@@ -1,0 +1,22 @@
+{
+  "codex": {
+    "executable": "/data1/home/ziruiwang/.local/npm/bin/codex",
+    "returncode": 0,
+    "version": "codex-cli 0.159.2"
+  },
+  "claude": {
+    "executable": "/data1/home/ziruiwang/.local/npm/bin/claude",
+    "returncode": 0,
+    "version": "2.1.288 (Claude Code)"
+  },
+  "pi": {
+    "executable": "/data1/home/ziruiwang/.local/npm/bin/pi",
+    "returncode": 0,
+    "version": "1.0.0"
+  },
+  "opencode": {
+    "executable": "/data1/home/ziruiwang/.local/npm/bin/opencode",
+    "returncode": 0,
+    "version": "1.18.34"
+  }
+}

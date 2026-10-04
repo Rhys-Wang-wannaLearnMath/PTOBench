@@ -1,0 +1,18 @@
+{
+  "content_sha256": "cf861ccbfbff1281925ae8f45554121d7db995968620a8ed41d9991a09a253c9",
+  "directories": [
+    "",
+    "empty"
+  ],
+  "files": [
+    {
+      "path": "candidate.py",
+      "sha256": "8430d65774c78001690a842fbd1224dd36ade9a85475687d14d25e2feab70cf3"
+    },
+    {
+      "path": "helper.py",
+      "sha256": "e13df8c44af5dea1e412403910b99cc5a48f2ccbf68a66b3374d6ab9cef9fc65"
+    }
+  ],
+  "schema_version": 1
+}

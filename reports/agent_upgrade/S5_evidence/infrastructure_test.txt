@@ -1,0 +1,6 @@
+test_infrastructure_failure_stops_owned_evaluator_without_final (test_launcher.LauncherTests) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 5.299s
+
+OK

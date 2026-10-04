@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v3_2.deepseek_v3_2_decode_front_scope4_reduced",
+  "description": "DeepSeek V3.2-EXP decode front Scope 4 sparse attention dispatch, reduced preset",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "build_deepseek_v3_2_decode_front_scope4_program",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "runtime": {
+    "ring_task_window": 524288,
+    "ring_dep_pool": 1048576,
+    "ring_heap": 4294967296
+  },
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["dispatch_buf"]},
+  "state": {"behavior": "none", "initial_state": [], "restore_before_each_launch": false}
+}

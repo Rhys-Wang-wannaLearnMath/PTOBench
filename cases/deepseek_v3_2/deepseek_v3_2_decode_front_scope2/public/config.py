@@ -1,0 +1,14 @@
+"""Fixed scope2 workload contract (shared by Candidate, Ref, and evaluator)."""
+BATCH = 16
+MAX_SEQ = 4096
+HIDDEN = 7168
+Q_LORA_RANK = 1536
+QK_ROPE_HEAD_DIM = 64
+INDEX_HEADS = 64
+INDEX_HEAD_DIM = 128
+CACHE_ROWS = BATCH * MAX_SEQ
+EPS = 1e-6
+INT8_GROUP_SIZE = 128
+INT8_SCALE_MAX = 127.0
+INT8_AMAX_EPS = 1e-4
+INT8_SCALE_PACK = 8

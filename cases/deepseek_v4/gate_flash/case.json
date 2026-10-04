@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.gate_flash",
+  "description": "DeepSeek-V4 FLASH decode MoE gate: RMSNorm, INT8 quantization, top-k routing, and normalized route weights",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "gate_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "x_norm",
+      "x_norm_i8",
+      "x_norm_scale",
+      "indices",
+      "weights"
+    ]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  }
+}

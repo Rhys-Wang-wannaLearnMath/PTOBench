@@ -1,0 +1,19 @@
+# Session and compiler output. These are reproducible and must not enter a
+# standalone PTOBench clone or the parent pypto-lib repository.
+.ptobench/*
+build_output/
+runs/
+snapshots/
+results/
+reports/agent_upgrade/full_v02/
+
+# Protected Fixture/Ref/Oracle binaries are provisioned as a separate asset
+# bundle and selected with PTOBENCH_SEALED_ROOT; they are too large for the
+# control repository itself.
+sealed_assets/
+
+# Local Python caches and editor state.
+**/__pycache__/
+**/*.py[cod]
+.venv/
+.pytest_cache/

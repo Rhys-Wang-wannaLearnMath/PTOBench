@@ -1,0 +1,29 @@
+[
+  {
+    "argv": [
+      "codex",
+      "--version"
+    ],
+    "exit_code": 0,
+    "stdout": "codex-cli 0.159.2\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/data1/home/ziruiwang/ptoas-v0.60/bin/ptoas",
+      "--version"
+    ],
+    "exit_code": 0,
+    "stdout": "ptoas 0.60\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/bin/bisheng",
+      "--version"
+    ],
+    "exit_code": 0,
+    "stdout": "2026-04-25T15:46:25+08:00 clang version 15.0.5 (clang-5c68a1cb1231 flang-5c68a1cb1231)\nTarget: aarch64-unknown-linux-gnu\nThread model: posix\nInstalledDir: /usr/local/Ascend/cann-9.0.0/cann-9.0.0/bin\n",
+    "stderr": ""
+  }
+]

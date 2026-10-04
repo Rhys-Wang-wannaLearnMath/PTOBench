@@ -1,0 +1,19 @@
+{
+  "bootstrap_marker": null,
+  "candidate": "/tmp/s2_uitjs1ei/custom_runs/codex/test.case/20261002T184829Z_278d450c34a5/staging/action_000002/workspace",
+  "case_id": "test.case",
+  "diagnostic_only": true,
+  "inherited_profile": null,
+  "official_score": false,
+  "phase": "correctness",
+  "profiling_mode": "runtime",
+  "runs": [
+    {
+      "fixture_id": "fixture_000",
+      "median_effective_us": null,
+      "passed": true
+    }
+  ],
+  "schema_version": 1,
+  "verdict": "PASS"
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.prefill_attention_csa_demo",
+  "description": "DeepSeek V4 DEMO packed prefill compressed sparse attention",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "prefill_attention_csa_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "scalars": ["num_tokens"],
+  "correctness": {"mode": "single_step", "outputs": ["x_out", "kv_cache"]},
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "kv_cache", "cmp_kv", "cmp_kv_state", "cmp_score_state",
+      "idx_kv_cache", "idx_kv_scale", "inner_kv_state", "inner_score_state"
+    ],
+    "restore_before_each_launch": true
+  }
+}

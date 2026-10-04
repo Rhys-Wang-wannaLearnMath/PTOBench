@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "x_norm": {"method": "allclose", "rtol": 0.01, "atol": 0.01},
+    "indices": {
+      "method": "custom",
+      "name": "topk_pair_compare",
+      "values_output": "weights",
+      "dim": -1,
+      "descending": true
+    },
+    "weights": {"method": "allclose", "rtol": 0.001, "atol": 0.001},
+    "post_ffn": {"method": "allclose", "rtol": 0.001, "atol": 0.001},
+    "comb_ffn": {"method": "allclose", "rtol": 0.001, "atol": 0.001}
+  }
+}

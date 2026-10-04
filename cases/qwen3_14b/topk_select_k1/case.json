@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "case_id": "qwen3_14b.topk_select_k1",
+  "description": "Qwen3-14B greedy top-k selection with selection_k=1",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "topk_select_fwd",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": ["topk_values", "topk_indices"]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  },
+  "runtime": {}
+}

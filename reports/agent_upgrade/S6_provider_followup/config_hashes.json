@@ -1,0 +1,14 @@
+{
+  "benchmarks/mig_workflow/agent_provider/launch.py": "10c2653e6bc03c55d9b678b914f0626e4566458af24e6ed2b2ac4fe96d675064",
+  "benchmarks/mig_workflow/agent_provider/opencode.json": "ff2821da472e2ddcda4f0812b10fc0e6f5e87dcc0a050bed396ed536c5b4024b",
+  "benchmarks/mig_workflow/agent_provider/pi/models.json": "2d052086cd7b04d438e51438febbe459fbccf429e9064258cc88176a6de34c3d",
+  "benchmarks/mig_workflow/agent_provider/pi/settings.json": "6b671d753ac19348e5c2159ba5debc677bcc79417d297f27b93d4f26dfa31fdc",
+  "benchmarks/pypto_lib_bench-v0.2/launcher/profiles/pi/deepseek-flash.yaml": "aee26afd9317638e94b80d3eedae7c1d447c851da4a0ce3a43c4abc47400134a",
+  "benchmarks/pypto_lib_bench-v0.2/launcher/profiles/pi/default.yaml": "f3ccec845b39973280813b33f7b2ac7d827a683e3697c22b41d26879b26b16e4",
+  "benchmarks/pypto_lib_bench-v0.2/launcher/profiles/pi/glm-5.3-flash.yaml": "81d28d6b0ebc48bfa1cf79eed6038599624b347536c6245160947ecd4f0793cd",
+  "benchmarks/pypto_lib_bench-v0.2/launcher/profiles/pi/gpt-6.1-sol.yaml": "f22c0eceede0dc4695e069fcf724698c8fb0ba6998e696f7c562391836902de2",
+  "benchmarks/pypto_lib_bench-v0.2/launcher/profiles/opencode/deepseek-flash.yaml": "9d99e94a5f75da82ed77b2a274cd1a9a2421c9c0533adf38a398817924446dc9",
+  "benchmarks/pypto_lib_bench-v0.2/launcher/profiles/opencode/default.yaml": "c455bcaa0d7354b55fd77e4a73e0b9e113fe626f50c40c975f9777d2e047f742",
+  "benchmarks/pypto_lib_bench-v0.2/launcher/profiles/opencode/glm-5.3-flash.yaml": "e1684286f4aab32868307478a7dca751c726ceecaae61933e1ec1ce492452242",
+  "benchmarks/pypto_lib_bench-v0.2/launcher/profiles/opencode/gpt-6.1-sol.yaml": "781a0cb6be205422105becafd66ca3e1ee9772cad1990eebbdd57d224622fb21"
+}

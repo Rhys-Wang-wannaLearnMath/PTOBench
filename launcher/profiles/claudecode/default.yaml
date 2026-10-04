@@ -1,0 +1,4 @@
+argv: [claude, -p, --dangerously-skip-permissions, "{prompt}"]
+version_argv: [claude, --version]
+help_argv: [claude, --help]
+env: {}

@@ -1,0 +1,22 @@
+{
+  "global_status": "FAIL",
+  "selected_status": "PASS",
+  "selected_entries_before": 369,
+  "selected_entries_after": 369,
+  "selected_bytes": 4662156790,
+  "selected_differences": [],
+  "changed_paths": 42,
+  "changed_cases": [
+    "deepseek_v4.prefill_layer_ep2_csa_pro"
+  ],
+  "added_environment": "environments/a2a3_prefill_layer_ep2_csa_pro_repair_idle67.json",
+  "external_case_processes": [
+    {
+      "pid": 3498492,
+      "program": "python",
+      "case": "deepseek_v4.prefill_layer_ep2_csa_pro",
+      "process_exited_during_inspection": true
+    }
+  ],
+  "attribution": "S6 executes only its fixed four Cases; a separate live process is working on prefill_layer_ep2_csa_pro. Global concurrent changes are retained, not restored or hidden."
+}

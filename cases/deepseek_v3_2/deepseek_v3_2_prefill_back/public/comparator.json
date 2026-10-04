@@ -1,0 +1,4 @@
+{
+  "schema_version": 1,
+  "outputs": {"out": {"method": "allclose", "atol": 0.003, "rtol": 0.003}}
+}

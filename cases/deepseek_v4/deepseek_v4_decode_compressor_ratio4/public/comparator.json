@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "out": {"method": "allclose", "rtol": 0.004, "atol": 0.004},
+    "kv_state": {"method": "allclose", "rtol": 0.004, "atol": 0.004},
+    "score_state": {"method": "allclose", "rtol": 0.004, "atol": 0.004}
+  }
+}

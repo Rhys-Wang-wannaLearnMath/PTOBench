@@ -1,0 +1,11 @@
+case: deepseek_v4.rmsnorm_decode_demo
+optimizer:
+  id: codex
+  backend: codex
+  profile: default
+output:
+  runs_root: ../runs
+  snapshots_root: ../snapshots
+budget:
+  max_hardware_actions: 20
+  finish_actions: 1

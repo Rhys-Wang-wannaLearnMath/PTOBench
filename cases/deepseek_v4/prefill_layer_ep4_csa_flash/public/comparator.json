@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "hca_cmp_kv_state": {
+      "method": "allclose",
+      "atol": 0.001,
+      "rtol": 0.001
+    },
+    "hca_cmp_score_state": {
+      "method": "allclose",
+      "atol": 0.001,
+      "rtol": 0.001
+    },
+    "csa_cmp_kv_state": {
+      "method": "allclose",
+      "atol": 0.01,
+      "rtol": 0.01
+    },
+    "csa_cmp_score_state": {
+      "method": "allclose",
+      "atol": 0.01,
+      "rtol": 0.01
+    },
+    "csa_inner_kv_state": {
+      "method": "allclose",
+      "atol": 0.01,
+      "rtol": 0.01
+    },
+    "csa_inner_score_state": {
+      "method": "allclose",
+      "atol": 0.01,
+      "rtol": 0.01
+    },
+    "kv_cache": {
+      "method": "ratio_allclose",
+      "atol": 0.0001,
+      "max_error_ratio": 0.005,
+      "rtol": 0.0078125
+    },
+    "cmp_kv": {
+      "method": "allclose",
+      "atol": 0.01,
+      "rtol": 0.01
+    },
+    "idx_kv_cache": {
+      "method": "ratio_allclose",
+      "atol": 1.0,
+      "max_error_ratio": 0.01,
+      "rtol": 0.0
+    },
+    "idx_kv_scale": {
+      "method": "allclose",
+      "atol": 0.001,
+      "rtol": 0.001
+    },
+    "x_next": {
+      "method": "custom",
+      "name": "valid_ratio_reldiff",
+      "chunk_lens_input": "chunk_lens",
+      "chunk_offsets_input": "chunk_offsets",
+      "diff_thd": 0.01,
+      "pct_thd": 0.05
+    }
+  }
+}

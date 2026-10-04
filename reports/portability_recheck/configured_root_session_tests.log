@@ -1,0 +1,24 @@
+test_corrupt_manifest_backup_and_wrong_binding_fail_without_rebaseline (test_session.SessionTest) ... ok
+test_creation_failure_cleans_only_owned_unpublished_dirs (test_session.SessionTest) ... ok
+test_creation_independent_layout_schema_and_original_assets (test_session.SessionTest) ... ok
+test_creation_record_publication_survives_real_process_crash (test_session.SessionTest) ... ok
+test_failed_asset_recovery_marks_session_failed_and_preserves_budget (test_session.SessionTest) ... ok
+test_failed_fork_has_no_registry_or_partial_and_never_reuses_allocated_id (test_session.SessionTest) ... ok
+test_foreign_extra_record_and_fixed_binding_are_rejected_before_recovery (test_session.SessionTest) ... ok
+test_fork_copies_helpers_and_initial_snapshot_without_budget (test_session.SessionTest) ... ok
+test_fork_crash_keeps_registry_atomic_and_never_reuses_published_number (test_session.SessionTest) ... S2 creation crash: committed manifest -> complete Session and empty event log restored
+S2 fork crash: registry_manifest=False, next accepted worker=002, usage=0
+ok
+test_invalid_parameters_output_overlap_and_link_components (test_session.SessionTest) ... ok
+test_metadata_cannot_change_identity_budget_module_or_modes (test_session.SessionTest) ... ok
+test_preflight_rejects_every_incomplete_certified_asset_without_preparing (test_session.SessionTest) ... ok
+test_reads_repair_latest_records_without_touching_context_or_assets (test_session.SessionTest) ... ok
+test_record_symlink_replaced_itself_and_external_sentinel_untouched (test_session.SessionTest) ... ok
+test_registered_roots_only_cross_session_subdirectory_and_links (test_session.SessionTest) ... ok
+test_schema_validation_even_for_a_bench_committed_bad_record (test_session.SessionTest) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 3.361s
+
+OK
+S2 fork crash: registry_manifest=True, next accepted worker=002, usage=0

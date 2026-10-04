@@ -1,0 +1,405 @@
+Reading additional input from stdin...
+OpenAI Codex v0.159.2
+--------
+workdir: /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo/20261003T050120Z_f64a04d58138/workspaces/worker_000
+model: gpt-6.1-sol
+provider: custom
+approval: never
+sandbox: danger-full-access
+reasoning effort: high
+reasoning summaries: none
+session id: 01a10023-6591-7400-b644-f4ef3bff722e
+--------
+user
+Optimize Case deepseek_v4.rmsnorm_decode_demo for this experiment.
+Your initial cwd is the registered workspace worker_000. Entry: candidate.py::rms_norm_test.
+Read .benchmark_context/README.md and the public contract before editing.
+First run ptobench evaluate to establish a baseline, then improve the Candidate.
+You may edit Candidate source and helper files in registered workspaces.
+Do not change .benchmark_context or Bench control records. Do not read sealed assets.
+Use only these five Bench operations (PATH and Session environment are already set):
+  ptobench evaluate [workspace]
+  ptobench profile runtime [workspace]
+  ptobench profile pmu [workspace]
+  ptobench profile compiler [workspace]
+  ptobench fork [workspace]
+Omitting workspace uses cwd. A fork registers a new workspace; use its returned path.
+Exploration budget: 1 accepted hardware actions,
+shared by evaluate and all profile operations. fork consumes no hardware action.
+Profiles provide diagnostics; their output is not an official final score.
+Use these commands for Bench actions; directly invoking internal scripts violates the experiment rules.
+Stop when you are finished or the exploration budget is exhausted. No special final message is required.
+Bench automatically selects the best valid historical Snapshot and independently verifies it
+with the one reserved finish action. You do not call finalization yourself.
+
+warning: Codex is ignoring 4 unrecognized configuration settings. Check for typos or deprecated settings.
+  user (/data1/home/ziruiwang/.codex/config.toml): `disable_response_storage` is ignored.
+  user (/data1/home/ziruiwang/.codex/config.toml): `mcp_servers.computer-use.type` is ignored.
+  user (/data1/home/ziruiwang/.codex/config.toml): `mcp_servers.node_repl.type` is ignored.
+  ... and 1 more ignored settings.
+warning: Codex is ignoring 4 unrecognized configuration settings. Check for typos or deprecated settings.
+  user (/data1/home/ziruiwang/.codex/config.toml): `disable_response_storage` is ignored.
+  user (/data1/home/ziruiwang/.codex/config.toml): `mcp_servers.computer-use.type` is ignored.
+  user (/data1/home/ziruiwang/.codex/config.toml): `mcp_servers.node_repl.type` is ignored.
+  ... and 1 more ignored settings.
+codex
+I’ll read the workspace guidance and public contract, then run the required baseline evaluation before making any changes.
+
+exec
+/bin/bash -lc "pwd && rg --files -g 'AGENTS.md' -g 'candidate.py' -g '.benchmark_context/**' -g '*contract*' -g 'README.md' -g '"'!**/.git/**'"'" in /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo/20261003T050120Z_f64a04d58138/workspaces/worker_000
+ succeeded in 0ms:
+/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo/20261003T050120Z_f64a04d58138/workspaces/worker_000
+candidate.py
+
+exec
+/bin/bash -lc 'for d in /data1 /data1/home /data1/home/ziruiwang /data1/home/ziruiwang/pypto-lib /data1/home/ziruiwang/pypto-lib/benchmarks /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2 /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo/20261003T050120Z_f64a04d58138 /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo/20261003T050120Z_f64a04d58138/workspaces .; do if [ -f "$d/AGENTS.md" ]; then cat "$d/AGENTS.md"; fi; done' in /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo/20261003T050120Z_f64a04d58138/workspaces/worker_000
+ succeeded in 0ms:
+exec
+/bin/bash -lc 'cat .benchmark_context/README.md' in /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo/20261003T050120Z_f64a04d58138/workspaces/worker_000
+ succeeded in 0ms:
+# Benchmark Workspace
+
+Case: `deepseek_v4.rmsnorm_decode_demo`
+
+## Files
+
+- Files outside `.benchmark_context/` and `.benchmark_outputs/`: editable Candidate
+  implementation and its local helper dependencies.
+- `.benchmark_outputs/`: evaluator-generated results, compiler output, and profiling diagnostics, separated by mode.
+- `.benchmark_context/case.json`: Case description and evaluation mode.
+- `.benchmark_context/config.py`: fixed configuration for this Case; read-only information.
+- `.benchmark_context/comparator.json`: correctness comparison rules; read-only information.
+- `.benchmark_context/reference.json`: public summary of certified reference status and performance.
+- `.benchmark_context/environment.json`: target platform and device summary.
+- `.benchmark_context/workspace.json`: binding between this workspace and the Case.
+- `.benchmark_context/profiling_modes.json`: profiling modes available in this workspace.
+- `.benchmark_context/starting_point/`: read-only copy of the Candidate at workspace creation.
+
+The files under `.benchmark_context/` are informational snapshots. Official evaluation
+reads the canonical Case and sealed assets outside this workspace.
+Case identity and budget come from the protected Session
+registry. `PTOBENCH_SESSION_ROOT` must be set, and this root must be registered.
+
+## Candidate Contract
+
+The evaluator loads `candidate.py` and calls `rms_norm_test`. The entry may
+import any local files copied into this workspace. Preserve the input/output ABI
+described by `case.json` and `config.py`; implementation files, helper layout,
+and optimization choices are otherwise free.
+
+## Evaluate
+
+```bash
+ptobench evaluate .
+```
+
+Formal inputs and reference output tensors are hidden from this workspace.
+The default result and compiler output are written under
+`.benchmark_outputs/clean/`.
+These outputs are diagnostic copies. Bench records authoritative results and
+readonly Snapshots from the frozen implementation; edits here cannot change them.
+Evaluate reserves one exploration action; failure does not refund it.
+
+## Fork
+
+```bash
+ptobench fork .
+```
+
+Bench chooses and registers the child workspace and returns its absolute path.
+Fork copies implementation files, regenerates context and consumes no hardware action.
+
+
+## Diagnostics
+
+The following optional diagnostics are available:
+
+- `ptobench profile runtime .`: Runtime scheduling, dependency, and scope diagnostics.
+- `ptobench profile pmu .`: Hardware PMU diagnostics.
+- `ptobench profile compiler .`: Compiler pass IR and compile-time diagnostics.
+
+Each profiling command performs one correctness dispatch; it does not measure
+performance, and reserves one exploration action. Profiling results are diagnostic only. After an optimization, run
+`ptobench evaluate .` again for the formal clean performance result.
+
+
+exec
+/bin/bash -lc 'cat candidate.py .benchmark_context/reference.json .benchmark_context/environment.json' in /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo/20261003T050120Z_f64a04d58138/workspaces/worker_000
+ succeeded in 0ms:
+# Copyright (c) PyPTO Contributors.
+# This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+# CANN Open Software License Agreement Version 2.0 (the "License").
+# Please refer to the License for details. You may not use this file except in compliance with the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+# See LICENSE in the root of the software repository for the full text of the License.
+# -----------------------------------------------------------------------------------------------------------
+"""DeepSeek-V4 attention RMSNorm (dynamic shape): normalizes token-major
+activations for both decode and prefill attention paths."""
+
+import pypto.language as pl
+
+from config import CASE_CONFIG as M, DECODE_BATCH, DECODE_SEQ
+
+
+# Dynamic shape variables.
+T_DYN = pl.dynamic("T_DYN")  # T = B * S
+
+
+# model config
+D = M.hidden_size
+EPS = M.rms_norm_eps
+
+# tiling
+D_TILE = 128
+T_TILE = 8
+assert D % D_TILE == 0, "D must be divisible by D_TILE"
+assert (DECODE_BATCH * DECODE_SEQ) % T_TILE == 0
+
+
+@pl.jit.inline
+def rms_norm(
+    x: pl.Tensor[[T_DYN, D], pl.BF16],
+    norm_w: pl.Tensor[[D], pl.BF16],
+    x_normed: pl.Tensor[[T_DYN, D], pl.BF16],
+):
+    t_dim = pl.tensor.dim(x, 0)
+    for tg_idx in pl.spmd(t_dim // T_TILE, name_hint="rms_norm"):
+        tg = tg_idx * T_TILE
+        x_sq_sum = pl.full([1, T_TILE], dtype=pl.FP32, value=0.0)
+        for rms_db in pl.pipeline(D // D_TILE, stage=2):
+            rms_d0 = rms_db * D_TILE
+            rms_x_chunk = pl.cast(x[tg : tg + T_TILE, rms_d0 : rms_d0 + D_TILE], target_type=pl.FP32)
+            x_sq_sum = pl.add(x_sq_sum, pl.reshape(pl.row_sum(pl.mul(rms_x_chunk, rms_x_chunk)), [1, T_TILE]))
+        x_inv_rms = pl.recip(pl.sqrt(pl.add(pl.mul(x_sq_sum, 1.0 / D), EPS)))
+        x_inv_rms_t = pl.reshape(x_inv_rms, [T_TILE, 1])
+        for apply_db in pl.pipeline(D // D_TILE, stage=2):
+            apply_d0 = apply_db * D_TILE
+            apply_x_chunk = pl.cast(x[tg : tg + T_TILE, apply_d0 : apply_d0 + D_TILE], target_type=pl.FP32)
+            norm_w_chunk = pl.cast(pl.reshape(norm_w[apply_d0 : apply_d0 + D_TILE], [1, D_TILE]), pl.FP32)
+            x_normed_chunk = pl.col_expand_mul(pl.row_expand_mul(apply_x_chunk, x_inv_rms_t), norm_w_chunk)
+            x_normed[tg : tg + T_TILE, apply_d0 : apply_d0 + D_TILE] = pl.cast(
+                x_normed_chunk,
+                target_type=pl.BF16,
+                mode="rint",
+            )
+
+    return x_normed
+
+
+@pl.jit
+def rms_norm_test(
+    x: pl.Tensor[[T_DYN, D], pl.BF16],
+    norm_w: pl.Tensor[[D], pl.BF16],
+    x_normed: pl.Out[pl.Tensor[[T_DYN, D], pl.BF16]],
+):
+    x.bind_dynamic(0, T_DYN)
+    x_normed.bind_dynamic(0, T_DYN)
+
+    x_normed = rms_norm(x, norm_w, x_normed)
+    return x_normed
+{
+  "schema_version": 1,
+  "status": "ready",
+  "reference_performance": {
+    "fixture_000": 17.729999999999997
+  }
+}
+{
+  "profile": "a2a3_single_card",
+  "platform": "a2a3",
+  "device": 0
+}
+
+exec
+/bin/bash -lc 'cat .benchmark_context/case.json .benchmark_context/config.py .benchmark_context/comparator.json' in /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo/20261003T050120Z_f64a04d58138/workspaces/worker_000
+ succeeded in 0ms:
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.rmsnorm_decode_demo",
+  "description": "DeepSeek-V4 DEMO RMSNorm decode for one token per request",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "rms_norm_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["x_normed"]},
+  "state": {"behavior": "none", "initial_state": [], "restore_before_each_launch": false}
+}
+"""Fixed DeepSeek-V4 DEMO RMSNorm decode contract."""
+
+from dataclasses import dataclass
+from typing import Literal, Optional, Tuple
+
+
+@dataclass(frozen=True)
+class DeepSeekV4Config:
+    """Source-shaped DeepSeek-V4 model configuration."""
+
+    name: str
+    hidden_size: int
+    num_attention_heads: int
+    head_dim: int
+    qk_rope_head_dim: int
+    q_lora_rank: int
+    o_lora_rank: int
+    o_groups: int
+    sliding_window: int
+    rms_norm_eps: float
+    vocab_size: int
+    moe_intermediate_size: int
+    n_routed_experts: int
+    n_shared_experts: int
+    num_experts_per_tok: int
+    scoring_func: Literal["softmax", "sigmoid", "sqrtsoftplus"]
+    routed_scaling_factor: float
+    swiglu_limit: float
+    num_hidden_layers: int
+    num_hash_layers: int
+    num_nextn_predict_layers: int
+    compress_ratios: Tuple[int, ...]
+    index_n_heads: int
+    index_head_dim: int
+    index_topk: int
+    hc_mult: int
+    hc_sinkhorn_iters: int
+    hc_eps: float
+    max_position_embeddings: int
+    rope_theta: float
+    compress_rope_theta: float
+    rope_factor: float
+    beta_fast: int
+    beta_slow: int
+    original_max_position_embeddings: int
+    dtype: Literal["bf16", "fp8"]
+    scale_fmt: Optional[Literal["ue8m0"]]
+    expert_dtype: Optional[Literal["fp4"]]
+    scale_dtype: Literal["fp32", "fp8"]
+    max_batch_size: int
+
+    @property
+    def nope_head_dim(self) -> int:
+        return self.head_dim - self.qk_rope_head_dim
+
+    @property
+    def softmax_scale(self) -> float:
+        return self.head_dim ** -0.5
+
+    @property
+    def index_nope_head_dim(self) -> int:
+        return self.index_head_dim - self.qk_rope_head_dim
+
+    @property
+    def index_weights_scale(self) -> float:
+        return self.index_head_dim ** -0.5 * self.index_n_heads ** -0.5
+
+    @property
+    def hc_dim(self) -> int:
+        return self.hc_mult * self.hidden_size
+
+    @property
+    def mix_hc(self) -> int:
+        return (2 + self.hc_mult) * self.hc_mult
+
+
+DEMO = DeepSeekV4Config(
+    name="demo", hidden_size=4096, num_attention_heads=64, head_dim=512,
+    qk_rope_head_dim=64, q_lora_rank=1024, o_lora_rank=1024, o_groups=8,
+    sliding_window=128, rms_norm_eps=1e-6, vocab_size=129280,
+    moe_intermediate_size=4096, n_routed_experts=16, n_shared_experts=1,
+    num_experts_per_tok=2, scoring_func="sqrtsoftplus", routed_scaling_factor=1.0,
+    swiglu_limit=0.0, num_hidden_layers=8, num_hash_layers=0,
+    num_nextn_predict_layers=1, compress_ratios=(0, 0, 4, 128, 4, 128, 4, 0),
+    index_n_heads=64, index_head_dim=128, index_topk=512, hc_mult=4,
+    hc_sinkhorn_iters=20, hc_eps=1e-6, max_position_embeddings=4096,
+    rope_theta=10000.0, compress_rope_theta=40000.0, rope_factor=40.0,
+    beta_fast=32, beta_slow=1, original_max_position_embeddings=0,
+    dtype="fp8", scale_fmt="ue8m0", expert_dtype=None, scale_dtype="fp8",
+    max_batch_size=4,
+)
+
+CASE_CONFIG = DEMO
+
+# Fixed decode ABI. Implementation tile and pipeline choices stay in the Ref.
+DECODE_BATCH = 8
+DECODE_SEQ = 1
+DECODE_TOKENS = DECODE_BATCH * DECODE_SEQ
+T = DECODE_TOKENS
+D = CASE_CONFIG.hidden_size
+EPS = CASE_CONFIG.rms_norm_eps
+X_SHAPE = (T, D)
+NORM_W_SHAPE = (D,)
+OUTPUT_SHAPE = (T, D)
+X_DTYPE = "bfloat16"
+NORM_W_DTYPE = "bfloat16"
+OUTPUT_DTYPE = "bfloat16"
+{"schema_version":1,"outputs":{"x_normed":{"method":"ratio_allclose","rtol":0.0078125,"atol":0.0001,"max_error_ratio":0.005}}}
+
+codex
+The contract specifies BF16 input and output of shape `(8, 4096)`. The required baseline evaluation will use the sole exploration action; your stop rule means I must end after it completes.
+
+exec
+/bin/bash -lc 'ptobench evaluate' in /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo/20261003T050120Z_f64a04d58138/workspaces/worker_000
+ succeeded in 12543ms:
+[RUN] compile ...
+2026-10-03 13:02:02.304 I | [perf_hint] 4 hints across 4 sites; see /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo/20261003T050120Z_f64a04d58138/staging/action_000001/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_1vbmxifi/report/perf_hints.log
+[RUN] compile done (0.36s)
+[RUN] generate inputs ...
+[RUN]   cache hit: /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/rmsnorm_decode_demo/fixtures/fixture_000/in
+[RUN] generate inputs done (0.00s)
+[RUN] compute golden ...
+[RUN]   cache hit: /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/rmsnorm_decode_demo/fixtures/fixture_000/out
+[RUN] compute golden done (0.00s)
+[RUN] runtime ...
+[mono_ns=13021903866251092][T0xffffb216a020][TIMING] clock_anchor: [CLOCK_ANCHOR] v=1 pid=3102478 mono_ns=13021903866250702 wall_ns=1791003726058623118
+[mono_ns=13021905032993448][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=0 hid=0 depth=0 name=chip.prewarm.build ts=13021905016079299 dur=16894099 
+[mono_ns=13021905040878653][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=1 hid=f77004078c9e9aa4 depth=2 name=chip.run.bind.args ts=13021905040802841 dur=70121 
+[mono_ns=13021905040896003][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=1 hid=f77004078c9e9aa4 depth=2 name=chip.run.bind.prebuilt ts=13021905040889223 dur=4180 
+[mono_ns=13021905040901543][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=1 hid=f77004078c9e9aa4 depth=1 name=chip.run.bind ts=13021905040779121 dur=119942 
+[mono_ns=13021905042708504][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=1 hid=f77004078c9e9aa4 depth=1 name=chip.run.runner_run ts=13021905041256519 dur=1445545 
+[mono_ns=13021905042756315][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=1 hid=f77004078c9e9aa4 depth=1 name=chip.run.validate ts=13021905042722824 dur=29861 
+[mono_ns=13021905042766525][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=1 hid=f77004078c9e9aa4 depth=2 name=chip.run.runner_run.device_wall ts=0 dur=230360 clk=dev
+[mono_ns=13021905042771585][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=1 hid=f77004078c9e9aa4 depth=3 name=chip.run.runner_run.device_wall.preamble ts=0 dur=145859 clk=dev
+[mono_ns=13021905042778725][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=1 hid=f77004078c9e9aa4 depth=3 name=chip.run.runner_run.device_wall.graph_build ts=35559 dur=176560 clk=dev
+[mono_ns=13021905042787035][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=1 hid=f77004078c9e9aa4 depth=3 name=chip.run.runner_run.device_wall.config_validate ts=40020 dur=2460 clk=dev
+[mono_ns=13021905042791325][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=1 hid=f77004078c9e9aa4 depth=3 name=chip.run.runner_run.device_wall.arena_wire ts=42660 dur=10440 clk=dev
+[mono_ns=13021905042797065][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=1 hid=f77004078c9e9aa4 depth=3 name=chip.run.runner_run.device_wall.sm_reset ts=53140 dur=16960 clk=dev
+[mono_ns=13021905042805135][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=1 hid=f77004078c9e9aa4 depth=3 name=chip.run.runner_run.device_wall.post_orch ts=212220 dur=14760 clk=dev
+[mono_ns=13021905042809136][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=1 hid=f77004078c9e9aa4 depth=3 name=chip.run.runner_run.device_wall.orch ts=71500 dur=26980 clk=dev
+[mono_ns=13021905042813336][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=1 hid=f77004078c9e9aa4 depth=3 name=chip.run.runner_run.device_wall.sched ts=147540 dur=44940 clk=dev
+[mono_ns=13021905042822516][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=1 hid=f77004078c9e9aa4 depth=1 name=chip.run.claim_release ts=13021905042820026 dur=550 
+[mono_ns=13021905042827236][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=1 hid=f77004078c9e9aa4 depth=0 name=chip.run ts=13021905040758501 dur=2066385 run_id=0 dispatch_id=0 slot_id=0 generation=1 run_epoch=1
+[RUN] runtime done (4.66s)
+[RUN] validate ...
+[RUN]   'x_normed' PASS  shape=(8, 4096) dtype=torch.bfloat16 (compare)
+[RUN] validate done (0.00s)
+[RUN] benchmark ...
+[mono_ns=13021905138936007][T0xffffb216a020][TIMING] emit_host_span: [STRACE] v=1 pid=3102478 tid=3102478 inv=0 hid=0 depth=0 name=chip.prewarm.build ts=13021905122093610 dur=16824777 
+[RUN] benchmark done (0.13s)
+[RUN]   effective_us (10 rounds) min=16.5 median=17.7 mean=17.9 max=21.0
+[RUN] PASS (5.15s)
+deepseek_v4.rmsnorm_decode_demo: PASS
+{"status": "PASS", "error_code": null, "exit_code": 0, "event_seq": 1, "workspace": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo/20261003T050120Z_f64a04d58138/workspaces/worker_000", "correctness": "PASS", "latency_us": 17.6995, "snapshot_id": "snapshot_000001", "remaining_hardware_actions": 0, "message": null, "integrity_passed": true}
+
+2026-10-03 13:02:16.356 I | [perf_hint] 4 hints across 4 sites; see /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo/20261003T050120Z_f64a04d58138/final/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_x7987edu/report/perf_hints.log
+[mono_ns=13021917866151441][T0xffff99538020][TIMING] clock_anchor: [CLOCK_ANCHOR] v=1 pid=3103347 mono_ns=13021917866150601 wall_ns=1791003740058523287
+[mono_ns=13021918928821709][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=0 hid=0 depth=0 name=chip.prewarm.build ts=13021918911978432 dur=16826267 
+[mono_ns=13021918935194548][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=1 hid=a8054262f2a85873 depth=2 name=chip.run.bind.args ts=13021918935128787 dur=59641 
+[mono_ns=13021918935209618][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=1 hid=a8054262f2a85873 depth=2 name=chip.run.bind.prebuilt ts=13021918935202358 dur=4330 
+[mono_ns=13021918935216748][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=1 hid=a8054262f2a85873 depth=1 name=chip.run.bind ts=13021918935107597 dur=106701 
+[mono_ns=13021918937070790][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=1 hid=a8054262f2a85873 depth=1 name=chip.run.runner_run ts=13021918935594735 dur=1469865 
+[mono_ns=13021918937106761][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=1 hid=a8054262f2a85873 depth=1 name=chip.run.validate ts=13021918937082680 dur=21291 
+[mono_ns=13021918937114281][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=1 hid=a8054262f2a85873 depth=2 name=chip.run.runner_run.device_wall ts=0 dur=223420 clk=dev
+[mono_ns=13021918937120921][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=1 hid=a8054262f2a85873 depth=3 name=chip.run.runner_run.device_wall.preamble ts=0 dur=138440 clk=dev
+[mono_ns=13021918937127011][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=1 hid=a8054262f2a85873 depth=3 name=chip.run.runner_run.device_wall.graph_build ts=32660 dur=170940 clk=dev
+[mono_ns=13021918937132641][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=1 hid=a8054262f2a85873 depth=3 name=chip.run.runner_run.device_wall.config_validate ts=36420 dur=2139 clk=dev
+[mono_ns=13021918937138631][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=1 hid=a8054262f2a85873 depth=3 name=chip.run.runner_run.device_wall.arena_wire ts=38600 dur=11040 clk=dev
+[mono_ns=13021918937143951][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=1 hid=a8054262f2a85873 depth=3 name=chip.run.runner_run.device_wall.sm_reset ts=49680 dur=17020 clk=dev
+[mono_ns=13021918937147681][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=1 hid=a8054262f2a85873 depth=3 name=chip.run.runner_run.device_wall.post_orch ts=203780 dur=15959 clk=dev
+[mono_ns=13021918937153192][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=1 hid=a8054262f2a85873 depth=3 name=chip.run.runner_run.device_wall.orch ts=67680 dur=29600 clk=dev
+[mono_ns=13021918937158472][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=1 hid=a8054262f2a85873 depth=3 name=chip.run.runner_run.device_wall.sched ts=139940 dur=43560 clk=dev
+[mono_ns=13021918937163572][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=1 hid=a8054262f2a85873 depth=1 name=chip.run.claim_release ts=13021918937161082 dur=550 
+[mono_ns=13021918937170442][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=1 hid=a8054262f2a85873 depth=0 name=chip.run ts=13021918935089436 dur=2078376 run_id=0 dispatch_id=0 slot_id=0 generation=1 run_epoch=1
+[mono_ns=13021919024130677][T0xffff99538020][TIMING] emit_host_span: [STRACE] v=1 pid=3103347 tid=3103347 inv=0 hid=0 depth=0 name=chip.prewarm.build ts=13021919008695213 dur=15420304 

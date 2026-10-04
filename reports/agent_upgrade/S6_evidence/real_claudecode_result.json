@@ -1,0 +1,78 @@
+{
+  "backend": "claudecode",
+  "profile": "default",
+  "case": "deepseek_v4.rmsnorm_decode_flash",
+  "status": "PASS",
+  "exit_code": 0,
+  "launcher_result": {
+    "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_real_claudecode/deepseek_v4.rmsnorm_decode_flash/20261003T070102Z_75a7c15206ea",
+    "final_result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_real_claudecode/deepseek_v4.rmsnorm_decode_flash/20261003T070102Z_75a7c15206ea/final_result.json",
+    "status": "completed",
+    "error_code": null,
+    "close_reason": "optimizer_exit",
+    "optimizer_exit_code": 0
+  },
+  "usage": {
+    "finish_actions": 1,
+    "hardware_actions": 1
+  },
+  "events": [
+    "evaluate",
+    "finish"
+  ],
+  "optimizer_group_alive": false,
+  "final": {
+    "best_observed_latency_us": 17.939999999999998,
+    "best_observed_metric_name": "median_effective_us",
+    "best_observed_mode": null,
+    "best_observed_source": "evaluate",
+    "best_observed_unit": "us",
+    "case_id": "deepseek_v4.rmsnorm_decode_flash",
+    "close_reason": "optimizer_exit",
+    "completed_at": "2026-10-03T07:01:48.424117+00:00",
+    "error_code": null,
+    "final_integrity_passed": true,
+    "final_verified_correctness": "passed",
+    "final_verified_latency_us": 17.369999999999997,
+    "final_verified_speedup": 1.0068796776050664,
+    "finish_actions_used": 1,
+    "finish_event_seq": 2,
+    "hardware_actions_used": 1,
+    "message": null,
+    "optimizer_id": "s6_real_claudecode",
+    "schema_version": 1,
+    "selected_content_sha256": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+    "selected_event_seq": 1,
+    "selected_observation": {
+      "correctness": "PASS",
+      "kind": "evaluate",
+      "latency_us": 17.939999999999998,
+      "metric_name": "median_effective_us",
+      "mode": null,
+      "unit": "us"
+    },
+    "selected_snapshot": "snapshot_000001",
+    "selection_policy": "lowest_observed_latency_else_latest_pass",
+    "selection_reason": "lowest_observed_latency",
+    "session_id": "20261003T070102Z_75a7c15206ea",
+    "status": "completed"
+  },
+  "backend_provenance": {
+    "argv": [
+      "claude",
+      "-p",
+      "--dangerously-skip-permissions",
+      "Integration acceptance task. Read .benchmark_context/README.md, run exactly one ptobench evaluate in your current registered workspace, wait for its result, then exit. Do not optimize or edit source. PATH and Session environment are already set. Do not call internal scripts or inspect sealed assets. Bench will independently finalize on exit. Exploration budget is 2; finish budget is 1. No special completion text is required."
+    ],
+    "backend": {
+      "authentication": "authenticated_host_configuration",
+      "backend": "claudecode",
+      "checked_help": true,
+      "executable": "/data1/home/ziruiwang/.local/npm/bin/claude",
+      "model": "unknown",
+      "version": "2.1.288 (Claude Code)"
+    },
+    "cwd": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_real_claudecode/deepseek_v4.rmsnorm_decode_flash/20261003T070102Z_75a7c15206ea/workspaces/worker_000",
+    "profile_sha256": "b0c7ea138139e6e671102eee88c4cf5bc3ec239b853bf78c8a7b533e698fafab"
+  }
+}

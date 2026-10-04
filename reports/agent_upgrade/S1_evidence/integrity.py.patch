@@ -1,0 +1,429 @@
+--- /dev/null
++++ b/evaluator/integrity.py
+@@ -0,0 +1,426 @@
++"""Frozen file inventories, independent backups and recoverable record commits.
++
++Control data in protection_root is trusted Bench state, not an OS sandbox.
++APIs serialize manifest access with an internal flock. Session code must also
++hold its Session lock around read/compute/commit of budget and event payloads.
++"""
++
++from __future__ import annotations
++
++import contextlib
++import copy
++from dataclasses import dataclass, field
++import fcntl
++import hashlib
++import json
++import os
++from pathlib import Path, PurePosixPath
++import re
++import stat
++import uuid
++from typing import Mapping
++
++import file_tree
++
++
++@dataclass(frozen=True)
++class ProtectionRoot:
++    path: Path
++    group: str
++    readonly: bool = False
++
++
++@dataclass
++class IntegrityReport:
++    changed_paths: list[str] = field(default_factory=list)
++    restored_paths: list[str] = field(default_factory=list)
++    unrecoverable_paths: list[str] = field(default_factory=list)
++
++    @property
++    def passed(self) -> bool:
++        # Restoration never erases evidence of the original change.
++        return not self.changed_paths and not self.unrecoverable_paths
++
++
++class InfrastructureError(RuntimeError):
++    error_code = "infrastructure_error"
++
++    def __init__(self, message: str, report: IntegrityReport | None = None):
++        super().__init__(message)
++        self.report = report or IntegrityReport()
++
++
++def _json_bytes(value: dict) -> bytes:
++    return (json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode("utf-8")
++
++
++@contextlib.contextmanager
++def _locked(protection_root: Path, *, create: bool = False):
++    try:
++        with file_tree.open_directory(protection_root, create=create) as parent:
++            descriptor = os.open(".integrity.lock", os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW | os.O_NONBLOCK,
++                                 mode=0o600, dir_fd=parent)
++            try:
++                if not stat.S_ISREG(os.fstat(descriptor).st_mode):
++                    raise InfrastructureError("integrity lock is not a regular file")
++                fcntl.flock(descriptor, fcntl.LOCK_EX)
++                yield
++            finally:
++                os.close(descriptor)
++    except (OSError, file_tree.UnsafeTreeError, file_tree.TreeChangedError) as error:
++        raise InfrastructureError(str(error)) from error
++
++
++def _relative(value: str, *, allow_root: bool = True) -> None:
++    if not isinstance(value, str) or (not value and not allow_root):
++        raise InfrastructureError("invalid relative inventory path")
++    if value:
++        parts = value.split("/")
++        if any(part in {"", ".", ".."} for part in parts) or "\x00" in value:
++            raise InfrastructureError(f"invalid inventory path: {value!r}")
++
++
++def _validate(manifest: dict, protection_root: Path) -> None:
++    if (type(manifest) is not dict or set(manifest) != {"schema_version", "roots"}
++            or type(manifest["schema_version"]) is not int or manifest["schema_version"] != 1
++            or type(manifest["roots"]) is not dict):
++        raise InfrastructureError("invalid protection manifest schema")
++    paths = []
++    for name, root in manifest["roots"].items():
++        if not isinstance(name, str) or not re.fullmatch(r"[A-Za-z0-9_.-]+", name) or name in {".", ".."}:
++            raise InfrastructureError("invalid logical root name")
++        if type(root) is not dict or set(root) != {"path", "group", "readonly", "entries"}:
++            raise InfrastructureError(f"invalid root info: {name}")
++        if (not isinstance(root["path"], str) or "\x00" in root["path"]
++                or not Path(root["path"]).is_absolute()
++                or str(file_tree.absolute_path(root["path"])) != root["path"]
++                or root["path"] == "/" or not isinstance(root["group"], str)
++                or not root["group"] or type(root["readonly"]) is not bool):
++            raise InfrastructureError(f"invalid root info: {name}")
++        path = Path(root["path"])
++        if path.is_relative_to(protection_root) or protection_root.is_relative_to(path):
++            raise InfrastructureError("control data must not overlap protected roots")
++        if any(path.is_relative_to(other) or other.is_relative_to(path) for other in paths):
++            raise InfrastructureError("protected roots must not overlap")
++        paths.append(path)
++        entries = root["entries"]
++        if type(entries) is not dict or "" not in entries:
++            raise InfrastructureError(f"missing root directory/type: {name}")
++        for relative, entry in entries.items():
++            _relative(relative)
++            if type(entry) is not dict:
++                raise InfrastructureError("invalid inventory entry")
++            kind = entry.get("kind")
++            if kind == "absent":
++                if relative or len(entries) != 1 or set(entry) != {"kind"}:
++                    raise InfrastructureError("only an entire root may be absent")
++            elif kind in {"file", "directory"}:
++                fields = {"kind", "mode", "sha256", "backup"} if kind == "file" else {"kind", "mode"}
++                if set(entry) != fields or type(entry["mode"]) is not int or not 0 <= entry["mode"] <= 0o7777:
++                    raise InfrastructureError("invalid inventory fields/mode")
++                if kind == "file":
++                    if (not isinstance(entry["sha256"], str)
++                            or not re.fullmatch(r"[0-9a-f]{64}", entry["sha256"])
++                            or entry["backup"] != f"backups/{entry['sha256']}"):
++                        raise InfrastructureError("invalid backup hash/location")
++            else:
++                raise InfrastructureError("unsupported inventory type")
++            if relative:
++                parent = str(PurePosixPath(relative).parent)
++                parent = "" if parent == "." else parent
++                if entries.get(parent, {}).get("kind") != "directory":
++                    raise InfrastructureError("inventory parent is not a recorded directory")
++
++
++def _load(protection_root: Path) -> dict:
++    try:
++        with file_tree.open_file(protection_root / "manifest.json") as descriptor:
++            with os.fdopen(os.dup(descriptor), "rb") as reader:
++                manifest = json.load(reader)
++        _validate(manifest, protection_root)
++        return manifest
++    except (OSError, ValueError, UnicodeError, file_tree.UnsafeTreeError) as error:
++        raise InfrastructureError(f"cannot read protection manifest: {error}") from error
++
++
++def _write_manifest(protection_root: Path, manifest: dict) -> None:
++    _validate(manifest, protection_root)
++    file_tree.atomic_bytes(protection_root / "manifest.json", _json_bytes(manifest))
++
++
++def _verify_backup(protection_root: Path, entry: dict) -> None:
++    try:
++        with file_tree.open_file(protection_root / entry["backup"]) as descriptor:
++            if file_tree.descriptor_sha256(descriptor) != entry["sha256"]:
++                raise InfrastructureError(f"corrupt recovery backup: {entry['backup']}")
++    except (OSError, file_tree.UnsafeTreeError) as error:
++        raise InfrastructureError(f"unavailable recovery backup: {entry['backup']}: {error}") from error
++
++
++def _copy_backup_at(parent: int, name: str, source: int, entry: dict) -> None:
++    temporary = f".{name}.restore_{uuid.uuid4().hex}"
++    descriptor = os.open(temporary, os.O_RDWR | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
++                         mode=0o600, dir_fd=parent)
++    try:
++        file_tree.copy_descriptor(source, descriptor)
++        if file_tree.descriptor_sha256(descriptor) != entry["sha256"]:
++            raise InfrastructureError("recovery bytes changed during copying")
++        os.fchmod(descriptor, entry["mode"])
++        os.fsync(descriptor)
++        os.replace(temporary, name, src_dir_fd=parent, dst_dir_fd=parent)
++        os.fsync(parent)
++    finally:
++        os.close(descriptor)
++        try:
++            os.unlink(temporary, dir_fd=parent)
++        except FileNotFoundError:
++            pass
++
++
++def _store_file(protection_root: Path, source: Path, entry: dict) -> None:
++    backup = protection_root / entry["backup"]
++    with file_tree.open_parent(backup) as (parent, name):
++        try:
++            os.stat(name, dir_fd=parent, follow_symlinks=False)
++        except FileNotFoundError:
++            with file_tree.open_file(source) as descriptor:
++                version = file_tree.file_version(os.fstat(descriptor))
++                _copy_backup_at(parent, name, descriptor, {**entry, "mode": 0o444})
++                if version != file_tree.file_version(os.fstat(descriptor)):
++                    raise InfrastructureError(f"asset changed during capture: {source}")
++        _verify_backup(protection_root, entry)
++
++
++def _capture_roots(protection_root: Path, roots: Mapping[str, ProtectionRoot]) -> dict:
++    captured = {}
++    scans = {}
++    for name, specification in roots.items():
++        if not isinstance(specification, ProtectionRoot):
++            raise InfrastructureError("roots must map logical names to ProtectionRoot")
++        path = file_tree.absolute_path(specification.path)
++        raw = file_tree.scan_tree(path, reject_special=True)
++        scans[name] = raw
++        entries = copy.deepcopy(raw)
++        for entry in entries.values():
++            if entry["kind"] == "file":
++                entry["backup"] = f"backups/{entry['sha256']}"
++                if specification.readonly:
++                    entry["mode"] &= ~0o222
++        captured[name] = {"path": str(path), "group": specification.group,
++                          "readonly": specification.readonly, "entries": entries}
++    manifest = {"schema_version": 1, "roots": captured}
++    _validate(manifest, protection_root)
++    for name, root in captured.items():
++        for relative, entry in root["entries"].items():
++            if entry["kind"] == "file":
++                _store_file(protection_root, Path(root["path"]) / relative, entry)
++        if scans[name] != file_tree.scan_tree(root["path"], reject_special=True):
++            raise InfrastructureError(f"asset changed during capture: {name}")
++    return captured
++
++
++def capture_protection(protection_root: Path, roots: Mapping[str, ProtectionRoot]) -> dict:
++    protection_root = file_tree.absolute_path(protection_root)
++    with _locked(protection_root, create=True):
++        with file_tree.open_directory(protection_root) as descriptor:
++            if set(os.listdir(descriptor)) - {".integrity.lock"}:
++                raise InfrastructureError("protection root is not empty; cannot recapture a baseline")
++        with file_tree.open_directory(protection_root / "backups", create=True):
++            pass
++        manifest = {"schema_version": 1, "roots": _capture_roots(protection_root, roots)}
++        _write_manifest(protection_root, manifest)
++        return manifest
++
++
++def _selected(manifest: dict, groups) -> dict:
++    available = {root["group"] for root in manifest["roots"].values()}
++    wanted = available if groups is None else {groups} if isinstance(groups, str) else set(groups)
++    if not wanted <= available:
++        raise InfrastructureError(f"unknown protection groups: {wanted - available}")
++    return {name: root for name, root in manifest["roots"].items() if root["group"] in wanted}
++
++
++def _check(manifest: dict, groups) -> IntegrityReport:
++    report = IntegrityReport()
++    for name, root in _selected(manifest, groups).items():
++        try:
++            actual = file_tree.scan_tree(root["path"])
++        except (OSError, file_tree.UnsafeTreeError, file_tree.TreeChangedError) as error:
++            report.unrecoverable_paths.append(name)
++            raise InfrastructureError(f"cannot safely inspect {name}: {error}", report) from error
++        expected = {relative: {k: v for k, v in entry.items() if k != "backup"}
++                    for relative, entry in root["entries"].items()}
++        report.changed_paths.extend(
++            f"{name}/{relative}" if relative else name
++            for relative in sorted(actual.keys() | expected.keys())
++            if actual.get(relative) != expected.get(relative)
++        )
++    report.changed_paths.sort()
++    return report
++
++
++def check_only(protection_root: Path, groups=None) -> IntegrityReport:
++    protection_root = file_tree.absolute_path(protection_root)
++    with _locked(protection_root):
++        return _check(_load(protection_root), groups)
++
++
++def _replace_record(protection_root: Path, parent: int, name: str, entry: dict) -> None:
++    with file_tree.open_file(protection_root / entry["backup"]) as descriptor:
++        _copy_backup_at(parent, name, descriptor, entry)
++
++
++def _repair_node(protection_root: Path, parent: int, name: str, relative: str,
++                 entries: dict, changed: set[str]) -> None:
++    expected = entries[relative]
++    try:
++        actual_mode = os.stat(name, dir_fd=parent, follow_symlinks=False).st_mode
++    except FileNotFoundError:
++        actual_mode = 0
++    if expected["kind"] == "absent":
++        file_tree.remove_at(parent, name)
++    elif expected["kind"] == "file":
++        if relative in changed or not stat.S_ISREG(actual_mode):
++            if stat.S_ISDIR(actual_mode):
++                file_tree.remove_at(parent, name)
++            _replace_record(protection_root, parent, name, expected)
++    else:
++        if not stat.S_ISDIR(actual_mode):
++            file_tree.remove_at(parent, name)
++            os.mkdir(name, mode=0o700, dir_fd=parent)
++        descriptor = os.open(name, file_tree.DIRECTORY_FLAGS, dir_fd=parent)
++        try:
++            os.fchmod(descriptor, expected["mode"] | 0o700)
++            prefix = relative + "/" if relative else ""
++            children = {key[len(prefix):]: key for key in entries
++                        if key.startswith(prefix) and key != relative
++                        and "/" not in key[len(prefix):]}
++            for extra in sorted(set(os.listdir(descriptor)) - children.keys()):
++                if extra not in file_tree.CACHE_NAMES and Path(extra).suffix not in file_tree.CACHE_SUFFIXES:
++                    file_tree.remove_at(descriptor, extra)
++            for child, key in sorted(children.items()):
++                _repair_node(protection_root, descriptor, child, key, entries, changed)
++            os.fchmod(descriptor, expected["mode"])
++            os.fsync(descriptor)
++        finally:
++            os.close(descriptor)
++
++
++def _restore(protection_root: Path, manifest: dict, groups) -> IntegrityReport:
++    report = _check(manifest, groups)
++    if report.passed:
++        return report
++    roots = _selected(manifest, groups)
++    changed = set(report.changed_paths)
++    # Validate every needed recovery source before modifying a working tree.
++    for name, root in roots.items():
++        for relative, entry in root["entries"].items():
++            logical = f"{name}/{relative}" if relative else name
++            if entry["kind"] == "file" and logical in changed:
++                try:
++                    _verify_backup(protection_root, entry)
++                except InfrastructureError as error:
++                    report.unrecoverable_paths.append(logical)
++                    raise InfrastructureError(str(error), report) from error
++    for name, root in roots.items():
++        prefix = name + "/"
++        relative_changes = {"" if path == name else path[len(prefix):]
++                            for path in changed if path == name or path.startswith(prefix)}
++        if not relative_changes:
++            continue
++        try:
++            with file_tree.open_parent(root["path"]) as (parent, leaf):
++                _repair_node(protection_root, parent, leaf, "", root["entries"], relative_changes)
++        except (OSError, file_tree.UnsafeTreeError, InfrastructureError) as error:
++            report.unrecoverable_paths.append(name)
++            raise InfrastructureError(f"cannot safely restore {name}: {error}", report) from error
++    verification = _check(manifest, groups)
++    if not verification.passed:
++        report.unrecoverable_paths.extend(verification.changed_paths)
++        raise InfrastructureError("protected files changed during restoration", report)
++    report.restored_paths = report.changed_paths.copy()
++    return report
++
++
++def check_and_restore(protection_root: Path, groups=None) -> IntegrityReport:
++    protection_root = file_tree.absolute_path(protection_root)
++    with _locked(protection_root):
++        return _restore(protection_root, _load(protection_root), groups)
++
++
++def register_roots(protection_root: Path, roots: Mapping[str, ProtectionRoot]) -> dict:
++    """Register new context/Snapshot roots without rebaselining existing roots."""
++    protection_root = file_tree.absolute_path(protection_root)
++    with _locked(protection_root):
++        manifest = _load(protection_root)
++        if manifest["roots"].keys() & roots.keys():
++            raise InfrastructureError("cannot replace an already registered logical root")
++        if not _check(manifest, None).passed:
++            raise InfrastructureError("restore existing protected roots before registration")
++        # Validate all paths together before capturing any additional bytes.
++        declarations = copy.deepcopy(manifest)
++        for name, specification in roots.items():
++            if not isinstance(specification, ProtectionRoot):
++                raise InfrastructureError("roots must map logical names to ProtectionRoot")
++            declarations["roots"][name] = {"path": str(file_tree.absolute_path(specification.path)),
++                "group": specification.group, "readonly": specification.readonly,
++                "entries": {"": {"kind": "absent"}}}
++        _validate(declarations, protection_root)
++        manifest["roots"].update(_capture_roots(protection_root, roots))
++        _write_manifest(protection_root, manifest)
++        return manifest
++
++
++def commit_records(protection_root: Path, replacements: Mapping[str, bytes]) -> None:
++    """Atomically commit exact bytes for record roots or root/relative files.
++
++    All backups precede the single manifest commit. Working files may lag after
++    interruption; check_and_restore then installs every committed new value.
++    Dirty current records are rejected, so callers must repair and recompute
++    payloads under their Session lock instead of legitimizing external edits.
++    """
++    protection_root = file_tree.absolute_path(protection_root)
++    with _locked(protection_root):
++        manifest = _load(protection_root)
++        records = _selected(manifest, "records")
++        report = _check(manifest, "records")
++        if not report.passed:
++            raise InfrastructureError("records changed; restore and recompute updates before commit", report)
++        updated = copy.deepcopy(manifest)
++        payloads = []
++        for logical, data in replacements.items():
++            if not isinstance(logical, str) or type(data) is not bytes:
++                raise InfrastructureError("replacements must map logical paths to exact bytes")
++            name, slash, relative = logical.partition("/")
++            _relative(relative, allow_root=not slash)
++            if name not in records:
++                raise InfrastructureError(f"not a registered record root: {name}")
++            root = updated["roots"][name]
++            entries = root["entries"]
++            if entries.get(relative, {}).get("kind") == "directory":
++                raise InfrastructureError("a record directory cannot be replaced with bytes")
++            if relative:
++                parts = relative.split("/")
++                for count in range(len(parts)):
++                    ancestor = "/".join(parts[:count])
++                    if ancestor in entries and entries[ancestor]["kind"] != "directory":
++                        raise InfrastructureError("record parent is not a directory")
++                    entries.setdefault(ancestor, {"kind": "directory", "mode": 0o755})
++            digest = hashlib.sha256(data).hexdigest()
++            entry = {"kind": "file", "mode": entries.get(relative, {}).get("mode", 0o600),
++                     "sha256": digest, "backup": f"backups/{digest}"}
++            if root["readonly"]:
++                entry["mode"] &= ~0o222
++            entries[relative] = entry
++            payloads.append((data, entry))
++        _validate(updated, protection_root)
++        for data, entry in payloads:
++            backup = protection_root / entry["backup"]
++            with file_tree.open_parent(backup) as (parent, name):
++                try:
++                    os.stat(name, dir_fd=parent, follow_symlinks=False)
++                except FileNotFoundError:
++                    file_tree.atomic_bytes(backup, data, mode=0o444)
++            _verify_backup(protection_root, entry)
++        _write_manifest(protection_root, updated)
++        _restore(protection_root, updated, "records")

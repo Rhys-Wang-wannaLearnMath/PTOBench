@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "case": "deepseek_v4.rmsnorm_decode_flash",
+  "files": 25,
+  "bytes": 193643,
+  "changed_paths": [],
+  "global_s6_hash_gate": "Historical FAIL retained; this is a scoped followup check."
+}

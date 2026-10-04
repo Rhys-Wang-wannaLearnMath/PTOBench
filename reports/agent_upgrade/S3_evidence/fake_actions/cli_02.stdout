@@ -1,0 +1,2 @@
+fake evaluator stdout
+{"status": "PASS", "error_code": null, "exit_code": 0, "event_seq": 2, "workspace": "/tmp/s2_uitjs1ei/custom_runs/codex/test.case/20261002T184829Z_278d450c34a5/workspaces/worker_000", "correctness": "PASS", "latency_us": null, "snapshot_id": "snapshot_000002", "remaining_hardware_actions": 18, "message": null, "integrity_passed": true}

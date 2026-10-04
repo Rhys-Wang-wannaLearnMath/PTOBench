@@ -1,0 +1,1027 @@
+{
+  "deepseek_v4.rmsnorm_decode_flash": {
+    "profiles": {
+      "runtime": {
+        "status": "PASS",
+        "schema_equal_to_direct": true,
+        "direct": {
+          "schema": {
+            "chip_swimlane_records.json": [
+              {
+                "aicore_tasks": "list",
+                "aicpu_orchestrator_phases": "list",
+                "aicpu_scheduler_phases": "list",
+                "aicpu_tasks": "list",
+                "chip_swimlane_level": "int",
+                "metadata": "dict"
+              }
+            ],
+            "deps.json": [
+              {
+                "edges": "list",
+                "tasks": "list",
+                "tensors": "list"
+              }
+            ],
+            "merged_swimlane_*.json": [
+              {
+                "traceEvents": "list"
+              }
+            ],
+            "scope_stats.jsonl": [
+              "dep_pool_end",
+              "dep_pool_max",
+              "dep_pool_start",
+              "depth",
+              "dropped",
+              "fatal",
+              "heap_end",
+              "heap_max",
+              "heap_start",
+              "phase",
+              "ring",
+              "site",
+              "task_window_end",
+              "task_window_max",
+              "task_window_start",
+              "tensormap",
+              "tensormap_max",
+              "total"
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test_breios3a/dfx_outputs/chip_swimlane_records.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test_breios3a/dfx_outputs/deps.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test_breios3a/dfx_outputs/merged_swimlane_20261003_144753.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test_breios3a/dfx_outputs/scope_stats/scope_stats.jsonl"
+          ]
+        },
+        "managed": {
+          "schema": {
+            "chip_swimlane_records.json": [
+              {
+                "aicore_tasks": "list",
+                "aicpu_orchestrator_phases": "list",
+                "aicpu_scheduler_phases": "list",
+                "aicpu_tasks": "list",
+                "chip_swimlane_level": "int",
+                "metadata": "dict"
+              }
+            ],
+            "deps.json": [
+              {
+                "edges": "list",
+                "tasks": "list",
+                "tensors": "list"
+              }
+            ],
+            "merged_swimlane_*.json": [
+              {
+                "traceEvents": "list"
+              }
+            ],
+            "scope_stats.jsonl": [
+              "dep_pool_end",
+              "dep_pool_max",
+              "dep_pool_start",
+              "depth",
+              "dropped",
+              "fatal",
+              "heap_end",
+              "heap_max",
+              "heap_start",
+              "phase",
+              "ring",
+              "site",
+              "task_window_end",
+              "task_window_max",
+              "task_window_start",
+              "tensormap",
+              "tensormap_max",
+              "total"
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test__kf_qj_t/dfx_outputs/chip_swimlane_records.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test__kf_qj_t/dfx_outputs/deps.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test__kf_qj_t/dfx_outputs/merged_swimlane_20261003_144812.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test__kf_qj_t/dfx_outputs/scope_stats/scope_stats.jsonl"
+          ]
+        }
+      },
+      "pmu": {
+        "status": "PASS",
+        "schema_equal_to_direct": true,
+        "direct": {
+          "schema": {
+            "pmu.csv": [
+              [
+                "thread_id",
+                "core_id",
+                "task_id",
+                "func_id",
+                "core_type",
+                "pmu_total_cycles",
+                "vec_busy_cycles",
+                "cube_busy_cycles",
+                "scalar_busy_cycles",
+                "mte1_busy_cycles",
+                "mte2_busy_cycles",
+                "mte3_busy_cycles",
+                "icache_miss",
+                "icache_req",
+                "event_type"
+              ]
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_pmu/workspace/.benchmark_outputs/hardware/build_output/_jit_rms_norm_test_e8g4x8mq/dfx_outputs/pmu.csv"
+          ]
+        },
+        "managed": {
+          "schema": {
+            "pmu.csv": [
+              [
+                "thread_id",
+                "core_id",
+                "task_id",
+                "func_id",
+                "core_type",
+                "pmu_total_cycles",
+                "vec_busy_cycles",
+                "cube_busy_cycles",
+                "scalar_busy_cycles",
+                "mte1_busy_cycles",
+                "mte2_busy_cycles",
+                "mte3_busy_cycles",
+                "icache_miss",
+                "icache_req",
+                "event_type"
+              ]
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000007/workspace/.benchmark_outputs/hardware/build_output/_jit_rms_norm_test_om5s3zkh/dfx_outputs/pmu.csv"
+          ]
+        }
+      },
+      "compiler": {
+        "status": "PASS",
+        "schema_equal_to_direct": true,
+        "direct": {
+          "schema": {
+            "pipeline_profile.json": [
+              {
+                "stages": "list",
+                "total_seconds": "float"
+              }
+            ],
+            "passes_dump": [
+              "00_frontend.py",
+              "01_after_InlineFunctions.py",
+              "02_after_UnrollLoops.py",
+              "03_after_CtrlFlowTransform.py",
+              "04_after_ConvertToSSA.py",
+              "05_after_Simplify.py",
+              "06_after_NormalizeStmtStructure.py",
+              "07_after_FlattenCallExpr.py",
+              "08_after_OutlineHierarchyScopes.py",
+              "09_after_OutlineGraphScopes.py",
+              "10_after_OutlineIncoreScopes.py",
+              "11_after_OutlineClusterScopes.py",
+              "12_after_ConvertTensorToTileOps.py",
+              "13_after_OptimizeOrchTensors.py",
+              "14_after_LowerCompositeOps.py",
+              "15_after_FlattenTileNdTo2D.py",
+              "16_after_BlockNzTensorViews.py",
+              "17_after_BlockMxScaleTensorViews.py",
+              "18_after_LegalizeTileCast.py",
+              "19_after_AutoTileMatmulL0.py",
+              "20_after_CanonicalizeTileSlice.py",
+              "21_after_InferTileMemorySpace.py",
+              "22_after_InsertMxScaleAddr.py",
+              "23_after_ResolveBackendOpLayouts.py",
+              "24_after_LowerAutoVectorSplit.py",
+              "25_after_ExpandMixedKernel.py",
+              "26_after_InjectGMPipeBuffer.py",
+              "27_after_SplitVectorKernel.py",
+              "28_after_StampTfreeSplit.py",
+              "29_after_NormalizeReturnOrder.py",
+              "30_after_SkewCrossCorePipeline.py",
+              "31_after_LowerPipelineToSlots.py",
+              "32_after_LowerPipelineLoops.py",
+              "33_after_CanonicalizeIOOrder.py",
+              "34_after_MaterializeTensorStrides.py",
+              "35_after_InitMemRef.py",
+              "36_after_MaterializeSemanticAliases.py",
+              "37_after_MemoryReuse.py",
+              "38_after_AllocateMemoryAddr.py",
+              "39_after_FoldNoOpReshape.py",
+              "40_after_FuseCreateAssembleToSlice.py",
+              "41_after_LowerL2TensorCollectives.py",
+              "42_after_DeriveCallDirections.py",
+              "43_after_AutoDeriveTaskDependencies.py",
+              "44_after_ExpandManualPhaseFence.py",
+              "45_after_SynthesizeAllReduceSignals.py",
+              "46_after_MaterializeCommDomainScopes.py",
+              "47_after_LowerHostTensorCollectives.py",
+              "48_after_MaterializeDistTensorCtx.py",
+              "49_after_Simplify.py",
+              "50_after_LegalizeGraphBoundary.py",
+              "51_after_MaterializeRuntimeScopes.py",
+              "52_after_ClassifyIterArgCarry.py",
+              "53_after_InsertCommFence.py",
+              "54_after_MaterializeValidShapeSymbols.py"
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_mxyc0h96/report/pipeline_profile.json"
+          ]
+        },
+        "managed": {
+          "schema": {
+            "pipeline_profile.json": [
+              {
+                "stages": "list",
+                "total_seconds": "float"
+              }
+            ],
+            "passes_dump": [
+              "00_frontend.py",
+              "01_after_InlineFunctions.py",
+              "02_after_UnrollLoops.py",
+              "03_after_CtrlFlowTransform.py",
+              "04_after_ConvertToSSA.py",
+              "05_after_Simplify.py",
+              "06_after_NormalizeStmtStructure.py",
+              "07_after_FlattenCallExpr.py",
+              "08_after_OutlineHierarchyScopes.py",
+              "09_after_OutlineGraphScopes.py",
+              "10_after_OutlineIncoreScopes.py",
+              "11_after_OutlineClusterScopes.py",
+              "12_after_ConvertTensorToTileOps.py",
+              "13_after_OptimizeOrchTensors.py",
+              "14_after_LowerCompositeOps.py",
+              "15_after_FlattenTileNdTo2D.py",
+              "16_after_BlockNzTensorViews.py",
+              "17_after_BlockMxScaleTensorViews.py",
+              "18_after_LegalizeTileCast.py",
+              "19_after_AutoTileMatmulL0.py",
+              "20_after_CanonicalizeTileSlice.py",
+              "21_after_InferTileMemorySpace.py",
+              "22_after_InsertMxScaleAddr.py",
+              "23_after_ResolveBackendOpLayouts.py",
+              "24_after_LowerAutoVectorSplit.py",
+              "25_after_ExpandMixedKernel.py",
+              "26_after_InjectGMPipeBuffer.py",
+              "27_after_SplitVectorKernel.py",
+              "28_after_StampTfreeSplit.py",
+              "29_after_NormalizeReturnOrder.py",
+              "30_after_SkewCrossCorePipeline.py",
+              "31_after_LowerPipelineToSlots.py",
+              "32_after_LowerPipelineLoops.py",
+              "33_after_CanonicalizeIOOrder.py",
+              "34_after_MaterializeTensorStrides.py",
+              "35_after_InitMemRef.py",
+              "36_after_MaterializeSemanticAliases.py",
+              "37_after_MemoryReuse.py",
+              "38_after_AllocateMemoryAddr.py",
+              "39_after_FoldNoOpReshape.py",
+              "40_after_FuseCreateAssembleToSlice.py",
+              "41_after_LowerL2TensorCollectives.py",
+              "42_after_DeriveCallDirections.py",
+              "43_after_AutoDeriveTaskDependencies.py",
+              "44_after_ExpandManualPhaseFence.py",
+              "45_after_SynthesizeAllReduceSignals.py",
+              "46_after_MaterializeCommDomainScopes.py",
+              "47_after_LowerHostTensorCollectives.py",
+              "48_after_MaterializeDistTensorCtx.py",
+              "49_after_Simplify.py",
+              "50_after_LegalizeGraphBoundary.py",
+              "51_after_MaterializeRuntimeScopes.py",
+              "52_after_ClassifyIterArgCarry.py",
+              "53_after_InsertCommFence.py",
+              "54_after_MaterializeValidShapeSymbols.py"
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/report/pipeline_profile.json"
+          ]
+        }
+      }
+    },
+    "checks": {
+      "all_actions_pass": true,
+      "source_hash_constant": true,
+      "one_finish": true,
+      "no_active": true,
+      "fresh_final": true,
+      "final_corresponds_to_clean": true,
+      "ten_positive_final_samples": true,
+      "final_source_matches_snapshot": true,
+      "no_live_process_in_owned_workspaces": true,
+      "direct_process_groups_dead": true,
+      "direct_and_managed_clean": true,
+      "expected_devices": true,
+      "warmup_rounds_unchanged": true
+    },
+    "errors": [],
+    "live_processes_in_workspaces": [],
+    "source_files": [
+      "candidate.py"
+    ],
+    "status": "PASS"
+  },
+  "deepseek_v4.compressor_ratio4_flash": {
+    "profiles": {
+      "runtime": {
+        "status": "PASS",
+        "schema_equal_to_direct": true,
+        "direct": {
+          "schema": {
+            "chip_swimlane_records.json": [
+              {
+                "aicore_tasks": "list",
+                "aicpu_orchestrator_phases": "list",
+                "aicpu_scheduler_phases": "list",
+                "aicpu_tasks": "list",
+                "chip_swimlane_level": "int",
+                "metadata": "dict"
+              }
+            ],
+            "deps.json": [
+              {
+                "edges": "list",
+                "tasks": "list",
+                "tensors": "list"
+              }
+            ],
+            "merged_swimlane_*.json": [
+              {
+                "traceEvents": "list"
+              }
+            ],
+            "scope_stats.jsonl": [
+              "dep_pool_end",
+              "dep_pool_max",
+              "dep_pool_start",
+              "depth",
+              "dropped",
+              "fatal",
+              "heap_end",
+              "heap_max",
+              "heap_start",
+              "phase",
+              "ring",
+              "site",
+              "task_window_end",
+              "task_window_max",
+              "task_window_start",
+              "tensormap",
+              "tensormap_max",
+              "total"
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_w216tpby/dfx_outputs/chip_swimlane_records.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_w216tpby/dfx_outputs/deps.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_w216tpby/dfx_outputs/merged_swimlane_20261003_145201.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_w216tpby/dfx_outputs/scope_stats/scope_stats.jsonl"
+          ]
+        },
+        "managed": {
+          "schema": {
+            "chip_swimlane_records.json": [
+              {
+                "aicore_tasks": "list",
+                "aicpu_orchestrator_phases": "list",
+                "aicpu_scheduler_phases": "list",
+                "aicpu_tasks": "list",
+                "chip_swimlane_level": "int",
+                "metadata": "dict"
+              }
+            ],
+            "deps.json": [
+              {
+                "edges": "list",
+                "tasks": "list",
+                "tensors": "list"
+              }
+            ],
+            "merged_swimlane_*.json": [
+              {
+                "traceEvents": "list"
+              }
+            ],
+            "scope_stats.jsonl": [
+              "dep_pool_end",
+              "dep_pool_max",
+              "dep_pool_start",
+              "depth",
+              "dropped",
+              "fatal",
+              "heap_end",
+              "heap_max",
+              "heap_start",
+              "phase",
+              "ring",
+              "site",
+              "task_window_end",
+              "task_window_max",
+              "task_window_start",
+              "tensormap",
+              "tensormap_max",
+              "total"
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_t6teft7b/dfx_outputs/chip_swimlane_records.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_t6teft7b/dfx_outputs/deps.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_t6teft7b/dfx_outputs/merged_swimlane_20261003_145224.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_t6teft7b/dfx_outputs/scope_stats/scope_stats.jsonl"
+          ]
+        }
+      },
+      "pmu": {
+        "status": "PASS",
+        "schema_equal_to_direct": true,
+        "direct": {
+          "schema": {
+            "pmu.csv": [
+              [
+                "thread_id",
+                "core_id",
+                "task_id",
+                "func_id",
+                "core_type",
+                "pmu_total_cycles",
+                "vec_busy_cycles",
+                "cube_busy_cycles",
+                "scalar_busy_cycles",
+                "mte1_busy_cycles",
+                "mte2_busy_cycles",
+                "mte3_busy_cycles",
+                "icache_miss",
+                "icache_req",
+                "event_type"
+              ]
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_pmu/workspace/.benchmark_outputs/hardware/build_output/_jit_compressor_test__6q8925m/dfx_outputs/pmu.csv"
+          ]
+        },
+        "managed": {
+          "schema": {
+            "pmu.csv": [
+              [
+                "thread_id",
+                "core_id",
+                "task_id",
+                "func_id",
+                "core_type",
+                "pmu_total_cycles",
+                "vec_busy_cycles",
+                "cube_busy_cycles",
+                "scalar_busy_cycles",
+                "mte1_busy_cycles",
+                "mte2_busy_cycles",
+                "mte3_busy_cycles",
+                "icache_miss",
+                "icache_req",
+                "event_type"
+              ]
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000007/workspace/.benchmark_outputs/hardware/build_output/_jit_compressor_test_n94q0etk/dfx_outputs/pmu.csv"
+          ]
+        }
+      },
+      "compiler": {
+        "status": "PASS",
+        "schema_equal_to_direct": true,
+        "direct": {
+          "schema": {
+            "pipeline_profile.json": [
+              {
+                "stages": "list",
+                "total_seconds": "float"
+              }
+            ],
+            "passes_dump": [
+              "00_frontend.py",
+              "01_after_InlineFunctions.py",
+              "02_after_UnrollLoops.py",
+              "03_after_CtrlFlowTransform.py",
+              "04_after_ConvertToSSA.py",
+              "05_after_Simplify.py",
+              "06_after_NormalizeStmtStructure.py",
+              "07_after_FlattenCallExpr.py",
+              "08_after_OutlineHierarchyScopes.py",
+              "09_after_OutlineGraphScopes.py",
+              "10_after_OutlineIncoreScopes.py",
+              "11_after_OutlineClusterScopes.py",
+              "12_after_ConvertTensorToTileOps.py",
+              "13_after_OptimizeOrchTensors.py",
+              "14_after_LowerCompositeOps.py",
+              "15_after_FlattenTileNdTo2D.py",
+              "16_after_BlockNzTensorViews.py",
+              "17_after_BlockMxScaleTensorViews.py",
+              "18_after_LegalizeTileCast.py",
+              "19_after_AutoTileMatmulL0.py",
+              "20_after_CanonicalizeTileSlice.py",
+              "21_after_InferTileMemorySpace.py",
+              "22_after_InsertMxScaleAddr.py",
+              "23_after_ResolveBackendOpLayouts.py",
+              "24_after_LowerAutoVectorSplit.py",
+              "25_after_ExpandMixedKernel.py",
+              "26_after_InjectGMPipeBuffer.py",
+              "27_after_SplitVectorKernel.py",
+              "28_after_StampTfreeSplit.py",
+              "29_after_NormalizeReturnOrder.py",
+              "30_after_SkewCrossCorePipeline.py",
+              "31_after_LowerPipelineToSlots.py",
+              "32_after_LowerPipelineLoops.py",
+              "33_after_CanonicalizeIOOrder.py",
+              "34_after_MaterializeTensorStrides.py",
+              "35_after_InitMemRef.py",
+              "36_after_MaterializeSemanticAliases.py",
+              "37_after_MemoryReuse.py",
+              "38_after_AllocateMemoryAddr.py",
+              "39_after_FoldNoOpReshape.py",
+              "40_after_FuseCreateAssembleToSlice.py",
+              "41_after_LowerL2TensorCollectives.py",
+              "42_after_DeriveCallDirections.py",
+              "43_after_AutoDeriveTaskDependencies.py",
+              "44_after_ExpandManualPhaseFence.py",
+              "45_after_SynthesizeAllReduceSignals.py",
+              "46_after_MaterializeCommDomainScopes.py",
+              "47_after_LowerHostTensorCollectives.py",
+              "48_after_MaterializeDistTensorCtx.py",
+              "49_after_Simplify.py",
+              "50_after_LegalizeGraphBoundary.py",
+              "51_after_MaterializeRuntimeScopes.py",
+              "52_after_ClassifyIterArgCarry.py",
+              "53_after_InsertCommFence.py",
+              "54_after_MaterializeValidShapeSymbols.py"
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_77ivy4kc/report/pipeline_profile.json"
+          ]
+        },
+        "managed": {
+          "schema": {
+            "pipeline_profile.json": [
+              {
+                "stages": "list",
+                "total_seconds": "float"
+              }
+            ],
+            "passes_dump": [
+              "00_frontend.py",
+              "01_after_InlineFunctions.py",
+              "02_after_UnrollLoops.py",
+              "03_after_CtrlFlowTransform.py",
+              "04_after_ConvertToSSA.py",
+              "05_after_Simplify.py",
+              "06_after_NormalizeStmtStructure.py",
+              "07_after_FlattenCallExpr.py",
+              "08_after_OutlineHierarchyScopes.py",
+              "09_after_OutlineGraphScopes.py",
+              "10_after_OutlineIncoreScopes.py",
+              "11_after_OutlineClusterScopes.py",
+              "12_after_ConvertTensorToTileOps.py",
+              "13_after_OptimizeOrchTensors.py",
+              "14_after_LowerCompositeOps.py",
+              "15_after_FlattenTileNdTo2D.py",
+              "16_after_BlockNzTensorViews.py",
+              "17_after_BlockMxScaleTensorViews.py",
+              "18_after_LegalizeTileCast.py",
+              "19_after_AutoTileMatmulL0.py",
+              "20_after_CanonicalizeTileSlice.py",
+              "21_after_InferTileMemorySpace.py",
+              "22_after_InsertMxScaleAddr.py",
+              "23_after_ResolveBackendOpLayouts.py",
+              "24_after_LowerAutoVectorSplit.py",
+              "25_after_ExpandMixedKernel.py",
+              "26_after_InjectGMPipeBuffer.py",
+              "27_after_SplitVectorKernel.py",
+              "28_after_StampTfreeSplit.py",
+              "29_after_NormalizeReturnOrder.py",
+              "30_after_SkewCrossCorePipeline.py",
+              "31_after_LowerPipelineToSlots.py",
+              "32_after_LowerPipelineLoops.py",
+              "33_after_CanonicalizeIOOrder.py",
+              "34_after_MaterializeTensorStrides.py",
+              "35_after_InitMemRef.py",
+              "36_after_MaterializeSemanticAliases.py",
+              "37_after_MemoryReuse.py",
+              "38_after_AllocateMemoryAddr.py",
+              "39_after_FoldNoOpReshape.py",
+              "40_after_FuseCreateAssembleToSlice.py",
+              "41_after_LowerL2TensorCollectives.py",
+              "42_after_DeriveCallDirections.py",
+              "43_after_AutoDeriveTaskDependencies.py",
+              "44_after_ExpandManualPhaseFence.py",
+              "45_after_SynthesizeAllReduceSignals.py",
+              "46_after_MaterializeCommDomainScopes.py",
+              "47_after_LowerHostTensorCollectives.py",
+              "48_after_MaterializeDistTensorCtx.py",
+              "49_after_Simplify.py",
+              "50_after_LegalizeGraphBoundary.py",
+              "51_after_MaterializeRuntimeScopes.py",
+              "52_after_ClassifyIterArgCarry.py",
+              "53_after_InsertCommFence.py",
+              "54_after_MaterializeValidShapeSymbols.py"
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/report/pipeline_profile.json"
+          ]
+        }
+      }
+    },
+    "checks": {
+      "all_actions_pass": true,
+      "source_hash_constant": true,
+      "one_finish": true,
+      "no_active": true,
+      "fresh_final": true,
+      "final_corresponds_to_clean": true,
+      "ten_positive_final_samples": true,
+      "final_source_matches_snapshot": true,
+      "no_live_process_in_owned_workspaces": true,
+      "direct_process_groups_dead": true,
+      "direct_and_managed_clean": true,
+      "expected_devices": true,
+      "warmup_rounds_unchanged": true
+    },
+    "errors": [],
+    "live_processes_in_workspaces": [],
+    "source_files": [
+      "candidate.py"
+    ],
+    "status": "PASS"
+  },
+  "deepseek_v4.decode_attention_hca_flash": {
+    "profiles": {
+      "runtime": {
+        "status": "PASS",
+        "schema_equal_to_direct": true,
+        "direct": {
+          "schema": {
+            "chip_swimlane_records.json": [
+              {
+                "aicore_tasks": "list",
+                "aicpu_orchestrator_phases": "list",
+                "aicpu_scheduler_phases": "list",
+                "aicpu_tasks": "list",
+                "chip_swimlane_level": "int",
+                "metadata": "dict"
+              }
+            ],
+            "deps.json": [
+              {
+                "edges": "list",
+                "tasks": "list",
+                "tensors": "list"
+              }
+            ],
+            "merged_swimlane_*.json": [
+              {
+                "traceEvents": "list"
+              }
+            ],
+            "scope_stats.jsonl": [
+              "dep_pool_end",
+              "dep_pool_max",
+              "dep_pool_start",
+              "depth",
+              "dropped",
+              "fatal",
+              "heap_end",
+              "heap_max",
+              "heap_start",
+              "phase",
+              "ring",
+              "site",
+              "task_window_end",
+              "task_window_max",
+              "task_window_start",
+              "tensormap",
+              "tensormap_max",
+              "total"
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_zneeevyf/dfx_outputs/chip_swimlane_records.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_zneeevyf/dfx_outputs/deps.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_zneeevyf/dfx_outputs/merged_swimlane_20261003_145458.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_zneeevyf/dfx_outputs/scope_stats/scope_stats.jsonl"
+          ]
+        },
+        "managed": {
+          "schema": {
+            "chip_swimlane_records.json": [
+              {
+                "aicore_tasks": "list",
+                "aicpu_orchestrator_phases": "list",
+                "aicpu_scheduler_phases": "list",
+                "aicpu_tasks": "list",
+                "chip_swimlane_level": "int",
+                "metadata": "dict"
+              }
+            ],
+            "deps.json": [
+              {
+                "edges": "list",
+                "tasks": "list",
+                "tensors": "list"
+              }
+            ],
+            "merged_swimlane_*.json": [
+              {
+                "traceEvents": "list"
+              }
+            ],
+            "scope_stats.jsonl": [
+              "dep_pool_end",
+              "dep_pool_max",
+              "dep_pool_start",
+              "depth",
+              "dropped",
+              "fatal",
+              "heap_end",
+              "heap_max",
+              "heap_start",
+              "phase",
+              "ring",
+              "site",
+              "task_window_end",
+              "task_window_max",
+              "task_window_start",
+              "tensormap",
+              "tensormap_max",
+              "total"
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_nj0evkxg/dfx_outputs/chip_swimlane_records.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_nj0evkxg/dfx_outputs/deps.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_nj0evkxg/dfx_outputs/merged_swimlane_20261003_145527.json",
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_nj0evkxg/dfx_outputs/scope_stats/scope_stats.jsonl"
+          ]
+        }
+      },
+      "pmu": {
+        "status": "PASS",
+        "schema_equal_to_direct": true,
+        "direct": {
+          "schema": {
+            "pmu.csv": [
+              [
+                "thread_id",
+                "core_id",
+                "task_id",
+                "func_id",
+                "core_type",
+                "pmu_total_cycles",
+                "vec_busy_cycles",
+                "cube_busy_cycles",
+                "scalar_busy_cycles",
+                "mte1_busy_cycles",
+                "mte2_busy_cycles",
+                "mte3_busy_cycles",
+                "icache_miss",
+                "icache_req",
+                "event_type"
+              ]
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_pmu/workspace/.benchmark_outputs/hardware/build_output/_jit_attention_hca_test_i0c4_egv/dfx_outputs/pmu.csv"
+          ]
+        },
+        "managed": {
+          "schema": {
+            "pmu.csv": [
+              [
+                "thread_id",
+                "core_id",
+                "task_id",
+                "func_id",
+                "core_type",
+                "pmu_total_cycles",
+                "vec_busy_cycles",
+                "cube_busy_cycles",
+                "scalar_busy_cycles",
+                "mte1_busy_cycles",
+                "mte2_busy_cycles",
+                "mte3_busy_cycles",
+                "icache_miss",
+                "icache_req",
+                "event_type"
+              ]
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000003/workspace/.benchmark_outputs/hardware/build_output/_jit_attention_hca_test_3quu00ia/dfx_outputs/pmu.csv"
+          ]
+        }
+      },
+      "compiler": {
+        "status": "PASS",
+        "schema_equal_to_direct": true,
+        "direct": {
+          "schema": {
+            "pipeline_profile.json": [
+              {
+                "stages": "list",
+                "total_seconds": "float"
+              }
+            ],
+            "passes_dump": [
+              "00_frontend.py",
+              "01_after_InlineFunctions.py",
+              "02_after_UnrollLoops.py",
+              "03_after_CtrlFlowTransform.py",
+              "04_after_ConvertToSSA.py",
+              "05_after_Simplify.py",
+              "06_after_NormalizeStmtStructure.py",
+              "07_after_FlattenCallExpr.py",
+              "08_after_OutlineHierarchyScopes.py",
+              "09_after_OutlineGraphScopes.py",
+              "10_after_OutlineIncoreScopes.py",
+              "11_after_OutlineClusterScopes.py",
+              "12_after_ConvertTensorToTileOps.py",
+              "13_after_OptimizeOrchTensors.py",
+              "14_after_LowerCompositeOps.py",
+              "15_after_FlattenTileNdTo2D.py",
+              "16_after_BlockNzTensorViews.py",
+              "17_after_BlockMxScaleTensorViews.py",
+              "18_after_LegalizeTileCast.py",
+              "19_after_AutoTileMatmulL0.py",
+              "20_after_CanonicalizeTileSlice.py",
+              "21_after_InferTileMemorySpace.py",
+              "22_after_InsertMxScaleAddr.py",
+              "23_after_ResolveBackendOpLayouts.py",
+              "24_after_LowerAutoVectorSplit.py",
+              "25_after_ExpandMixedKernel.py",
+              "26_after_InjectGMPipeBuffer.py",
+              "27_after_SplitVectorKernel.py",
+              "28_after_StampTfreeSplit.py",
+              "29_after_NormalizeReturnOrder.py",
+              "30_after_SkewCrossCorePipeline.py",
+              "31_after_LowerPipelineToSlots.py",
+              "32_after_LowerPipelineLoops.py",
+              "33_after_CanonicalizeIOOrder.py",
+              "34_after_MaterializeTensorStrides.py",
+              "35_after_InitMemRef.py",
+              "36_after_MaterializeSemanticAliases.py",
+              "37_after_MemoryReuse.py",
+              "38_after_AllocateMemoryAddr.py",
+              "39_after_FoldNoOpReshape.py",
+              "40_after_FuseCreateAssembleToSlice.py",
+              "41_after_LowerL2TensorCollectives.py",
+              "42_after_DeriveCallDirections.py",
+              "43_after_AutoDeriveTaskDependencies.py",
+              "44_after_ExpandManualPhaseFence.py",
+              "45_after_SynthesizeAllReduceSignals.py",
+              "46_after_MaterializeCommDomainScopes.py",
+              "47_after_LowerHostTensorCollectives.py",
+              "48_after_MaterializeDistTensorCtx.py",
+              "49_after_Simplify.py",
+              "50_after_LegalizeGraphBoundary.py",
+              "51_after_MaterializeRuntimeScopes.py",
+              "52_after_ClassifyIterArgCarry.py",
+              "53_after_InsertCommFence.py",
+              "54_after_MaterializeValidShapeSymbols.py"
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_grdbconm/report/pipeline_profile.json"
+          ]
+        },
+        "managed": {
+          "schema": {
+            "pipeline_profile.json": [
+              {
+                "stages": "list",
+                "total_seconds": "float"
+              }
+            ],
+            "passes_dump": [
+              "00_frontend.py",
+              "01_after_InlineFunctions.py",
+              "02_after_UnrollLoops.py",
+              "03_after_CtrlFlowTransform.py",
+              "04_after_ConvertToSSA.py",
+              "05_after_Simplify.py",
+              "06_after_NormalizeStmtStructure.py",
+              "07_after_FlattenCallExpr.py",
+              "08_after_OutlineHierarchyScopes.py",
+              "09_after_OutlineGraphScopes.py",
+              "10_after_OutlineIncoreScopes.py",
+              "11_after_OutlineClusterScopes.py",
+              "12_after_ConvertTensorToTileOps.py",
+              "13_after_OptimizeOrchTensors.py",
+              "14_after_LowerCompositeOps.py",
+              "15_after_FlattenTileNdTo2D.py",
+              "16_after_BlockNzTensorViews.py",
+              "17_after_BlockMxScaleTensorViews.py",
+              "18_after_LegalizeTileCast.py",
+              "19_after_AutoTileMatmulL0.py",
+              "20_after_CanonicalizeTileSlice.py",
+              "21_after_InferTileMemorySpace.py",
+              "22_after_InsertMxScaleAddr.py",
+              "23_after_ResolveBackendOpLayouts.py",
+              "24_after_LowerAutoVectorSplit.py",
+              "25_after_ExpandMixedKernel.py",
+              "26_after_InjectGMPipeBuffer.py",
+              "27_after_SplitVectorKernel.py",
+              "28_after_StampTfreeSplit.py",
+              "29_after_NormalizeReturnOrder.py",
+              "30_after_SkewCrossCorePipeline.py",
+              "31_after_LowerPipelineToSlots.py",
+              "32_after_LowerPipelineLoops.py",
+              "33_after_CanonicalizeIOOrder.py",
+              "34_after_MaterializeTensorStrides.py",
+              "35_after_InitMemRef.py",
+              "36_after_MaterializeSemanticAliases.py",
+              "37_after_MemoryReuse.py",
+              "38_after_AllocateMemoryAddr.py",
+              "39_after_FoldNoOpReshape.py",
+              "40_after_FuseCreateAssembleToSlice.py",
+              "41_after_LowerL2TensorCollectives.py",
+              "42_after_DeriveCallDirections.py",
+              "43_after_AutoDeriveTaskDependencies.py",
+              "44_after_ExpandManualPhaseFence.py",
+              "45_after_SynthesizeAllReduceSignals.py",
+              "46_after_MaterializeCommDomainScopes.py",
+              "47_after_LowerHostTensorCollectives.py",
+              "48_after_MaterializeDistTensorCtx.py",
+              "49_after_Simplify.py",
+              "50_after_LegalizeGraphBoundary.py",
+              "51_after_MaterializeRuntimeScopes.py",
+              "52_after_ClassifyIterArgCarry.py",
+              "53_after_InsertCommFence.py",
+              "54_after_MaterializeValidShapeSymbols.py"
+            ]
+          },
+          "evidence": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/report/pipeline_profile.json"
+          ]
+        }
+      }
+    },
+    "checks": {
+      "all_actions_pass": true,
+      "source_hash_constant": true,
+      "one_finish": true,
+      "no_active": true,
+      "fresh_final": true,
+      "final_corresponds_to_clean": true,
+      "ten_positive_final_samples": true,
+      "final_source_matches_snapshot": true,
+      "no_live_process_in_owned_workspaces": true,
+      "direct_process_groups_dead": true,
+      "direct_and_managed_clean": true,
+      "expected_devices": true,
+      "warmup_rounds_unchanged": true
+    },
+    "errors": [],
+    "live_processes_in_workspaces": [],
+    "source_files": [
+      "candidate.py",
+      "decode_compressor_ratio128.py",
+      "decode_qkv_proj_rope.py",
+      "decode_sparse_attn.py",
+      "hc_post.py",
+      "hc_pre.py"
+    ],
+    "status": "PASS"
+  },
+  "deepseek_v4.prefill_layer_ep2_hca_flash": {
+    "profiles": {},
+    "checks": {},
+    "errors": [],
+    "status": "BLOCKED",
+    "reason": "unsafe directory: /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/cases/deepseek_v4/prefill_layer_ep2_hca_flash/public/candidate_seed: [Errno 2] No such file or directory: 'candidate_seed'",
+    "required_runs": {
+      "managed_clean": {
+        "status": "BLOCKED",
+        "reason": "canonical Candidate Seed directory is absent"
+      },
+      "managed_compiler": {
+        "status": "BLOCKED",
+        "reason": "canonical Candidate Seed directory is absent"
+      },
+      "independent_finish": {
+        "status": "BLOCKED",
+        "reason": "canonical Candidate Seed directory is absent"
+      }
+    }
+  }
+}

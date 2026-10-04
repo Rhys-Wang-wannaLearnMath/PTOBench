@@ -1,0 +1,64 @@
+{
+  "codex": {
+    "installed": true,
+    "info": {
+      "backend": "codex",
+      "executable": "/data1/home/ziruiwang/.local/npm/bin/codex",
+      "version": "codex-cli 0.159.2",
+      "model": "unknown",
+      "authentication": "authenticated_host_configuration",
+      "checked_help": true
+    },
+    "status": "READY"
+  },
+  "claudecode": {
+    "installed": true,
+    "info": {
+      "backend": "claudecode",
+      "executable": "/data1/home/ziruiwang/.local/npm/bin/claude",
+      "version": "2.1.288 (Claude Code)",
+      "model": "unknown",
+      "authentication": "authenticated_host_configuration",
+      "checked_help": true
+    },
+    "status": "READY"
+  },
+  "pi": {
+    "installed": true,
+    "info": {
+      "backend": "pi",
+      "executable": "/data1/home/ziruiwang/.local/npm/bin/pi",
+      "version": "1.0.0",
+      "model": "unknown",
+      "authentication": "existing_host_configuration",
+      "checked_help": true
+    },
+    "status": "BLOCKED",
+    "reason": "No API key found for selected model",
+    "probe_exit": 1,
+    "probe_argv": [
+      "pi",
+      "--print",
+      "Reply only READY."
+    ]
+  },
+  "opencode": {
+    "installed": true,
+    "info": {
+      "backend": "opencode",
+      "executable": "/data1/home/ziruiwang/.local/npm/bin/opencode",
+      "version": "1.18.34",
+      "model": "unknown",
+      "authentication": "existing_host_configuration",
+      "checked_help": true
+    },
+    "status": "BLOCKED",
+    "reason": "host auth list has zero credentials",
+    "probe_exit": 0,
+    "probe_argv": [
+      "opencode",
+      "auth",
+      "list"
+    ]
+  }
+}

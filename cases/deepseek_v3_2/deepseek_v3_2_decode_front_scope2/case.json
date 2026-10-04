@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v3_2.deepseek_v3_2_decode_front_scope2",
+  "description": "DeepSeek V3.2 decode front scope2 INT8 indexer",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "build_deepseek_v3_2_decode_front_scope2_program",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["q_idx_full_i8_out", "q_idx_scale_heads_out", "weights_out", "k_cache_idx_i8", "k_cache_idx_scale"]},
+  "state": {"behavior": "mutating", "initial_state": ["k_cache_idx_i8", "k_cache_idx_scale"], "restore_before_each_launch": true}
+}

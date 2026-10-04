@@ -1,0 +1,14 @@
+{
+  "ignored_paths": [
+    "benchmarks/pypto_lib_bench-v0.2/.ptobench/execution.lock",
+    "benchmarks/pypto_lib_bench-v0.2/build_output/test",
+    "benchmarks/pypto_lib_bench-v0.2/runs/test",
+    "benchmarks/pypto_lib_bench-v0.2/snapshots/test",
+    "benchmarks/pypto_lib_bench-v0.2/results/test",
+    "benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/full_v02/test",
+    "benchmarks/pypto_lib_bench-v0.2/sealed_assets/test"
+  ],
+  "all_ignored": true,
+  "named_backend_profiles_checked": 8,
+  "custom_wrappers_preserved": true
+}

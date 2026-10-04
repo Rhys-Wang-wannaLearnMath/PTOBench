@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.legacy_decode_qkv_proj_rope_t16",
+  "description": "DeepSeek-V4 legacy T=16 single-token decode Q/KV projection with Q-LoRA quantization and RoPE",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "deepseek_v4_decode_qkv_proj_rope_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": ["q", "kv", "qr", "qr_scale"]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  },
+  "fixture_generation": {
+    "kind": "seeded_official_tensor_specs",
+    "official_source": "sealed_assets/deepseek_v4/legacy_decode_qkv_proj_rope_t16/official/original.py",
+    "builder": "build_tensor_specs",
+    "golden": "golden_deepseek_v4_decode_qkv_proj_rope"
+  },
+  "npu_entry": "sealed_assets/deepseek_v4/legacy_decode_qkv_proj_rope_t16/ref/ref_npu.py:deepseek_v4_decode_qkv_proj_rope_test"
+}

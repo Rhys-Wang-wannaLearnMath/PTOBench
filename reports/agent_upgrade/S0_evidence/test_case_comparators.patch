@@ -1,0 +1,272 @@
+--- a/evaluator/tests/test_case_comparators.py
++++ b/evaluator/tests/test_case_comparators.py
+@@ -1,9 +1,11 @@
+ import json
+ import inspect
++import runpy
+ import sys
+ import tempfile
+ import unittest
+ from pathlib import Path
++from types import SimpleNamespace
+ 
+ import torch
+ 
+@@ -12,6 +14,165 @@
+ BENCHMARK_ROOT = EVALUATOR_DIR.parent
+ sys.path.insert(0, str(EVALUATOR_DIR))
+ import common
++
++
++def build_case_comparators(evaluator, case_dir, case):
++    """Adapt the existing local factories without imposing a runtime API."""
++    names = [
++        name for name in ("_compare", "_make_compare", "make_compare")
++        if callable(getattr(evaluator, name, None))
++    ]
++    if len(names) != 1:
++        raise AssertionError(f"{case['case_id']}: ambiguous/unsupported factories: {names}")
++    factory = getattr(evaluator, names[0])
++    parameters = inspect.signature(factory).parameters
++    if tuple(parameters) not in (
++        ("case_dir", "case"), ("case_dir", "case", "config"),
++    ) or any(
++        parameter.kind != inspect.Parameter.POSITIONAL_OR_KEYWORD
++        for parameter in parameters.values()
++    ):
++        raise AssertionError(f"{case['case_id']}: unsupported factory signature: {parameters}")
++    config = None
++    policy = common.read_json(case_dir / case["comparator"])
++    if "config" in parameters or any(
++        rule["method"] == "custom" for rule in policy["outputs"].values()
++    ):
++        # run_path registers its temporary module during execution, as needed
++        # by dataclasses with postponed annotations, then restores sys.modules.
++        config = SimpleNamespace(**runpy.run_path(
++            str(case_dir / case["config"]),
++            run_name=f"comparator_config_{case['case_id'].replace('.', '_')}",
++        ))
++    if "config" in parameters:
++        return factory(case_dir, case, config), config
++    return factory(case_dir, case), config
++
++
++def comparator_examples(name, rule, config):
++    """Small CPU tensors with the callback's ranks, masks and paired bindings.
++
++    Feature widths unrelated to comparison are kept small. Policy-bound
++    capacities, top-k lengths, offsets, dtypes and metadata remain intact.
++    These exercise callbacks, not NPU execution or formal Fixture correctness.
++    """
++    actual_outputs, expected_outputs, inputs = {}, {}, {}
++    extras = []
++    method = rule["method"]
++    if method in {"exact", "allclose", "ratio_allclose"}:
++        expected = torch.tensor([100.0, 200.0])
++        rejected = torch.zeros_like(expected)
++    elif method != "custom":
++        raise AssertionError(f"Unsupported comparator method: {method}")
++    elif rule["name"] in {"topk_pair_compare", "indexed_topk_pair"}:
++        indexed = rule["name"] == "indexed_topk_pair" or name == "topk_idxs"
++        if rule["name"] == "indexed_topk_pair":
++            length, offset = config.INDEXER_SCORE_CAP, rule["index_offset"]
++        elif indexed:
++            length, offset = config.SCORE_LEN, config.OFFSET
++        else:
++            if hasattr(config, "TOPK"):
++                length = config.TOPK
++            elif hasattr(config, "INDEX_TOPK"):
++                length = config.INDEX_TOPK
++            else:
++                length = config.INDICES_SHAPE[-1]
++            offset = 0
++        expected = (torch.arange(length, dtype=torch.int32) + offset).reshape(1, -1)
++        rejected = expected.clone()
++        if length >= 2:
++            rejected[:, :2] = rejected[:, :2].flip(-1)
++        else:
++            # The declared K=1 has no adjacent ordering constraint. Exercise
++            # shape rejection rather than inventing a two-element output.
++            rejected = torch.cat((expected, expected), dim=-1)
++        scores = torch.arange(length, 0, -1, dtype=torch.float32).reshape(1, -1)
++        if not rule["descending"]:
++            scores = scores.flip(-1)
++        # Indexed callbacks gather scores using indices. Other callbacks see
++        # values already paired with the returned indices.
++        actual_outputs[rule["values_output"]] = scores if indexed else scores.flip(-1)
++        expected_outputs[rule["values_output"]] = scores
++        if length >= 2:
++            extras.append(("tied permutation", rejected, True, {
++                "actual_outputs": {rule["values_output"]: torch.ones_like(scores)},
++            }))
++    elif rule["name"] == "valid_rows_allclose":
++        shape = (2, rule["recv_max"], 2) if rule["is_3d"] else (2, rule["recv_max"])
++        dtype = {"recv_x": torch.int8, "recv_token": torch.int32}.get(name, torch.float32)
++        expected = torch.ones(shape, dtype=dtype)
++        rejected = torch.zeros_like(expected)
++        expected_outputs[rule["count_output"]] = torch.tensor([[1], [0]], dtype=torch.int32)
++        ignored = expected.clone()
++        ignored[:, 1:] = 100
++        ignored[1] = 100
++        extras.append(("unused receive rows", ignored, True, {}))
++    elif rule["name"] == "active_recv_ratio_reldiff":
++        expected = torch.ones((config.N_LOCAL_EXPERTS, config.RECV_MAX, 2), dtype=torch.bfloat16)
++        rejected = expected.clone()
++        rejected[:, 0] = 100
++        inputs[rule["count_input"]] = torch.ones((config.N_LOCAL_EXPERTS, 1), dtype=torch.int32)
++        if config.RECV_MAX > 1:
++            inactive = expected.clone()
++            inactive[:, -1] = 100
++            extras.append(("inactive receive row changed", inactive, False, {}))
++        extras.append(("missing expert counts", expected.clone(), False, {"inputs": {}}))
++    elif rule["name"] == "mapped_active_rows_ratio_allclose":
++        dtype = torch.int8 if name == "idx_kv_cache" else torch.float32
++        expected = torch.ones((2,) * rule["flatten_leading_dims"] + (1, 2), dtype=dtype)
++        rejected = expected.clone()
++        rejected.reshape(-1, 2)[0] = 100
++        inputs[rule["mapping_input"]] = torch.tensor([0, -1], dtype=torch.int32)
++        inactive = expected.clone()
++        inactive.reshape(-1, 2)[-1] = 100
++        extras.extend([
++            ("inactive mapped row changed", inactive, False, {}),
++            ("missing mapping", expected.clone(), False, {"inputs": {}}),
++        ])
++    elif rule["name"] == "valid_ratio_reldiff" and "chunk_lens_input" in rule:
++        ranks = config.N_RANKS
++        expected = torch.ones((ranks, 4, 1, 2), dtype=torch.bfloat16)
++        rejected = expected.clone()
++        rejected[:, 0] = 100
++        inputs[rule["chunk_lens_input"]] = torch.tensor([[1, 1]] * ranks, dtype=torch.int32)
++        inputs[rule["chunk_offsets_input"]] = torch.tensor([[0, 2]] * ranks, dtype=torch.int32)
++        ignored = expected.clone()
++        ignored[:, 1] = 100
++        extras.extend([
++            ("unselected chunk rows", ignored, True, {}),
++            ("missing chunk metadata", expected.clone(), False, {"inputs": {}}),
++        ])
++    elif rule["name"] in {"ratio_reldiff", "valid_ratio_reldiff"}:
++        rows = rule.get("valid_rows")
++        rank = {"sh": 2, "recv_y": 3, "x_out": 3, "x_next": 4}[name]
++        shape = [2] * rank
++        if rows is not None:
++            shape[rule["valid_axis"]] = max(1, rows)
++        expected = torch.ones(shape, dtype=torch.bfloat16)
++        rejected = torch.full_like(expected, 100)
++    elif rule["name"] == "int8_lsb":
++        expected = torch.zeros((1, 2), dtype=torch.int8)
++        rejected = torch.full_like(expected, rule["max_abs_diff"] + 1)
++        extras.append(("allowed LSB difference", torch.full_like(expected, rule["max_abs_diff"]), True, {}))
++    else:
++        raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
++
++    examples = [
++        ("equal", expected.clone(), True, {}),
++        ("different", rejected, False, {}),
++        *extras,
++    ]
++    for label, actual, passed, updates in examples:
++        kwargs = {
++            "actual_outputs": {**actual_outputs, name: actual},
++            "expected_outputs": {**expected_outputs, name: expected},
++            "inputs": inputs,
++            # Call-site tolerances must not replace the public policy.
++            "rtol": 1e10,
++            "atol": 1e10,
++            **updates,
++        }
++        yield label, actual, expected, kwargs, passed
+ 
+ 
+ class CaseComparatorTest(unittest.TestCase):
+@@ -20,45 +181,60 @@
+         case_paths = sorted((BENCHMARK_ROOT / "cases").glob("*/*/case.json"))
+         self.assertTrue(case_paths)
+ 
++        constructed = 0
++        non_ready_missing = []
++        ready = 0
+         for index, case_path in enumerate(case_paths):
+             case_dir = case_path.parent
+             case = json.loads(case_path.read_text(encoding="utf-8"))
+             family, name = case["case_id"].split(".", 1)
+             sealed = BENCHMARK_ROOT / "sealed_assets" / family / name
+-            evaluator = common.load_module(
+-                sealed / "evaluate.py", f"case_comparator_test_{index}"
++            certification_path = sealed / "certification.json"
++            certification = (
++                common.read_json(certification_path) if certification_path.is_file() else {}
+             )
+-            source = (sealed / "evaluate.py").read_text(encoding="utf-8")
+-            self.assertNotIn("common.make_comparators", source)
+-
+-            comparators = evaluator._compare(case_dir, case)
+-            self.assertEqual(set(comparators), set(case["correctness"]["outputs"]))
+-            policy = json.loads(
+-                (case_dir / case["comparator"]).read_text(encoding="utf-8")
+-            )
+-            for name, compare in comparators.items():
+-                signature = inspect.signature(compare)
+-                self.assertNotIn("rtol", signature.parameters)
+-                self.assertNotIn("atol", signature.parameters)
+-                if policy["outputs"][name]["method"] == "custom":
++            is_ready = certification.get("status") == "ready"
++            ready += is_ready
++            with self.subTest(case=case["case_id"], certification=certification.get("status")):
++                if not (sealed / "evaluate.py").is_file():
++                    self.assertFalse(is_ready, "ready Case is missing its evaluator")
++                    non_ready_missing.append(case["case_id"])
+                     continue
+-                expected = torch.tensor([1.0, 2.0])
+-                runner_kwargs = {
+-                    "actual_outputs": {name: expected},
+-                    "expected_outputs": {name: expected},
+-                    "inputs": {},
+-                    "rtol": 0.0,
+-                    "atol": 0.0,
+-                }
+-                self.assertTrue(
+-                    compare(expected.clone(), expected, **runner_kwargs)[0]
++                evaluator = common.load_isolated_module(
++                    sealed / "evaluate.py", f"case_comparator_test_{index}"
+                 )
+-                self.assertFalse(
+-                    compare(
+-                        torch.zeros(2), torch.full((2,), 100.0),
+-                        **runner_kwargs,
+-                    )[0]
+-                )
++                source = (sealed / "evaluate.py").read_text(encoding="utf-8")
++                self.assertNotIn("common.make_comparators", source)
++                comparators, config = build_case_comparators(evaluator, case_dir, case)
++                constructed += 1
++                self.assertEqual(set(comparators), set(case["correctness"]["outputs"]))
++                policy = common.read_json(case_dir / case["comparator"])
++                self.assertEqual(set(policy["outputs"]), set(comparators))
++                if is_ready:
++                    self.assertEqual(
++                        certification["comparator_sha256"],
++                        common.comparator_sha256(case_dir, case),
++                        "ready certification is bound to a stale comparator",
++                    )
++                for name, compare in comparators.items():
++                    with self.subTest(output=name):
++                        signature = inspect.signature(compare)
++                        self.assertNotIn("rtol", signature.parameters)
++                        self.assertNotIn("atol", signature.parameters)
++                        for label, actual, expected, kwargs, passed in comparator_examples(
++                            name, policy["outputs"][name], config,
++                        ):
++                            with self.subTest(example=label):
++                                result = compare(actual, expected, **kwargs)
++                                self.assertIsInstance(result, tuple)
++                                self.assertEqual(bool(result[0]), passed, result[1])
++        print(
++            f"Comparator coverage: inventory={len(case_paths)}, ready={ready}, "
++            f"constructed={constructed}, non_ready_missing_evaluator={len(non_ready_missing)}",
++            flush=True,
++        )
++        for case_id in non_ready_missing:
++            print(f"NOT_RUN (non-ready, missing evaluator): {case_id}", flush=True)
+ 
+     def test_declared_methods_and_strict_schema(self):
+         qwen_case_path = (

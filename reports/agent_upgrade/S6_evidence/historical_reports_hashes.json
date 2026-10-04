@@ -1,0 +1,8 @@
+{
+  "benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S2_session_and_budget.md": "6b941abf9768eb750b4cef1a4a67b9e7a2ab9419e1f279b06bfdb726a520fbd9",
+  "benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S0_baseline.md": "adbe298316dd3f95c9c052c6f26a6c669abac4871a818adaa5e6535948de16f8",
+  "benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S4_finalize.md": "696dd5acc37109dfb13df74502f023eca84a37c0c35217b13727c3366ffec754",
+  "benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S5_launcher_and_adapters.md": "dcb0353fd4f50f9d6ec472296da32692f79d36501ca4f4cab9fc42fff235bed5",
+  "benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S1_file_integrity.md": "a2aa3dd5637766c3aa0d8ecf736fcf682155f521e7cafdc96f7c5f150b2c4747",
+  "benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S3_cli_events_and_snapshots.md": "92e99127421c97b10d08f81d987ea1347523c353fef31939279cde7a5f456cdd"
+}

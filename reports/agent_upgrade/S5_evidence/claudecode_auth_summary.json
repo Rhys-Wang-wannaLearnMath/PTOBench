@@ -1,0 +1,5 @@
+{
+  "returncode": 0,
+  "authenticated": true,
+  "auth_method": "oauth_token"
+}

@@ -1,0 +1,23 @@
+{
+  "checked_at": "2026-10-03T04:56:13.666870+00:00",
+  "packages": [
+    {
+      "package": "@anthropic-ai/claude-code",
+      "latest": "2.1.288",
+      "installed": "2.1.288 (Claude Code)",
+      "matches_latest": true
+    },
+    {
+      "package": "@earendil-works/pi-coding-agent",
+      "latest": "1.0.0",
+      "installed": "1.0.0",
+      "matches_latest": true
+    },
+    {
+      "package": "opencode-ai",
+      "latest": "1.18.34",
+      "installed": "1.18.34",
+      "matches_latest": true
+    }
+  ]
+}

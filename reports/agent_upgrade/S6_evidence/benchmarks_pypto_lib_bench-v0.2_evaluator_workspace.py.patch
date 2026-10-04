@@ -1,0 +1,12 @@
+--- benchmarks/pypto_lib_bench-v0.2/evaluator/workspace.py.before
++++ benchmarks/pypto_lib_bench-v0.2/evaluator/workspace.py
+@@ -122,6 +122,9 @@
+ These outputs are diagnostic copies. Bench records authoritative results and
+ readonly Snapshots from the frozen implementation; edits here cannot change them.
+ Evaluate reserves one exploration action; failure does not refund it.
++The experiment's final score comes from an independent clean verification of
++a selected historical Snapshot in a fresh final workspace. Bench performs this
++after exploration closes, using the separate finish budget.
+ 
+ ## Fork
+ 

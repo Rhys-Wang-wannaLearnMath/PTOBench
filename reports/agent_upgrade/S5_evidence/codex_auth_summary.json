@@ -1,0 +1,10 @@
+{
+  "command": [
+    "codex",
+    "login",
+    "status"
+  ],
+  "exit_code": 0,
+  "authenticated": true,
+  "auth_kind": "configured credential"
+}

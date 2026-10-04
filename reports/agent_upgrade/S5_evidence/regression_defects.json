@@ -1,0 +1,38 @@
+{
+  "overall": "FAIL",
+  "tests_run": 136,
+  "elapsed_seconds": 295.068,
+  "failed_test_methods": 1,
+  "failed_subtests": 21,
+  "failed_method": "test_case_comparators.CaseComparatorTest.test_every_case_owns_and_executes_its_comparator",
+  "S5_launcher_failures": 0,
+  "failures": [
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='x_next', case='deepseek_v4.moe_ep2_demo', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='x_next', case='deepseek_v4.moe_ep2_flash', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='x_next', case='deepseek_v4.moe_ep2_pro', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='x_next', case='deepseek_v4.moe_ep4_demo', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='x_next', case='deepseek_v4.moe_ep4_flash', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='x_next', case='deepseek_v4.moe_ep4_pro', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='kv_cache', case='deepseek_v4.prefill_attention_hca_demo', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='kv_cache', case='deepseek_v4.prefill_attention_hca_flash', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='kv_cache', case='deepseek_v4.prefill_attention_hca_pro', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='kv_cache', case='deepseek_v4.prefill_layer_ep2_csa_demo', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='cmp_kv', case='deepseek_v4.prefill_layer_ep2_csa_demo', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='idx_kv_cache', case='deepseek_v4.prefill_layer_ep2_csa_demo', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (example='unselected chunk rows', output='x_next', case='deepseek_v4.prefill_layer_ep2_csa_demo', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='kv_cache', case='deepseek_v4.prefill_layer_ep2_csa_flash', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='cmp_kv', case='deepseek_v4.prefill_layer_ep2_csa_flash', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='idx_kv_cache', case='deepseek_v4.prefill_layer_ep2_csa_flash', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (example='unselected chunk rows', output='x_next', case='deepseek_v4.prefill_layer_ep2_csa_flash', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='kv_cache', case='deepseek_v4.prefill_layer_ep2_csa_pro', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='cmp_kv', case='deepseek_v4.prefill_layer_ep2_csa_pro', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='idx_kv_cache', case='deepseek_v4.prefill_layer_ep2_csa_pro', certification='pending')",
+    "test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (example='unselected chunk rows', output='x_next', case='deepseek_v4.prefill_layer_ep2_csa_pro', certification='pending')"
+  ],
+  "reason_groups": {
+    "unsupported_token_partition_ratio_reldiff": 6,
+    "unsupported_mapped_pool_compare": 12,
+    "changed_unselected_chunk_rows_expectation": 3
+  },
+  "ownership": "Case/comparator migration and inventory-test coverage handoff; outside S5. No canonical or historical comparator test repair performed."
+}

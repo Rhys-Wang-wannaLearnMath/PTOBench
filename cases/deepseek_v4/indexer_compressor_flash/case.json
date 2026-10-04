@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.indexer_compressor_flash",
+  "description": "DeepSeek-V4 FLASH standalone decode indexer compressor, ratio 4 overlap",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "compressor_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "scalars": ["start_pos", "rotate"],
+  "correctness": {"mode": "single_step", "outputs": ["kv", "kv_state", "score_state", "kv_cache"]},
+  "state": {"behavior": "mutating", "initial_state": ["kv_state", "score_state", "kv_cache"], "restore_before_each_launch": true}
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.lm_head_tp2_pro",
+  "description": "DeepSeek-V4 LM head TP2 projection, PRO preset",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "host_orch",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["logits"]},
+  "state": {"behavior": "none", "initial_state": [], "restore_before_each_launch": false},
+  "runtime": {"device_ids": [0, 1]}
+}

@@ -1,0 +1,4 @@
+audit /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/portability_recheck_20261004_173235
+returncode 0
+launcher_result {"session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/portability_recheck_20261004_173235/sessions/standalone_hardware_smoke/deepseek_v4.rmsnorm_decode_demo/20261004T093239Z_e9f246d3f7fc", "final_result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/portability_recheck_20261004_173235/sessions/standalone_hardware_smoke/deepseek_v4.rmsnorm_decode_demo/20261004T093239Z_e9f246d3f7fc/final_result.json", "status": "completed", "error_code": null, "close_reason": "optimizer_exit", "optimizer_exit_code": 0}
+PASS: real NPU evaluate + runtime/PMU/compiler + natural exit + final verification + status

@@ -1,0 +1,145 @@
+{
+  "stage": "S2",
+  "status": "PASS",
+  "unit_tests": {
+    "session_final.log": {
+      "exit_code": 0,
+      "tests": 16,
+      "seconds": 3.314,
+      "sha256": "e7bf9c5eea55f04db9d45595f154d4d40848c89931a239481dfafa256309e3d9"
+    },
+    "budget_final.log": {
+      "exit_code": 0,
+      "tests": 17,
+      "seconds": 5.329,
+      "sha256": "026efcb83d9a95dbd26691c86d554a87dfe126b87fc209f83b7258552d2de473"
+    },
+    "unittest_final.log": {
+      "exit_code": 0,
+      "tests": 74,
+      "seconds": 11.935,
+      "sha256": "27d0a4ac4daabc6a4a4309a5383c37d51b027e295cc9a1b796b0314f91d2e29a"
+    }
+  },
+  "source_sha256": {
+    "benchmarks/pypto_lib_bench-v0.2/evaluator/session.py": "45ed58fff8ec3211acb351aeb3af456e2f40312aa714621041be1d6375120c2b",
+    "benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_session.py": "ce6ad3dc41394d6ce828c09f36ddb9727c0a75db674760daa2171c3996151568",
+    "benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_budget.py": "14feac5449d10ccdf640641749d22939773080a69f54d68b16ca20f957f36d47",
+    "benchmarks/pypto_lib_bench-v0.2/evaluator/tests/session_test_support.py": "4a1271a42808f39dba622ea7875d67ad23cf059b368a8282cf649fbd32c5dfd7",
+    "benchmarks/pypto_lib_bench-v0.2/evaluator/SESSION.md": "429c07a415af284524a94ce68e5b14cea57f1a293517d20263051de342ed8c43"
+  },
+  "requirement_audit": [
+    {
+      "requirement": "1",
+      "scope": "Session creation/layout/schema/registry/status and direct init reuse",
+      "status": "verified",
+      "test_source": "test_session.py",
+      "tests": [
+        "test_creation_independent_layout_schema_and_original_assets",
+        "test_creation_record_publication_survives_real_process_crash",
+        "test_schema_validation_even_for_a_bench_committed_bad_record"
+      ]
+    },
+    {
+      "requirement": "2",
+      "scope": "Certification, full spec input inventory, Ref outputs/baseline and comparator; no prepare-ref",
+      "status": "verified",
+      "test_source": "test_session.py",
+      "tests": [
+        "test_preflight_rejects_every_incomplete_certified_asset_without_preparing"
+      ]
+    },
+    {
+      "requirement": "3",
+      "scope": "Protected Session identity rather than workspace metadata",
+      "status": "verified",
+      "test_source": "test_session.py",
+      "tests": [
+        "test_metadata_cannot_change_identity_budget_module_or_modes",
+        "test_registered_roots_only_cross_session_subdirectory_and_links"
+      ]
+    },
+    {
+      "requirement": "4",
+      "scope": "Fixed global lock, short Session lock, order, output independence",
+      "status": "verified",
+      "test_source": "test_budget.py",
+      "tests": [
+        "test_lock_order_rejected_and_state_reads_need_no_global_lock",
+        "test_status_and_close_do_not_wait_for_active_global_measurement",
+        "test_two_sessions_with_different_outputs_wait_on_one_lock_without_charging"
+      ]
+    },
+    {
+      "requirement": "5",
+      "scope": "Exploration/finish reservations, active_action and closing",
+      "status": "verified",
+      "test_source": "test_budget.py",
+      "tests": [
+        "test_all_public_profiles_charge_once_and_old_modes_never_reserve",
+        "test_finish_is_independent_requires_closed_exploration_and_cannot_repeat",
+        "test_close_preserves_active_action_and_finish_waits_for_it"
+      ]
+    },
+    {
+      "requirement": "6",
+      "scope": "No precheck charge, no accepted refund, no fork charge",
+      "status": "verified",
+      "test_source": "test_budget.py",
+      "tests": [
+        "test_invalid_prechecks_do_not_charge_and_global_lock_is_required",
+        "test_failures_after_reservation_never_refund_and_completion_is_idempotent",
+        "test_close_during_prechecks_prevents_reservation_without_charge"
+      ]
+    },
+    {
+      "requirement": "7",
+      "scope": "Concurrency, cross-Session, links, legal updates and residuals",
+      "status": "verified",
+      "test_source": "test_budget.py",
+      "tests": [
+        "test_multiprocess_last_allowance_never_exceeds_limit",
+        "test_dead_owner_and_child_reconciled_once_without_refund",
+        "test_dead_unstarted_action_records_interrupted_without_refund",
+        "test_actual_living_orphan_process_blocks_final_measurement",
+        "test_real_crash_completion_recovers_one_consistent_generation"
+      ]
+    },
+    {
+      "requirement": "8",
+      "scope": "Last accepted action completes after exhaustion/closure",
+      "status": "verified",
+      "test_source": "test_budget.py",
+      "tests": [
+        "test_status_and_close_do_not_wait_for_active_global_measurement",
+        "test_idempotent_old_completion_preserves_the_next_active_action"
+      ]
+    },
+    {
+      "requirement": "9",
+      "scope": "No old CLI Session routing/search/alias/fallback; old entry retained for S3",
+      "status": "verified",
+      "evidence": "Original public and old CLI hashes unchanged; new module imports no bench/subprocess and takes explicit Session roots."
+    }
+  ],
+  "preservation": {
+    "canonical_changed_paths": [],
+    "tracked_changed_paths": [],
+    "previous_public_and_history_changed_paths": [],
+    "index_unchanged": true,
+    "canonical_file_count": 6701,
+    "tensor_metadata_count": 2992,
+    "non_tensor_content_hash_count": 3709,
+    "tensor_verification": "size/mtime_ns/mode only; no full byte hashes"
+  },
+  "report_sha256": "6b941abf9768eb750b4cef1a4a67b9e7a2ab9419e1f279b06bfdb726a520fbd9",
+  "report_links_verified": true,
+  "S2_only": true,
+  "S3_preconditions_met": true,
+  "limits": [
+    "Only fake Cases and processes used for S2 runtime tests.",
+    "Fixture preflight checks metadata/file completeness and existing certification, not fresh tensor correctness.",
+    "No real Optimizer/hardware/Evaluator/Snapshot/finalize implementation or acceptance.",
+    "S0 real Case asset blockers retained; tensor preservation checked by metadata, not byte hashes."
+  ]
+}

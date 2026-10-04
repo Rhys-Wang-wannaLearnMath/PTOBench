@@ -1,0 +1,11 @@
+--- a/Benchmark升级/plan/08_execution_steps.md
++++ b/Benchmark升级/plan/08_execution_steps.md
+@@ -4,7 +4,7 @@
+ 
+ 把本目录交给 Codex，先读 README，再按 S0 到 S7 执行。一次任务只推进一个阶段；不要求第一次任务就接入真实 Optimizer。
+ 
+-每个阶段可直接复制的完整 prompt 见 [S0～S7 执行 prompt](10_stage_prompts.md)。这些 prompt 用于启动实际实施，保留 Case 原始内容并要求完成测试和报告。
++每个阶段可直接复制的完整 prompt 见 [S0～S7 执行 prompt](../../docs/10_stage_prompts.md)。这些 prompt 用于启动实际实施，保留 Case 原始内容并要求完成测试和报告。
+ 
+ 建议通用任务说明：
+ 

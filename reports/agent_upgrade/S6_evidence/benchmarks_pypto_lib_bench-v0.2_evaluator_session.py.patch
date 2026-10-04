@@ -1,0 +1,11 @@
+--- benchmarks/pypto_lib_bench-v0.2/evaluator/session.py.before
++++ benchmarks/pypto_lib_bench-v0.2/evaluator/session.py
+@@ -704,7 +704,7 @@
+         if fields[0] == "Z":
+             return None
+         return {"pid": pid, "start_ticks": int(fields[19]), "pgid": int(fields[2])}
+-    except FileNotFoundError:
++    except (FileNotFoundError, ProcessLookupError):
+         return None
+     except (OSError, ValueError, IndexError) as error:
+         raise integrity.InfrastructureError(f"cannot establish process identity: {error}") from error

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "case_id": "qwen3_14b.greedy_sample",
+  "description": "Qwen3-14B single-step greedy token sampling over the real vocabulary",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "greedy_sample_fwd",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": ["sampled_ids"]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  }
+}

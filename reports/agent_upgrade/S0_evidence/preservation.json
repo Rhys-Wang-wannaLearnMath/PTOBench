@@ -1,0 +1,10 @@
+{
+  "canonical_file_count": 6701,
+  "canonical_content_hashed_files": 3709,
+  "tensor_metadata_only_files": 2992,
+  "canonical_changed_paths": [],
+  "previous_tracked_file_count": 297,
+  "previous_tracked_changed_paths": [],
+  "git_index_unchanged": true,
+  "tensor_check_limitation": "The 216.98 GiB .pt assets were checked by unchanged size, mtime_ns and mode, not read for full byte hashes; no Fixture writes or hardware processes were performed."
+}

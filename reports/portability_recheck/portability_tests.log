@@ -1,0 +1,9 @@
+test_external_checkout_imports_without_inherited_pythonpath (test_portability.PortabilityTests) ... ok
+test_profile_python_preserves_virtual_environment (test_portability.PortabilityTests) ... ok
+test_root_detection_and_toolchain_overrides (test_portability.PortabilityTests) ... ok
+test_standalone_sessions_external_assets_and_backend_fallback (test_portability.PortabilityTests) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 24.649s
+
+OK

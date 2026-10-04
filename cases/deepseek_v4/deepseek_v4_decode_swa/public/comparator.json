@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "x_out": {
+      "method": "ratio_allclose",
+      "rtol": 0.013,
+      "atol": 0.013,
+      "max_error_ratio": 0.005
+    }
+  }
+}

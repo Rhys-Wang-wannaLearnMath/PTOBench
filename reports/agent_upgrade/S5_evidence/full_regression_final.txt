@@ -1,0 +1,398 @@
+test_five_operations_default_workspace_fixed_modes_and_null_profiles (test_agent_cli.AgentCliTest) ... ok
+test_legacy_session_cannot_restore_removed_parser (test_agent_cli.AgentCliTest) ... ok
+test_linked_source_is_rejected_before_reservation (test_agent_cli.AgentCliTest) ... ok
+test_missing_session_invalid_root_unregistered_and_no_upward_search (test_agent_cli.AgentCliTest) ... ok
+test_new_context_public_names_and_old_entry_absence (test_agent_cli.AgentCliTest) ... ok
+test_rejects_old_parser_modes_parameters_and_commands_without_execution (test_agent_cli.AgentCliTest) ... ok
+test_actual_living_orphan_process_blocks_final_measurement (test_budget.BudgetTest) ... ok
+test_all_public_profiles_charge_once_and_old_modes_never_reserve (test_budget.BudgetTest) ... ok
+test_close_during_prechecks_prevents_reservation_without_charge (test_budget.BudgetTest) ... ok
+test_close_preserves_active_action_and_finish_waits_for_it (test_budget.BudgetTest) ... ok
+test_dead_owner_and_child_reconciled_once_without_refund (test_budget.BudgetTest) ... S2 living orphan: real PID/group remains alive; infrastructure failure blocks finish; test releases child
+ok
+test_dead_unstarted_action_records_interrupted_without_refund (test_budget.BudgetTest) ... S2 residual: dead owner + child -> one interrupted event; budget retained
+ok
+test_disabled_profile_is_frozen_in_session_and_not_from_metadata (test_budget.BudgetTest) ... ok
+test_failures_after_reservation_never_refund_and_completion_is_idempotent (test_budget.BudgetTest) ... ok
+test_finish_is_independent_requires_closed_exploration_and_cannot_repeat (test_budget.BudgetTest) ... ok
+test_idempotent_old_completion_preserves_the_next_active_action (test_budget.BudgetTest) ... ok
+test_invalid_prechecks_do_not_charge_and_global_lock_is_required (test_budget.BudgetTest) ... ok
+test_live_action_is_preserved_and_unattributed_spawn_blocks_finish (test_budget.BudgetTest) ... ok
+test_lock_order_rejected_and_state_reads_need_no_global_lock (test_budget.BudgetTest) ... ok
+test_multiprocess_last_allowance_never_exceeds_limit (test_budget.BudgetTest) ... S2 concurrency: 5 processes, limit=1, accepted=1, rejected=4
+ok
+test_real_crash_completion_recovers_one_consistent_generation (test_budget.BudgetTest) ... S2 concurrency: 5 processes, limit=3, accepted=3, rejected=2
+S2 completion crash: before_manifest, used=1, active=True, events=0
+ok
+test_status_and_close_do_not_wait_for_active_global_measurement (test_budget.BudgetTest) ... S2 completion crash: after_manifest, used=1, active=False, events=1
+ok
+test_two_sessions_with_different_outputs_wait_on_one_lock_without_charging (test_budget.BudgetTest) ... S2 last action: exhausted + active visible during lock; close preserved PASS completion
+ok
+test_declared_methods_and_strict_schema (test_case_comparators.CaseComparatorTest) ... ok
+test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) ... S2 cross-Session lock: distinct Optimizer/Case/output roots; waiter usage=0 before release, 1 afterwards
+Comparator coverage: inventory=198, ready=156, constructed=195, non_ready_missing_evaluator=3
+NOT_RUN (non-ready, missing evaluator): deepseek_v4_flash_mtp.prefill_cp_zigzag_cp2_demo
+NOT_RUN (non-ready, missing evaluator): deepseek_v4_flash_mtp.prefill_cp_zigzag_cp2_flash
+NOT_RUN (non-ready, missing evaluator): deepseek_v4_flash_mtp.prefill_cp_zigzag_cp2_pro
+test_official_fixture_adapter_strips_historical_is_output (test_common.RoleLoadingTest) ... ok
+test_official_fixture_isolates_siblings_through_delayed_imports (test_common.RoleLoadingTest)
+Both import-time and builder-time helpers must use the selected preset. ... ok
+test_official_fixture_restores_process_state_after_failure (test_common.RoleLoadingTest) ... ok
+test_oracle_does_not_reuse_or_replace_ref_helper (test_common.RoleLoadingTest) ... ok
+test_workspaces_and_modes_get_distinct_artifact_roots (test_evaluate.RunIsolationTest) ... ok
+test_all_null_or_invalid_profile_metrics_choose_latest_pass (test_finalize.FinalizeTest) ... ok
+test_all_null_selection_still_receives_one_clean_finish (test_finalize.FinalizeTest) ... fake evaluator stdout
+fake evaluator stderr
+ok
+test_bad_or_missing_final_results_are_failed_without_replay (test_finalize.FinalizeTest) ... fake evaluator stdout
+fake evaluator stderr
+fake evaluator stdout
+fake evaluator stderr
+fake evaluator stdout
+fake evaluator stderr
+fake evaluator stdout
+fake evaluator stderr
+ok
+test_clean_failure_never_uses_observed_score_or_tries_second_place (test_finalize.FinalizeTest) ... fake evaluator stdout
+fake evaluator stderr
+ok
+test_committed_final_and_authority_are_restored_without_reading_diagnostics (test_finalize.FinalizeTest) ... fake evaluator stdout
+fake evaluator stderr
+ok
+test_concurrent_finalize_processes_commit_one_finish (test_finalize.FinalizeTest) ... ok
+test_corrupt_history_recovery_blocks_finish_without_charge (test_finalize.FinalizeTest) ... ok
+test_failed_infrastructure_session_never_consumes_finish (test_finalize.FinalizeTest) ... ok
+test_final_integrity_changes_fail_even_when_evaluator_passes (test_finalize.FinalizeTest) ... fake evaluator stdout
+fake evaluator stderr
+fake evaluator stdout
+fake evaluator stderr
+fake evaluator stdout
+fake evaluator stderr
+ok
+test_finish_reservation_crash_before_marker_never_replays (test_finalize.FinalizeTest) ... ok
+test_history_source_metadata_events_and_authority_are_restored (test_finalize.FinalizeTest) ... fake evaluator stdout
+fake evaluator stderr
+ok
+test_inconsistent_committed_history_is_rejected_before_finish (test_finalize.FinalizeTest) ... ok
+test_invalid_committed_final_metric_is_rejected_without_measurement (test_finalize.FinalizeTest) ... fake evaluator stdout
+fake evaluator stderr
+ok
+test_killed_finish_owner_recovers_final_process_group_without_remeasurement (test_finalize.FinalizeTest) ... ok
+test_last_exhausted_action_finishes_before_independent_finish (test_finalize.FinalizeTest) ... ok
+test_mixed_metrics_choose_lowest_then_earliest_without_new_execution (test_finalize.FinalizeTest) ... ok
+test_no_snapshot_never_falls_back_to_current_or_seed_and_is_idempotent (test_finalize.FinalizeTest) ... ok
+test_preparation_failure_is_terminal_idempotent_and_costs_no_finish (test_finalize.FinalizeTest) ... ok
+test_sigterm_finish_stops_group_and_publishes_one_failed_result (test_finalize.FinalizeTest) ... ok
+test_success_uses_clean_selected_source_and_new_verified_numbers (test_finalize.FinalizeTest) ... fake evaluator stdout
+fake evaluator stderr
+ok
+test_terminal_transaction_crashes_restore_all_old_or_all_new (test_finalize.FinalizeTest) ... ok
+test_unregistered_orphan_never_enters_selection (test_finalize.FinalizeTest) ... ok
+test_ancestor_outside_protected_root_is_not_repaired_or_followed (test_integrity.FileIntegrityTest) ... ok
+test_backups_are_independent_deduplicated_and_include_pt (test_integrity.FileIntegrityTest) ... ok
+test_commit_rejects_dirty_records_unregistered_paths_and_asset_updates (test_integrity.FileIntegrityTest) ... ok
+test_committed_budget_events_are_restored_to_latest_values (test_integrity.FileIntegrityTest) ... ok
+test_concurrent_process_commits_are_serialized (test_integrity.FileIntegrityTest) ... ok
+test_corrupt_manifest_and_invalid_paths_are_not_rebaselined (test_integrity.FileIntegrityTest) ... ok
+test_corrupt_missing_and_linked_recovery_sources_fail_before_repair (test_integrity.FileIntegrityTest) ... ok
+test_groups_restore_only_selected_assets (test_integrity.FileIntegrityTest) ... ok
+test_overlapping_roots_and_control_trees_are_rejected (test_integrity.FileIntegrityTest) ... ok
+test_permissions_cache_exclusions_and_expected_absence (test_integrity.FileIntegrityTest) ... ok
+test_process_crash_at_every_commit_boundary_recovers_consistent_records (test_integrity.FileIntegrityTest) ... commit crash boundary=before_backup, exit=23, before=(0, 0), recovered=(0, 0)
+commit crash boundary=after_backup, exit=23, before=(0, 0), recovered=(0, 0)
+commit crash boundary=before_manifest, exit=23, before=(0, 0), recovered=(0, 0)
+commit crash boundary=after_manifest, exit=23, before=(0, 0), recovered=(1, 1)
+commit crash boundary=after_first_record, exit=23, before=(1, 0), recovered=(1, 1)
+commit crash boundary=after_last_record, exit=23, before=(1, 1), recovered=(1, 1)
+ok
+test_record_tree_new_files_and_empty_directories (test_integrity.FileIntegrityTest) ... ok
+test_register_new_root_cannot_replace_existing_authority (test_integrity.FileIntegrityTest) ... ok
+test_restore_content_empty_directories_types_and_extra_nodes (test_integrity.FileIntegrityTest) ... ok
+test_root_file_and_inner_links_never_touch_external_sentinel (test_integrity.FileIntegrityTest) ... ok
+test_special_file_and_missing_root_are_restored_without_opening_fifo (test_integrity.FileIntegrityTest) ... ok
+test_budget_stop_and_dual_large_logs (test_launcher.LauncherTests) ... ok
+test_budget_waits_for_last_active_action (test_launcher.LauncherTests) ... ok
+test_early_exit_without_snapshot_does_not_measure (test_launcher.LauncherTests) ... ok
+test_four_adapters_real_cli_all_five_operations (test_launcher.LauncherTests) ... ok
+test_infrastructure_failure_stops_owned_evaluator_without_final (test_launcher.LauncherTests) ... ok
+test_interrupt_active_evaluator_and_child (test_launcher.LauncherTests) ... ok
+test_invalid_configuration_fails_before_session (test_launcher.LauncherTests) ... ok
+test_leftover_worker_is_killed (test_launcher.LauncherTests) ... ok
+test_nonzero_exit_still_finalizes_best_history (test_launcher.LauncherTests) ... ok
+test_sensitive_profile_rejected_and_host_secret_not_recorded (test_launcher.LauncherTests) ... ok
+test_status_no_hardware_and_repairs_records (test_launcher.LauncherTests) ... ok
+test_user_interrupt_during_final_measurement (test_launcher.LauncherTests) ... ok
+test_user_interrupt_finalizes_and_returns_130 (test_launcher.LauncherTests) ... ok
+test_yaml_defaults_and_paths_ignore_startup_cwd (test_launcher.LauncherTests) ... ok
+test_all_modes_default_to_one_shot_correctness (test_profile_modes.ProfilePhaseTest) ... ok
+test_hardware_defaults_to_one_shot_correctness (test_profile_modes.ProfilePhaseTest) ... ok
+test_corrupt_manifest_backup_and_wrong_binding_fail_without_rebaseline (test_session.SessionTest) ... ok
+test_creation_failure_cleans_only_owned_unpublished_dirs (test_session.SessionTest) ... ok
+test_creation_independent_layout_schema_and_original_assets (test_session.SessionTest) ... ok
+test_creation_record_publication_survives_real_process_crash (test_session.SessionTest) ... ok
+test_failed_asset_recovery_marks_session_failed_and_preserves_budget (test_session.SessionTest) ... ok
+test_failed_fork_has_no_registry_or_partial_and_never_reuses_allocated_id (test_session.SessionTest) ... ok
+test_foreign_extra_record_and_fixed_binding_are_rejected_before_recovery (test_session.SessionTest) ... ok
+test_fork_copies_helpers_and_initial_snapshot_without_budget (test_session.SessionTest) ... ok
+test_fork_crash_keeps_registry_atomic_and_never_reuses_published_number (test_session.SessionTest) ... S2 creation crash: committed manifest -> complete Session and empty event log restored
+S2 fork crash: registry_manifest=False, next accepted worker=002, usage=0
+ok
+test_invalid_parameters_output_overlap_and_link_components (test_session.SessionTest) ... ok
+test_metadata_cannot_change_identity_budget_module_or_modes (test_session.SessionTest) ... ok
+test_preflight_rejects_every_incomplete_certified_asset_without_preparing (test_session.SessionTest) ... ok
+test_reads_repair_latest_records_without_touching_context_or_assets (test_session.SessionTest) ... ok
+test_record_symlink_replaced_itself_and_external_sentinel_untouched (test_session.SessionTest) ... ok
+test_registered_roots_only_cross_session_subdirectory_and_links (test_session.SessionTest) ... ok
+test_schema_validation_even_for_a_bench_committed_bad_record (test_session.SessionTest) ... ok
+test_blocked_terminal_consumers_do_not_block_logs_or_completion (test_session_actions.SessionActionsTest) ... ok
+test_change_after_check_only_is_detected_by_restoration (test_session_actions.SessionActionsTest) ... fake evaluator stdout
+fake evaluator stderr
+ok
+test_dual_large_logs_are_preserved_and_forwarded_without_deadlock (test_session_actions.SessionActionsTest) ... ok
+test_invalid_results_and_exceptions_charge_once_never_snapshot (test_session_actions.SessionActionsTest) ... ok
+test_killed_parent_recovers_global_marker_before_next_session_executes (test_session_actions.SessionActionsTest) ... ok
+test_original_edits_after_freeze_do_not_change_snapshot_or_hash (test_session_actions.SessionActionsTest) ... ok
+test_output_root_or_mode_link_inserted_after_freeze_never_writes_external (test_session_actions.SessionActionsTest) ... ok
+test_owner_killed_after_reservation_before_marker_recovers_once (test_session_actions.SessionActionsTest) ... ok
+test_protected_and_frozen_changes_invalid_even_if_result_pass (test_session_actions.SessionActionsTest) ... ok
+test_real_cli_competition_accepts_only_last_budget_once (test_session_actions.SessionActionsTest) ... ok
+test_repeated_signals_cannot_interrupt_term_then_kill_cleanup (test_session_actions.SessionActionsTest) ... ok
+test_reused_pid_is_never_signaled (test_session_actions.SessionActionsTest) ... ok
+test_same_mode_publish_replaces_complete_set_and_public_result_is_not_authority (test_session_actions.SessionActionsTest) ... ok
+test_sigterm_stops_group_then_postchecks_and_records_once (test_session_actions.SessionActionsTest) ... ok
+test_spawn_failure_still_postchecks_commits_without_refund (test_session_actions.SessionActionsTest) ... ok
+test_status_repair_during_execution_preserves_tamper_witness (test_session_actions.SessionActionsTest) ... ok
+test_unconfirmed_process_stop_blocks_postcheck_and_keeps_evidence (test_session_actions.SessionActionsTest) ... ok
+test_authority_or_snapshot_registration_failure_never_publishes_success (test_snapshots.SnapshotTest) ... fake evaluator stdout
+fake evaluator stderr
+fake evaluator stdout
+fake evaluator stderr
+ok
+test_identical_successful_sources_have_distinct_observations_and_readonly_trees (test_snapshots.SnapshotTest) ... ok
+test_snapshot_and_authority_tampering_restored_before_next_action (test_snapshots.SnapshotTest) ... ok
+test_candidate_rejects_stale_comparator_before_using_cache (test_workflow.CertificationBindingTest) ... ok
+test_complete_fixture_inputs_are_reusable_for_recertification (test_workflow.FixtureReuseTest) ... ok
+test_complete_independent_copy_excludes_outputs_and_caches_recursively (test_workspace.CandidateCopyTest) ... ok
+test_continuously_changing_source_fails_after_three_retries_without_partial_publish (test_workspace.CandidateCopyTest) ... ok
+test_hash_tracks_names_and_bytes_but_not_cached_outputs (test_workspace.CandidateCopyTest) ... ok
+test_link_substituted_after_scan_is_rejected_without_publishing (test_workspace.CandidateCopyTest) ... ok
+test_non_utf8_filename_is_rejected_before_publishing (test_workspace.CandidateCopyTest) ... ok
+test_parallel_edit_retries_and_publishes_one_consistent_tree (test_workspace.CandidateCopyTest) ... ok
+test_source_and_destination_overlap_is_rejected (test_workspace.CandidateCopyTest) ... ok
+test_source_links_and_fifos_fail_without_publishing_or_reading_outside (test_workspace.CandidateCopyTest) ... ok
+test_source_root_and_ancestor_links_are_rejected (test_workspace.CandidateCopyTest) ... ok
+test_target_links_and_nonempty_target_never_overwrite_existing_files (test_workspace.CandidateCopyTest) ... ok
+test_context_recovery_preserves_initial_source_and_current_edits (test_workspace.WorkspaceDocumentationTest) ... ok
+test_disabled_profiling_is_absent_from_context_and_readme (test_workspace.WorkspaceDocumentationTest) ... ok
+test_fork_copies_candidate_and_regenerates_context (test_workspace.WorkspaceDocumentationTest) ... ok
+test_init_rejects_nonempty_destination (test_workspace.WorkspaceDocumentationTest) ... ok
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='x_next', case='deepseek_v4.moe_ep2_demo', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: token_partition_ratio_reldiff
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='x_next', case='deepseek_v4.moe_ep2_flash', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: token_partition_ratio_reldiff
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='x_next', case='deepseek_v4.moe_ep2_pro', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: token_partition_ratio_reldiff
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='x_next', case='deepseek_v4.moe_ep4_demo', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: token_partition_ratio_reldiff
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='x_next', case='deepseek_v4.moe_ep4_flash', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: token_partition_ratio_reldiff
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='x_next', case='deepseek_v4.moe_ep4_pro', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: token_partition_ratio_reldiff
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='kv_cache', case='deepseek_v4.prefill_attention_hca_demo', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: mapped_pool_compare
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='kv_cache', case='deepseek_v4.prefill_attention_hca_flash', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: mapped_pool_compare
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='kv_cache', case='deepseek_v4.prefill_attention_hca_pro', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: mapped_pool_compare
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='kv_cache', case='deepseek_v4.prefill_layer_ep2_csa_demo', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: mapped_pool_compare
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='cmp_kv', case='deepseek_v4.prefill_layer_ep2_csa_demo', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: mapped_pool_compare
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='idx_kv_cache', case='deepseek_v4.prefill_layer_ep2_csa_demo', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: mapped_pool_compare
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (example='unselected chunk rows', output='x_next', case='deepseek_v4.prefill_layer_ep2_csa_demo', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 230, in test_every_case_owns_and_executes_its_comparator
+    self.assertEqual(bool(result[0]), passed, result[1])
+AssertionError: False != True : padded output row changed
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='kv_cache', case='deepseek_v4.prefill_layer_ep2_csa_flash', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: mapped_pool_compare
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='cmp_kv', case='deepseek_v4.prefill_layer_ep2_csa_flash', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: mapped_pool_compare
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='idx_kv_cache', case='deepseek_v4.prefill_layer_ep2_csa_flash', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: mapped_pool_compare
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (example='unselected chunk rows', output='x_next', case='deepseek_v4.prefill_layer_ep2_csa_flash', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 230, in test_every_case_owns_and_executes_its_comparator
+    self.assertEqual(bool(result[0]), passed, result[1])
+AssertionError: False != True : padded output row changed
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='kv_cache', case='deepseek_v4.prefill_layer_ep2_csa_pro', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: mapped_pool_compare
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='cmp_kv', case='deepseek_v4.prefill_layer_ep2_csa_pro', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: mapped_pool_compare
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (output='idx_kv_cache', case='deepseek_v4.prefill_layer_ep2_csa_pro', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 224, in test_every_case_owns_and_executes_its_comparator
+    for label, actual, expected, kwargs, passed in comparator_examples(
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 158, in comparator_examples
+    raise AssertionError(f"Unsupported custom comparator: {rule['name']}")
+AssertionError: Unsupported custom comparator: mapped_pool_compare
+
+======================================================================
+FAIL: test_every_case_owns_and_executes_its_comparator (test_case_comparators.CaseComparatorTest) (example='unselected chunk rows', output='x_next', case='deepseek_v4.prefill_layer_ep2_csa_pro', certification='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_case_comparators.py", line 230, in test_every_case_owns_and_executes_its_comparator
+    self.assertEqual(bool(result[0]), passed, result[1])
+AssertionError: False != True : padded output row changed
+
+----------------------------------------------------------------------
+Ran 136 tests in 295.068s
+
+FAILED (failures=21)
+S2 fork crash: registry_manifest=True, next accepted worker=002, usage=0

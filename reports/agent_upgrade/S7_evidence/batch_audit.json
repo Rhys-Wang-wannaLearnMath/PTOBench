@@ -1,0 +1,32 @@
+{
+  "audit_passed": true,
+  "issues": [],
+  "cases": 198,
+  "records": 792,
+  "sessions": 162,
+  "commands": 1296,
+  "by_item": {
+    "clean": {
+      "PASS": 157,
+      "BLOCKED": 36,
+      "FAIL": 5
+    },
+    "runtime": {
+      "PASS": 157,
+      "BLOCKED": 36,
+      "FAIL": 5
+    },
+    "pmu": {
+      "PASS": 157,
+      "BLOCKED": 36,
+      "FAIL": 5
+    },
+    "compiler": {
+      "PASS": 157,
+      "BLOCKED": 36,
+      "FAIL": 5
+    }
+  },
+  "recording_complete": true,
+  "all_pass": false
+}

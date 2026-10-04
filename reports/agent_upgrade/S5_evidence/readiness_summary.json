@@ -1,0 +1,20 @@
+{
+  "claudecode": {
+    "exit_code": 0,
+    "timed_out": false,
+    "marker_returned": true,
+    "shell_cwd_seen": false
+  },
+  "pi": {
+    "exit_code": 1,
+    "timed_out": false,
+    "marker_returned": false,
+    "shell_cwd_seen": false
+  },
+  "opencode": {
+    "exit_code": 1,
+    "timed_out": false,
+    "marker_returned": false,
+    "shell_cwd_seen": false
+  }
+}

@@ -1,0 +1,252 @@
+--- a/evaluator/tests/test_workspace.py
++++ b/evaluator/tests/test_workspace.py
+@@ -1,7 +1,10 @@
+ from __future__ import annotations
+ 
+ import sys
++import os
++import shutil
+ import tempfile
++import threading
+ import unittest
+ from pathlib import Path
+ from unittest import mock
+@@ -11,6 +14,7 @@
+ sys.path.insert(0, str(EVALUATOR_DIR))
+ import workspace
+ import common
++import integrity
+ 
+ 
+ class WorkspaceDocumentationTest(unittest.TestCase):
+@@ -112,6 +116,230 @@
+             self.assertEqual(binding["parent_workspace"], str(parent.resolve()))
+             self.assertEqual(binding["workspace"], str(child.resolve()))
+ 
++    def test_context_recovery_preserves_initial_source_and_current_edits(self):
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            case_dir, sealed, candidate = root / "case", root / "sealed", root / "workspace"
++            seed = case_dir / "public/candidate_seed"
++            seed.mkdir(parents=True)
++            sealed.mkdir()
++            (seed / "candidate.py").write_text("VERSION = 1\n")
++            (seed / "helper.py").write_text("VALUE = 'initial'\n")
++            for path in (case_dir / "case.json", case_dir / "public/comparator.json"):
++                path.write_text("{}\n")
++            (case_dir / "public/config.py").write_text("WIDTH = 2\n")
++            (sealed / "certification.json").write_text('{"status":"ready"}')
++            case = {"case_id": "fake.case", "workspace": "public/candidate_seed",
++                    "module": "candidate.py", "entry": "entry", "config": "public/config.py",
++                    "comparator": "public/comparator.json", "environment": "fake"}
++            with mock.patch.object(workspace, "_environment_summary", return_value={"profile": "original"}), \
++                    mock.patch.object(workspace.profile_modes, "enabled_modes", return_value={}):
++                workspace.init_workspace(case_dir, sealed, case, candidate)
++            context = candidate / ".benchmark_context"
++            protection = root / "protection"
++            integrity.capture_protection(protection, {
++                "context": integrity.ProtectionRoot(context, "context", readonly=True),
++            })
++            (candidate / "candidate.py").write_text("VERSION = 2\n")
++            (candidate / "helper.py").write_text("VALUE = 'optimized'\n")
++            (case_dir / "public/config.py").write_text("WIDTH = 999\n")
++            original_candidate = workspace.source_manifest(candidate)
++            initial = context / "starting_point/candidate.py"
++            initial.chmod(0o644)
++            initial.write_text("fake initial\n")
++            (context / "config.py").unlink()
++            shutil.rmtree(context / "starting_point")
++            (context / "starting_point").write_text("wrong type")
++            (context / "extra").write_text("rogue")
++            report = integrity.check_and_restore(protection, "context")
++            self.assertTrue(report.restored_paths)
++            self.assertEqual(initial.read_text(), "VERSION = 1\n")
++            self.assertEqual((context / "starting_point/helper.py").read_text(), "VALUE = 'initial'\n")
++            self.assertEqual(workspace.source_manifest(candidate), original_candidate)
++            self.assertEqual((context / "config.py").read_text(), "WIDTH = 2\n")
++            self.assertEqual((context / "environment.json").read_text(), '{\n  "profile": "original"\n}\n')
++            self.assertEqual(initial.stat().st_mode & 0o777, 0o444)
++            self.assertFalse((context / "extra").exists())
++
++
++class CandidateCopyTest(unittest.TestCase):
++    def setUp(self):
++        self.temporary = tempfile.TemporaryDirectory()
++        self.addCleanup(self.temporary.cleanup)
++        self.root = Path(self.temporary.name)
++        self.source, self.target = self.root / "source", self.root / "target"
++        (self.source / "helpers/deep/empty").mkdir(parents=True)
++        (self.source / "candidate.py").write_text("import helpers.kernel\n")
++        (self.source / "helpers/kernel.py").write_text("VERSION = 1\n")
++        (self.source / "参数.bin").write_bytes(b"\x00\xff\x01")
++
++    def test_complete_independent_copy_excludes_outputs_and_caches_recursively(self):
++        for parent in (self.source, self.source / "helpers"):
++            for name in workspace.CANDIDATE_EXCLUDES:
++                directory = parent / name
++                directory.mkdir()
++                (directory / "ignored").write_text("ignored")
++            for name in ("ignored.pyc", "ignored.pyo"):
++                (parent / name).write_bytes(b"cached")
++        manifest = workspace.copy_candidate_tree(self.source, self.target)
++        self.assertEqual(manifest, workspace.source_manifest(self.source))
++        self.assertEqual(manifest, workspace.source_manifest(self.target))
++        self.assertEqual([item["path"] for item in manifest["files"]],
++                         ["candidate.py", "helpers/kernel.py", "参数.bin"])
++        self.assertEqual((self.target / "参数.bin").read_bytes(), b"\x00\xff\x01")
++        self.assertTrue((self.target / "helpers/deep/empty").is_dir())
++        self.assertNotEqual((self.target / "candidate.py").stat().st_ino,
++                            (self.source / "candidate.py").stat().st_ino)
++        for excluded in workspace.CANDIDATE_EXCLUDES:
++            self.assertFalse((self.target / excluded).exists())
++            self.assertFalse((self.target / "helpers" / excluded).exists())
++
++    def test_hash_tracks_names_and_bytes_but_not_cached_outputs(self):
++        original = workspace.source_manifest(self.source)["content_sha256"]
++        (self.source / ".benchmark_outputs").mkdir()
++        (self.source / ".benchmark_outputs/result.json").write_text("new result")
++        (self.source / "cache.pyc").write_bytes(b"cache")
++        self.assertEqual(workspace.source_manifest(self.source)["content_sha256"], original)
++        (self.source / "helpers/kernel.py").rename(self.source / "helpers/renamed.py")
++        renamed = workspace.source_manifest(self.source)["content_sha256"]
++        self.assertNotEqual(original, renamed)
++        (self.source / "helpers/renamed.py").write_text("VERSION = 2\n")
++        self.assertNotEqual(renamed, workspace.source_manifest(self.source)["content_sha256"])
++
++    def test_source_links_and_fifos_fail_without_publishing_or_reading_outside(self):
++        sentinel = self.root / "sentinel"
++        sentinel.write_text("outside")
++        for name, directory in (("linked.py", False), ("linked_dir", True), ("__pycache__", False)):
++            with self.subTest(name=name):
++                node = self.source / name
++                node.symlink_to(sentinel if not directory else self.root, target_is_directory=directory)
++                with self.assertRaises(workspace.InvalidWorkspaceError) as failure:
++                    workspace.copy_candidate_tree(self.source, self.target)
++                self.assertEqual(failure.exception.error_code, "invalid_workspace")
++                node.unlink()
++                self.assertFalse(self.target.exists())
++                self.assertEqual(sentinel.read_text(), "outside")
++        fifo = self.source / "pipe"
++        os.mkfifo(fifo)
++        with self.assertRaises(workspace.InvalidWorkspaceError):
++            workspace.copy_candidate_tree(self.source, self.target)
++        self.assertFalse(self.target.exists())
++        self.assertFalse(list(self.root.glob(".target.copy_*")))
++
++    def test_source_root_and_ancestor_links_are_rejected(self):
++        alias = self.root / "alias"
++        alias.symlink_to(self.source, target_is_directory=True)
++        for source in (alias, alias / "helpers"):
++            with self.subTest(source=source), self.assertRaises(workspace.InvalidWorkspaceError):
++                workspace.copy_candidate_tree(source, self.target)
++        self.assertFalse(self.target.exists())
++
++    def test_link_substituted_after_scan_is_rejected_without_publishing(self):
++        sentinel = self.root / "sentinel"
++        sentinel.write_text("outside")
++        actual_copy = workspace._copy_source_file
++
++        def swap_during_copy(source, target, entry):
++            source.unlink()
++            source.symlink_to(sentinel)
++            return actual_copy(source, target, entry)
++
++        with mock.patch.object(workspace, "_copy_source_file", side_effect=swap_during_copy):
++            with self.assertRaises(workspace.InvalidWorkspaceError):
++                workspace.copy_candidate_tree(self.source, self.target)
++        self.assertFalse(self.target.exists())
++        self.assertEqual(sentinel.read_text(), "outside")
++        self.assertFalse(list(self.root.glob(".target.copy_*")))
++
++    def test_target_links_and_nonempty_target_never_overwrite_existing_files(self):
++        outside = self.root / "outside"
++        outside.mkdir()
++        sentinel = outside / "sentinel"
++        sentinel.write_text("outside")
++        self.target.symlink_to(outside, target_is_directory=True)
++        for destination in (self.target, self.target / "child"):
++            with self.subTest(destination=destination), self.assertRaises(workspace.InvalidWorkspaceError):
++                workspace.copy_candidate_tree(self.source, destination)
++        self.assertEqual(sentinel.read_text(), "outside")
++        self.assertFalse((outside / "child").exists())
++        self.target.unlink()
++        self.target.mkdir()
++        (self.target / "existing.py").write_text("existing")
++        with self.assertRaises(workspace.InvalidWorkspaceError):
++            workspace.copy_candidate_tree(self.source, self.target)
++        self.assertEqual((self.target / "existing.py").read_text(), "existing")
++        self.assertFalse((self.target / "candidate.py").exists())
++
++    def test_parallel_edit_retries_and_publishes_one_consistent_tree(self):
++        copying, edited = threading.Event(), threading.Event()
++        actual_copy = workspace._copy_source_file
++        first = True
++        errors = []
++
++        def edit():
++            try:
++                if not copying.wait(3):
++                    raise AssertionError("copy was not reached")
++                (self.source / "helpers/kernel.py").write_text("VERSION = 2\n")
++            except BaseException as error:
++                errors.append(error)
++            finally:
++                edited.set()
++
++        def synchronized_copy(*args):
++            nonlocal first
++            if first:
++                first = False
++                copying.set()
++                self.assertTrue(edited.wait(3))
++            return actual_copy(*args)
++
++        worker = threading.Thread(target=edit)
++        worker.start()
++        try:
++            with mock.patch.object(workspace, "_copy_source_file", side_effect=synchronized_copy):
++                manifest = workspace.copy_candidate_tree(self.source, self.target)
++        finally:
++            worker.join(3)
++        self.assertFalse(worker.is_alive())
++        self.assertFalse(errors)
++        self.assertEqual((self.target / "helpers/kernel.py").read_text(), "VERSION = 2\n")
++        self.assertEqual(manifest, workspace.source_manifest(self.source))
++        self.assertEqual(manifest, workspace.source_manifest(self.target))
++
++    def test_continuously_changing_source_fails_after_three_retries_without_partial_publish(self):
++        actual_copy = workspace._copy_source_tree
++        attempts = []
++        self.target.mkdir()
++
++        def change_after_copy(*args):
++            actual_copy(*args)
++            attempts.append(1)
++            with (self.source / "candidate.py").open("a") as stream:
++                stream.write("# changed\n")
++
++        with mock.patch.object(workspace, "_copy_source_tree", side_effect=change_after_copy):
++            with self.assertRaisesRegex(workspace.InvalidWorkspaceError, "stably"):
++                workspace.copy_candidate_tree(self.source, self.target)
++        self.assertEqual(len(attempts), 4, "one attempt plus at most three retries")
++        self.assertFalse(list(self.target.iterdir()))
++        self.assertFalse(list(self.root.glob(".target.copy_*")))
++
++    def test_source_and_destination_overlap_is_rejected(self):
++        for target in (self.source, self.source / "child", self.root):
++            with self.subTest(target=target), self.assertRaises(workspace.InvalidWorkspaceError):
++                workspace.copy_candidate_tree(self.source, target)
++        self.assertEqual((self.source / "candidate.py").read_text(), "import helpers.kernel\n")
++
++    def test_non_utf8_filename_is_rejected_before_publishing(self):
++        filename = os.fsencode(self.source) + b"/invalid_\xff.py"
++        with open(filename, "wb") as stream:
++            stream.write(b"source")
++        with self.assertRaises(workspace.InvalidWorkspaceError):
++            workspace.copy_candidate_tree(self.source, self.target)
++        self.assertFalse(self.target.exists())
++        self.assertFalse(list(self.root.glob(".target.copy_*")))
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

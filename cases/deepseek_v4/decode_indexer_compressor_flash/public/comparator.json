@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "kv": {
+      "method": "ratio_allclose",
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 0.0
+    },
+    "compress_state": {
+      "method": "ratio_allclose",
+      "rtol": 0.001,
+      "atol": 0.001,
+      "max_error_ratio": 0.0
+    },
+    "idx_kv_cache": {
+      "method": "ratio_allclose",
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 7.62939453125e-08
+    }
+  }
+}

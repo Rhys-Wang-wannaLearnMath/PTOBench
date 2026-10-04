@@ -1,0 +1,45 @@
+{
+  "stage": "S1",
+  "unit_tests": {
+    "integrity_final.log": {
+      "exit_code": 0,
+      "tests": 16,
+      "seconds": 0.248,
+      "sha256": "a8dc688eaacf989e9966c60670966f99a762526dfd230e062721388ea03b1bfd"
+    },
+    "workspace_final.log": {
+      "exit_code": 0,
+      "tests": 14,
+      "seconds": 0.097,
+      "sha256": "9ed9bfbdac32dc2bda8346ea2655154cbc837e8088cf57240c9502fe6e65a194"
+    },
+    "unittest_final.log": {
+      "exit_code": 0,
+      "tests": 41,
+      "seconds": 2.458,
+      "sha256": "7f4491f6a6d738f22b634374c641397770a93dbcbb36b3c1931512d6c451a0cf"
+    }
+  },
+  "source_sha256": {
+    "benchmarks/pypto_lib_bench-v0.2/evaluator/workspace.py": "bc3a8effcfc54c3c930d454d40f1fdb7429f8492cc5274d5b6f276c884eb663c",
+    "benchmarks/pypto_lib_bench-v0.2/evaluator/file_tree.py": "b8f09a8c92d42c9be590d55a2f0af0eb418b55aadb3a2d9110a73eb15e6fa524",
+    "benchmarks/pypto_lib_bench-v0.2/evaluator/integrity.py": "b2824a06399d477c5199bd402a1908e73d055a5fb325ca82f5d85f80c0deb959",
+    "benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_integrity.py": "ddec60f9f5618ef26516024d0ad27f2397ff93896f00cdbd99b7f525b319974e",
+    "benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_workspace.py": "9ad05a4b08b6bdbd1545301913f5e94e2a9c196293ec3fecd9a4b1402d994d8c"
+  },
+  "preservation": {
+    "canonical_file_count": 6701,
+    "non_tensor_content_hash_count": 3709,
+    "tensor_metadata_count": 2992,
+    "tensor_gib": 216.98,
+    "canonical_changed_paths": [],
+    "previous_tracked_file_count": 297,
+    "previous_tracked_changed_paths": [],
+    "git_index_unchanged": true,
+    "tensor_verification": "Tensor files checked by size/mtime_ns/mode, not full byte hashes. No real asset writes or hardware runs."
+  },
+  "report_sha256": "a2aa3dd5637766c3aa0d8ecf736fcf682155f521e7cafdc96f7c5f150b2c4747",
+  "report_links_verified": true,
+  "S0_existing_tests_preserved_except_workspace": true,
+  "S2_preconditions_met": true
+}

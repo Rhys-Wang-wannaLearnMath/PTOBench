@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "kv_cache": {"method": "allclose", "rtol": 0.004, "atol": 0.004},
+    "pe_cache": {"method": "allclose", "rtol": 0.004, "atol": 0.004},
+    "k_cache_idx": {"method": "allclose", "rtol": 0.004, "atol": 0.004},
+    "dispatch_buf": {"method": "allclose", "rtol": 0.004, "atol": 0.004}
+  }
+}

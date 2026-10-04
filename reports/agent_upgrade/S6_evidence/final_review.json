@@ -1,0 +1,7 @@
+{
+  "benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_integration_acceptance.md": "all local links resolve",
+  "benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/final_acceptance.md": "all local links resolve",
+  "global_marker": "absent",
+  "retired_entries": "absent",
+  "preservation": "tracked diff and historical reports unchanged"
+}

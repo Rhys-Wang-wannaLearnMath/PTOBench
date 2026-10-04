@@ -1,0 +1,1 @@
+{"schema_version": 1, "outputs": {"hidden_states_out": {"method": "ratio_allclose", "rtol": 0.01, "atol": 0.01, "max_error_ratio": 0.02}}}

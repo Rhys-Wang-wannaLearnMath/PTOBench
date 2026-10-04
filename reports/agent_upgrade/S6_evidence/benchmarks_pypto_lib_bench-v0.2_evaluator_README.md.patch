@@ -1,0 +1,20 @@
+--- benchmarks/pypto_lib_bench-v0.2/evaluator/README.md.before
++++ benchmarks/pypto_lib_bench-v0.2/evaluator/README.md
+@@ -110,6 +110,17 @@
+ record and logs are bound durably; it then uses the existing environment and
+ measurement lifecycle. Maintenance invocations without that pipe proceed
+ normally. The pipe is consumed before environment re-exec.
++
++Direct acceptance controls use `session_actions.run_maintenance_process(argv,
++environment, action_dir)` while the caller holds `session.execution_lock()`.
++Prepare a fresh `action_dir/workspace` below benchmark `runs/`, call the existing
++`evaluate.py` with its actual `--case`, `--candidate`, `--phase`, `--profile-mode`
++and `--result` parameters, and use a new directory for each call. This internal
++API shares the start gate, durable PID marker, dual logs, TERM/KILL/reap and
++abandoned-worker recovery with exploration and finish. It charges no Session
++action and publishes no official score. Arbitrary direct host scripts do not
++automatically acquire this protection. For fresh Seed qualification, use the
++[Session recipe](../../mig_workflow/SESSION_ACCEPTANCE.md).
+ 
+ S4's [finalization API](FINALIZE.md) selects validated, protected observations
+ and runs one clean final evaluation. `snapshots.select_best_snapshot` performs

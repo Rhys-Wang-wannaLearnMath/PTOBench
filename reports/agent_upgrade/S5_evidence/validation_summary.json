@@ -1,0 +1,52 @@
+{
+  "public_implementation": "PASS",
+  "S5_tests": {
+    "status": "PASS",
+    "count": 15,
+    "seconds": 123.592
+  },
+  "full_regression": {
+    "status": "FAIL",
+    "count": 136,
+    "seconds": 295.068,
+    "failed_subtests": 21,
+    "S5_failures": 0,
+    "defects": "regression_defects.json"
+  },
+  "backend_real_smoke": {
+    "codex": "PASS",
+    "claudecode": "PASS",
+    "pi": "BLOCKED_missing_selected_model_api_key",
+    "opencode": "BLOCKED_missing_token"
+  },
+  "latest_installs_verified": true,
+  "python": "3.10.20",
+  "PyYAML": "6.0.3",
+  "preservation": {
+    "baseline_canonical_files": 7245,
+    "baseline_tensor_metadata_records": 3291,
+    "baseline_non_tensor_hashes": 3954,
+    "canonical_changed_count": 609,
+    "canonical_added_count": 350,
+    "tracked_changed_count": 0,
+    "previous_public_and_history_changed_paths": [
+      "benchmarks/pypto_lib_bench-v0.2/README.md"
+    ],
+    "index_unchanged": true,
+    "real_smoke_case_changed": false
+  },
+  "S6_started": false,
+  "implementation_sha256": {
+    "launcher/__init__.py": "633a1832bb77ff406c0db1624524520625e44669fc1610879166577e2887bf3c",
+    "launcher/adapters.py": "989332b553e729cb7e31dff26bc7feea56465a24e297841a03f23dc923546002",
+    "launcher/config.py": "f535cb3a35bda69892f015f0ddc8823340a7995431483a76f79bab5339e64b18",
+    "launcher/main.py": "0c1561d5e4cff58dd077fd8d6930207355455f5f7c43d0d72c92608f8cbc7bb4",
+    "launcher/preflight.py": "b3f5aa839d317a526b79003fdbc0e5a3b26648a1ffc31df9b65677ed1f865838",
+    "launcher/profiles/claudecode/default.yaml": "7429ac460f7ef279c992996cc5deb77b6524663805796a29d24b8a40c621f0ab",
+    "launcher/profiles/codex/default.yaml": "287348315695a4076596305076edd74fadc730b499601613efb6956a2f56ef03",
+    "launcher/profiles/opencode/default.yaml": "42bf412f210696df21bc7628ee080533692732c961a1cc16fca8e15ccfdc1a56",
+    "launcher/profiles/pi/default.yaml": "af17ee33ffd1f6dfe35fb0d6fb0b714e8533489c9414c33bb05a1ec08dfa94b3",
+    "launcher/prompt.py": "7714f14cc44e489bb3b625f7f511eaeb7035c0e710517fff2ae90f8b437aeba1",
+    "launcher/runner.py": "382db94ae8fdc831eaafeef8000b9f458f19c474f910fb7ae1f9f96034da4c55"
+  }
+}

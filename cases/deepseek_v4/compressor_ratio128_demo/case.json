@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.compressor_ratio128_demo",
+  "description": "DeepSeek-V4 DEMO decode KV compressor, compression ratio 128, one step",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "compressor_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["kv", "kv_state", "score_state", "kv_cache"]},
+  "state": {"behavior": "mutating", "initial_state": ["kv_state", "score_state", "kv_cache"], "restore_before_each_launch": true}
+}

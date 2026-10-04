@@ -1,0 +1,186 @@
+benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S2_session_and_budget.md
+# S2：Session、路径、锁和预算
+
+阶段：S2。日期：2026-10-03（Asia/Shanghai）。结论：**PASS，满足进入 S3 的条件。**
+
+依据：已读取 `docs/10_stage_prompts.md` 的共同约束、`Benchmark升级/plan/README.md`、`10_cli_cutover.md`、`01_interfaces_and_layout.md`、`03_session_and_budget.md` 和 `08_execution_steps.md`；核对 [S0 报告](S0_baseline.md)、[S1 报告](S1_file_integrity.md) 与实际 `workspace`、`file_tree`、`integrity`、`common`、`profile_modes` API。未重新实施 S0/S1，未改写原报告或证据。
+
+本次实现 S2 内部 Python API、临时资产测试、使用说明与报告。没有实现新 Agent CLI、Evaluator 执行器、真实 Snapshot 发布、最终候选选择或 Launcher；旧 `bench` 和 `evaluator/bench.py` 留给 S3 删除。没有运行真实 Optimizer、硬件或真实 Case 的 Ref 准备。
+
+## 修改和接口
+
+| 新文件 | 行为与用途 |
+| --- | --- |
+| [session.py](../../evaluator/session.py) | 创建/读取 Session、冻结路径/schema、workspace registry、全局/Session 锁、保护记录提交、探索/finish 预占、active_action、关闭探索和残留记录处理 |
+| [SESSION.md](../../evaluator/SESSION.md) | 内部 API 参数、完整调用约定、锁顺序、预算和中断语义，以及 S3/S4/S5 接入边界 |
+| [test_session.py](../../evaluator/tests/test_session.py) | 16 项 Session/资产/路径/恢复/创建和 fork 中断测试 |
+| [test_budget.py](../../evaluator/tests/test_budget.py) | 17 项额度、锁、收尾、finish、并发和残留进程测试 |
+| [session_test_support.py](../../evaluator/tests/session_test_support.py) | 假 ready Case、预备小文件、假官方 spec builder；禁止 tensor 生成与实现入口执行 |
+| [preserve.py](S2_evidence/preserve.py) | 只读保存前后 canonical、tracked、原公共文件及 S0/S1 证据摘要 |
+
+固定设计 API 已提供：
+
+```python
+create_session(case_id, optimizer, output=None, budget=None) -> SessionHandle
+read_session(session_root, repair=True) -> SessionRecord
+register_workspace(session_root, workspace_path, parent_id=None) -> workspace_id
+reserve_action(session_root, event_seq, kind, *, workspace_path, mode=None,
+               source_manifest) -> usage
+close_exploration(session_root, reason) -> None
+```
+
+benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S0_baseline.md
+# S0：基线检查与公共测试修缮
+
+阶段：S0。日期：2026-10-02。
+
+结论：**S0 公共基线修缮 PASS，满足进入 S1 的条件。Case 资产存在 BLOCKED 项，未将它们记为通过。**
+
+依据：已按顺序阅读 `Benchmark升级/plan/README.md`、`08_execution_steps.md`，并阅读该目录全部设计文档。本次执行 `00_baseline_and_scope.md` 的 S0；S1～S7 未实施，未运行 NPU 评测或 profiling。S7 仍是升级后的必需全量验收阶段。
+
+## 当前版本与工作区
+
+- Git revision：`9c5dfec2dfa18f056098000123e10de06de32426`。本工作区有大量已有暂存、未暂存和未跟踪内容，实际测试对象是当前工作区，不能仅以 HEAD 代表当前实现。
+- 操作前完整状态：[git_status_before.txt](S0_evidence/git_status_before.txt)；原 index：[git_index_before.txt](S0_evidence/git_index_before.txt)；操作后状态：[git_status_after.txt](S0_evidence/git_status_after.txt)。未执行 reset、clean、checkout、暂存或提交。
+- 正式 Python：`.venv-official/bin/python`，实际为 CPython 3.10.20、aarch64；安装包版本包括 torch `2.6.0+cpu`、PyPTO `0.1.0`、numpy `2.2.6`。未使用普通 Python 代替正式环境。
+- 工具路径及全部 Case environment JSON 保存于 [environment.json](S0_evidence/environment.json)。版本查询见 [toolchain_versions.json](S0_evidence/toolchain_versions.json)：Codex `0.159.2`、PTOAS `0.60`、CANN bisheng/clang `15.0.5`；PTOAS 路径 `/data1/home/ziruiwang/ptoas-v0.60/bin/ptoas`，CANN setup 路径 `/usr/local/Ascend/cann-9.0.0/cann/set_env.sh`。
+- PyYAML 尚未安装；按规划属于 S5 的依赖准备，不是本次 CPU 回归的依赖。未将工具路径存在或 CPU 测试结果解释为 NPU 可用性验收。
+
+规划中的 189 个 Case / 153 ready / 12 项测试是此前记录。本次实测为 **192 个 Case、156 ready、36 pending、14 项测试**，未固定旧数量作为断言。
+
+## 实际修改
+
+实现修改仅发生在公共测试 [test_case_comparators.py](../../evaluator/tests/test_case_comparators.py)，原文件及精确差异分别保存为 [test_case_comparators.before.py](S0_evidence/test_case_comparators.before.py) 和 [test_case_comparators.patch](S0_evidence/test_case_comparators.patch)。此外新增本报告、原始证据、资产清单及只读清单采集脚本；没有新增 Bench runtime 功能。
+
+1. 测试内明确适配 `_compare`、`_make_compare`、`make_compare` 三种实际构造入口，支持 `(case_dir, case)` 与 `(case_dir, case, config)`。入口缺失、歧义及未知签名直接失败，不 catch 后跳过。需要时执行 canonical public config；`runpy.run_path` 正确处理带 postponed annotations 的 dataclass，并恢复临时模块登记。
+2. 使用按 Case、output、example 划分的 subTest，使某个错误不阻止其余 Case 的检查；任何 subTest 失败仍使整套测试非零退出。
+3. 保留标准方法的正反例、Case-local ownership、输出覆盖、callback 不接受 `rtol/atol` 参数等检查。增加 ready certification 与当前 comparator SHA-256 一致性检查，并用宽松调用端容差验证 public policy 不被覆盖。
+4. 删除自定义比较器的无条件 `continue`。为全部 8 类自定义规则提供 callback ABI 所需的输出 dtype/rank、paired outputs、INT32 expert counts、slot mapping、chunk lengths/offsets。按 config/policy 保留 top-k 长度、offset、receive capacity 和 EP2/EP4 metadata 行数；与比较无关的 feature/batch 维度缩小，测试不加载巨量正式 Fixture、不执行 kernel。
+5. 自定义正反例还覆盖 tie permutation、有效/无效 receive rows、active/inactive mapped rows、缺失绑定 metadata、未选择 chunk rows、INT8 LSB 边界。未知自定义规则明确失败。
+6. 全部现存 evaluator 均检查，包括 pending 中的现存实现；ready 缺 evaluator 必须失败。9 个缺 evaluator 的非 ready Case 明确输出 `NOT_RUN` 并进入 pending 资产清单，不将其计入 comparator 执行成功数。
+
+实际构造 **183 个 Case 的 486 个 callback**：标准方法 435 个，自定义方法 51 个。156 个 ready Case 全部覆盖，另覆盖 27 个 pending Case 的 comparator；这不构成 pending Case 的认证或 NPU 正确性结论。
+benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S4_finalize.md
+# S4：候选选择与最终复核
+
+阶段：S4。日期：2026-10-03（Asia/Shanghai）。结论：**PASS（公共实现、CPU 假 Evaluator 验收）**。最终 **122 tests / 182.167s，OK，exit 0**：原有 100 项 S0～S3 回归 + 新增 22 项 S4 测试，无 skip/expectedFailure。满足进入 S5 的公共前置条件，本轮没有实施 Launcher/Adapter 或自动触发逻辑，没有执行真实 Optimizer、NPU、真实 Case prepare-ref、真实 profiling 或正式测量验收。
+
+依据：`docs/10_stage_prompts.md` 共同约束、`Benchmark升级/plan/{README,10_cli_cutover,05_finalize,08_execution_steps}.md`。已核对 S0～S3 报告及实际 API；原阶段报告和证据均保留，未重做 S1 保护/复制/context 或 S0 comparator 修缮。
+
+## 实际修改与接口
+
+| 文件 | S4 行为 |
+| --- | --- |
+| [snapshots.py](../../evaluator/snapshots.py) | Selection、历史登记/事件/权威结果/source/metadata 校验，确定性选择，两个内部公开 Python API |
+| [finalize.py](../../evaluator/finalize.py) | FinalResult、干净 final workspace/context、独立 finish、共享执行/事后检查、正式结果、失败与幂等恢复 |
+| `session.py` | `_commit` 支持额外保护 records；`complete_action` 一次提交 finish event、Session 终态/时间、清除 active、完整 Evaluator bytes 和 final_result |
+| `session_actions.py` | 全局残留恢复根据 action kind 使用 final/workspace 或探索 staging；执行/停止/信号/后检/结果验证 helper 本身不变 |
+| [test_finalize.py](../../evaluator/tests/test_finalize.py) | 22 项选择、最终成绩、失败、篡改、并发、真实假进程/崩溃恢复测试 |
+| `tests/action_test_support.py` | 假 Evaluator 可配置已有 median/speedup，记录执行前目录状态；S3 默认行为保留 |
+| [FINALIZE.md](../../evaluator/FINALIZE.md) 与当前公共 README/SESSION/AGENT_CLI | 使用说明、S5 caller 前提、返回 schema、幂等/中断与正式成绩来源 |
+
+按设计提供：
+
+```python
+snapshots.select_best_snapshot(session_root) -> Selection | None
+snapshots.finalize_session(session_root, close_reason) -> FinalResult
+```
+
+finalize 实现分在公共 `finalize.py`，由 snapshots 的内部入口调用。两个入口自己取得全局锁；内部执行全程使用 caller-held S3 helper，不调用公开 CLI、不递归取得同一执行锁。不新增 Agent finalize 命令；旧 bench/parser 继续不存在。选择无硬件调用，正式复核直接运行现有 evaluate.py。
+
+## 历史候选与确定性选择
+
+先恢复 Session/events/authority records 及只读 Snapshot source/metadata，核对 Snapshot 保护名称/绝对路径/readonly、Session/Case/Optimizer、event_seq、来源 workspace、source manifest/hash、完整 Evaluator JSON 与 observation。只考虑来源 completed event 成功、correctness PASS、integrity PASS、正式保护登记完成的 Snapshot。meta/observation 必须与来源 authority 和事件一致；源码须与该动作保护清单一致。
+benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S5_launcher_and_adapters.md
+# S5 — Launcher、YAML 与四种 Optimizer Adapter
+
+日期：2026-10-03；仓库：`/data1/home/ziruiwang/pypto-lib`。仅实施 S5，未实施 S6。
+
+公共实现和假工具闭环已完成；Codex、ClaudeCode 的真实 NPU Session 均 PASS。
+pi、OpenCode 已安装至 npm latest，但默认宿主认证未就绪，真实运行 BLOCKED。
+全库回归 **FAIL**：一个既有 Comparator inventory 测试出现 21 个子测试失败，
+涉及同时发生变化的 Case；S5 Launcher 测试没有失败。不能将本次全库回归写成 PASS。
+
+## 依据与改动
+
+已核对 `docs/10_stage_prompts.md` 共同约束、plan README、
+`06_launcher_and_adapters.md`、`08_execution_steps.md`、CLI 切换决定和 S0～S4
+报告/实际 API。复用 S1 文件保护、S2 Session、S3 action/process recovery、
+S4 Snapshot 选择与 finalize；没有重写测量、workspace 或 Comparator 公共实现。
+
+新增文件：`pto-launcher`、`launcher/{config,preflight,prompt,adapters,runner,main}.py`、
+四个 `launcher/profiles/<backend>/default.yaml`、`requirements.txt`、
+`examples/experiment.yaml`、`LAUNCHER.md`、`evaluator/tests/test_launcher.py`。
+benchmark README 增加使用说明链接；根项目包名、发布结构与 Git index 不变。
+
+- `run EXPERIMENT.yaml` / `status SESSION_ROOT` 是唯一实验入口。旧 `bench` 和
+  `evaluator/bench.py` 不存在，preflight 也拒绝它们重新出现。
+- YAML 使用 `yaml.safe_load`，严格检查 mapping、重复键、未知字段、ID、预算、
+  命名 profile、managed 路径和目录重叠。默认 profile/output/budget 为
+  default、YAML 相对 runs/snapshots、20/1；错误配置在创建 Session 前失败。
+- benchmark 的局部依赖仅 `PyYAML>=6,<7`；已在 `.venv-official` 安装 **6.0.3**，
+  Python **3.10.20**。测试保留 venv 解释器路径，避免 resolve symlink 后丢失依赖。
+- preflight 只检查已准备 Case 资产、Python/CANN/PTOAS、目标设备健康、工具版本/
+  参数及已有认证；不生成 Fixture、不准备 Ref、不执行测量。宿主 CANN 安装中的
+benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S1_file_integrity.md
+# S1：文件保护、恢复和源码复制
+
+阶段：S1。日期：2026-10-03（Asia/Shanghai）。结论：**PASS，满足进入 S2 的条件。**
+
+依据：已核对 [S0 报告](S0_baseline.md)，读取 `01_interfaces_and_layout.md`、`02_file_integrity.md`、`08_execution_steps.md`。用户指定的 `Benchmark升级/plan/10_stage_prompts.md` 当前不存在；搜索找到了实际文件 `docs/10_stage_prompts.md`，已读取其共同约束及 S1 prompt，并修正 `08_execution_steps.md` 指向它的失效链接。没有改变阶段范围或执行顺序。
+
+本次仅实现 S1 公共工具、测试与说明，没有实现 Session/预算生命周期、Agent CLI、Launcher、Optimizer 或硬件执行。S0 已记录的 Case 资产缺项继续保留。
+
+## 修改内容与接口
+
+| 文件 | 实际行为 |
+| --- | --- |
+| [workspace.py](../../evaluator/workspace.py) | 抽出 `copy_candidate_tree`、`source_manifest`、`write_context`；init/fork 复用公共入口；多文件及 helper 递归复制，空目录保留，稳定副本发布，context 仍为 0444 |
+| [file_tree.py](../../evaluator/file_tree.py) | 共享的目录描述符操作、无链接扫描、固定文件描述符 SHA-256、独立流式复制、无链接删除、同目录原子替换；复用 `common.sha256_file` |
+| [integrity.py](../../evaluator/integrity.py) | 清单、独立备份、分组检查/恢复、原子记录提交及新根登记；不重新建立已存在保护基线 |
+| [test_integrity.py](../../evaluator/tests/test_integrity.py) | 16 项临时资产行为测试，含真实子进程提交中断和多进程并发 |
+| [test_workspace.py](../../evaluator/tests/test_workspace.py) | 扩充至 14 项，覆盖多文件、排除项、稳定 hash、并发修改、类型/链接拒绝、旧 init/fork 及 context 恢复 |
+| [Evaluator README](../../evaluator/README.md) | 说明公共 API、清单/备份格式、错误码、hash 序列化、恢复和提交语义，以及后续 Session 调用约定 |
+
+实现的固定 API：
+
+```python
+capture_protection(protection_root, roots) -> dict
+check_only(protection_root, groups=None) -> IntegrityReport
+check_and_restore(protection_root, groups=None) -> IntegrityReport
+commit_records(protection_root, replacements) -> None
+```
+
+`roots` 使用 `{logical_name: ProtectionRoot(path, group, readonly=False)}`。清单保存冻结的绝对路径、根节点类型、全部普通文件/目录和空目录、mode、文件 SHA-256 及 `backups/<sha256>` 位置。不存在的最终记录按 expected absence 登记；保护清单只排除 `__pycache__`、`.pyc/.pyo`，不排除 `.pt` 或 Ref 输出。
+
+benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S3_cli_events_and_snapshots.md
+# S3：CLI、事件、冻结源码与 Snapshot
+
+结论：**PASS（公共实现与假 Evaluator CPU 验收）**。最终 **100 tests / 94.742s，OK，exit 0**，包含原有 74 项 S0/S1/S2 回归与 26 项 S3 测试，无 skip/expectedFailure。S3 门槛已满足，可进入 S4；本次没有实施 S4，也没有执行真实 NPU、真实 profiling、真实 Optimizer、真实 Case prepare-ref 或正式测量。
+
+执行日期：2026-10-03（Asia/Shanghai）。依据 `docs/10_stage_prompts.md` 共同约束及 `Benchmark升级/plan/{README,10_cli_cutover,01_interfaces_and_layout,04_cli_events_and_snapshots,08_execution_steps}.md`。已核对 S0、S1、S2 报告与实际 API，保留原报告/证据，不重做 S1 文件保护或源码复制。
+
+## 实际修改
+
+| 文件 | S3 行为 |
+| --- | --- |
+| `ptobench`、`evaluator/agent_cli.py` | 仅五种操作；位置参数默认 `.`；强制 Session 环境；JSON 结果/固定退出码；不做 bootstrap、不 import torch/PyPTO |
+| `evaluator/session_actions.py` | 全局恢复、事前恢复/检查、稳定冻结、预占、现有 Evaluator 子进程、双路日志、进程组清理、事后校验、结果验证、权威提交/事件/诊断发布 |
+| `evaluator/snapshots.py` | 从同一冻结源码创建唯一 readonly Snapshot，验证 metadata/source，再登记 S1 保护，最后允许事件引用 |
+| `evaluator/session.py` | 提供已持锁 fork、非硬件事件、Session failure；completion observation/state；状态读取修复记录时保存 active integrity witness；拒绝会恢复旧入口/parser 的历史 Session |
+| `evaluator/common.py`、`evaluate.py` | 仅增加内部启动 pipe gate 与 main 首行调用；先持久绑定 PID/records/logs，再允许 Evaluator 解析/加载 Case。维护调用没有 gate 时照常执行 |
+| `profile_modes.py`、`workspace.py` | 增加 runtime/pmu/compiler 公开映射与 context 展示；更新生成 README 的 CLI、Session、额度、诊断与 fork 说明。内部模式/参数/产物语义保留 |
+| 新测试/假 Evaluator support | 真实 CLI subprocess + TemporaryDirectory 假 ready Case；实现文件与 tensor generation 入口设置为禁止执行，真实资产不被复制或准备 |
+| `README.md`、Evaluator README/SESSION、新 `AGENT_CLI.md` | 当前 CLI 与维护接口说明、日志背压限制、恢复与 S4 交接 |
+| 删除 `bench`、`evaluator/bench.py` | 无兼容链接、别名、转发或旧 parser；原字节仅存 S3 历史证据 `.before` 文件 |
+
+S2 测试的非功能命令 stub 与固定根断言从 `bench/public_bench` 改为 `ptobench/public_ptobench`，继续验证公共命令保护，没有降低测试标准。S1 的 `integrity.py`、`file_tree.py`、workspace 源码复制/hash 函数未改写；`workflow.py`、全部原有 common 函数、profile RunConfig 与 warmup/rounds 未改变。最终审计以 SHA-256/AST 核对这些事实，见 [validation_summary.json](S3_evidence/validation_summary.json)。
+
+## 执行与记录语义
+
+公开接口固定为：
+
+```text
+ptobench evaluate [WORKSPACE]
+ptobench profile runtime [WORKSPACE]
+ptobench profile pmu [WORKSPACE]

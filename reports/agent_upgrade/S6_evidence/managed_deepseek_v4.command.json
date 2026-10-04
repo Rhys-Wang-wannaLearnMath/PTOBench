@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+    "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/ptobench",
+    "profile",
+    "compiler"
+  ],
+  "cwd": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/workspaces/worker_000"
+}

@@ -1,0 +1,170 @@
+[
+  {
+    "backend": "pi",
+    "model": "glm-5.3-flash",
+    "argv": [
+      "/data1/home/ziruiwang/pypto-lib/benchmarks/mig_workflow/agent_provider/launch.py",
+      "pi",
+      "--print",
+      "--mode",
+      "json",
+      "--no-session",
+      "--no-extensions",
+      "--no-skills",
+      "--no-context-files",
+      "--tools",
+      "read",
+      "--provider",
+      "profile-gateway",
+      "--model",
+      "glm-5.3-flash",
+      "Use the read tool to read model-test.txt in the current directory. Reply with exactly its content."
+    ],
+    "exit_code": 0,
+    "tool_names": [
+      "read"
+    ],
+    "returned_models": [
+      "glm-5.3-flash"
+    ],
+    "token_received": true,
+    "elapsed_seconds": 15.018,
+    "log": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_provider_followup/pi_glm-5.3-flash.log",
+    "status": "PASS"
+  },
+  {
+    "backend": "pi",
+    "model": "deepseek-flash",
+    "argv": [
+      "/data1/home/ziruiwang/pypto-lib/benchmarks/mig_workflow/agent_provider/launch.py",
+      "pi",
+      "--print",
+      "--mode",
+      "json",
+      "--no-session",
+      "--no-extensions",
+      "--no-skills",
+      "--no-context-files",
+      "--tools",
+      "read",
+      "--provider",
+      "profile-gateway",
+      "--model",
+      "deepseek-flash",
+      "Use the read tool to read model-test.txt in the current directory. Reply with exactly its content."
+    ],
+    "exit_code": 0,
+    "tool_names": [
+      "read"
+    ],
+    "returned_models": [
+      "deepseek-flash"
+    ],
+    "token_received": true,
+    "elapsed_seconds": 3.412,
+    "log": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_provider_followup/pi_deepseek-flash.log",
+    "status": "PASS"
+  },
+  {
+    "backend": "pi",
+    "model": "gpt-6.1-sol",
+    "argv": [
+      "/data1/home/ziruiwang/pypto-lib/benchmarks/mig_workflow/agent_provider/launch.py",
+      "pi",
+      "--print",
+      "--mode",
+      "json",
+      "--no-session",
+      "--no-extensions",
+      "--no-skills",
+      "--no-context-files",
+      "--tools",
+      "read",
+      "--provider",
+      "profile-gateway",
+      "--model",
+      "gpt-6.1-sol",
+      "Use the read tool to read model-test.txt in the current directory. Reply with exactly its content."
+    ],
+    "exit_code": 0,
+    "tool_names": [
+      "read"
+    ],
+    "returned_models": [
+      "gpt-6.1-sol"
+    ],
+    "token_received": true,
+    "elapsed_seconds": 19.741,
+    "log": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_provider_followup/pi_gpt-6.1-sol.log",
+    "status": "PASS"
+  },
+  {
+    "backend": "opencode",
+    "model": "glm-5.3-flash",
+    "argv": [
+      "/data1/home/ziruiwang/pypto-lib/benchmarks/mig_workflow/agent_provider/launch.py",
+      "opencode",
+      "run",
+      "--format",
+      "json",
+      "--model",
+      "profile-gateway/glm-5.3-flash",
+      "Use the read tool to read model-test.txt in the current directory. Reply with exactly its content."
+    ],
+    "exit_code": 0,
+    "tool_names": [
+      "read"
+    ],
+    "returned_models": [],
+    "token_received": true,
+    "elapsed_seconds": 15.745,
+    "log": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_provider_followup/opencode_glm-5.3-flash.log",
+    "status": "PASS"
+  },
+  {
+    "backend": "opencode",
+    "model": "deepseek-flash",
+    "argv": [
+      "/data1/home/ziruiwang/pypto-lib/benchmarks/mig_workflow/agent_provider/launch.py",
+      "opencode",
+      "run",
+      "--format",
+      "json",
+      "--model",
+      "profile-gateway/deepseek-flash",
+      "Use the read tool to read model-test.txt in the current directory. Reply with exactly its content."
+    ],
+    "exit_code": 0,
+    "tool_names": [
+      "read"
+    ],
+    "returned_models": [],
+    "token_received": true,
+    "elapsed_seconds": 8.927,
+    "log": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_provider_followup/opencode_deepseek-flash.log",
+    "status": "PASS"
+  },
+  {
+    "backend": "opencode",
+    "model": "gpt-6.1-sol",
+    "argv": [
+      "/data1/home/ziruiwang/pypto-lib/benchmarks/mig_workflow/agent_provider/launch.py",
+      "opencode",
+      "run",
+      "--format",
+      "json",
+      "--model",
+      "profile-gateway/gpt-6.1-sol",
+      "Use the read tool to read model-test.txt in the current directory. Reply with exactly its content."
+    ],
+    "exit_code": 0,
+    "tool_names": [
+      "read"
+    ],
+    "returned_models": [],
+    "token_received": true,
+    "elapsed_seconds": 18.81,
+    "log": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_provider_followup/opencode_gpt-6.1-sol.log",
+    "status": "PASS"
+  }
+]

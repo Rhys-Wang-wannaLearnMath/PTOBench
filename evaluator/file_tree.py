@@ -1,0 +1,212 @@
+"""Descriptor-based file tree operations used by copying and protection.
+
+Paths are lexical absolute paths. Every directory component is opened with
+O_NOFOLLOW; no content is read or written through an Agent-supplied symlink.
+"""
+
+from __future__ import annotations
+
+import contextlib
+import os
+import shutil
+import stat
+import uuid
+from pathlib import Path
+from typing import Iterator
+
+import common
+
+
+CACHE_NAMES = frozenset({"__pycache__"})
+CACHE_SUFFIXES = frozenset({".pyc", ".pyo"})
+DIRECTORY_FLAGS = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+FILE_FLAGS = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC
+
+
+class UnsafeTreeError(ValueError):
+    """A path is a symlink or unsupported special file."""
+
+
+class TreeChangedError(RuntimeError):
+    """An ordinary tree changed while it was being read."""
+
+
+def absolute_path(path: str | Path) -> Path:
+    return Path(os.path.abspath(path))
+
+
+@contextlib.contextmanager
+def open_directory(path: str | Path, *, create: bool = False) -> Iterator[int]:
+    path = absolute_path(path)
+    descriptor = os.open("/", DIRECTORY_FLAGS)
+    try:
+        for component in path.parts[1:]:
+            if create:
+                try:
+                    os.mkdir(component, mode=0o755, dir_fd=descriptor)
+                except FileExistsError:
+                    pass
+            try:
+                child = os.open(component, DIRECTORY_FLAGS, dir_fd=descriptor)
+            except OSError:
+                # Distinguish unsafe components from ordinary disappearance.
+                try:
+                    mode = os.stat(component, dir_fd=descriptor, follow_symlinks=False).st_mode
+                except FileNotFoundError:
+                    raise
+                if not stat.S_ISDIR(mode):
+                    raise UnsafeTreeError(f"not a real directory: {path}") from None
+                raise
+            os.close(descriptor)
+            descriptor = child
+        yield descriptor
+    finally:
+        os.close(descriptor)
+
+
+@contextlib.contextmanager
+def open_parent(path: str | Path) -> Iterator[tuple[int, str]]:
+    path = absolute_path(path)
+    if path == Path("/"):
+        raise UnsafeTreeError("the filesystem root is not a supported tree root")
+    with open_directory(path.parent) as descriptor:
+        yield descriptor, path.name
+
+
+@contextlib.contextmanager
+def open_file(path: str | Path) -> Iterator[int]:
+    with open_parent(path) as (parent, name):
+        descriptor = os.open(name, FILE_FLAGS, dir_fd=parent)
+        try:
+            if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+                raise UnsafeTreeError(f"not a regular file: {path}")
+            yield descriptor
+        finally:
+            os.close(descriptor)
+
+
+def descriptor_sha256(descriptor: int) -> str:
+    # Reuse the public hash helper on an already validated, pinned descriptor.
+    return common.sha256_file(Path(f"/proc/self/fd/{descriptor}"))
+
+
+def file_version(value: os.stat_result) -> tuple[int, ...]:
+    return (value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns,
+            value.st_ctime_ns, value.st_mode)
+
+
+def _entry(parent: int, name: str, relative: str, entries: dict,
+           excluded_names: frozenset[str], reject_special: bool) -> None:
+    before = os.stat(name, dir_fd=parent, follow_symlinks=False)
+    mode = stat.S_IMODE(before.st_mode)
+    if stat.S_ISLNK(before.st_mode):
+        if reject_special:
+            raise UnsafeTreeError(f"unsupported symlink: {relative or name}")
+        entries[relative] = {"kind": "symlink"}
+    elif stat.S_ISDIR(before.st_mode):
+        descriptor = os.open(name, DIRECTORY_FLAGS, dir_fd=parent)
+        try:
+            pinned = os.fstat(descriptor)
+            if (before.st_dev, before.st_ino) != (pinned.st_dev, pinned.st_ino):
+                raise TreeChangedError(f"directory changed: {relative}")
+            entries[relative] = {"kind": "directory", "mode": mode}
+            names = sorted(os.listdir(descriptor))
+            for child in names:
+                child_relative = f"{relative}/{child}" if relative else child
+                if child in excluded_names or Path(child).suffix in CACHE_SUFFIXES:
+                    # An excluded name does not permit a link or special node.
+                    if reject_special:
+                        child_mode = os.stat(child, dir_fd=descriptor, follow_symlinks=False).st_mode
+                        if not (stat.S_ISDIR(child_mode) or stat.S_ISREG(child_mode)):
+                            raise UnsafeTreeError(f"unsupported node: {child_relative}")
+                    continue
+                _entry(descriptor, child, child_relative, entries,
+                       excluded_names, reject_special)
+            if names != sorted(os.listdir(descriptor)):
+                raise TreeChangedError(f"directory changed: {relative}")
+        finally:
+            os.close(descriptor)
+    elif stat.S_ISREG(before.st_mode):
+        descriptor = os.open(name, FILE_FLAGS, dir_fd=parent)
+        try:
+            pinned = os.fstat(descriptor)
+            if not stat.S_ISREG(pinned.st_mode):
+                raise UnsafeTreeError(f"unsupported node: {relative}")
+            if file_version(before) != file_version(pinned):
+                raise TreeChangedError(f"file changed: {relative}")
+            digest = descriptor_sha256(descriptor)
+            if file_version(pinned) != file_version(os.fstat(descriptor)):
+                raise TreeChangedError(f"file changed: {relative}")
+            entries[relative] = {"kind": "file", "mode": mode, "sha256": digest}
+        finally:
+            os.close(descriptor)
+    else:
+        if reject_special:
+            raise UnsafeTreeError(f"unsupported special file: {relative or name}")
+        entries[relative] = {"kind": "special"}
+
+
+def scan_tree(path: str | Path, *, excluded_names: frozenset[str] = CACHE_NAMES,
+              reject_special: bool = False) -> dict[str, dict]:
+    entries: dict[str, dict] = {}
+    with open_parent(path) as (parent, name):
+        try:
+            _entry(parent, name, "", entries, excluded_names, reject_special)
+        except FileNotFoundError:
+            # Only an absent root is an ordinary absence. A disappearing
+            # descendant must not turn a partial scan into a new baseline.
+            try:
+                os.stat(name, dir_fd=parent, follow_symlinks=False)
+            except FileNotFoundError:
+                return {"": {"kind": "absent"}}
+            raise TreeChangedError(f"tree changed: {path}") from None
+    return entries
+
+
+def remove_at(parent: int, name: str) -> None:
+    """Delete one node, including a whole directory, without following links."""
+    try:
+        mode = os.stat(name, dir_fd=parent, follow_symlinks=False).st_mode
+    except FileNotFoundError:
+        return
+    if stat.S_ISDIR(mode):
+        descriptor = os.open(name, DIRECTORY_FLAGS, dir_fd=parent)
+        try:
+            os.fchmod(descriptor, stat.S_IMODE(mode) | 0o700)
+            for child in os.listdir(descriptor):
+                remove_at(descriptor, child)
+        finally:
+            os.close(descriptor)
+        os.rmdir(name, dir_fd=parent)
+    else:
+        os.unlink(name, dir_fd=parent)
+
+
+def copy_descriptor(source: int, destination: int) -> None:
+    with os.fdopen(os.dup(source), "rb") as reader, \
+            os.fdopen(os.dup(destination), "wb") as writer:
+        reader.seek(0)
+        shutil.copyfileobj(reader, writer, length=1024 * 1024)
+        writer.flush()
+
+
+def atomic_bytes(path: str | Path, data: bytes, *, mode: int = 0o600) -> None:
+    """Durable same-directory replacement; a target link is replaced itself."""
+    with open_parent(path) as (parent, name):
+        temporary = f".{name}.write_{uuid.uuid4().hex}"
+        descriptor = os.open(temporary, os.O_RDWR | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                             mode=0o600, dir_fd=parent)
+        try:
+            with os.fdopen(os.dup(descriptor), "wb") as writer:
+                writer.write(data)
+                writer.flush()
+            os.fchmod(descriptor, mode)
+            os.fsync(descriptor)
+            os.replace(temporary, name, src_dir_fd=parent, dst_dir_fd=parent)
+            os.fsync(parent)
+        finally:
+            os.close(descriptor)
+            try:
+                os.unlink(temporary, dir_fd=parent)
+            except FileNotFoundError:
+                pass

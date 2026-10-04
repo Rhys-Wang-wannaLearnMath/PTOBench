@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "x_mixed": {"method": "allclose", "rtol": 0.004, "atol": 0.004},
+    "post": {"method": "allclose", "rtol": 0.004, "atol": 0.004},
+    "comb": {"method": "allclose", "rtol": 0.004, "atol": 0.004}
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.decode_qkv_proj_rope_pro",
+  "description": "DeepSeek-V4 PRO single-token decode Q/KV projection with Q-LoRA quantization and RoPE",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "qkv_proj_rope_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["q", "kv", "qr", "qr_scale"]},
+  "state": {"behavior": "none", "initial_state": [], "restore_before_each_launch": false}
+}

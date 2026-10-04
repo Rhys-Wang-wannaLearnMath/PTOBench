@@ -1,0 +1,67 @@
+[
+  {
+    "file": "benchmarks/pypto_lib_bench-v0.2/evaluator/workspace.py",
+    "before_sha256": "a72fb313fce39b0f3674bc2eb82bce36808c1eef99a82c5aef1c6dd87213df75",
+    "after_sha256": "846d7b12036c0715d918cfad23198cd1d7bad67f3109ba02b8909e9ed2f23d12"
+  },
+  {
+    "file": "benchmarks/pypto_lib_bench-v0.2/evaluator/workflow.py",
+    "before_sha256": "46a8ec089d351bc603348f06607829111c489118ad65126718df7cb39322c23d",
+    "after_sha256": "fdfce0891802e57564c9f99e2cc28dfeda07129d3dc6b2e80ca896d1c8229f43"
+  },
+  {
+    "file": "benchmarks/pypto_lib_bench-v0.2/evaluator/session.py",
+    "before_sha256": "d0b9846ee07529275a6ba9fa47130f389dd0d512b6f31fc55045342d90058c21",
+    "after_sha256": "38322c5e924b2bc893949466c4142d23bcb60d6436b85d88f70167374a313386"
+  },
+  {
+    "file": "benchmarks/pypto_lib_bench-v0.2/evaluator/session_actions.py",
+    "before_sha256": "099942b69b75f173e9af3684a60cedcd5df7785d6c77186b5f5e6dc18a14abf2",
+    "after_sha256": "04725549229a5cdd0527dc31d5a685c0f3e21675be7c804e81ace49137d3f3af"
+  },
+  {
+    "file": "benchmarks/pypto_lib_bench-v0.2/evaluator/README.md",
+    "before_sha256": "d482408ef04daeaac7435250513bc2d952b00eeea841222fd50a32e38c4762d5",
+    "after_sha256": "82aada4c52462b57bc7797b43a5a87b25f6131960cb78561de9dde95251dcc62"
+  },
+  {
+    "file": "benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_launcher.py",
+    "before_sha256": "111b0821e5e7bbfe5b376775f2cf4fac647f66e7a652e4fabf72bf3d786ea424",
+    "after_sha256": "7c07f7bd0704d9bad5e33a5e1df45e224767a7b1b3a59c8bddc4a0bd349edda8"
+  },
+  {
+    "file": "benchmarks/mig_workflow/04_repair_and_recertify.md",
+    "before_sha256": "d1e506e6a5858f7801bfdd6fa7032068ceb27993640a853dc0af7a8694f812a3",
+    "after_sha256": "2ba3bae4c00c1764d3eec349bcdcf2eb0fe7a53331c6c2eeccd05d1a3e980392"
+  },
+  {
+    "file": "benchmarks/mig_workflow/06_accept.md",
+    "before_sha256": "dde0ee00ea5beff073f3c2bc88cafdaa03cbe11e32ed30ccbbc61f71a7639305",
+    "after_sha256": "9de5e5de18065c3fa1b7443e4ddb0abf1eb39667e7b62a2b95429b7049cf1bc5"
+  },
+  {
+    "file": "benchmarks/mig_workflow/validate_bootstrap.py",
+    "before_sha256": "8f65019e485057ce7b3b6117edbfa6d368582db74959994d60dbd7366904868f",
+    "after_sha256": "cd3a975f64a04195f41d6418b109abf03d192fe069c132848a6220f1bd74bd94"
+  },
+  {
+    "file": "benchmarks/mig_workflow/04_implement_and_certify.md",
+    "before_sha256": "7d5049ca296328cbc79fc318f27554570cd7799db59668987298ae67f863597d",
+    "after_sha256": "dfacf4ffa8c0e709f8cf5359310898ab261b405c01745182d4c0e7c174e6802d"
+  },
+  {
+    "file": "benchmarks/mig_workflow/CASE_MIGRATION_CONTRACT.md",
+    "before_sha256": "91d810f6009558c0b347cf0c18e7166f18dbc2d520d971701aee88889cdc7b7c",
+    "after_sha256": "23aeb400113ab0c5f1f7c6a10edcc4cda65153d5ccfa4ff6e895a9b8d3a5c7e2"
+  },
+  {
+    "file": "benchmarks/mig_workflow/README.md",
+    "before_sha256": "d23c0facfe76ffbc3fc9e4675bd4e6bc45796d11fbfe2ed57233a5baade04538",
+    "after_sha256": "f0728debf769e1778e1cc47c3b9c469990b47e42dcd62ed5bb24249315329179"
+  },
+  {
+    "file": "benchmarks/mig_workflow/05_publish_candidate.md",
+    "before_sha256": "b66a40b83d06b9a47f9e17881e2c8d8274f0302abc0494f3bea405b2c79e189c",
+    "after_sha256": "a507d34b67bc170ee91ff14640ef045da9aea04a210d169abb14a46406eebfb0"
+  }
+]

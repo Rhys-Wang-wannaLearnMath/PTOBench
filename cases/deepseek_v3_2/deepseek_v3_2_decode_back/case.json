@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v3_2.deepseek_v3_2_decode_back",
+  "description": "DeepSeek V3.2 decode back residual and MLP, one step",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "build_deepseek_v3_2_decode_back_program",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["out"]},
+  "state": {"behavior": "none", "initial_state": [], "restore_before_each_launch": false}
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "sh": {
+      "method": "custom",
+      "name": "ratio_reldiff",
+      "diff_thd": 0.002,
+      "pct_thd": 0.01,
+      "max_diff_hd": null,
+      "valid_rows": null,
+      "valid_axis": 0,
+      "zero_tail": false
+    }
+  }
+}

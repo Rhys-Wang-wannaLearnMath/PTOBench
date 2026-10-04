@@ -1,0 +1,35 @@
+--- benchmarks/mig_workflow/README.md.before
++++ benchmarks/mig_workflow/README.md
+@@ -1,4 +1,6 @@
+ # PyPTO v0.1 -> v0.2 staged migration
++
++Current runtime and certification interfaces: `benchmarks/mig_workflow/SESSION_ACCEPTANCE.md`. Use a fresh Session from Seed, protected action evidence, and independent clean finalization. Public profile names are runtime/pmu/compiler; internal artifact names remain runtime/hardware/compile.
+ 
+ One source Case is migrated by six sequential Codex sessions. Each session has
+ one objective and a fixed write boundary. A later session must not repair work
+@@ -79,7 +81,7 @@
+ ## Authority and drift
+ 
+ The current v0.2 implementation is authoritative for executable interfaces:
+-`bench`, `evaluator/workflow.py`, `evaluator/workspace.py`,
++`ptobench`, `evaluator/session.py`, `evaluator/workflow.py`, `evaluator/workspace.py`,
+ `evaluator/profile_modes.py`, the environment profile schema, and current
+ canonical Case examples. The common migration contract defines the invariants
+ that all stages share; each Stage document and Skill defines ownership and its
+@@ -265,13 +267,11 @@
+ All clean/profile commands run sequentially because they share the selected
+ device and diagnostic state.
+ 
+-Publication and acceptance create fresh workspaces with `bench init`, not
+-`bench fork`. Both initial and final clean gates use `phase=all`; explicit
+-`--result` paths move only the summary JSON, while build and diagnostic output
+-remains under that workspace's `.benchmark_outputs/<mode>/`.
++Publication and acceptance create fresh workspaces with `session.create_session`, not
++`ptobench fork`. Both initial and final clean gates use `phase=all`; protected result JSON remains in Session staging and artifacts remain under the frozen action workspace's `.benchmark_outputs/<internal-mode>/`.
+ 
+ Migration qualification currently attempts all standard profiling modes defined
+-in `evaluator/profile_modes.py`: `runtime`, `hardware`, and `compile`. Each gets
++in `evaluator/profile_modes.py`: `runtime`, `pmu`, and `compiler` (internal `runtime/hardware/compile`). Each gets
+ an explicit `PASS`, `UNSUPPORTED`, or `FAIL` record. Clean evaluation remains
+ the formal pass gate, so a Case may be `READY` with `Profiling: PARTIAL` when a
+ mode is genuinely unavailable, provided the limitation and reason are recorded.

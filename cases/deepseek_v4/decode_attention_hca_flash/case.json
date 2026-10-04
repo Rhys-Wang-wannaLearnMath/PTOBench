@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.decode_attention_hca_flash",
+  "description": "DeepSeek-V4 FLASH ratio-128 HCA decode, one step",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "attention_hca_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["x_out"]},
+  "state": {
+    "behavior": "mutating",
+    "initial_state": ["compress_state", "kv_cache", "cmp_kv"],
+    "restore_before_each_launch": true
+  }
+}

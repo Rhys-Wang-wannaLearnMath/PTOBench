@@ -1,0 +1,102 @@
+{
+  "cases/deepseek_v4/rmsnorm_decode_flash/case.json": {
+    "sha256": "5ab7ca6eba0295392f9f1028ba5fdc60cfd0d921a0a7b0dae6f557ee5f8d2c4d",
+    "bytes": 553
+  },
+  "cases/deepseek_v4/rmsnorm_decode_flash/public/__pycache__/config.cpython-310.pyc": {
+    "sha256": "03f5699d1c80ba793351ce1d51b92d88d46a1ab796e12b982a936f56d9a3ce8a",
+    "bytes": 4098
+  },
+  "cases/deepseek_v4/rmsnorm_decode_flash/public/candidate_seed/__pycache__/candidate.cpython-310.pyc": {
+    "sha256": "153434f776e55ae370662e196d9506d7bcad469c706c782ca1d0f2512915b4f3",
+    "bytes": 2043
+  },
+  "cases/deepseek_v4/rmsnorm_decode_flash/public/candidate_seed/candidate.py": {
+    "sha256": "c5726f627b31356b35de5553dcc924ef43c8f9370501f6a37d92ea06ea9d9dbd",
+    "bytes": 2938
+  },
+  "cases/deepseek_v4/rmsnorm_decode_flash/public/comparator.json": {
+    "sha256": "b56cd8971e54ecef73ed99eed42df99525fca5428356d7b3e441766d957abb27",
+    "bytes": 127
+  },
+  "cases/deepseek_v4/rmsnorm_decode_flash/public/config.py": {
+    "sha256": "7ff4ab9ebe35129afb207cf1b90139750fad4470df69af8c7edf9b2b92fce657",
+    "bytes": 3447
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/__pycache__/evaluate.cpython-310.pyc": {
+    "sha256": "fa0ea06bd85e69eb9e2555749c71336262239c4374a0ead0669e0c35b4a3ddce",
+    "bytes": 5723
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/__pycache__/fixture_builder.cpython-310.pyc": {
+    "sha256": "72760a4dcd3927564266c04132d057e664b15ce719c1c0c212d5d7a5afd60c02",
+    "bytes": 1373
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/certification.json": {
+    "sha256": "76ba6866912e9374d82a5512fd60dcdd23ba23d61f5fbe51b86f49176bc383df",
+    "bytes": 269
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/evaluate.py": {
+    "sha256": "8664d5db0b988029335755d0a6c5c4a0f41985e62061f137adc5529856dfe4ea",
+    "bytes": 5234
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/fixture_builder.py": {
+    "sha256": "d2d7e98e85a0e6092326558d48de769a931a8fcdd5d36e0ec80d4ec67df70eb2",
+    "bytes": 1141
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/fixture_policy.json": {
+    "sha256": "d97f6c196164beb3c55e95e4b880a8070c522c698ab62bb5c2faffa4e3b62fe6",
+    "bytes": 55
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/fixtures/fixture_000/in/norm_w.pt": {
+    "sha256": "28f2ce2e3ae77f4d16b0e6a4ce70182b7ec1897f691d3db6dddc58fbe7ff2e41",
+    "bytes": 9303
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/fixtures/fixture_000/in/x.pt": {
+    "sha256": "d7b6c4f84fe883a5867ae00311fcfc003d02172f95b5b88656fd47d6c5eda5c0",
+    "bytes": 66558
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/fixtures/fixture_000/manifest.json": {
+    "sha256": "332795843cb587effe5cef9eacca2e78db2cce0d21d1078e06c3d37a95af89f8",
+    "bytes": 214
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/fixtures/fixture_000/out/x_normed.pt": {
+    "sha256": "9e2e27a2d32c9147db677ed4648e3a1c60eff4a8673edb6de4360d7c70aa7657",
+    "bytes": 66721
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/official/original.py": {
+    "sha256": "fc0817fb24dd0ce9a075ca48ee82ea0af091ffe6c48e0d216933c10d5d74ce26",
+    "bytes": 5888
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/official/original_config.py": {
+    "sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+    "bytes": 10040
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/official/source_provenance.json": {
+    "sha256": "36bc024947d61ed4794aa3535a56f25dba2270b9248438184ba2c561244787b2",
+    "bytes": 1000
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/oracle/__pycache__/ref_cpu.cpython-310.pyc": {
+    "sha256": "b79a3d4b582a1016243619aa18998b5d0561706e59c49fc63c707f0522dc3bb1",
+    "bytes": 700
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/oracle/ref_cpu.py": {
+    "sha256": "52384a534977aac7594f13903b616d455bbf938945da038c3aae490007c88777",
+    "bytes": 449
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/ref/__pycache__/ref_npu.cpython-310.pyc": {
+    "sha256": "af302d453942b924162345b6df5e1b12638a40f29941abcdf02d4a1b6b64b391",
+    "bytes": 2031
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/ref/ref_npu.py": {
+    "sha256": "c5726f627b31356b35de5553dcc924ef43c8f9370501f6a37d92ea06ea9d9dbd",
+    "bytes": 2938
+  },
+  "sealed_assets/deepseek_v4/rmsnorm_decode_flash/ref_performance.json": {
+    "sha256": "f8cff08a3a51e2fa7118438ec3119828bf9c246cf43185d542f262e20ed180c7",
+    "bytes": 397
+  },
+  "environments/a2a3_single_card.json": {
+    "sha256": "7ba24580cd52d026cd379b2e2d6cd284af5d0f7b4c6dc7b4e72b89014c910bcc",
+    "bytes": 403
+  }
+}

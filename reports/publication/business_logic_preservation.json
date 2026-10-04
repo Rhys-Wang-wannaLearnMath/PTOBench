@@ -1,0 +1,17 @@
+{
+  "changed_existing_files": [
+    "LAUNCHER.md",
+    "README.md",
+    "evaluator/README.md",
+    "evaluator/SESSION.md"
+  ],
+  "unchanged_runtime_code": true,
+  "unchanged_public_case_files": true,
+  "unchanged_environment_json": true,
+  "baseline_file_groups": {
+    "evaluator_files": 40,
+    "launcher_files": 17,
+    "case_files": 1006,
+    "environment_files": 30
+  }
+}

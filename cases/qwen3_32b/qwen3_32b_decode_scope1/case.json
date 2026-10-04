@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "case_id": "qwen3_32b.qwen3_32b_decode_scope1",
+  "description": "Qwen3-32B decode Scope 1 RMSNorm with Q/K/V projection",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "build_qwen3_scope1_program",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": ["q_proj", "k_proj", "v_proj"]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  }
+}

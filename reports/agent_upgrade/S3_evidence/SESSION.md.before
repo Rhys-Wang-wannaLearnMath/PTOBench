@@ -1,0 +1,152 @@
+# Session and action accounting (S2)
+
+`session.py` is an internal Python API. It creates prepared Sessions and handles
+registry, state, locks and durable budgets. S3 supplies the Agent CLI, Evaluator
+execution, result validation and Snapshot publication; S4 supplies final selection
+and measurement. S2 does not route or change the existing `bench` parser.
+
+```python
+import session
+
+handle = session.create_session(
+    "family.case",
+    {"id": "experiment_codex", "backend": "codex", "profile": "default",
+     "command": ["codex", "..."], "tool_version": "recorded-version"},
+    {"runs_root": "/absolute/runs", "snapshots_root": "/absolute/snapshots"},
+    {"max_hardware_actions": 20, "finish_actions": 1},
+)
+record = session.read_session(handle.session_root)
+worker_id, worker_root, case_id = session.resolve_workspace(
+    handle.session_root, handle.initial_workspace,
+)
+child_id = session.fork_workspace(handle.session_root, worker_root)
+session.close_exploration(handle.session_root, "optimizer_exit")
+```
+
+`optimizer` also accepts a backend string, using that string as its ID and
+`default` as its profile. `output=None` uses benchmark `runs/` and `snapshots/`;
+`budget=None` uses 20 exploration actions and one finish action. The exploration
+limit must be a positive integer; the finish limit must be exactly one. Booleans
+are rejected as integers. Output roots cannot contain one another, or overlap
+Case, sealed, environment, evaluator, launcher, golden or control directories.
+All input directory components reject links, including a link preceding `..`.
+
+Creation requires ready certification and Ref cache, matching comparator SHA-256,
+the exact `fixture_000` manifest, complete input files (including scalar and
+initial state tensors), declared Ref outputs, the Seed entry and dependencies,
+Ref/Oracle/evaluator sources, and a finite positive Ref median. The existing
+official Fixture builder is called to describe spec names; neither tensor
+creation nor Candidate/Ref/Oracle/kernel execution is called. Prepared tensors
+must be regular nonempty files. This checks preparation and recorded
+certification, without repeating tensor correctness certification or calling
+`prepare_ref`. Missing dependencies or builder failure reject creation.
+
+The global execution lock is always
+`<common.BENCHMARK_ROOT>/.ptobench/execution.lock`, regardless of output roots.
+Session directories use UTC time plus a random suffix, created exclusively.
+A `SessionHandle` carries absolute Session, Snapshot, protection and initial
+workspace paths. `session.json` freezes canonical Case identity, environment,
+public profile availability (`runtime`, `pmu`, `compiler`), optimizer metadata,
+command/version, paths, asset hash summaries, registry, state and usage.
+Session records and `events.jsonl` use S1's independent backups and atomic
+`commit_records`. `final_result.json` starts as protected expected absence.
+
+Status readers only take `.session.lock` and inspect/repair the `records` group;
+they never wait for the global execution lock or restore shared assets/context.
+They verify schema, path bindings, registry protection, sequence numbers and the
+usage ledger. `repair=False` rejects changed records without repairing them.
+Workspace metadata is informational: it cannot change Case, entry, modes or
+budget. Only exact registered roots under this Session's `workspaces/` are
+accepted; sibling references such as `../worker_001` work, while subdirectories,
+other Sessions and unregistered directories fail.
+
+`create_session` and `fork_workspace` acquire the global lock themselves. Other
+execution APIs require a caller-held `execution_lock()`. Never hold a Session
+lock while acquiring the global lock, and never recursively acquire either
+lock. Heavy copying and fixed-tree checks do not hold the Session record lock.
+An execution caller keeps the global lock across repair, freeze, reservation,
+subprocess execution, postcheck, completion and publication. The internal
+Evaluator must not reacquire it.
+
+The handoff to S3/S4 uses these APIs in order:
+
+```python
+with session.execution_lock():
+    repairs = session.repair_assets(handle.session_root)
+    record = session.read_session(handle.session_root)
+    worker_id, worker_root, case_id = session.resolve_workspace(
+        handle.session_root, requested_workspace,
+    )
+    # S3 validates the request and copies with workspace.copy_candidate_tree.
+    # Use that returned manifest and the current next_event_seq below.
+    usage = session.reserve_action(
+        handle.session_root, record["next_event_seq"], "evaluate",
+        workspace_path=worker_root, source_manifest=frozen_source_manifest,
+    )
+    session.mark_action_starting(handle.session_root, record["next_event_seq"])
+    # S3 starts the Evaluator with a separate process group/session.
+    session.set_action_process(handle.session_root, record["next_event_seq"], pid)
+    # S3 always cleans up its process group and performs the postcheck.
+    session.complete_action(
+        handle.session_root, record["next_event_seq"], exit_code=exit_code,
+        error_code=error_code, integrity_passed=integrity_passed,
+        result=validated_result, repaired_paths=repaired_paths,
+        snapshot_id=snapshot_id, action_started=action_started,
+    )
+```
+
+`reserve_action(..., "profile", mode="pmu", ...)` accepts public names only,
+checks frozen Session availability, requires a valid manifest from S1, and
+rechecks state after prechecks. S3 must obtain a stable copy before reservation;
+this module does not launch an action or substitute current Candidate for that
+copy. Reservation atomically increments usage/event sequence and sets
+`active_action`, including source hash, time, owner PID/start ticks/group and
+spawn state. Invalid requests, paths, mode, source, protection or state do not
+charge budget. After reservation, compilation, wrong output, integrity failure,
+interruption and spawn failure never refund it.
+
+At the exploration limit, status immediately becomes `exhausted`. Further
+exploration and fork fail, while completion of the accepted action remains
+allowed. Closing exploration keeps the active action and preserves the first
+close reason. Launcher must wait for `active_action is None` before treating
+exhaustion as ready for finalization. Completion commits one event and clears
+the active action together. Repeated completion returns the original event,
+including when a later action is active, and never modifies the later action.
+
+Finish reservation uses `kind="finish"`, requires closed nonterminal exploration,
+no active action, a prepared `final/workspace`, and a stable source manifest.
+It consumes only `finish_actions`. The one accepted finish can complete even
+when exploration is exhausted; failure does not refund finish. S4 validates
+selection, final workspace/context, result and idempotent final publication.
+This module records supplied completion evidence rather than implementing S4.
+
+Fork assigns the next worker ID, durably consumes it before copying, uses S1
+copy/context tools with the Session's canonical Case, publishes a complete
+directory, protects its context, and commits the registry. It never charges
+hardware usage. An interrupted publication may leave a complete protected
+orphan directory; it is inaccessible through the registry and its ID is not
+reused. A crash after the registry manifest commit restores the complete new
+registry. Unpublished temporary copies are cleaned on handled failure.
+
+`reconcile_active_action` requires the global lock. A living owner keeps its
+accepted action pending. A dead owner with a confirmed dead child (or an action
+still marked `not_started`) gets one interrupted event, closed exploration and
+no refund. The spawn boundary is committed as `starting` before launch, so a
+crash before PID binding is explicit uncertainty: it marks infrastructure
+failure and blocks final measurement. A living orphan child or remaining member
+of its owned process group also blocks measurement. S3/S5 owns termination and
+cleanup of attributed groups; S2 does not kill unrelated processes. PID identity
+includes Linux start ticks to handle reuse. No crashed Session automatically
+resumes exploration. Failed asset recovery marks a readable Session failed and
+closed, preserving its usage and active evidence.
+
+CPU regression:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python -m unittest discover \
+  -s benchmarks/pypto_lib_bench-v0.2/evaluator/tests -p 'test_*.py' -v
+```
+
+`test_session.py` and `test_budget.py` use small fake Case files and real temporary
+workspaces/processes. They never prepare real Ref assets, run hardware, start an
+Optimizer or claim that a supplied fake result is a real Snapshot/measurement.

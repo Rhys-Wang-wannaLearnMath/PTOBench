@@ -1,0 +1,10 @@
+{
+  "state": "reports_saved",
+  "recording_complete": true,
+  "independent_audit_passed": true,
+  "all_pass": false,
+  "case_count": 198,
+  "records": 792,
+  "report": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S7_full_v02_acceptance.md",
+  "batch": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/full_v02/20261004_S7_01"
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.prefill_sparse_attn_demo",
+  "description": "DeepSeek V4 DEMO prefill sparse attention",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "prefill_sparse_attn_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["attn_out"]},
+  "state": {"behavior": "none", "initial_state": [], "restore_before_each_launch": false}
+}

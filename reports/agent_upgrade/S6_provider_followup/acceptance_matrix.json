@@ -1,0 +1,434 @@
+[
+  {
+    "backend": "pi",
+    "model": "glm-5.3-flash",
+    "profile": "default",
+    "case": "deepseek_v4.rmsnorm_decode_flash",
+    "status": "PASS",
+    "checks": {
+      "launcher_completed": true,
+      "optimizer_exit_zero": true,
+      "one_exploration_one_finish": true,
+      "evaluate_then_finish": true,
+      "all_events_passed": true,
+      "source_unchanged": true,
+      "no_active_action": true,
+      "optimizer_group_stopped": true,
+      "fresh_clean_final": true,
+      "ten_final_samples": true
+    },
+    "exit_code": 0,
+    "launcher_result": {
+      "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_provider_pi_glm-5.3-flash/deepseek_v4.rmsnorm_decode_flash/20261003T074612Z_0547832c7318",
+      "final_result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_provider_pi_glm-5.3-flash/deepseek_v4.rmsnorm_decode_flash/20261003T074612Z_0547832c7318/final_result.json",
+      "status": "completed",
+      "error_code": null,
+      "close_reason": "optimizer_exit",
+      "optimizer_exit_code": 0
+    },
+    "usage": {
+      "finish_actions": 1,
+      "hardware_actions": 1
+    },
+    "events": [
+      "evaluate",
+      "finish"
+    ],
+    "final": {
+      "best_observed_latency_us": 17.18,
+      "best_observed_metric_name": "median_effective_us",
+      "best_observed_mode": null,
+      "best_observed_source": "evaluate",
+      "best_observed_unit": "us",
+      "case_id": "deepseek_v4.rmsnorm_decode_flash",
+      "close_reason": "optimizer_exit",
+      "completed_at": "2026-10-03T07:46:58.755104+00:00",
+      "error_code": null,
+      "final_integrity_passed": true,
+      "final_verified_correctness": "passed",
+      "final_verified_latency_us": 17.4295,
+      "final_verified_speedup": 1.0034424395421555,
+      "finish_actions_used": 1,
+      "finish_event_seq": 2,
+      "hardware_actions_used": 1,
+      "message": null,
+      "optimizer_id": "s6_provider_pi_glm-5.3-flash",
+      "schema_version": 1,
+      "selected_content_sha256": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+      "selected_event_seq": 1,
+      "selected_observation": {
+        "correctness": "PASS",
+        "kind": "evaluate",
+        "latency_us": 17.18,
+        "metric_name": "median_effective_us",
+        "mode": null,
+        "unit": "us"
+      },
+      "selected_snapshot": "snapshot_000001",
+      "selection_policy": "lowest_observed_latency_else_latest_pass",
+      "selection_reason": "lowest_observed_latency",
+      "session_id": "20261003T074612Z_0547832c7318",
+      "status": "completed"
+    }
+  },
+  {
+    "backend": "pi",
+    "model": "deepseek-flash",
+    "profile": "deepseek-flash",
+    "case": "deepseek_v4.rmsnorm_decode_flash",
+    "status": "PASS",
+    "checks": {
+      "launcher_completed": true,
+      "optimizer_exit_zero": true,
+      "one_exploration_one_finish": true,
+      "evaluate_then_finish": true,
+      "all_events_passed": true,
+      "source_unchanged": true,
+      "no_active_action": true,
+      "optimizer_group_stopped": true,
+      "fresh_clean_final": true,
+      "ten_final_samples": true
+    },
+    "exit_code": 0,
+    "launcher_result": {
+      "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_provider_pi_deepseek-flash/deepseek_v4.rmsnorm_decode_flash/20261003T074700Z_7951001d2940",
+      "final_result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_provider_pi_deepseek-flash/deepseek_v4.rmsnorm_decode_flash/20261003T074700Z_7951001d2940/final_result.json",
+      "status": "completed",
+      "error_code": null,
+      "close_reason": "optimizer_exit",
+      "optimizer_exit_code": 0
+    },
+    "usage": {
+      "finish_actions": 1,
+      "hardware_actions": 1
+    },
+    "events": [
+      "evaluate",
+      "finish"
+    ],
+    "final": {
+      "best_observed_latency_us": 17.57,
+      "best_observed_metric_name": "median_effective_us",
+      "best_observed_mode": null,
+      "best_observed_source": "evaluate",
+      "best_observed_unit": "us",
+      "case_id": "deepseek_v4.rmsnorm_decode_flash",
+      "close_reason": "optimizer_exit",
+      "completed_at": "2026-10-03T07:47:33.753710+00:00",
+      "error_code": null,
+      "final_integrity_passed": true,
+      "final_verified_correctness": "passed",
+      "final_verified_latency_us": 17.3095,
+      "final_verified_speedup": 1.0103989138912157,
+      "finish_actions_used": 1,
+      "finish_event_seq": 2,
+      "hardware_actions_used": 1,
+      "message": null,
+      "optimizer_id": "s6_provider_pi_deepseek-flash",
+      "schema_version": 1,
+      "selected_content_sha256": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+      "selected_event_seq": 1,
+      "selected_observation": {
+        "correctness": "PASS",
+        "kind": "evaluate",
+        "latency_us": 17.57,
+        "metric_name": "median_effective_us",
+        "mode": null,
+        "unit": "us"
+      },
+      "selected_snapshot": "snapshot_000001",
+      "selection_policy": "lowest_observed_latency_else_latest_pass",
+      "selection_reason": "lowest_observed_latency",
+      "session_id": "20261003T074700Z_7951001d2940",
+      "status": "completed"
+    }
+  },
+  {
+    "backend": "pi",
+    "model": "gpt-6.1-sol",
+    "profile": "gpt-6.1-sol",
+    "case": "deepseek_v4.rmsnorm_decode_flash",
+    "status": "PASS",
+    "checks": {
+      "launcher_completed": true,
+      "optimizer_exit_zero": true,
+      "one_exploration_one_finish": true,
+      "evaluate_then_finish": true,
+      "all_events_passed": true,
+      "source_unchanged": true,
+      "no_active_action": true,
+      "optimizer_group_stopped": true,
+      "fresh_clean_final": true,
+      "ten_final_samples": true
+    },
+    "exit_code": 0,
+    "launcher_result": {
+      "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_provider_pi_gpt-6.1-sol/deepseek_v4.rmsnorm_decode_flash/20261003T074735Z_8b79e5045a7c",
+      "final_result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_provider_pi_gpt-6.1-sol/deepseek_v4.rmsnorm_decode_flash/20261003T074735Z_8b79e5045a7c/final_result.json",
+      "status": "completed",
+      "error_code": null,
+      "close_reason": "optimizer_exit",
+      "optimizer_exit_code": 0
+    },
+    "usage": {
+      "finish_actions": 1,
+      "hardware_actions": 1
+    },
+    "events": [
+      "evaluate",
+      "finish"
+    ],
+    "final": {
+      "best_observed_latency_us": 17.950000000000003,
+      "best_observed_metric_name": "median_effective_us",
+      "best_observed_mode": null,
+      "best_observed_source": "evaluate",
+      "best_observed_unit": "us",
+      "case_id": "deepseek_v4.rmsnorm_decode_flash",
+      "close_reason": "optimizer_exit",
+      "completed_at": "2026-10-03T07:48:32.824425+00:00",
+      "error_code": null,
+      "final_integrity_passed": true,
+      "final_verified_correctness": "passed",
+      "final_verified_latency_us": 17.019,
+      "final_verified_speedup": 1.0276455725953346,
+      "finish_actions_used": 1,
+      "finish_event_seq": 2,
+      "hardware_actions_used": 1,
+      "message": null,
+      "optimizer_id": "s6_provider_pi_gpt-6.1-sol",
+      "schema_version": 1,
+      "selected_content_sha256": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+      "selected_event_seq": 1,
+      "selected_observation": {
+        "correctness": "PASS",
+        "kind": "evaluate",
+        "latency_us": 17.950000000000003,
+        "metric_name": "median_effective_us",
+        "mode": null,
+        "unit": "us"
+      },
+      "selected_snapshot": "snapshot_000001",
+      "selection_policy": "lowest_observed_latency_else_latest_pass",
+      "selection_reason": "lowest_observed_latency",
+      "session_id": "20261003T074735Z_8b79e5045a7c",
+      "status": "completed"
+    }
+  },
+  {
+    "backend": "opencode",
+    "model": "glm-5.3-flash",
+    "profile": "default",
+    "case": "deepseek_v4.rmsnorm_decode_flash",
+    "status": "PASS",
+    "checks": {
+      "launcher_completed": true,
+      "optimizer_exit_zero": true,
+      "one_exploration_one_finish": true,
+      "evaluate_then_finish": true,
+      "all_events_passed": true,
+      "source_unchanged": true,
+      "no_active_action": true,
+      "optimizer_group_stopped": true,
+      "fresh_clean_final": true,
+      "ten_final_samples": true
+    },
+    "exit_code": 0,
+    "launcher_result": {
+      "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_provider_opencode_glm-5.3-flash/deepseek_v4.rmsnorm_decode_flash/20261003T074836Z_12fe8e9f3757",
+      "final_result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_provider_opencode_glm-5.3-flash/deepseek_v4.rmsnorm_decode_flash/20261003T074836Z_12fe8e9f3757/final_result.json",
+      "status": "completed",
+      "error_code": null,
+      "close_reason": "optimizer_exit",
+      "optimizer_exit_code": 0
+    },
+    "usage": {
+      "finish_actions": 1,
+      "hardware_actions": 1
+    },
+    "events": [
+      "evaluate",
+      "finish"
+    ],
+    "final": {
+      "best_observed_latency_us": 17.4105,
+      "best_observed_metric_name": "median_effective_us",
+      "best_observed_mode": null,
+      "best_observed_source": "evaluate",
+      "best_observed_unit": "us",
+      "case_id": "deepseek_v4.rmsnorm_decode_flash",
+      "close_reason": "optimizer_exit",
+      "completed_at": "2026-10-03T07:49:28.808769+00:00",
+      "error_code": null,
+      "final_integrity_passed": true,
+      "final_verified_correctness": "passed",
+      "final_verified_latency_us": 17.139499999999998,
+      "final_verified_speedup": 1.0204206657137023,
+      "finish_actions_used": 1,
+      "finish_event_seq": 2,
+      "hardware_actions_used": 1,
+      "message": null,
+      "optimizer_id": "s6_provider_opencode_glm-5.3-flash",
+      "schema_version": 1,
+      "selected_content_sha256": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+      "selected_event_seq": 1,
+      "selected_observation": {
+        "correctness": "PASS",
+        "kind": "evaluate",
+        "latency_us": 17.4105,
+        "metric_name": "median_effective_us",
+        "mode": null,
+        "unit": "us"
+      },
+      "selected_snapshot": "snapshot_000001",
+      "selection_policy": "lowest_observed_latency_else_latest_pass",
+      "selection_reason": "lowest_observed_latency",
+      "session_id": "20261003T074836Z_12fe8e9f3757",
+      "status": "completed"
+    }
+  },
+  {
+    "backend": "opencode",
+    "model": "deepseek-flash",
+    "profile": "deepseek-flash",
+    "case": "deepseek_v4.rmsnorm_decode_flash",
+    "status": "PASS",
+    "checks": {
+      "launcher_completed": true,
+      "optimizer_exit_zero": true,
+      "one_exploration_one_finish": true,
+      "evaluate_then_finish": true,
+      "all_events_passed": true,
+      "source_unchanged": true,
+      "no_active_action": true,
+      "optimizer_group_stopped": true,
+      "fresh_clean_final": true,
+      "ten_final_samples": true
+    },
+    "exit_code": 0,
+    "launcher_result": {
+      "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_provider_opencode_deepseek-flash/deepseek_v4.rmsnorm_decode_flash/20261003T074932Z_57663374620d",
+      "final_result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_provider_opencode_deepseek-flash/deepseek_v4.rmsnorm_decode_flash/20261003T074932Z_57663374620d/final_result.json",
+      "status": "completed",
+      "error_code": null,
+      "close_reason": "optimizer_exit",
+      "optimizer_exit_code": 0
+    },
+    "usage": {
+      "finish_actions": 1,
+      "hardware_actions": 1
+    },
+    "events": [
+      "evaluate",
+      "finish"
+    ],
+    "final": {
+      "best_observed_latency_us": 17.41,
+      "best_observed_metric_name": "median_effective_us",
+      "best_observed_mode": null,
+      "best_observed_source": "evaluate",
+      "best_observed_unit": "us",
+      "case_id": "deepseek_v4.rmsnorm_decode_flash",
+      "close_reason": "optimizer_exit",
+      "completed_at": "2026-10-03T07:50:13.795800+00:00",
+      "error_code": null,
+      "final_integrity_passed": true,
+      "final_verified_correctness": "passed",
+      "final_verified_latency_us": 17.439500000000002,
+      "final_verified_speedup": 1.0028670546747325,
+      "finish_actions_used": 1,
+      "finish_event_seq": 2,
+      "hardware_actions_used": 1,
+      "message": null,
+      "optimizer_id": "s6_provider_opencode_deepseek-flash",
+      "schema_version": 1,
+      "selected_content_sha256": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+      "selected_event_seq": 1,
+      "selected_observation": {
+        "correctness": "PASS",
+        "kind": "evaluate",
+        "latency_us": 17.41,
+        "metric_name": "median_effective_us",
+        "mode": null,
+        "unit": "us"
+      },
+      "selected_snapshot": "snapshot_000001",
+      "selection_policy": "lowest_observed_latency_else_latest_pass",
+      "selection_reason": "lowest_observed_latency",
+      "session_id": "20261003T074932Z_57663374620d",
+      "status": "completed"
+    }
+  },
+  {
+    "backend": "opencode",
+    "model": "gpt-6.1-sol",
+    "profile": "gpt-6.1-sol",
+    "case": "deepseek_v4.rmsnorm_decode_flash",
+    "status": "PASS",
+    "checks": {
+      "launcher_completed": true,
+      "optimizer_exit_zero": true,
+      "one_exploration_one_finish": true,
+      "evaluate_then_finish": true,
+      "all_events_passed": true,
+      "source_unchanged": true,
+      "no_active_action": true,
+      "optimizer_group_stopped": true,
+      "fresh_clean_final": true,
+      "ten_final_samples": true
+    },
+    "exit_code": 0,
+    "launcher_result": {
+      "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_provider_opencode_gpt-6.1-sol/deepseek_v4.rmsnorm_decode_flash/20261003T075017Z_ec0b20af7c4b",
+      "final_result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_provider_opencode_gpt-6.1-sol/deepseek_v4.rmsnorm_decode_flash/20261003T075017Z_ec0b20af7c4b/final_result.json",
+      "status": "completed",
+      "error_code": null,
+      "close_reason": "optimizer_exit",
+      "optimizer_exit_code": 0
+    },
+    "usage": {
+      "finish_actions": 1,
+      "hardware_actions": 1
+    },
+    "events": [
+      "evaluate",
+      "finish"
+    ],
+    "final": {
+      "best_observed_latency_us": 17.0295,
+      "best_observed_metric_name": "median_effective_us",
+      "best_observed_mode": null,
+      "best_observed_source": "evaluate",
+      "best_observed_unit": "us",
+      "case_id": "deepseek_v4.rmsnorm_decode_flash",
+      "close_reason": "optimizer_exit",
+      "completed_at": "2026-10-03T07:51:44.852723+00:00",
+      "error_code": null,
+      "final_integrity_passed": true,
+      "final_verified_correctness": "passed",
+      "final_verified_latency_us": 17.519,
+      "final_verified_speedup": 0.9983161139334438,
+      "finish_actions_used": 1,
+      "finish_event_seq": 2,
+      "hardware_actions_used": 1,
+      "message": null,
+      "optimizer_id": "s6_provider_opencode_gpt-6.1-sol",
+      "schema_version": 1,
+      "selected_content_sha256": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+      "selected_event_seq": 1,
+      "selected_observation": {
+        "correctness": "PASS",
+        "kind": "evaluate",
+        "latency_us": 17.0295,
+        "metric_name": "median_effective_us",
+        "mode": null,
+        "unit": "us"
+      },
+      "selected_snapshot": "snapshot_000001",
+      "selection_policy": "lowest_observed_latency_else_latest_pass",
+      "selection_reason": "lowest_observed_latency",
+      "session_id": "20261003T075017Z_ec0b20af7c4b",
+      "status": "completed"
+    }
+  }
+]

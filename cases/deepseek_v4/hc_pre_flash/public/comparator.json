@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "x_mixed": {"method": "ratio_allclose", "rtol": 0.0078125, "atol": 0.0001, "max_error_ratio": 0.005},
+    "post": {"method": "ratio_allclose", "rtol": 0.005, "atol": 0.000025, "max_error_ratio": 0.005},
+    "comb": {"method": "ratio_allclose", "rtol": 0.005, "atol": 0.000025, "max_error_ratio": 0.005}
+  }
+}

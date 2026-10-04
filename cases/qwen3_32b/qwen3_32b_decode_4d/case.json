@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "case_id": "qwen3_32b.qwen3_32b_decode_4d",
+  "description": "Qwen3-32B single-layer decode forward with blocked 4-D operands",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "build_qwen3_decode_program",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": ["out"]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  },
+  "runtime": {
+    "platform": "a2a3",
+    "device_id": 0,
+    "rtol": 0.003,
+    "atol": 0.003
+  }
+}

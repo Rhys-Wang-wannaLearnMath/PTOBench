@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "case_id": "qwen3_14b.decode_layer_single_layer_max_seq_127",
+  "description": "Qwen3-14B single-layer decode with paged KV cache at max sequence 127",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "decode_fwd_layers",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "qwen3_14b_decode_layer_single_layer_max_seq_127",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "out"
+    ]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  }
+}

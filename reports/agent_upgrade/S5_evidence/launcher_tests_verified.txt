@@ -1,0 +1,20 @@
+test_blocked_terminal_does_not_stall_finalization_or_exit (test_launcher.LauncherTests) ... ok
+test_budget_stop_and_dual_large_logs (test_launcher.LauncherTests) ... ok
+test_budget_waits_for_last_active_action (test_launcher.LauncherTests) ... ok
+test_early_exit_without_snapshot_does_not_measure (test_launcher.LauncherTests) ... ok
+test_four_adapters_real_cli_all_five_operations (test_launcher.LauncherTests) ... ok
+test_infrastructure_failure_stops_owned_evaluator_without_final (test_launcher.LauncherTests) ... ok
+test_interrupt_active_evaluator_and_child (test_launcher.LauncherTests) ... ok
+test_invalid_configuration_fails_before_session (test_launcher.LauncherTests) ... ok
+test_leftover_worker_is_killed (test_launcher.LauncherTests) ... ok
+test_nonzero_exit_still_finalizes_best_history (test_launcher.LauncherTests) ... ok
+test_sensitive_profile_rejected_and_host_secret_not_recorded (test_launcher.LauncherTests) ... ok
+test_status_no_hardware_and_repairs_records (test_launcher.LauncherTests) ... ok
+test_user_interrupt_during_final_measurement (test_launcher.LauncherTests) ... ok
+test_user_interrupt_finalizes_and_returns_130 (test_launcher.LauncherTests) ... ok
+test_yaml_defaults_and_paths_ignore_startup_cwd (test_launcher.LauncherTests) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 123.592s
+
+OK

@@ -1,0 +1,64 @@
+{
+  "case_id": "deepseek_v4.prefill_layer_ep2_csa_pro",
+  "source_case": "deepseek_v4.prefill_layer_ep2_csa",
+  "preset": "pro",
+  "changes": {
+    "hidden_size": [
+      7168,
+      4096
+    ],
+    "moe_intermediate_size": [
+      3072,
+      2048
+    ],
+    "max_position_embeddings": [
+      1048576,
+      458752
+    ]
+  },
+  "authorization": "User permits model-parameter and case-local repairs; v0.2 Bench shared code remains read-only.",
+  "private_repairs": [
+    "Use earliest passing July09 19f9ec92 routed W2 SPMD epilogue; equation/ABI preserved.",
+    "Separate FP32 Hadamard GM write and vector INT8 quantization scopes to fix invalid TCVT scratch lowering.",
+    "Independent CPU Oracle derives hash-layer and optional SwiGLU clamp conditions from selected preset, matching frozen official golden.",
+    "Private main Q projection casts INT8 to exact FP16 operands and accumulates FP32, then rounds back INT32 before unchanged dequantization.",
+    "Initialize complete position lookup in4096-column SPMD blocks.",
+    "Compute quantization scale as reciprocal(amax) times127 in gate/shared/routed experts, matching official CPU floating execution order.",
+    "Use a new owning environment profile on device6/7 after device0 failed AICore register initialization before comparison; original environment profiles preserved.",
+    "Zero-argument deterministic fixture tables memoized with clone-on-return; RNG distribution preserved.",
+    "Earliest official Aug14 7a57215c signal retirement adapted to old credit slopes; final post-benchmark cache also checked against independent CPU."
+  ],
+  "comparator_sha256": "1f5f8a8fbbe76f6369e55c64905c7fefe66cd349f30df972a121ca23d829082d",
+  "comparator_reconciliation": "benchmarks/mig_data/all_presets_repair_20261003/comparator_reconciliation.md",
+  "official_sha256": {
+    "expert_routed.py": "e6bc6458dd64cfb9e777be54e312b44de9300a440a9f0c24c672973e40c29271",
+    "moe.py": "a04255581c7ad609076e88f63768d9756f4d48287a68ec521272b69f1fafcc0e",
+    "prefill_indexer_compressor.py": "0ab7dfbc70a5fc3cbd91559b112d027bf9df9a7297478e79973a8d938d322e0e",
+    "gate.py": "c79165cc4cee2044c033527dafb562e44fdc4113f51ffc4d9208b763f67b3f50",
+    "rope_tables.py": "6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59",
+    "prefill_hc_pre.py": "8ba656865ff4fb249746573b000a0079dc75b08ca1db932063881a3a3c3c5f73",
+    "prefill_hc_post.py": "9f3e51cbf8b1b9e258874b1ca104cb0e8e94793e2d42f153bea2cac75243f25f",
+    "prefill_indexer.py": "1ea13b2b83f7376d3122c08754078efdf51769298ac601066060f7bb97300769",
+    "original.py": "4bf4d98d8c2e47f266354fb8b7cf2d61d859f383749dfdd071772a9d157ccc6e",
+    "source_provenance.json": "a4b1c6de035ec2b81c9d09becdddaac9eccc7c0e5e4702ed90c91abac1bcb4f6",
+    "rmsnorm.py": "4c041b40ff9b37da5dc3dc050d8a39d29db8eb577a568abad853efc41b5a2c1b",
+    "hc_pre_v2.py": "d9bdd864f553761f499432fb3bcfe1db8881b2979461204cdfe5785be5bc5a5f",
+    "prefill_attention_csa.py": "60c650a26eba057d64cacc99ea01a1a85775c025ca0748d95e7159658cdc5da2",
+    "prefill_compressor_ratio128.py": "78e7db5c4e29bb74c1a8ed6e849cb6f419393e5a37f050c8b3343f91dffee060",
+    "hc_post_v2.py": "f3a0265ba266eed1bd0c480cdd2d61b4b77ce612b4c44c0124d91131258d7f5c",
+    "prefill_attention_hca.py": "b9f593660c9b277404ab8a4d9b5e8f59cd463c7e34f24e4dd8f83d0df396ae43",
+    "prefill_compressor_ratio4.py": "f261cf232147a2230231da41e07c5cb9a84cf724a400beef4e364ce58d5a9e02",
+    "prefill_attention_swa.py": "fc909a7be93f285a9a88d7d91efebcae134c03c37213d2435b7a43dcb9da1481",
+    "original_config.py": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+    "prefill_sparse_attn_v2.py": "e343d127905f527b30035c936f3fcb738b36662ee0cec4c87745a81b6dbc9293",
+    "prefill_qkv_proj_rope_v2.py": "032e7ca86f096886487ed37d158d4cd4484a7a3cb2fe4ecec322c2f6b6ef3f68",
+    "expert_shared.py": "b010d1914a90528373ebdba362ba5c37b07b01f6d7fc08bacde32123593a7a74"
+  },
+  "repair_outcome": "REF_CERTIFIED_READY",
+  "evidence_directory": "benchmarks/mig_data/all_presets_repair_20261003",
+  "certification_evidence": "benchmarks/mig_data/all_presets_repair_20261003/prefill_layer_ep2_csa_pro.certify.json",
+  "scope": "Fixed official seed0 fixture_000 after authorized model and case-private repairs; fresh full-source-bound Ref certification. Candidate publication and independent acceptance have separate records in admission continuation.",
+  "admission_continuation": "benchmarks/mig_data/all_presets_admission_20261003",
+  "metadata_note": "Source provenance completed and fixture adapter docstrings aligned during authorized admission; official Python and executable adapter AST unchanged.",
+  "current_certification_evidence": "benchmarks/mig_data/all_presets_admission_20261003/csa_publication_rework_01/certification/prefill_layer_ep2_csa_pro/certify_result.json"
+}

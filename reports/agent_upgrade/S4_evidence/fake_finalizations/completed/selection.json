@@ -1,0 +1,16 @@
+{
+  "snapshot_id": "snapshot_000002",
+  "event_seq": 2,
+  "content_sha256": "cf861ccbfbff1281925ae8f45554121d7db995968620a8ed41d9991a09a253c9",
+  "source_workspace": "/tmp/s2_v0lihqx0/custom_runs/codex/test.case/20261002T192833Z_2c2d43bfe045/workspaces/worker_000",
+  "observation": {
+    "kind": "profile",
+    "mode": "pmu",
+    "correctness": "PASS",
+    "latency_us": 3.0,
+    "metric_name": "median_effective_us",
+    "unit": "us"
+  },
+  "selection_reason": "lowest_observed_latency",
+  "selection_policy": "lowest_observed_latency_else_latest_pass"
+}

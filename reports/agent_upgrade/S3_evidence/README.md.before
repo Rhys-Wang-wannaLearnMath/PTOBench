@@ -1,0 +1,143 @@
+# PyPTO Lib Benchmark v0.2
+
+v0.2 将一个 Case 分成公开资产和评测专用资产：
+
+- `cases/`：Agent 可见的 Case 描述、只读契约、公开比较规则和 Candidate workspace。只有 workspace 可写，其内部文件自由。
+- `sealed_assets/`：评测器专用的输入、初始状态、NPU Ref、CPU Oracle、缓存输出和 Case-local evaluator。Agent 不应读取此目录。
+
+每个公开 Case 使用三个简单文件划分职责：
+
+- `case.json`：Case 路由、环境和评测模式；
+- `public/config.py`：本 Case 唯一的固定配置，Ref 和 Candidate 共用；
+- `public/comparator.json`：实际生效的输出比较方法与容差。
+
+Agent 可以读取并 import 后两者，但调度框架应将它们只读挂载。Evaluator
+直接读取 canonical Case 中的这两份文件；workspace 中的副本只是给 Agent 阅读的
+只读快照，不参与正式评测。
+
+`public/candidate_seed/` 可以包含任意数量的实现文件和子目录。`bench init` 会
+递归复制整个目录，Agent 可以修改、增加或删除这些实现文件；只需保证
+`case.json` 指定的入口仍可加载。Sealed `ref/` 独立保存初始 NPU Ref 运行所需的
+完整冻结依赖，不从 Candidate workspace 导入代码。Candidate 和 Ref 共同读取
+唯一的 public `config.py`，但不共用可编辑实现文件。
+
+Comparator 的上游对齐原则见 `../mig_workflow/COMPARATOR_POLICY.md`；当前全部
+Case 的逐项复核结论和证据分组见 `COMPARATOR_AUDIT.md`。
+
+所有 Case 只执行一个 step，并只使用一个固定的正式 Fixture
+`fixture_000`。Ref 在正式优化前生成一次输出和性能基线，Candidate 后续直接与
+缓存的 Ref 结果比较。
+
+统一 CLI 是 `bench`，提供 `list`、`init`、`evaluate`、`profile` 和
+`prepare-ref`。`evaluate` 始终使用 clean 模式并产生正式成绩；启用的
+`profile runtime`、`profile hardware` 和 `profile compile` 只运行 Candidate，
+生成诊断信息，不产生正式性能成绩。
+中央 `evaluator/evaluate.py` 只提供统一结果格式。每个 Case 的
+`sealed_assets/<family>/<case>/evaluate.py` 保留从原始实现提取的 TensorSpec、运行
+方式，并完成该 Case 的具体执行。Comparator 的规则公开存放，由 Case-local
+evaluator 读取并应用。
+
+每个 Case 还提供 `sealed_assets/<family>/<case>/fixture_builder.py`。统一生成入口
+只负责调用它；具体的官方 `build_tensor_specs()` 编排由 Case 自己保存。
+
+`bench init` 会在 Candidate workspace 中生成给 Agent 阅读的 `.benchmark_context/`
+目录：
+
+```text
+.benchmark_context/
+├── README.md
+├── workspace.json
+├── case.json
+├── config.py
+├── comparator.json
+├── reference.json
+├── environment.json
+├── starting_point/       # read-only initial Candidate snapshot
+└── profiling_modes.json   # 仅在至少开放一种 profiling mode 时存在
+```
+
+这些是公开快照；`starting_point/` 保存本轮优化开始时的 Candidate，供对比和恢复使用，
+不参与评测。正式评测始终从 canonical `cases/` 和 `sealed_assets/` 读取权威内容。
+
+评测产生的结果和编译、诊断文件写入 Workspace 自己的
+`.benchmark_outputs/<mode>/`，不会使用调用目录下的公共输出目录。
+
+常用命令：
+
+```bash
+bench list
+bench init deepseek_v4.compressor_ratio4_flash --out runs/worker_001
+bench fork runs/worker_001 --out runs/worker_002
+bench evaluate runs/worker_001
+bench profile runtime runs/worker_001
+bench profile hardware runs/worker_001
+bench profile compile runs/worker_001
+bench prepare-ref deepseek_v4.compressor_ratio4_flash
+bench prepare-ref deepseek_v4.compressor_ratio4_flash --regenerate-fixtures
+```
+
+普通 `prepare-ref` 会复用完整的现有 Fixture 输入，并刷新 Ref 输出、性能与认证。
+只有 Fixture builder、公开输入契约或 seed policy 发生变化时才使用
+`--regenerate-fixtures`。
+
+`bench fork <parent_workspace> --out <child_workspace>` 从已有 Candidate 派生一个
+新的独立 workspace。它只复制 Candidate 实现，不复制 `.benchmark_context/` 或
+`.benchmark_outputs/`；child 的公开 context 会根据 canonical Case 重新生成，并在
+`workspace.json` 中记录 parent 和 child 的绝对路径。parent 不会被修改，child 必须
+是新的空目录或不存在的路径。
+
+## 启动 Agent 优化
+
+推荐由维护者先准备一次 Ref，然后在独立 workspace 中启动 Agent：
+
+```bash
+# 从仓库根目录将完整 benchmark 目录加入 PATH；workspace 可以位于任意目录
+cd /path/to/pypto-lib
+export PATH="$PWD/benchmarks/pypto_lib_bench-v0.2:$PATH"
+
+# 只需由维护者执行一次
+bench prepare-ref deepseek_v4.compressor_ratio4_flash --platform a2a3
+
+# 在任意位置创建 Agent workspace
+bench init deepseek_v4.compressor_ratio4_flash \
+  --out /somewhere/runs/agent_001
+
+# 以 workspace 作为 Agent 的工作目录
+cd /somewhere/runs/agent_001
+```
+
+Agent 只修改 workspace 中的 Candidate 实现文件，并通过 CLI 获取评测反馈：
+
+```bash
+# 修改后先做快速正确性检查
+bench evaluate . --phase correctness
+
+# 需要时运行已开放的诊断模式；这些结果不是正式成绩
+bench profile runtime .
+bench profile hardware .
+bench profile compile .
+
+# 最终必须重新运行 clean 正式评测
+bench evaluate . --phase all
+```
+
+`bench evaluate .` 会根据 `.benchmark_context/workspace.json` 找到 Case；因此
+workspace 不要求位于 benchmark 目录下。`bench` 命令本身必须使用完整的
+benchmark 安装目录，不能只把 `bench` 脚本单独复制到 workspace。若不使用
+`PATH`，也可以直接调用该脚本的绝对路径。
+
+默认评测结果写入 `.benchmark_outputs/clean/latest_result.json`；profiling 结果分别
+写入对应 mode 目录。
+
+在上述可信 Agent 模型中，Agent 将 CLI 当作外部评测工具，只读取当前 workspace
+及其生成的公开结果。`PATH` 只解决命令发现，不提供操作系统级隔离；如果 Agent
+不被信任，必须把 evaluator 和 `sealed_assets/` 放在独立的 broker、容器或权限域中，
+不能仅靠切换工作目录防止读取隐藏资产。
+
+Profiling 模式和新 workspace 的开放列表由 `evaluator/profile_modes.py` 配置。
+`bench init` 只向 Agent 公开当前开放的模式；没有开放的模式不会出现在
+`.benchmark_context/README.md` 或 `.benchmark_context/profiling_modes.json` 中。Agent 不能通过 CLI
+修改固定的 RunConfig 参数。Profiling 下的耗时仅用于诊断；最终性能比较必须
+重新运行 clean 的 `bench evaluate`。Profiling 和 clean `evaluate` 使用同一个
+固定 Fixture；区别只在于 profiling 生成诊断产物，而 clean `evaluate` 生成正式
+性能成绩。

@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "next_hidden": {
+      "method": "allclose",
+      "rtol": 0,
+      "atol": 0
+    }
+  }
+}

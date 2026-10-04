@@ -1,0 +1,27 @@
+{
+  "name": "a2a3_prefill_layer_ep2_csa_pro",
+  "platform": "a2a3",
+  "device": 0,
+  "runtime": {
+    "device_ids": [
+      0,
+      1
+    ],
+    "ring_heap": 1073741824
+  },
+  "benchmark": {
+    "warmup": 5,
+    "rounds": 10
+  },
+  "python": ".venv-official/bin/python",
+  "setup_scripts": [
+    "{cann_root}/set_env.sh"
+  ],
+  "prepend_env": {
+    "PATH": "{ptoas_root}/bin"
+  },
+  "env": {
+    "PYTHONPATH": "{repo_root}",
+    "PTOAS_ROOT": "{ptoas_root}"
+  }
+}

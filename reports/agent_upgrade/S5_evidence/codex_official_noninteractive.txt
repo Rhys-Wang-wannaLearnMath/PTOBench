@@ -1,0 +1,2 @@
+https://developers.openai.com/codex/noninteractive
+FETCH_FAILED: HTTP Error 403: Forbidden

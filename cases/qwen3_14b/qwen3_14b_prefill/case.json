@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "case_id": "qwen3_14b.qwen3_14b_prefill",
+  "description": "Qwen3-14B single-layer prefill with paged KV cache",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "build_qwen3_14b_prefill_program",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": ["out"]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  }
+}

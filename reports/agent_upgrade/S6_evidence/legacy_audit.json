@@ -1,0 +1,194 @@
+{
+  "status": "PASS",
+  "active_legacy_calls": [],
+  "scanned_files": [
+    ".agents/skills/publish-pypto-case-v02-candidate/SKILL.md",
+    ".agents/skills/implement-and-certify-pypto-case-v02/SKILL.md",
+    ".agents/skills/analyze-pypto-case-v02-migration/SKILL.md",
+    ".agents/skills/audit-pypto-case-v02-closure/SKILL.md",
+    ".agents/skills/migrate-pypto-case-v01-to-v02/SKILL.md",
+    ".agents/skills/build-pypto-case-v02-contract/SKILL.md",
+    ".agents/skills/repair-and-recertify-pypto-case-v02/SKILL.md",
+    ".agents/skills/verify-pypto-case-v02-migration/SKILL.md",
+    "benchmarks/mig_workflow/04_repair_and_recertify.md",
+    "benchmarks/mig_workflow/02_analyze.md",
+    "benchmarks/mig_workflow/06_accept.md",
+    "benchmarks/mig_workflow/SESSION_ACCEPTANCE.md",
+    "benchmarks/mig_workflow/03_contract.md",
+    "benchmarks/mig_workflow/04_implement_and_certify.md",
+    "benchmarks/mig_workflow/01_plan.md",
+    "benchmarks/mig_workflow/COMPARATOR_POLICY.md",
+    "benchmarks/mig_workflow/CASE_MIGRATION_CONTRACT.md",
+    "benchmarks/mig_workflow/README.md",
+    "benchmarks/mig_workflow/MULTI_FILE_MIGRATION.md",
+    "benchmarks/mig_workflow/05_publish_candidate.md",
+    "benchmarks/mig_workflow/06_closure_audit.md",
+    "benchmarks/mig_workflow/validate_bootstrap.py",
+    "benchmarks/mig_workflow/validate_stage_result.py",
+    "benchmarks/mig_workflow/repair_gate.py",
+    "benchmarks/mig_workflow/prepare_progress_requeue.py",
+    "benchmarks/mig_workflow/start_post_followup_qkv_20260927.sh",
+    "benchmarks/mig_workflow/requeue_incomplete_invalid_20260929.sh",
+    "benchmarks/mig_workflow/start_retry_infra_codex_01540_20260928.sh",
+    "benchmarks/mig_workflow/requeue_progress_states_serial_20261001.sh",
+    "benchmarks/mig_workflow/requeue_infra_failed_serial_20260929.sh",
+    "benchmarks/mig_workflow/run_migrations.sh",
+    "benchmarks/mig_workflow/wait_then_start_not_started_18_20260929.sh",
+    "benchmarks/mig_workflow/start_retry_infra_codex_01571_20260927.sh",
+    "benchmarks/mig_workflow/start_new10_remaining_20260927.sh",
+    "benchmarks/mig_workflow/start_followup_20260927.sh",
+    "benchmarks/mig_workflow/start_not_started_18_codex_01580_20260929.sh",
+    "benchmarks/mig_workflow/start_qkv_stage6_then_new10_20260927.sh",
+    "benchmarks/mig_workflow/start_followup2_20260927.sh",
+    "benchmarks/mig_workflow/start_serial_20260925.sh",
+    "benchmarks/mig_workflow/requeue_exec_failed_20260929.sh",
+    "benchmarks/mig_workflow/start_retry_nonready_20260927.sh",
+    "benchmarks/mig_workflow/start_serial_recovery_20260926.sh",
+    "benchmarks/mig_workflow/start_goal_20260927.sh",
+    "benchmarks/mig_workflow/start_new10_after_qkv_20260927.sh",
+    "benchmarks/mig_workflow/restart_state_fix_queue_20261001.sh",
+    "benchmarks/mig_workflow/start_retry_codex_01580_20260928.sh"
+  ],
+  "old_entry_absent": true,
+  "old_parser_absent": true,
+  "preserved_negative_checks": [
+    "evaluator/tests/test_agent_cli.py",
+    "benchmarks/mig_workflow/validate_bootstrap.py"
+  ],
+  "preserved_history": [
+    "reports/agent_upgrade/S0-S5 reports and evidence",
+    "COMPARATOR_AUDIT.md",
+    "docs/weekly_reports",
+    "benchmarks/mig_workflow archived task logs"
+  ],
+  "real_cli_refusals_without_session": [
+    {
+      "argv": [
+        "evaluate"
+      ],
+      "exit": 2,
+      "stdout": {
+        "status": "REJECTED",
+        "error_code": "invalid_request",
+        "exit_code": 2,
+        "event_seq": null,
+        "workspace": null,
+        "correctness": null,
+        "latency_us": null,
+        "snapshot_id": null,
+        "remaining_hardware_actions": null,
+        "message": "PTOBENCH_SESSION_ROOT is required",
+        "integrity_passed": null
+      },
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "profile",
+        "hardware"
+      ],
+      "exit": 2,
+      "stdout": {
+        "status": "REJECTED",
+        "error_code": "invalid_request",
+        "exit_code": 2,
+        "event_seq": null,
+        "workspace": null,
+        "correctness": null,
+        "latency_us": null,
+        "snapshot_id": null,
+        "remaining_hardware_actions": null,
+        "message": "argument mode: invalid choice: 'hardware' (choose from 'runtime', 'pmu', 'compiler')",
+        "integrity_passed": null
+      },
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "profile",
+        "compile"
+      ],
+      "exit": 2,
+      "stdout": {
+        "status": "REJECTED",
+        "error_code": "invalid_request",
+        "exit_code": 2,
+        "event_seq": null,
+        "workspace": null,
+        "correctness": null,
+        "latency_us": null,
+        "snapshot_id": null,
+        "remaining_hardware_actions": null,
+        "message": "argument mode: invalid choice: 'compile' (choose from 'runtime', 'pmu', 'compiler')",
+        "integrity_passed": null
+      },
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "evaluate",
+        "--phase",
+        "all"
+      ],
+      "exit": 2,
+      "stdout": {
+        "status": "REJECTED",
+        "error_code": "invalid_request",
+        "exit_code": 2,
+        "event_seq": null,
+        "workspace": null,
+        "correctness": null,
+        "latency_us": null,
+        "snapshot_id": null,
+        "remaining_hardware_actions": null,
+        "message": "unrecognized arguments: --phase",
+        "integrity_passed": null
+      },
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "evaluate",
+        "--result",
+        "/tmp/no_s6_write.json"
+      ],
+      "exit": 2,
+      "stdout": {
+        "status": "REJECTED",
+        "error_code": "invalid_request",
+        "exit_code": 2,
+        "event_seq": null,
+        "workspace": null,
+        "correctness": null,
+        "latency_us": null,
+        "snapshot_id": null,
+        "remaining_hardware_actions": null,
+        "message": "unrecognized arguments: --result",
+        "integrity_passed": null
+      },
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "fork",
+        "--out",
+        "/tmp/no_s6_fork"
+      ],
+      "exit": 2,
+      "stdout": {
+        "status": "REJECTED",
+        "error_code": "invalid_request",
+        "exit_code": 2,
+        "event_seq": null,
+        "workspace": null,
+        "correctness": null,
+        "latency_us": null,
+        "snapshot_id": null,
+        "remaining_hardware_actions": null,
+        "message": "unrecognized arguments: --out",
+        "integrity_passed": null
+      },
+      "stderr": ""
+    }
+  ]
+}

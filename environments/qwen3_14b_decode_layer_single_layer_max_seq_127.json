@@ -1,0 +1,21 @@
+{
+  "name": "qwen3_14b_decode_layer_single_layer_max_seq_127",
+  "platform": "a2a3",
+  "device": 0,
+  "benchmark": {
+    "warmup": 5,
+    "rounds": 10
+  },
+  "python": ".venv-official/bin/python",
+  "setup_scripts": [
+    "{cann_root}/set_env.sh"
+  ],
+  "prepend_env": {
+    "PATH": "{ptoas_root}/bin"
+  },
+  "env": {
+    "PYTHONPATH": "{repo_root}",
+    "PTOAS_ROOT": "{ptoas_root}",
+    "PTO2_MANUAL_MAX_SEQ": "127"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "score": {
+      "method": "ratio_allclose",
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 0.005
+    },
+    "topk_idxs": {
+      "method": "custom",
+      "name": "indexed_topk_pair",
+      "values_output": "score",
+      "compared_columns": 256,
+      "index_offset": 256,
+      "invalid_below_offset_to_neg_inf": true,
+      "dim": -1,
+      "descending": true,
+      "rtol": 0.001,
+      "atol": 0.001
+    },
+    "idx_kv_cache": {
+      "method": "custom",
+      "name": "mapped_active_rows_ratio_allclose",
+      "mapping_input": "idx_slot_mapping",
+      "flatten_leading_dims": 2,
+      "active": {
+        "method": "ratio_allclose",
+        "rtol": 0.0,
+        "atol": 1.0,
+        "max_error_ratio": 0.01
+      },
+      "inactive": {"method": "exact"}
+    },
+    "idx_kv_scale": {
+      "method": "custom",
+      "name": "mapped_active_rows_ratio_allclose",
+      "mapping_input": "idx_slot_mapping",
+      "flatten_leading_dims": 2,
+      "active": {
+        "method": "ratio_allclose",
+        "rtol": 0.0078125,
+        "atol": 0.0001,
+        "max_error_ratio": 0.01
+      },
+      "inactive": {"method": "exact"}
+    }
+  }
+}

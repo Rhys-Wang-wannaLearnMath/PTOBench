@@ -1,0 +1,14 @@
+[
+  ".agents/skills/publish-pypto-case-v02-candidate/SKILL.md",
+  ".agents/skills/implement-and-certify-pypto-case-v02/SKILL.md",
+  ".agents/skills/migrate-pypto-case-v01-to-v02/SKILL.md",
+  ".agents/skills/repair-and-recertify-pypto-case-v02/SKILL.md",
+  ".agents/skills/verify-pypto-case-v02-migration/SKILL.md",
+  "benchmarks/mig_workflow/04_repair_and_recertify.md",
+  "benchmarks/mig_workflow/06_accept.md",
+  "benchmarks/mig_workflow/SESSION_ACCEPTANCE.md",
+  "benchmarks/mig_workflow/04_implement_and_certify.md",
+  "benchmarks/mig_workflow/CASE_MIGRATION_CONTRACT.md",
+  "benchmarks/mig_workflow/README.md",
+  "benchmarks/mig_workflow/05_publish_candidate.md"
+]

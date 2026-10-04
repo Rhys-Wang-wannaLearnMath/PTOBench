@@ -1,0 +1,11 @@
+{
+  "canonical_file_count": 6701,
+  "non_tensor_content_hash_count": 3709,
+  "tensor_metadata_count": 2992,
+  "tensor_gib": 216.98,
+  "canonical_changed_paths": [],
+  "previous_tracked_file_count": 297,
+  "previous_tracked_changed_paths": [],
+  "git_index_unchanged": true,
+  "tensor_verification": "Tensor files checked by size/mtime_ns/mode, not full byte hashes. No real asset writes or hardware runs."
+}

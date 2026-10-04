@@ -1,0 +1,17 @@
+{
+  "stage": "S6",
+  "status": "PASS",
+  "scope": "公共层升级和真实集成验收结项；不代表全部 Case 验收通过",
+  "basis": {
+    "public_cpu_regression": "146 项通过",
+    "installed_backends": "Codex、ClaudeCode、pi、OpenCode 均通过真实 NPU 闭环",
+    "pi_opencode_models": "三个指定模型的六个组合均通过",
+    "missing_seed": "按用户确认口径保留 Case 级 BLOCKED，不要求修复该 Case 后才能结项",
+    "canonical_changes": "42 条路径全部属于另一个 Case 的资产及新增环境；S6 所选四个 Case 未变"
+  },
+  "preserved_results": {
+    "deepseek_v4.prefill_layer_ep2_hca_flash": "BLOCKED：缺 Candidate Seed，未运行",
+    "historical_global_canonical_hash_equality": "FAIL：原差异记录保留",
+    "S7": "NOT_RUN"
+  }
+}

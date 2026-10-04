@@ -1,0 +1,30 @@
+{
+  "stage": "S0",
+  "unittest_command": "PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python -m unittest discover -s benchmarks/pypto_lib_bench-v0.2/evaluator/tests -p 'test_*.py' -v",
+  "unittest_exit_code": 0,
+  "test_count": 14,
+  "final_log": "unittest_final_verified.log",
+  "final_log_sha256": "cb9ed71b9666db271af236048cb56ba08918122708bc9815da461389e21895a7",
+  "final_test_sources_sha256": {
+    "evaluator/tests/test_case_comparators.py": "c7ac0a758fb47f9a309bd304851617ca8a0973868d23dfe65d2626c9d15601d4",
+    "evaluator/tests/test_common.py": "5280ba945f04b604f01c93dcc87a9850cbfe5f81e6783e88755437dd13f31e89",
+    "evaluator/tests/test_evaluate.py": "4381641e8b512b83ebacf1bce5024f88628dfb46b3652549487e56b3f2644bc2",
+    "evaluator/tests/test_profile_modes.py": "429338898f66c1470402658de28637369dfcebce5ee5c20726697240b4762306",
+    "evaluator/tests/test_workflow.py": "146dd8493bf773a39091009770290819f079d4aee47ec1db322bb512a264a128",
+    "evaluator/tests/test_workspace.py": "280a00c3b290212feae80b2261917f4b46a71e4a68209d26f9f8a5e8be56afd1"
+  },
+  "report_sha256": "adbe298316dd3f95c9c052c6f26a6c669abac4871a818adaa5e6535948de16f8",
+  "missing_ready_seed_cases": 6,
+  "S1_preconditions_met": true,
+  "NPU_acceptance_performed": false,
+  "preservation": {
+    "canonical_file_count": 6701,
+    "canonical_content_hashed_files": 3709,
+    "tensor_metadata_only_files": 2992,
+    "canonical_changed_paths": [],
+    "previous_tracked_file_count": 297,
+    "previous_tracked_changed_paths": [],
+    "git_index_unchanged": true,
+    "tensor_check_limitation": "The 216.98 GiB .pt assets were checked by unchanged size, mtime_ns and mode, not read for full byte hashes; no Fixture writes or hardware processes were performed."
+  }
+}

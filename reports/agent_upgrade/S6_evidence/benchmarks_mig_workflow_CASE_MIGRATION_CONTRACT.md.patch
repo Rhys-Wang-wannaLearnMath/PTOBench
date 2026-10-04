@@ -1,0 +1,90 @@
+--- benchmarks/mig_workflow/CASE_MIGRATION_CONTRACT.md.before
++++ benchmarks/mig_workflow/CASE_MIGRATION_CONTRACT.md
+@@ -1,4 +1,6 @@
+ # Case migration contract
++
++Current runtime and certification interfaces: `benchmarks/mig_workflow/SESSION_ACCEPTANCE.md`. Use a fresh Session from Seed, protected action evidence, and independent clean finalization. Public profile names are runtime/pmu/compiler; internal artifact names remain runtime/hardware/compile.
+ 
+ This document is the common engineering contract for all six migration
+ stages. Stage documents define who may edit each path. This document defines
+@@ -507,22 +509,18 @@
+ The migration workspace should expose the complete supported set in
+ `.benchmark_context/profiling_modes.json`. If a mode is not exposed, record
+ `UNSUPPORTED` with the reason; do not silently omit it. Agent-facing workspaces
+-still mention only modes actually exposed by `bench init`.
+-
+-Stage 4 and Stage 6 must use `bench init` from the canonical Candidate Seed.
+-Do not use `bench fork`: fork is for optimization branches and copies the
++still mention only modes actually exposed by `session.create_session`.
++
++Stage 4 and Stage 6 must use `session.create_session` from the canonical Candidate Seed.
++Do not use `ptobench fork`: fork is for optimization branches and copies the
+ parent's current editable implementation, so it cannot prove that the published
+ seed itself is valid. Verify the new workspace binding names the expected Case
+ and that `.benchmark_context/starting_point/` matches the initialized Candidate
+ tree before any command changes it.
+ 
+-After clean `bench evaluate`, run once per supported mode:
+-
+-```bash
+-bench profile runtime <workspace> --result <runtime-result.json>
+-bench profile hardware <workspace> --result <hardware-result.json>
+-bench profile compile <workspace> --result <compile-result.json>
+-```
++After clean `ptobench evaluate`, run once per supported mode:
++
++Follow the fresh Session recipe in `benchmarks/mig_workflow/SESSION_ACCEPTANCE.md`: create a Session from Seed, run `ptobench evaluate` and `ptobench profile runtime/pmu/compiler`, then `snapshots.finalize_session`. Record protected action results and the independent final result.
+ 
+ Each profiling command uses the `correctness` phase declared by
+ `PROFILE_MODES`. Profiling qualification is a one-dispatch availability and
+@@ -530,7 +528,7 @@
+ measured rounds and do not require timing samples. A passing result must still
+ contain a passed correctness run and the mode's nonempty diagnostics.
+ 
+-Both the initial and final clean evaluations use `phase=all` (the CLI default),
++Both the initial and final clean evaluations use the fixed `phase=all` (exploration and independent finish),
+ must report `phase: all`, and must contain the configured positive performance
+ samples in addition to passing correctness. A correctness-only clean result is
+ useful debugging evidence but is not publication or acceptance evidence.
+@@ -554,10 +552,7 @@
+   current PyPTO runtime/compiler for that mode. Do not invent a universal
+   mode-specific filename when the official tool does not define one.
+ 
+-An explicit `--result` may place the summary JSON under the Stage task
+-directory, but it does not relocate compiler or diagnostic artifacts. Those
+-remain under the workspace's `.benchmark_outputs/<mode>/`; `build_dir` must
+-resolve inside that mode's artifact tree.
++The protected action result remains under Session staging; a copied summary is diagnostic only. `build_dir` must resolve inside the frozen action workspace's `.benchmark_outputs/<internal-mode>/` tree.
+ 
+ A mode that compiles but fails during collection is `FAIL`, not
+ `UNSUPPORTED`. Use `UNSUPPORTED` only with clear evidence that the current
+@@ -568,7 +563,7 @@
+ snapshot to Stage 4.
+ 
+ Profiling never determines the official score. After all profiling attempts,
+-run clean `bench evaluate` again in the same fresh workspace and require
++run independent clean `snapshots.finalize_session` in its new final workspace and require
+ `profiling_mode: clean`, `official_score: true`, and `diagnostic_only: false`.
+ This final clean run is the accepted score and proves profiling settings did
+ not leak into evaluation.
+@@ -591,16 +586,12 @@
+ 
+ ## 12. Required commands and acceptance
+ 
+-Use the repository-local CLI:
+-
+-```bash
+-benchmarks/pypto_lib_bench-v0.2/bench prepare-ref <family.case>
+-benchmarks/pypto_lib_bench-v0.2/bench init <family.case> --out <fresh-workspace>
+-benchmarks/pypto_lib_bench-v0.2/bench evaluate <fresh-workspace> --result <result.json>
+-```
++Use the current Session API and repository-local CLI; certification uses the maintenance script:
++
++Follow the fresh Session recipe in `benchmarks/mig_workflow/SESSION_ACCEPTANCE.md`: create a Session from Seed, run `ptobench evaluate` and `ptobench profile runtime/pmu/compiler`, then `snapshots.finalize_session`. Record protected action results and the independent final result.
+ 
+ Run all modes declared by `PROFILE_MODES` using their exposed
+-`bench profile ...` commands. Never reuse an optimization workspace for final
++`ptobench profile ...` commands. Never reuse an optimization workspace for final
+ seed acceptance.
+ 
+ A Case is `READY` only when:

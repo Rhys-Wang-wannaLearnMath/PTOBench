@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "global_active_marker_present": false,
+  "sessions": [
+    {
+      "backend": "pi",
+      "model": "glm-5.3-flash",
+      "active_action": null,
+      "optimizer_group_alive": false
+    },
+    {
+      "backend": "pi",
+      "model": "deepseek-flash",
+      "active_action": null,
+      "optimizer_group_alive": false
+    },
+    {
+      "backend": "pi",
+      "model": "gpt-6.1-sol",
+      "active_action": null,
+      "optimizer_group_alive": false
+    },
+    {
+      "backend": "opencode",
+      "model": "glm-5.3-flash",
+      "active_action": null,
+      "optimizer_group_alive": false
+    },
+    {
+      "backend": "opencode",
+      "model": "deepseek-flash",
+      "active_action": null,
+      "optimizer_group_alive": false
+    },
+    {
+      "backend": "opencode",
+      "model": "gpt-6.1-sol",
+      "active_action": null,
+      "optimizer_group_alive": false
+    }
+  ]
+}

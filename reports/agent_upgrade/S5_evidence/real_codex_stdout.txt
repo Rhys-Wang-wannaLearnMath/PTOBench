@@ -1,0 +1,19 @@
+[RUN] compile ...
+[RUN] compile done (0.36s)
+[RUN] generate inputs ...
+[RUN]   cache hit: /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/rmsnorm_decode_demo/fixtures/fixture_000/in
+[RUN] generate inputs done (0.00s)
+[RUN] compute golden ...
+[RUN]   cache hit: /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/rmsnorm_decode_demo/fixtures/fixture_000/out
+[RUN] compute golden done (0.00s)
+[RUN] runtime ...
+[RUN] runtime done (4.50s)
+[RUN] validate ...
+[RUN]   'x_normed' PASS  shape=(8, 4096) dtype=torch.bfloat16 (compare)
+[RUN] validate done (0.00s)
+[RUN] benchmark ...
+[RUN] benchmark done (0.11s)
+[RUN]   effective_us (10 rounds) min=16.7 median=17.0 mean=17.1 max=17.8
+[RUN] PASS (4.98s)
+deepseek_v4.rmsnorm_decode_demo: PASS
+{"session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo/20261003T050120Z_f64a04d58138", "final_result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo/20261003T050120Z_f64a04d58138/final_result.json", "status": "completed", "error_code": null, "close_reason": "budget_exhausted", "optimizer_exit_code": 0}

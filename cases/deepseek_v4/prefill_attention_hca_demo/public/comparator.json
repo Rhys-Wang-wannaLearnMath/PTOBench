@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "x_out": {
+      "method": "custom",
+      "name": "valid_ratio_reldiff",
+      "valid_rows": 128,
+      "valid_axis": 0,
+      "diff_thd": 0.005,
+      "pct_thd": 0.005,
+      "max_diff_hd": 1,
+      "tail_policy": "reject_undeclared"
+    },
+    "kv_cache": {
+      "method": "custom",
+      "name": "mapped_pool_compare",
+      "mapping_inputs": [
+        "ori_slot_mapping"
+      ],
+      "ranked": false,
+      "valid_rows": 128,
+      "unmapped_policy": "exact",
+      "base_rule": {
+        "method": "ratio_allclose",
+        "rtol": 0.0078125,
+        "atol": 0.0001,
+        "max_error_ratio": 0.005
+      }
+    },
+    "cmp_kv": {
+      "method": "custom",
+      "name": "mapped_pool_compare",
+      "mapping_inputs": [
+        "cmp_slot_mapping"
+      ],
+      "ranked": false,
+      "valid_rows": 128,
+      "unmapped_policy": "exact",
+      "base_rule": {
+        "method": "ratio_allclose",
+        "rtol": 0.0078125,
+        "atol": 0.0001,
+        "max_error_ratio": 0.005
+      }
+    }
+  }
+}

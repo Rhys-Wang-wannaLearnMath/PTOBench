@@ -1,0 +1,1 @@
+{"schema_version":1,"outputs":{"attn_out":{"method":"ratio_allclose","rtol":0.0078125,"atol":0.0001,"max_error_ratio":0.005}}}

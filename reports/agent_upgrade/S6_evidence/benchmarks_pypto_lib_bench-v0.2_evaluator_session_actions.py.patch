@@ -1,0 +1,120 @@
+--- benchmarks/pypto_lib_bench-v0.2/evaluator/session_actions.py.before
++++ benchmarks/pypto_lib_bench-v0.2/evaluator/session_actions.py
+@@ -169,6 +169,23 @@
+         except FileNotFoundError:
+             return
+     marker = session._read(path)
++    if isinstance(marker, dict) and marker.get('kind') == 'maintenance':
++        action_dir = _maintenance_dir(marker.get('action_dir'))
++        identity = marker.get('process')
++        if (marker.get('schema_version') != 1 or marker.get('state') not in {'starting', 'running'}
++                or not isinstance(marker.get('owner'), dict)):
++            raise integrity.InfrastructureError('invalid maintenance marker')
++        if identity is None:
++            raise integrity.InfrastructureError('maintenance spawn has no bound PID; execution blocked')
++        if (not isinstance(identity, dict) or set(identity) != {'pid', 'pgid', 'start_ticks'}
++                or any(type(value) is not int or value <= 0 for value in identity.values())
++                or identity['pid'] != identity['pgid']):
++            raise integrity.InfrastructureError('invalid maintenance process identity')
++        _stop_group(identity)
++        file_tree.atomic_bytes(action_dir / 'process_result.json', session._bytes({
++            'exit_code': 130, 'error_code': 'interrupted', 'recovered': True, 'process': identity}))
++        _clear_marker()
++        return
+     if (not isinstance(marker, dict) or marker.get('schema_version') != 1
+             or type(marker.get('event_seq')) is not int or not isinstance(marker.get('session_root'), str)):
+         raise integrity.InfrastructureError('invalid global active-action marker')
+@@ -229,6 +246,7 @@
+ 
+ def _run_process(argv, environment, action_dir, root, seq, signal_state):
+     """Drain both pipes to disk, with nonblocking terminal forwarding."""
++    session._require_execution()
+     selector = selectors.DefaultSelector()
+     process = None
+     identity = None
+@@ -236,8 +254,12 @@
+     outputs = []
+     marker = {'schema_version': 1, 'session_root': str(root), 'event_seq': seq,
+               'owner': session.process_identity(), 'process': None, 'state': 'starting'}
++    if root is None:
++        marker = {'schema_version': 1, 'kind': 'maintenance', 'action_dir': str(action_dir),
++                  'owner': session.process_identity(), 'process': None, 'state': 'starting'}
+     _marker(marker)
+-    session.mark_action_starting(root, seq)
++    if root is not None:
++        session.mark_action_starting(root, seq)
+     gate_read, gate_write = os.pipe2(os.O_CLOEXEC)
+     environment = {**environment, 'PTOBENCH_ACTION_START_FD': str(gate_read)}
+     try:
+@@ -255,11 +277,14 @@
+         _marker(marker)
+         # Fast exited children do not need a live-PID bind API. Commit their
+         # pinned birth identity before reaping, under the short record lock.
+-        with session._session_lock(root):
+-            record, _ = session._load_locked(root)
+-            record['active_action']['process'] = identity
+-            record['active_action']['process_state'] = 'running'
+-            session._commit(root, record)
++        if root is not None:
++            with session._session_lock(root):
++                record, _ = session._load_locked(root)
++                record['active_action']['process'] = identity
++                record['active_action']['process_state'] = 'running'
++                session._commit(root, record)
++        else:
++            file_tree.atomic_bytes(action_dir / 'process_identity.json', session._bytes(identity))
+         for pipe, stream, name in ((process.stdout, sys.stdout, 'stdout.log'), (process.stderr, sys.stderr, 'stderr.log')):
+             with file_tree.open_parent(action_dir / name) as (parent, leaf):
+                 fd = os.open(leaf, os.O_RDWR | os.O_CREAT | os.O_TRUNC | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC,
+@@ -344,6 +369,51 @@
+             log.close()
+         if cleanup_error is not None:
+             raise cleanup_error
++
++
++def _maintenance_dir(value):
++    if not isinstance(value, (str, Path)):
++        raise integrity.InfrastructureError('invalid maintenance action directory')
++    path = session._path(value, code='invalid_request')
++    runs = file_tree.absolute_path(common.BENCHMARK_ROOT / 'runs')
++    if path == runs or not path.is_relative_to(runs):
++        raise integrity.InfrastructureError('maintenance evidence must be below benchmark runs')
++    session._path(path / 'workspace', code='invalid_request')
++    return path
++
++
++def run_maintenance_process(argv, environment, action_dir):
++    """Internal control execution; caller holds the lock, no Session budget.
++
++    Shares the Evaluator gate, log draining, birth identity and group cleanup
++    with exploration/finish. An abandoned worker is recovered under that same
++    lock before the next action. This is not an Agent CLI or score publisher.
++    """
++    session._require_execution()
++    action_dir = _maintenance_dir(action_dir)
++    recover_global_action()
++    if os.path.lexists(action_dir / 'command.json'):
++        raise integrity.InfrastructureError('maintenance evidence directory already used')
++    file_tree.atomic_bytes(action_dir / 'command.json', session._bytes({'argv': argv,
++                          'cwd': str(action_dir / 'workspace')}))
++    safe = True
++    with _signals() as state:
++        try:
++            code = _run_process(argv, environment, action_dir, None, None, state)
++            file_tree.atomic_bytes(action_dir / 'process_result.json', session._bytes({
++                'exit_code': code, 'error_code': None, 'recovered': False}))
++            return code
++        except ProcessCleanupError:
++            safe = False
++            raise
++        except BaseException as error:
++            file_tree.atomic_bytes(action_dir / 'process_result.json', session._bytes({
++                'exit_code': 130 if state['received'] else 5,
++                'error_code': getattr(error, 'error_code', 'infrastructure_error'), 'recovered': False}))
++            raise
++        finally:
++            if safe:
++                _clear_marker()
+ 
+ 
+ def _forward(outputs):

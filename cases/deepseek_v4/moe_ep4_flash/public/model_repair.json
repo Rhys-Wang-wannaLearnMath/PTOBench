@@ -1,0 +1,27 @@
+{
+  "case_id": "deepseek_v4.moe_ep4_flash",
+  "source_case": "deepseek_v4.moe_ep4",
+  "preset": "flash",
+  "changes": {},
+  "authorization": "User permits model-parameter and case-local repairs; v0.2 Bench shared code remains read-only.",
+  "private_repairs": [],
+  "comparator_sha256": "7ea633c2c667e8c8fb7a1dfc1f0f71f1164bad24def917982d7f1dec14b28b9d",
+  "comparator_reconciliation": "benchmarks/mig_data/all_presets_repair_20261003/comparator_reconciliation.md",
+  "official_sha256": {
+    "expert_routed.py": "e6bc6458dd64cfb9e777be54e312b44de9300a440a9f0c24c672973e40c29271",
+    "gate.py": "c79165cc4cee2044c033527dafb562e44fdc4113f51ffc4d9208b763f67b3f50",
+    "original.py": "a04255581c7ad609076e88f63768d9756f4d48287a68ec521272b69f1fafcc0e",
+    "source_provenance.json": "b1a7bcebc14d26bb76ee55dba65aecb0f881fba963fb382e593dd9e06c5edffc",
+    "hc_pre_v2.py": "d9bdd864f553761f499432fb3bcfe1db8881b2979461204cdfe5785be5bc5a5f",
+    "hc_post_v2.py": "f3a0265ba266eed1bd0c480cdd2d61b4b77ce612b4c44c0124d91131258d7f5c",
+    "original_config.py": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+    "expert_shared.py": "b010d1914a90528373ebdba362ba5c37b07b01f6d7fc08bacde32123593a7a74"
+  },
+  "repair_outcome": "REF_CERTIFIED_READY",
+  "evidence_directory": "benchmarks/mig_data/all_presets_repair_20261003",
+  "certification_evidence": "benchmarks/mig_data/all_presets_repair_20261003/moe_ep4_flash.certify.json",
+  "scope": "Fixed official seed0 fixture_000 after authorized model and case-private repairs; fresh full-source-bound Ref certification. Candidate publication and independent acceptance have separate records in admission continuation.",
+  "admission_continuation": "benchmarks/mig_data/all_presets_admission_20261003",
+  "metadata_note": "Source provenance completed and fixture adapter docstrings aligned during authorized admission; official Python and executable adapter AST unchanged.",
+  "current_certification_evidence": "benchmarks/mig_data/all_presets_admission_20261003/parser_type_rework_01/moe_ep4_flash/certify_result.json"
+}

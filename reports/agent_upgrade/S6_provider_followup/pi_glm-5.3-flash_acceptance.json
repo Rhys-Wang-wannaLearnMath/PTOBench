@@ -1,0 +1,72 @@
+{
+  "backend": "pi",
+  "model": "glm-5.3-flash",
+  "profile": "default",
+  "case": "deepseek_v4.rmsnorm_decode_flash",
+  "status": "PASS",
+  "checks": {
+    "launcher_completed": true,
+    "optimizer_exit_zero": true,
+    "one_exploration_one_finish": true,
+    "evaluate_then_finish": true,
+    "all_events_passed": true,
+    "source_unchanged": true,
+    "no_active_action": true,
+    "optimizer_group_stopped": true,
+    "fresh_clean_final": true,
+    "ten_final_samples": true
+  },
+  "exit_code": 0,
+  "launcher_result": {
+    "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_provider_pi_glm-5.3-flash/deepseek_v4.rmsnorm_decode_flash/20261003T074612Z_0547832c7318",
+    "final_result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_provider_pi_glm-5.3-flash/deepseek_v4.rmsnorm_decode_flash/20261003T074612Z_0547832c7318/final_result.json",
+    "status": "completed",
+    "error_code": null,
+    "close_reason": "optimizer_exit",
+    "optimizer_exit_code": 0
+  },
+  "usage": {
+    "finish_actions": 1,
+    "hardware_actions": 1
+  },
+  "events": [
+    "evaluate",
+    "finish"
+  ],
+  "final": {
+    "best_observed_latency_us": 17.18,
+    "best_observed_metric_name": "median_effective_us",
+    "best_observed_mode": null,
+    "best_observed_source": "evaluate",
+    "best_observed_unit": "us",
+    "case_id": "deepseek_v4.rmsnorm_decode_flash",
+    "close_reason": "optimizer_exit",
+    "completed_at": "2026-10-03T07:46:58.755104+00:00",
+    "error_code": null,
+    "final_integrity_passed": true,
+    "final_verified_correctness": "passed",
+    "final_verified_latency_us": 17.4295,
+    "final_verified_speedup": 1.0034424395421555,
+    "finish_actions_used": 1,
+    "finish_event_seq": 2,
+    "hardware_actions_used": 1,
+    "message": null,
+    "optimizer_id": "s6_provider_pi_glm-5.3-flash",
+    "schema_version": 1,
+    "selected_content_sha256": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+    "selected_event_seq": 1,
+    "selected_observation": {
+      "correctness": "PASS",
+      "kind": "evaluate",
+      "latency_us": 17.18,
+      "metric_name": "median_effective_us",
+      "mode": null,
+      "unit": "us"
+    },
+    "selected_snapshot": "snapshot_000001",
+    "selection_policy": "lowest_observed_latency_else_latest_pass",
+    "selection_reason": "lowest_observed_latency",
+    "session_id": "20261003T074612Z_0547832c7318",
+    "status": "completed"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "audit": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/standalone_regression_20261004_174723",
+  "clone": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/standalone_regression_20261004_174723/PTOBench",
+  "cwd": "/",
+  "external_root_configured": true,
+  "inherited_pythonpath": false,
+  "returncode": 0,
+  "test_count": 165,
+  "elapsed_seconds": 453.602,
+  "result": "OK"
+}

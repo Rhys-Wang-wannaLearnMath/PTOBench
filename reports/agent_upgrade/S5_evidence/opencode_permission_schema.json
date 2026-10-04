@@ -1,0 +1,84 @@
+{
+  "source": "https://opencode.ai/config.json",
+  "validated_runtime_version": "1.18.34",
+  "definitions": {
+    "PermissionConfig": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PermissionActionConfig"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "read": {
+              "$ref": "#/$defs/PermissionRuleConfig"
+            },
+            "edit": {
+              "$ref": "#/$defs/PermissionRuleConfig"
+            },
+            "glob": {
+              "$ref": "#/$defs/PermissionRuleConfig"
+            },
+            "grep": {
+              "$ref": "#/$defs/PermissionRuleConfig"
+            },
+            "list": {
+              "$ref": "#/$defs/PermissionRuleConfig"
+            },
+            "bash": {
+              "$ref": "#/$defs/PermissionRuleConfig"
+            },
+            "task": {
+              "$ref": "#/$defs/PermissionRuleConfig"
+            },
+            "external_directory": {
+              "$ref": "#/$defs/PermissionRuleConfig"
+            },
+            "todowrite": {
+              "$ref": "#/$defs/PermissionActionConfig"
+            },
+            "question": {
+              "$ref": "#/$defs/PermissionActionConfig"
+            },
+            "webfetch": {
+              "$ref": "#/$defs/PermissionActionConfig"
+            },
+            "websearch": {
+              "$ref": "#/$defs/PermissionActionConfig"
+            },
+            "lsp": {
+              "$ref": "#/$defs/PermissionRuleConfig"
+            },
+            "doom_loop": {
+              "$ref": "#/$defs/PermissionActionConfig"
+            },
+            "skill": {
+              "$ref": "#/$defs/PermissionRuleConfig"
+            }
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/PermissionRuleConfig"
+          }
+        }
+      ]
+    },
+    "PermissionActionConfig": {
+      "type": "string",
+      "enum": [
+        "ask",
+        "allow",
+        "deny"
+      ]
+    },
+    "PermissionRuleConfig": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PermissionActionConfig"
+        },
+        {
+          "$ref": "#/$defs/PermissionObjectConfig"
+        }
+      ]
+    }
+  }
+}

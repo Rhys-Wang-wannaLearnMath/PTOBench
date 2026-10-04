@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "case_id": "qwen3_14b.qwen3_14b_decode_tq_single_layer",
+  "description": "qwen3_14b.qwen3_14b_decode_tq_single_layer: Qwen3-14B single-layer TurboQuant INT4-KV decode at max sequence 127, final RMSNorm and full padded FP32 logits",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "decode_fwd_tq",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "out"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "quant_k_cache",
+      "quant_v_cache",
+      "quant_k_scales",
+      "quant_v_scales"
+    ],
+    "restore_before_each_launch": true
+  }
+}

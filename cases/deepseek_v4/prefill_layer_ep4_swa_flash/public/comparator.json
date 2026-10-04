@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "hca_cmp_kv_state": {
+      "method": "allclose",
+      "rtol": 0.001,
+      "atol": 0.001
+    },
+    "hca_cmp_score_state": {
+      "method": "allclose",
+      "rtol": 0.001,
+      "atol": 0.001
+    },
+    "csa_cmp_kv_state": {
+      "method": "allclose",
+      "rtol": 0.001,
+      "atol": 0.001
+    },
+    "csa_cmp_score_state": {
+      "method": "allclose",
+      "rtol": 0.001,
+      "atol": 0.001
+    },
+    "csa_inner_kv_state": {
+      "method": "allclose",
+      "rtol": 0.001,
+      "atol": 0.001
+    },
+    "csa_inner_score_state": {
+      "method": "allclose",
+      "rtol": 0.001,
+      "atol": 0.001
+    },
+    "kv_cache": {
+      "method": "ratio_allclose",
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 0.005
+    },
+    "cmp_kv": {
+      "method": "allclose",
+      "rtol": 0.001,
+      "atol": 0.001
+    },
+    "idx_kv_cache": {
+      "method": "allclose",
+      "rtol": 0.001,
+      "atol": 0.001
+    },
+    "idx_kv_scale": {
+      "method": "allclose",
+      "rtol": 0.001,
+      "atol": 0.001
+    },
+    "x_next": {
+      "method": "custom",
+      "name": "valid_ratio_reldiff",
+      "diff_thd": 0.01,
+      "pct_thd": 0.05,
+      "chunk_lens_input": "chunk_lens",
+      "chunk_offsets_input": "chunk_offsets"
+    }
+  }
+}

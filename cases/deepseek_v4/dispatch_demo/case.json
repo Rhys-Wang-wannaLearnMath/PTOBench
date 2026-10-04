@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.dispatch_demo",
+  "description": "DeepSeek-V4 DEMO packed dispatch, decode single-card EP",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "dispatch_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["recv_x", "recv_scale_dq", "recv_weights", "recv_token", "recv_expert_count"]},
+  "state": {"behavior": "none", "initial_state": [], "restore_before_each_launch": false}
+}

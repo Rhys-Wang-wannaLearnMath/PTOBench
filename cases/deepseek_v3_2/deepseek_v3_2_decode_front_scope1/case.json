@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v3_2.deepseek_v3_2_decode_front_scope1",
+  "description": "DeepSeek V3.2 decode front scope1 projection and cache preparation",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "build_deepseek_v3_2_decode_front_scope1_program",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["qr_out", "q_nope_out", "q_pe_out", "kv_a_out", "kv_cache", "pe_cache"]},
+  "state": {"behavior": "mutating", "initial_state": ["kv_cache", "pe_cache"], "restore_before_each_launch": true}
+}

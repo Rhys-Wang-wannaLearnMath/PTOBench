@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.decode_o_proj_grouped",
+  "description": "DeepSeek-V4 grouped decode output projection with mandatory BF16 intermediate rounding",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "build_deepseek_v4_decode_o_proj_program",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["attn_out"]},
+  "state": {"behavior": "none", "initial_state": [], "restore_before_each_launch": false},
+  "runtime": {"rtol": 0.001, "atol": 0.001}
+}

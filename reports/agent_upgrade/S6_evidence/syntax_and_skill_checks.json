@@ -1,0 +1,10 @@
+{
+  ".agents/skills/publish-pypto-case-v02-candidate/SKILL.md": "valid frontmatter",
+  ".agents/skills/implement-and-certify-pypto-case-v02/SKILL.md": "valid frontmatter",
+  ".agents/skills/analyze-pypto-case-v02-migration/SKILL.md": "valid frontmatter",
+  ".agents/skills/audit-pypto-case-v02-closure/SKILL.md": "valid frontmatter",
+  ".agents/skills/migrate-pypto-case-v01-to-v02/SKILL.md": "valid frontmatter",
+  ".agents/skills/build-pypto-case-v02-contract/SKILL.md": "valid frontmatter",
+  ".agents/skills/repair-and-recertify-pypto-case-v02/SKILL.md": "valid frontmatter",
+  ".agents/skills/verify-pypto-case-v02-migration/SKILL.md": "valid frontmatter"
+}

@@ -1,0 +1,524 @@
+{
+  "deepseek_v4.rmsnorm_decode_flash:runtime": {
+    "passed": true,
+    "mode": "runtime",
+    "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime",
+    "evidence": [
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test__kf_qj_t/dfx_outputs/chip_swimlane_records.json",
+        "bytes": 2373,
+        "schema": {
+          "aicore_tasks": "list",
+          "aicpu_tasks": "list",
+          "aicpu_orchestrator_phases": "list",
+          "aicpu_scheduler_phases": "list",
+          "chip_swimlane_level": "int",
+          "metadata": "dict"
+        }
+      },
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test__kf_qj_t/dfx_outputs/deps.json",
+        "bytes": 914,
+        "schema": {
+          "edges": "list",
+          "tasks": "list",
+          "tensors": "list"
+        }
+      },
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test__kf_qj_t/dfx_outputs/merged_swimlane_20261003_144812.json",
+        "bytes": 10742,
+        "schema": {
+          "traceEvents": "list"
+        }
+      },
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test__kf_qj_t/dfx_outputs/scope_stats/scope_stats.jsonl",
+        "bytes": 1030,
+        "schema": {
+          "header_fields": [
+            "dep_pool_max",
+            "dropped",
+            "fatal",
+            "heap_max",
+            "task_window_max",
+            "tensormap_max",
+            "total"
+          ],
+          "event_fields": [
+            "dep_pool_end",
+            "dep_pool_start",
+            "depth",
+            "heap_end",
+            "heap_start",
+            "phase",
+            "ring",
+            "site",
+            "task_window_end",
+            "task_window_start",
+            "tensormap"
+          ],
+          "records": 4,
+          "dropped": 0
+        }
+      }
+    ],
+    "errors": []
+  },
+  "deepseek_v4.rmsnorm_decode_flash:pmu": {
+    "passed": true,
+    "mode": "pmu",
+    "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000007/workspace/.benchmark_outputs/hardware",
+    "evidence": [
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000007/workspace/.benchmark_outputs/hardware/build_output/_jit_rms_norm_test_om5s3zkh/dfx_outputs/pmu.csv",
+        "bytes": 269,
+        "schema": {
+          "fields": [
+            "core_id",
+            "core_type",
+            "cube_busy_cycles",
+            "event_type",
+            "func_id",
+            "icache_miss",
+            "icache_req",
+            "mte1_busy_cycles",
+            "mte2_busy_cycles",
+            "mte3_busy_cycles",
+            "pmu_total_cycles",
+            "scalar_busy_cycles",
+            "task_id",
+            "thread_id",
+            "vec_busy_cycles"
+          ],
+          "records": 1
+        }
+      }
+    ],
+    "errors": []
+  },
+  "deepseek_v4.rmsnorm_decode_flash:compiler": {
+    "passed": true,
+    "mode": "compiler",
+    "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile",
+    "evidence": [
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/report/pipeline_profile.json",
+        "bytes": 7113,
+        "schema": {
+          "stages": "list",
+          "total_seconds": "float"
+        }
+      },
+      {
+        "kind": "passes_dump",
+        "paths": [
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/00_frontend.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/01_after_InlineFunctions.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/02_after_UnrollLoops.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/03_after_CtrlFlowTransform.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/04_after_ConvertToSSA.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/05_after_Simplify.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/06_after_NormalizeStmtStructure.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/07_after_FlattenCallExpr.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/08_after_OutlineHierarchyScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/09_after_OutlineGraphScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/10_after_OutlineIncoreScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/11_after_OutlineClusterScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/12_after_ConvertTensorToTileOps.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/13_after_OptimizeOrchTensors.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/14_after_LowerCompositeOps.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/15_after_FlattenTileNdTo2D.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/16_after_BlockNzTensorViews.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/17_after_BlockMxScaleTensorViews.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/18_after_LegalizeTileCast.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/19_after_AutoTileMatmulL0.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/20_after_CanonicalizeTileSlice.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/21_after_InferTileMemorySpace.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/22_after_InsertMxScaleAddr.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/23_after_ResolveBackendOpLayouts.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/24_after_LowerAutoVectorSplit.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/25_after_ExpandMixedKernel.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/26_after_InjectGMPipeBuffer.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/27_after_SplitVectorKernel.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/28_after_StampTfreeSplit.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/29_after_NormalizeReturnOrder.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/30_after_SkewCrossCorePipeline.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/31_after_LowerPipelineToSlots.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/32_after_LowerPipelineLoops.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/33_after_CanonicalizeIOOrder.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/34_after_MaterializeTensorStrides.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/35_after_InitMemRef.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/36_after_MaterializeSemanticAliases.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/37_after_MemoryReuse.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/38_after_AllocateMemoryAddr.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/39_after_FoldNoOpReshape.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/40_after_FuseCreateAssembleToSlice.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/41_after_LowerL2TensorCollectives.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/42_after_DeriveCallDirections.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/43_after_AutoDeriveTaskDependencies.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/44_after_ExpandManualPhaseFence.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/45_after_SynthesizeAllReduceSignals.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/46_after_MaterializeCommDomainScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/47_after_LowerHostTensorCollectives.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/48_after_MaterializeDistTensorCtx.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/49_after_Simplify.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/50_after_LegalizeGraphBoundary.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/51_after_MaterializeRuntimeScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/52_after_ClassifyIterArgCarry.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/53_after_InsertCommFence.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/passes_dump/54_after_MaterializeValidShapeSymbols.py"
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "deepseek_v4.compressor_ratio4_flash:runtime": {
+    "passed": true,
+    "mode": "runtime",
+    "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime",
+    "evidence": [
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_t6teft7b/dfx_outputs/chip_swimlane_records.json",
+        "bytes": 201050,
+        "schema": {
+          "aicore_tasks": "list",
+          "aicpu_tasks": "list",
+          "aicpu_orchestrator_phases": "list",
+          "aicpu_scheduler_phases": "list",
+          "chip_swimlane_level": "int",
+          "metadata": "dict"
+        }
+      },
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_t6teft7b/dfx_outputs/deps.json",
+        "bytes": 130482,
+        "schema": {
+          "edges": "list",
+          "tasks": "list",
+          "tensors": "list"
+        }
+      },
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_t6teft7b/dfx_outputs/merged_swimlane_20261003_145224.json",
+        "bytes": 2759922,
+        "schema": {
+          "traceEvents": "list"
+        }
+      },
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_t6teft7b/dfx_outputs/scope_stats/scope_stats.jsonl",
+        "bytes": 24857,
+        "schema": {
+          "header_fields": [
+            "dep_pool_max",
+            "dropped",
+            "fatal",
+            "heap_max",
+            "task_window_max",
+            "tensormap_max",
+            "total"
+          ],
+          "event_fields": [
+            "dep_pool_end",
+            "dep_pool_start",
+            "depth",
+            "heap_end",
+            "heap_start",
+            "phase",
+            "ring",
+            "site",
+            "task_window_end",
+            "task_window_start",
+            "tensormap"
+          ],
+          "records": 116,
+          "dropped": 0
+        }
+      }
+    ],
+    "errors": []
+  },
+  "deepseek_v4.compressor_ratio4_flash:pmu": {
+    "passed": true,
+    "mode": "pmu",
+    "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000007/workspace/.benchmark_outputs/hardware",
+    "evidence": [
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000007/workspace/.benchmark_outputs/hardware/build_output/_jit_compressor_test_n94q0etk/dfx_outputs/pmu.csv",
+        "bytes": 64231,
+        "schema": {
+          "fields": [
+            "core_id",
+            "core_type",
+            "cube_busy_cycles",
+            "event_type",
+            "func_id",
+            "icache_miss",
+            "icache_req",
+            "mte1_busy_cycles",
+            "mte2_busy_cycles",
+            "mte3_busy_cycles",
+            "pmu_total_cycles",
+            "scalar_busy_cycles",
+            "task_id",
+            "thread_id",
+            "vec_busy_cycles"
+          ],
+          "records": 1102
+        }
+      }
+    ],
+    "errors": []
+  },
+  "deepseek_v4.compressor_ratio4_flash:compiler": {
+    "passed": true,
+    "mode": "compiler",
+    "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile",
+    "evidence": [
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/report/pipeline_profile.json",
+        "bytes": 12176,
+        "schema": {
+          "stages": "list",
+          "total_seconds": "float"
+        }
+      },
+      {
+        "kind": "passes_dump",
+        "paths": [
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/00_frontend.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/01_after_InlineFunctions.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/02_after_UnrollLoops.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/03_after_CtrlFlowTransform.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/04_after_ConvertToSSA.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/05_after_Simplify.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/06_after_NormalizeStmtStructure.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/07_after_FlattenCallExpr.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/08_after_OutlineHierarchyScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/09_after_OutlineGraphScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/10_after_OutlineIncoreScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/11_after_OutlineClusterScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/12_after_ConvertTensorToTileOps.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/13_after_OptimizeOrchTensors.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/14_after_LowerCompositeOps.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/15_after_FlattenTileNdTo2D.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/16_after_BlockNzTensorViews.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/17_after_BlockMxScaleTensorViews.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/18_after_LegalizeTileCast.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/19_after_AutoTileMatmulL0.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/20_after_CanonicalizeTileSlice.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/21_after_InferTileMemorySpace.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/22_after_InsertMxScaleAddr.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/23_after_ResolveBackendOpLayouts.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/24_after_LowerAutoVectorSplit.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/25_after_ExpandMixedKernel.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/26_after_InjectGMPipeBuffer.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/27_after_SplitVectorKernel.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/28_after_StampTfreeSplit.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/29_after_NormalizeReturnOrder.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/30_after_SkewCrossCorePipeline.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/31_after_LowerPipelineToSlots.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/32_after_LowerPipelineLoops.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/33_after_CanonicalizeIOOrder.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/34_after_MaterializeTensorStrides.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/35_after_InitMemRef.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/36_after_MaterializeSemanticAliases.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/37_after_MemoryReuse.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/38_after_AllocateMemoryAddr.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/39_after_FoldNoOpReshape.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/40_after_FuseCreateAssembleToSlice.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/41_after_LowerL2TensorCollectives.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/42_after_DeriveCallDirections.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/43_after_AutoDeriveTaskDependencies.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/44_after_ExpandManualPhaseFence.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/45_after_SynthesizeAllReduceSignals.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/46_after_MaterializeCommDomainScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/47_after_LowerHostTensorCollectives.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/48_after_MaterializeDistTensorCtx.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/49_after_Simplify.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/50_after_LegalizeGraphBoundary.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/51_after_MaterializeRuntimeScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/52_after_ClassifyIterArgCarry.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/53_after_InsertCommFence.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/passes_dump/54_after_MaterializeValidShapeSymbols.py"
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "deepseek_v4.decode_attention_hca_flash:runtime": {
+    "passed": true,
+    "mode": "runtime",
+    "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime",
+    "evidence": [
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_nj0evkxg/dfx_outputs/chip_swimlane_records.json",
+        "bytes": 212820,
+        "schema": {
+          "aicore_tasks": "list",
+          "aicpu_tasks": "list",
+          "aicpu_orchestrator_phases": "list",
+          "aicpu_scheduler_phases": "list",
+          "chip_swimlane_level": "int",
+          "metadata": "dict"
+        }
+      },
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_nj0evkxg/dfx_outputs/deps.json",
+        "bytes": 61489,
+        "schema": {
+          "edges": "list",
+          "tasks": "list",
+          "tensors": "list"
+        }
+      },
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_nj0evkxg/dfx_outputs/merged_swimlane_20261003_145527.json",
+        "bytes": 2946099,
+        "schema": {
+          "traceEvents": "list"
+        }
+      },
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_nj0evkxg/dfx_outputs/scope_stats/scope_stats.jsonl",
+        "bytes": 1051,
+        "schema": {
+          "header_fields": [
+            "dep_pool_max",
+            "dropped",
+            "fatal",
+            "heap_max",
+            "task_window_max",
+            "tensormap_max",
+            "total"
+          ],
+          "event_fields": [
+            "dep_pool_end",
+            "dep_pool_start",
+            "depth",
+            "heap_end",
+            "heap_start",
+            "phase",
+            "ring",
+            "site",
+            "task_window_end",
+            "task_window_start",
+            "tensormap"
+          ],
+          "records": 4,
+          "dropped": 0
+        }
+      }
+    ],
+    "errors": []
+  },
+  "deepseek_v4.decode_attention_hca_flash:pmu": {
+    "passed": true,
+    "mode": "pmu",
+    "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000003/workspace/.benchmark_outputs/hardware",
+    "evidence": [
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000003/workspace/.benchmark_outputs/hardware/build_output/_jit_attention_hca_test_3quu00ia/dfx_outputs/pmu.csv",
+        "bytes": 82707,
+        "schema": {
+          "fields": [
+            "core_id",
+            "core_type",
+            "cube_busy_cycles",
+            "event_type",
+            "func_id",
+            "icache_miss",
+            "icache_req",
+            "mte1_busy_cycles",
+            "mte2_busy_cycles",
+            "mte3_busy_cycles",
+            "pmu_total_cycles",
+            "scalar_busy_cycles",
+            "task_id",
+            "thread_id",
+            "vec_busy_cycles"
+          ],
+          "records": 1303
+        }
+      }
+    ],
+    "errors": []
+  },
+  "deepseek_v4.decode_attention_hca_flash:compiler": {
+    "passed": true,
+    "mode": "compiler",
+    "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile",
+    "evidence": [
+      {
+        "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/report/pipeline_profile.json",
+        "bytes": 19111,
+        "schema": {
+          "stages": "list",
+          "total_seconds": "float"
+        }
+      },
+      {
+        "kind": "passes_dump",
+        "paths": [
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/00_frontend.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/01_after_InlineFunctions.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/02_after_UnrollLoops.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/03_after_CtrlFlowTransform.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/04_after_ConvertToSSA.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/05_after_Simplify.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/06_after_NormalizeStmtStructure.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/07_after_FlattenCallExpr.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/08_after_OutlineHierarchyScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/09_after_OutlineGraphScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/10_after_OutlineIncoreScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/11_after_OutlineClusterScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/12_after_ConvertTensorToTileOps.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/13_after_OptimizeOrchTensors.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/14_after_LowerCompositeOps.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/15_after_FlattenTileNdTo2D.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/16_after_BlockNzTensorViews.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/17_after_BlockMxScaleTensorViews.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/18_after_LegalizeTileCast.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/19_after_AutoTileMatmulL0.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/20_after_CanonicalizeTileSlice.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/21_after_InferTileMemorySpace.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/22_after_InsertMxScaleAddr.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/23_after_ResolveBackendOpLayouts.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/24_after_LowerAutoVectorSplit.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/25_after_ExpandMixedKernel.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/26_after_InjectGMPipeBuffer.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/27_after_SplitVectorKernel.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/28_after_StampTfreeSplit.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/29_after_NormalizeReturnOrder.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/30_after_SkewCrossCorePipeline.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/31_after_LowerPipelineToSlots.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/32_after_LowerPipelineLoops.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/33_after_CanonicalizeIOOrder.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/34_after_MaterializeTensorStrides.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/35_after_InitMemRef.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/36_after_MaterializeSemanticAliases.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/37_after_MemoryReuse.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/38_after_AllocateMemoryAddr.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/39_after_FoldNoOpReshape.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/40_after_FuseCreateAssembleToSlice.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/41_after_LowerL2TensorCollectives.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/42_after_DeriveCallDirections.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/43_after_AutoDeriveTaskDependencies.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/44_after_ExpandManualPhaseFence.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/45_after_SynthesizeAllReduceSignals.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/46_after_MaterializeCommDomainScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/47_after_LowerHostTensorCollectives.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/48_after_MaterializeDistTensorCtx.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/49_after_Simplify.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/50_after_LegalizeGraphBoundary.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/51_after_MaterializeRuntimeScopes.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/52_after_ClassifyIterArgCarry.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/53_after_InsertCommFence.py",
+          "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/passes_dump/54_after_MaterializeValidShapeSymbols.py"
+        ]
+      }
+    ],
+    "errors": []
+  }
+}

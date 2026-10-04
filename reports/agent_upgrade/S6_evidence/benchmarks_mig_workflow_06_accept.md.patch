@@ -1,0 +1,27 @@
+--- benchmarks/mig_workflow/06_accept.md.before
++++ benchmarks/mig_workflow/06_accept.md
+@@ -1,4 +1,6 @@
+ # Stage 6: final independent acceptance
++
++Current runtime and certification interfaces: `benchmarks/mig_workflow/SESSION_ACCEPTANCE.md`. Use a fresh Session from Seed, protected action evidence, and independent clean finalization. Public profile names are runtime/pmu/compiler; internal artifact names remain runtime/hardware/compile.
+ 
+ Skill: `verify-pypto-case-v02-migration`
+ 
+@@ -67,7 +69,7 @@
+ owner to automatically rework the Case and rerun all downstream stages. Never
+ select `accept` as the owner of a content defect found here.
+ 
+-Use `bench init`, never `bench fork`. Verify the Case binding and
++Use `session.create_session`, never `ptobench fork`. Verify the Case binding and
+ `starting_point/` snapshot before running initial clean evaluate, all modes read
+ at execution time from `evaluator/profile_modes.py:PROFILE_MODES`, and final
+ clean evaluate. Commands sharing a device run strictly sequentially. A mode
+@@ -104,7 +106,7 @@
+ Ref/Candidate manifest and byte identity with every allowed entry diff
+ explained. Ignore canonical __pycache__/ and *.pyc in these checks.
+ 
+-For each result Case, create a fresh bench-init workspace, verify its binding
++For each result Case, create a fresh Session workspace from Seed, verify its binding
+ and starting point, run initial phase-all clean evaluate, every mode currently
+ declared by PROFILE_MODES, and final phase-all clean evaluate sequentially.
+ Inspect result JSON fields and isolated artifacts, not only exit status.

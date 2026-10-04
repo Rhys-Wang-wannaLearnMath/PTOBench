@@ -1,0 +1,139 @@
+#!/usr/bin/env python3
+"""Small command line adapter for the PyPTO benchmark."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+import common
+import profile_modes
+import workspace
+
+
+def _case(value: str):
+    return common.resolve_case(value)
+
+
+def cmd_list(_args) -> int:
+    cases_root = common.BENCHMARK_ROOT / "cases"
+    for case_file in sorted(cases_root.glob("*/*/case.json")):
+        case = common.read_json(case_file)
+        sealed = common.BENCHMARK_ROOT / "sealed_assets" / case_file.parent.relative_to(cases_root)
+        status = common.read_json(sealed / "certification.json").get("status", "pending")
+        print(f"{case['case_id']}\t{status}")
+    return 0
+
+
+def cmd_init(args) -> int:
+    case_dir, sealed, case = _case(args.case)
+    workspace.init_workspace(case_dir, sealed, case, args.out)
+    print(json.dumps({"case_id": case["case_id"], "workspace": str(args.out.resolve())}, indent=2))
+    return 0
+
+
+def cmd_fork(args) -> int:
+    result = workspace.fork_workspace(args.parent, args.out)
+    print(json.dumps(result, indent=2))
+    return 0
+
+
+def _workspace_case(value: str):
+    return workspace.resolve_workspace(value)
+
+
+def cmd_evaluate(args) -> int:
+    candidate = args.candidate
+    case_name = args.case
+    if candidate is None and (case_name == "." or Path(case_name).is_dir()):
+        candidate, case_name = _workspace_case(case_name)
+    elif candidate is not None and case_name == ".":
+        _candidate, case_name = _workspace_case(candidate)
+    elif candidate is None:
+        case_dir, _sealed, case = _case(case_name)
+        candidate = case_dir / case["workspace"]
+    command = [sys.executable, str(Path(__file__).with_name("evaluate.py")), "--case", case_name,
+               "--candidate", str(candidate), "--phase", args.phase,
+               "--profile-mode", "clean"]
+    if args.result is not None:
+        command += ["--result", str(args.result)]
+    return subprocess.run(command).returncode
+
+
+def cmd_profile(args) -> int:
+    candidate = args.candidate
+    case_name = args.case
+    enabled = set(profile_modes.enabled_modes())
+    if candidate is None and (case_name == "." or Path(case_name).is_dir()):
+        candidate, case_name = _workspace_case(case_name)
+        enabled = workspace.workspace_profile_modes(args.case)
+    elif candidate is not None and case_name == ".":
+        _candidate, case_name = _workspace_case(candidate)
+        enabled = workspace.workspace_profile_modes(candidate)
+    elif candidate is None:
+        case_dir, _sealed, case = _case(case_name)
+        candidate = case_dir / case["workspace"]
+    elif (candidate / ".benchmark_context" / "workspace.json").is_file():
+        enabled = workspace.workspace_profile_modes(candidate)
+    if args.mode not in profile_modes.PROFILE_MODES:
+        raise SystemExit(f"unknown profiling mode: {args.mode}")
+    if args.mode not in enabled:
+        raise SystemExit(
+            f"profiling mode '{args.mode}' is not enabled for this workspace"
+        )
+    command = [sys.executable, str(Path(__file__).with_name("evaluate.py")),
+               "--case", case_name, "--candidate", str(candidate),
+               "--phase", profile_modes.phase(args.mode),
+               "--profile-mode", args.mode]
+    if args.result is not None:
+        command += ["--result", str(args.result)]
+    return subprocess.run(command).returncode
+
+
+def cmd_prepare_ref(args) -> int:
+    command = [sys.executable, str(Path(__file__).with_name("prepare_ref.py")), "--case", args.case]
+    if args.platform:
+        command += ["--platform", args.platform]
+    if args.regenerate_fixtures:
+        command += ["--regenerate-fixtures"]
+    return subprocess.run(command).returncode
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(prog="bench")
+    sub = parser.add_subparsers(dest="command", required=True)
+    sub.add_parser("list").set_defaults(func=cmd_list)
+    init = sub.add_parser("init")
+    init.add_argument("case")
+    init.add_argument("--out", type=Path, required=True)
+    init.set_defaults(func=cmd_init)
+    fork = sub.add_parser("fork")
+    fork.add_argument("parent", type=Path)
+    fork.add_argument("--out", type=Path, required=True)
+    fork.set_defaults(func=cmd_fork)
+    evaluate = sub.add_parser("evaluate")
+    evaluate.add_argument("case", nargs="?", default=".")
+    evaluate.add_argument("--candidate", type=Path)
+    evaluate.add_argument("--phase", choices=("correctness", "performance", "all"), default="all")
+    evaluate.add_argument("--result", type=Path)
+    evaluate.set_defaults(func=cmd_evaluate)
+    profile = sub.add_parser("profile")
+    profile.add_argument("mode")
+    profile.add_argument("case", nargs="?", default=".")
+    profile.add_argument("--candidate", type=Path)
+    profile.add_argument("--result", type=Path)
+    profile.set_defaults(func=cmd_profile)
+    prepare = sub.add_parser("prepare-ref")
+    prepare.add_argument("case")
+    prepare.add_argument("--platform")
+    prepare.add_argument("--regenerate-fixtures", action="store_true")
+    prepare.set_defaults(func=cmd_prepare_ref)
+    args = parser.parse_args()
+    return args.func(args)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

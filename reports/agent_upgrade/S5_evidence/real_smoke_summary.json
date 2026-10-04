@@ -1,0 +1,66 @@
+{
+  "codex": {
+    "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_codex/deepseek_v4.rmsnorm_decode_demo/20261003T050120Z_f64a04d58138",
+    "exit_code": 0,
+    "status": "completed",
+    "close_reason": "budget_exhausted",
+    "usage": {
+      "finish_actions": 1,
+      "hardware_actions": 1
+    },
+    "active_action": null,
+    "tool_version": "codex-cli 0.159.2",
+    "final_integrity_passed": true,
+    "final_verified_correctness": "passed",
+    "final_verified_latency_us": 16.9705,
+    "final_verified_speedup": 1.044754132170531,
+    "events": [
+      {
+        "seq": 1,
+        "action": "evaluate",
+        "mode": null,
+        "exit_code": 0
+      },
+      {
+        "seq": 2,
+        "action": "finish",
+        "mode": null,
+        "exit_code": 0
+      }
+    ],
+    "optimizer_group_alive": false,
+    "optimizer_birth_identity_alive": false
+  },
+  "claudecode": {
+    "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s5_real_claudecode/deepseek_v4.rmsnorm_decode_demo/20261003T050230Z_175039dcc9b3",
+    "exit_code": 0,
+    "status": "completed",
+    "close_reason": "budget_exhausted",
+    "usage": {
+      "finish_actions": 1,
+      "hardware_actions": 1
+    },
+    "active_action": null,
+    "tool_version": "2.1.288 (Claude Code)",
+    "final_integrity_passed": true,
+    "final_verified_correctness": "passed",
+    "final_verified_latency_us": 17.5795,
+    "final_verified_speedup": 1.0085611081088768,
+    "events": [
+      {
+        "seq": 1,
+        "action": "evaluate",
+        "mode": null,
+        "exit_code": 0
+      },
+      {
+        "seq": 2,
+        "action": "finish",
+        "mode": null,
+        "exit_code": 0
+      }
+    ],
+    "optimizer_group_alive": false,
+    "optimizer_birth_identity_alive": false
+  }
+}

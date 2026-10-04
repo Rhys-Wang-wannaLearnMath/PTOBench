@@ -1,0 +1,40 @@
+test_budget_stop_and_dual_large_logs (test_launcher.LauncherTests) ... ok
+test_budget_waits_for_last_active_action (test_launcher.LauncherTests) ... ok
+test_early_exit_without_snapshot_does_not_measure (test_launcher.LauncherTests) ... ok
+test_four_adapters_real_cli_all_five_operations (test_launcher.LauncherTests) ... ok
+test_infrastructure_failure_stops_owned_evaluator_without_final (test_launcher.LauncherTests) ... ERROR
+/data1/home/ziruiwang/.local/share/uv/python/cpython-3.10-linux-aarch64-gnu/lib/python3.10/subprocess.py:1072: ResourceWarning: subprocess 3086810 is still running
+  _warn("subprocess %s is still running" % self.pid,
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/data1/home/ziruiwang/.local/share/uv/python/cpython-3.10-linux-aarch64-gnu/lib/python3.10/unittest/case.py:613: ResourceWarning: unclosed file <_io.BufferedReader name=3>
+  outcome.errors.clear()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/data1/home/ziruiwang/.local/share/uv/python/cpython-3.10-linux-aarch64-gnu/lib/python3.10/unittest/case.py:613: ResourceWarning: unclosed file <_io.BufferedReader name=5>
+  outcome.errors.clear()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+test_interrupt_active_evaluator_and_child (test_launcher.LauncherTests) ... ok
+test_invalid_configuration_fails_before_session (test_launcher.LauncherTests) ... ok
+test_leftover_worker_is_killed (test_launcher.LauncherTests) ... ok
+test_nonzero_exit_still_finalizes_best_history (test_launcher.LauncherTests) ... ok
+test_sensitive_profile_rejected_and_host_secret_not_recorded (test_launcher.LauncherTests) ... ok
+test_status_no_hardware_and_repairs_records (test_launcher.LauncherTests) ... ok
+test_user_interrupt_during_final_measurement (test_launcher.LauncherTests) ... ok
+test_user_interrupt_finalizes_and_returns_130 (test_launcher.LauncherTests) ... ok
+test_yaml_defaults_and_paths_ignore_startup_cwd (test_launcher.LauncherTests) ... ok
+
+======================================================================
+ERROR: test_infrastructure_failure_stops_owned_evaluator_without_final (test_launcher.LauncherTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_launcher.py", line 284, in test_infrastructure_failure_stops_owned_evaluator_without_final
+    (root/'protection'/backup).write_bytes(b'corrupt recovery source')
+  File "/data1/home/ziruiwang/.local/share/uv/python/cpython-3.10-linux-aarch64-gnu/lib/python3.10/pathlib.py", line 1143, in write_bytes
+    with self.open(mode='wb') as f:
+  File "/data1/home/ziruiwang/.local/share/uv/python/cpython-3.10-linux-aarch64-gnu/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+PermissionError: [Errno 13] Permission denied: '/tmp/s2_tcgip9kh/launcher_runs/fake_codex/test.case/20261003T045838Z_26cf288781d4/protection/backups/71c21d534473236c722b8a97133976dbea8c54f9f5ad50c3d5d57ca2f36bfa87'
+
+----------------------------------------------------------------------
+Ran 14 tests in 109.863s
+
+FAILED (errors=1)

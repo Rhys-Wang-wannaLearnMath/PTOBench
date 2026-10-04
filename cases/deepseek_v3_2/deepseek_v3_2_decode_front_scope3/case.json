@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v3_2.deepseek_v3_2_decode_front_scope3",
+  "description": "DeepSeek V3.2-EXP decode front Scope 3 INT8 indexer score and top-k",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "build_deepseek_v3_2_decode_front_scope3_program",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "runtime": {"ring_heap": 1073741824},
+  "fixture_ids": ["fixture_000"],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": ["topk_vals_out", "topk_idx_out"]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": ["topk_vals_out", "topk_idx_out"],
+    "restore_before_each_launch": true
+  }
+}

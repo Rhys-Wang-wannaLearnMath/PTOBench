@@ -1,0 +1,16 @@
+{
+  "content_sha256": "cf861ccbfbff1281925ae8f45554121d7db995968620a8ed41d9991a09a253c9",
+  "event_seq": 1,
+  "observation": {
+    "correctness": "PASS",
+    "kind": "profile",
+    "latency_us": null,
+    "metric_name": null,
+    "mode": "runtime",
+    "unit": null
+  },
+  "selection_policy": "lowest_observed_latency_else_latest_pass",
+  "selection_reason": "latest_pass_without_latency",
+  "snapshot_id": "snapshot_000001",
+  "source_workspace": "/tmp/s2_v0lihqx0/custom_runs/opencode/test.case/20261002T192840Z_e181b69e277f/workspaces/worker_000"
+}

@@ -1,0 +1,37 @@
+{
+  "case_id": "deepseek_v4.prefill_attention_hca_pro",
+  "source_case": "deepseek_v4.prefill_attention_hca",
+  "preset": "pro",
+  "changes": {
+    "hidden_size": [
+      7168,
+      6144
+    ]
+  },
+  "authorization": "User permits model-parameter and case-local repairs; v0.2 Bench shared code remains read-only.",
+  "private_repairs": [
+    "Private main Q projection casts INT8 to exact FP16 operands and accumulates FP32, then rounds back INT32 before unchanged dequantization.",
+    "Complete cmp_kv correctness-output/cache boundary; root InOut and inline Tensor preserve initial mapped cache; CPU Oracle returns independently computed cmp_kv."
+  ],
+  "comparator_sha256": "d699691a44d236da6f9ab0979d76de5f30acb776ee1763bae9933e53010907d3",
+  "comparator_reconciliation": "benchmarks/mig_data/all_presets_admission_20261003/hca_boundary_reconciliation.md",
+  "official_sha256": {
+    "rope_tables.py": "6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59",
+    "original.py": "b9f593660c9b277404ab8a4d9b5e8f59cd463c7e34f24e4dd8f83d0df396ae43",
+    "source_provenance.json": "c8dc0a46584177ac27be1445b80afeee89839834adfba46fdfffb4ea0715f4e5",
+    "rmsnorm.py": "fc0817fb24dd0ce9a075ca48ee82ea0af091ffe6c48e0d216933c10d5d74ce26",
+    "hc_pre_v2.py": "f35f52c6c17366dc3abce6caebab82e6d46f89c49d99856db5e57edc0b4c32a8",
+    "prefill_compressor_ratio128.py": "78e7db5c4e29bb74c1a8ed6e849cb6f419393e5a37f050c8b3343f91dffee060",
+    "hc_post_v2.py": "43266edbf56d8dc84899de3b7a428ea3b08f4113b51ed5438d2a392170356c78",
+    "original_config.py": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+    "prefill_sparse_attn_v2.py": "e343d127905f527b30035c936f3fcb738b36662ee0cec4c87745a81b6dbc9293",
+    "prefill_qkv_proj_rope_v2.py": "97b0079558e2c81bf50abf1d52231faf50801279797ae0b3f5cba1101179529e"
+  },
+  "repair_outcome": "REF_CERTIFIED_READY",
+  "evidence_directory": "benchmarks/mig_data/all_presets_repair_20261003",
+  "certification_evidence": "benchmarks/mig_data/all_presets_repair_20261003/prefill_attention_hca_pro.certify.json",
+  "scope": "Fixed official seed0 fixture_000 after authorized model and case-private repairs; fresh full-source-bound Ref certification. Candidate publication and independent acceptance have separate records in admission continuation.",
+  "admission_continuation": "benchmarks/mig_data/all_presets_admission_20261003",
+  "metadata_note": "HCA auxiliary output boundary supersedes historical two-output certification; unchanged official Python, independent CPU Oracle and exact upstream BF16 mapped-cache rule. Full current evidence uses admission continuation.",
+  "current_certification_evidence": "benchmarks/mig_data/all_presets_admission_20261003/parser_type_rework_01/prefill_attention_hca_pro/certify_result.json"
+}

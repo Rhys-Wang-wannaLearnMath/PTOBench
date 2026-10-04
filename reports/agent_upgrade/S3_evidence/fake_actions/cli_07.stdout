@@ -1,0 +1,2 @@
+fake evaluator stdout
+{"status": "FAIL", "error_code": "action_failed", "exit_code": 1, "event_seq": 7, "workspace": "/tmp/s2_uitjs1ei/custom_runs/codex/test.case/20261002T184829Z_278d450c34a5/workspaces/worker_000", "correctness": null, "latency_us": null, "snapshot_id": null, "remaining_hardware_actions": 15, "message": "Evaluator/correctness failed", "integrity_passed": true}

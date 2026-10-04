@@ -1,0 +1,70 @@
+--- benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_launcher.py.before
++++ benchmarks/pypto_lib_bench-v0.2/evaluator/tests/test_launcher.py
+@@ -34,7 +34,18 @@
+     child=subprocess.Popen([sys.executable,'-c','import signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); time.sleep(60)'])
+     Path(c['child']).write_text(str(child.pid))
+ if c.get('mode')=='empty': sys.exit(c.get('exit',0))
+-call(['evaluate'])
++if c.get('mode') != 'profiles_only': call(['evaluate'])
++if c.get('mode')=='s6':
++    fork=call(['fork'])
++    target=Path(json.loads(fork.stdout.decode().splitlines()[-1])['workspace'])
++    (target/'helper.py').write_text('VALUE = 2\n')
++    control=Path(os.environ['S3_CONTROL'])
++    control.write_text(json.dumps({'median':5.0}))
++    call(['profile','runtime',str(target)])
++    call(['evaluate',str(target)])
++    control.write_text(json.dumps({'median':7.0}))
++if c.get('mode')=='profiles_only':
++    for mode in ('runtime','pmu','compiler'): call(['profile',mode])
+ if c.get('mode')=='all':
+     fork=call(['fork'])
+     data=json.loads(fork.stdout.decode().splitlines()[-1])
+@@ -146,6 +157,47 @@
+                 self.assertIn('optimizer stderr',(root/'process.log').read_text())
+                 self.assertEqual(json.loads((root/'backend.json').read_text())['backend']['version'],'fake-tool 1.0')
+ 
++    def test_s6_fork_helper_edit_profile_evaluate_exit_provenance(self):
++        self.launcher_config(budget=4,mode='s6')
++        p,value=self.launch()
++        self.assertEqual(p.returncode,0,(value,p.stderr.decode()))
++        root,final=self.assert_final(value,3)
++        events=[json.loads(line) for line in (root/'events.jsonl').read_text().splitlines()]
++        self.assertEqual([event['action'] for event in events],['evaluate','fork','profile','evaluate','finish'])
++        first,profile,improved=events[0],events[2],events[3]
++        self.assertNotEqual(first['content_sha256'],improved['content_sha256'])
++        self.assertEqual(profile['content_sha256'],improved['content_sha256'])
++        self.assertEqual(final['selected_snapshot'],profile['snapshot_id'])  # equal latency: earlier event
++        selected=Path(session.read_session(root)['snapshots_root'])/profile['snapshot_id']
++        self.assertEqual((selected/'source/helper.py').read_text(),'VALUE = 2\n')
++        self.assertEqual((root/'final/workspace/helper.py').read_text(),'VALUE = 2\n')
++        self.assertEqual(events[-1]['result']['runs'][0]['median_effective_us'],7.0)
++        self.assertFalse((root/'final/workspace/__pycache__').exists())
++
++    def test_s6_all_null_profiles_select_latest_and_clean_finish(self):
++        self.launcher_config(budget=4,mode='profiles_only')
++        p,value=self.launch()
++        self.assertEqual(p.returncode,0,(value,p.stderr.decode()))
++        root,final=self.assert_final(value,3)
++        events=[json.loads(line) for line in (root/'events.jsonl').read_text().splitlines()]
++        self.assertTrue(all(event['observation']['latency_us'] is None for event in events[:3]))
++        self.assertEqual(final['selected_snapshot'],events[2]['snapshot_id'])
++        self.assertEqual(final['selection_reason'],'latest_pass_without_latency')
++        self.assertEqual(events[-1]['result']['profiling_mode'],'clean')
++
++    def test_s6_all_failed_or_protected_tamper_never_finishes_seed(self):
++        for control in ({'fail':True},{'tamper':'fixed'}):
++            with self.subTest(control=control):
++                self.launcher_config(budget=2)
++                self.configure(**control)
++                p,value=self.launch()
++                self.assertEqual(p.returncode,1,value)
++                record=session.read_session(value['session_root'])
++                self.assertEqual(record['usage'],{'hardware_actions':1,'finish_actions':0})
++                self.assertEqual(value['error_code'],'no_valid_snapshot')
++                self.assertFalse(list(Path(record['snapshots_root']).iterdir()))
++                self.assertEqual((self.bench/'cases/test/case/public/config.py').read_text(),'SIZE = 2\n')
++
+     def test_nonzero_exit_still_finalizes_best_history(self):
+         self.launcher_config(exit=7)
+         p,value=self.launch()

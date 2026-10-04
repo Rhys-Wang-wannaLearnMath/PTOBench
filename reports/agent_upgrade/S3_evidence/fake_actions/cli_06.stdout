@@ -1,0 +1,1 @@
+{"status": "REJECTED", "error_code": "invalid_request", "exit_code": 2, "event_seq": 6, "workspace": null, "correctness": null, "latency_us": null, "snapshot_id": null, "remaining_hardware_actions": 16, "message": "argument mode: invalid choice: 'hardware' (choose from 'runtime', 'pmu', 'compiler')", "integrity_passed": null}

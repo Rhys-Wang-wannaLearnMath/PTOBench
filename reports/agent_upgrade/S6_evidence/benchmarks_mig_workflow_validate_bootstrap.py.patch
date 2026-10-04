@@ -1,0 +1,19 @@
+--- benchmarks/mig_workflow/validate_bootstrap.py.before
++++ benchmarks/mig_workflow/validate_bootstrap.py
+@@ -11,7 +11,15 @@
+ 
+ FORBIDDEN_COMMAND = re.compile(
+     r"(?:^|\s)(?:npu-smi|pytest|cmake|ninja|make)(?:\s|$)"
+-    r"|(?:^|/)bench\s+(?:prepare-ref|evaluate|profile|run)(?:\s|$)"
++    # Historical events remain rejected; this does not execute retired entries.
++    r"|(?:^|/|\s)bench['\"]?\s+(?:init|fork|prepare-ref|evaluate|profile|run)(?:\s|$)"
++    r"|(?:^|/|\s)ptobench['\"]?\s+(?:evaluate|profile|fork)(?:\s|$)"
++    r"|(?:^|/|\s)pto-launcher['\"]?\s+run(?:\s|$)"
++    r"|(?:^|[\s;&|])(?:[^\s'\";|&]*/)?python(?:3(?:\.\d+)?)?['\"]?\s+"
++    r"(?:-[A-Za-z]+\s+)*['\"]?(?:[^\s'\";|&]*/)?"
++    r"(?:evaluate|prepare_ref|generate_fixtures)\.py['\"]?(?:\s|$)"
++    r"|(?:^|[;&|\n])\s*(?:exec\s+)?['\"]?(?:[^\s'\";|&]*/)?"
++    r"(?:evaluate|prepare_ref|generate_fixtures)\.py['\"]?(?:\s|$)"
+     r"|(?:^|\s)ptoas(?:\s|$)",
+     re.IGNORECASE,
+ )

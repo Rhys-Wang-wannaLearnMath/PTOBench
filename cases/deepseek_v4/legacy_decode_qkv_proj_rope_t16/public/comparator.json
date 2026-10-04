@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "q": {"method": "allclose", "rtol": 0.005, "atol": 0.005},
+    "kv": {"method": "allclose", "rtol": 0.005, "atol": 0.005},
+    "qr": {"method": "custom", "name": "int8_lsb", "max_abs_diff": 1},
+    "qr_scale": {"method": "allclose", "rtol": 0.005, "atol": 0.005}
+  }
+}

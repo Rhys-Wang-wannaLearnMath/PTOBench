@@ -1,0 +1,236 @@
+"""Candidate workspace creation and workspace metadata helpers."""
+from __future__ import annotations
+
+import json
+import os
+import shutil
+import tempfile
+from pathlib import Path
+
+import common
+import profile_modes
+
+
+def _case_files(case_dir: Path, case: dict) -> dict[str, Path]:
+    return {
+        "case.json": case_dir / "case.json",
+        "config.py": case_dir / case["config"],
+        "comparator.json": case_dir / case["comparator"],
+    }
+
+
+def _readonly(path: Path) -> None:
+    if path.is_file():
+        path.chmod(0o444)
+    for child in path.rglob("*"):
+        if child.is_file():
+            child.chmod(0o444)
+
+
+def _reference_summary(sealed: Path) -> dict:
+    certification = common.read_json(sealed / "certification.json")
+    result = {"schema_version": 1, "status": certification.get("status", "pending")}
+    performance = sealed / "ref_performance.json"
+    if performance.exists():
+        data = common.read_json(performance)
+        result["reference_performance"] = {
+            name: values.get("median_effective_us")
+            for name, values in data.get("fixtures", {}).items()
+            if "median_effective_us" in values
+        }
+    return result
+
+
+def _environment_summary(case: dict) -> dict:
+    profile = common.read_json(
+        common.BENCHMARK_ROOT / "environments" / f"{case['environment']}.json"
+    )
+    return {"profile": profile["name"], "platform": profile["platform"],
+            "device": profile.get("device", 0)}
+
+
+def _readme(case: dict, enabled_profiles: dict[str, dict[str, str]]) -> str:
+    profiling = ""
+    profiling_file = ""
+    outputs_description = (
+        "- `.benchmark_outputs/`: evaluator-generated clean results and compiler output."
+    )
+    if enabled_profiles:
+        profiling_file = (
+            "\n- `.benchmark_context/profiling_modes.json`: profiling modes available in this workspace."
+        )
+        outputs_description = (
+            "- `.benchmark_outputs/`: evaluator-generated results, compiler output, "
+            "and profiling diagnostics, separated by mode."
+        )
+        commands = "\n".join(
+            f"- `bench profile {name} .`: {values['description']}"
+            for name, values in enabled_profiles.items()
+        )
+        profiling = f"""
+
+## Diagnostics
+
+The following optional diagnostics are available:
+
+{commands}
+
+Each profiling command performs one correctness dispatch; it does not measure
+performance. Profiling results are diagnostic only. After an optimization, run
+`bench evaluate .` again for the formal clean performance result.
+"""
+    return f"""# Benchmark Workspace
+
+Case: `{case['case_id']}`
+
+## Files
+
+- Files outside `.benchmark_context/` and `.benchmark_outputs/`: editable Candidate
+  implementation and its local helper dependencies.
+{outputs_description}
+- `.benchmark_context/case.json`: Case description and evaluation mode.
+- `.benchmark_context/config.py`: fixed configuration for this Case; read-only information.
+- `.benchmark_context/comparator.json`: correctness comparison rules; read-only information.
+- `.benchmark_context/reference.json`: public summary of certified reference status and performance.
+- `.benchmark_context/environment.json`: target platform and device summary.
+- `.benchmark_context/workspace.json`: binding between this workspace and the Case.{profiling_file}
+- `.benchmark_context/starting_point/`: read-only copy of the Candidate at workspace creation.
+
+The files under `.benchmark_context/` are informational snapshots. Official evaluation
+reads the canonical Case and sealed assets outside this workspace.
+
+## Candidate Contract
+
+The evaluator loads `{case['module']}` and calls `{case['entry']}`. The entry may
+import any local files copied into this workspace. Preserve the input/output ABI
+described by `case.json` and `config.py`; implementation files, helper layout,
+and optimization choices are otherwise free.
+
+## Evaluate
+
+```bash
+bench evaluate .
+```
+
+Formal inputs and reference output tensors are hidden from this workspace.
+The default result and compiler output are written under
+`.benchmark_outputs/clean/`.
+{profiling}
+"""
+
+
+def _assert_destination(destination: Path) -> None:
+    if destination.exists() and any(destination.iterdir()):
+        raise SystemExit(f"workspace is not empty: {destination}")
+
+
+def _assert_no_symlinks(source: Path) -> None:
+    for root, directories, files in os.walk(source, followlinks=False):
+        root_path = Path(root)
+        for name in [*directories, *files]:
+            if (root_path / name).is_symlink():
+                raise SystemExit(f"workspace contains unsupported symlink: {root_path / name}")
+
+
+def _copy_candidate(source: Path, destination: Path) -> None:
+    _assert_no_symlinks(source)
+    destination.mkdir(parents=True, exist_ok=True)
+    for child in source.iterdir():
+        if child.name in {".benchmark_context", ".benchmark_outputs"}:
+            continue
+        target = destination / child.name
+        if child.is_dir():
+            shutil.copytree(child, target)
+        else:
+            shutil.copy2(child, target)
+
+
+def _write_context(case_dir: Path, sealed: Path, case: dict, destination: Path,
+                   parent_workspace: Path | None = None,
+                   workspace_path: Path | None = None) -> None:
+    metadata = destination / ".benchmark_context"
+    metadata.mkdir(exist_ok=True)
+    _copy_candidate(destination, metadata / "starting_point")
+    enabled_profiles = profile_modes.enabled_modes()
+    for name, source in _case_files(case_dir, case).items():
+        shutil.copy2(source, metadata / name)
+    binding = {
+        "schema_version": 1, "case_id": case["case_id"],
+        "candidate_module": case["module"], "entry": case["entry"],
+        "workspace": str((workspace_path or destination).resolve()),
+        "parent_workspace": str(parent_workspace.resolve()) if parent_workspace else None,
+    }
+    common.write_json(metadata / "workspace.json", binding)
+    common.write_json(metadata / "reference.json", _reference_summary(sealed))
+    common.write_json(metadata / "environment.json", _environment_summary(case))
+    profiling_path = metadata / "profiling_modes.json"
+    if enabled_profiles:
+        common.write_json(profiling_path, {
+            "schema_version": 1,
+            "modes": enabled_profiles,
+        })
+    elif profiling_path.exists():
+        profiling_path.unlink()
+    (metadata / "README.md").write_text(
+        _readme(case, enabled_profiles), encoding="utf-8"
+    )
+    _readonly(metadata)
+
+
+def init_workspace(case_dir: Path, sealed: Path, case: dict, destination: Path) -> None:
+    destination = destination.resolve()
+    _assert_destination(destination)
+    destination.mkdir(parents=True, exist_ok=True)
+    _copy_candidate(case_dir / case["workspace"], destination)
+    _write_context(case_dir, sealed, case, destination)
+
+
+def fork_workspace(parent: Path, destination: Path) -> dict[str, str | None]:
+    parent = parent.resolve()
+    destination_input = Path(destination)
+    if destination_input.exists() and destination_input.is_symlink():
+        raise SystemExit(f"child workspace cannot be a symlink: {destination_input}")
+    destination = destination_input.resolve()
+    if not parent.is_dir():
+        raise SystemExit(f"not a benchmark workspace: {parent}")
+    if not (parent / ".benchmark_context" / "workspace.json").is_file():
+        raise SystemExit(f"not a benchmark workspace: {parent}")
+    if destination == parent or destination.is_relative_to(parent):
+        raise SystemExit("child workspace must not be the parent or inside the parent")
+    _assert_destination(destination)
+    binding = common.read_json(parent / ".benchmark_context" / "workspace.json")
+    case_dir, sealed, case = common.resolve_case(binding["case_id"])
+
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    temporary = Path(tempfile.mkdtemp(prefix=f".{destination.name}.", dir=destination.parent))
+    try:
+        _copy_candidate(parent, temporary)
+        _write_context(case_dir, sealed, case, temporary, parent_workspace=parent,
+                       workspace_path=destination)
+        temporary.rename(destination)
+    except BaseException:
+        shutil.rmtree(temporary, ignore_errors=True)
+        raise
+    return {
+        "case_id": case["case_id"],
+        "parent_workspace": str(parent),
+        "workspace": str(destination),
+    }
+
+
+def resolve_workspace(value: str | Path) -> tuple[Path, str]:
+    workspace = Path(value).resolve()
+    binding = common.read_json(workspace / ".benchmark_context" / "workspace.json")
+    return workspace, binding["case_id"]
+
+
+def workspace_profile_modes(value: str | Path) -> set[str]:
+    path = Path(value).resolve() / ".benchmark_context" / "profiling_modes.json"
+    if not path.is_file():
+        return set()
+    return set(common.read_json(path).get("modes", {}))
+
+
+def artifact_dir(value: str | Path, profile_mode: str) -> Path:
+    """Return the evaluator-owned artifact directory for one Workspace mode."""
+    return Path(value).resolve() / ".benchmark_outputs" / profile_mode

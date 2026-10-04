@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "case_id": "test.case",
+  "candidate_module": "candidate.py",
+  "entry": "entry",
+  "workspace": "/tmp/s2_uitjs1ei/custom_runs/codex/test.case/20261002T184829Z_278d450c34a5/workspaces/worker_000",
+  "parent_workspace": null
+}

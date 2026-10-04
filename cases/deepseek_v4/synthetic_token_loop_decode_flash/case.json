@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.synthetic_token_loop_decode_flash",
+  "description": "DeepSeek-V4 Flash reduced seven-layer synthetic zero-weight decode, EP2/TP2",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "l3_decode_fwd",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_synthetic_token_loop_ep2_libstdcxx_idle67",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "scalars": [
+    "num_tokens"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "pre_hc_hidden_out",
+      "hidden_out",
+      "logits",
+      "sampled_ids",
+      "kv_cache",
+      "cmp_kv",
+      "hca_compress_state",
+      "csa_compress_state",
+      "csa_inner_compress_state",
+      "idx_kv_cache",
+      "idx_kv_scale"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "kv_cache",
+      "cmp_kv",
+      "hca_compress_state",
+      "csa_compress_state",
+      "csa_inner_compress_state",
+      "idx_kv_cache",
+      "idx_kv_scale"
+    ],
+    "restore_before_each_launch": true
+  }
+}

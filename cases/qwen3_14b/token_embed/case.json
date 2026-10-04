@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "case_id": "qwen3_14b.token_embed",
+  "description": "Qwen3-14B sampled-token embedding lookup",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "token_embed_fwd",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": ["next_hidden"]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  }
+}

@@ -1,0 +1,98 @@
+[
+  {
+    "case_id": "deepseek_v4.prefill_compressor_ratio4_demo",
+    "argv": [
+      "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+      "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py",
+      "init",
+      "deepseek_v4.prefill_compressor_ratio4_demo",
+      "--out",
+      "/tmp/s0_missing_seed_4g78a5w8/workspace"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 139, in <module>\n    raise SystemExit(main())\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 135, in main\n    return args.func(args)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 33, in cmd_init\n    workspace.init_workspace(case_dir, sealed, case, args.out)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/workspace.py\", line 184, in init_workspace\n    _copy_candidate(case_dir / case[\"workspace\"], destination)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/workspace.py\", line 138, in _copy_candidate\n    for child in source.iterdir():\n  File \"/data1/home/ziruiwang/.local/share/uv/python/cpython-3.10-linux-aarch64-gnu/lib/python3.10/pathlib.py\", line 1017, in iterdir\n    for name in self._accessor.listdir(self):\nFileNotFoundError: [Errno 2] No such file or directory: '/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/cases/deepseek_v4/prefill_compressor_ratio4_demo/public/candidate_seed'\n",
+    "log": "reports/agent_upgrade/S0_evidence/init_deepseek_v4.prefill_compressor_ratio4_demo.log",
+    "owner": "Case Candidate Seed publication (publish-pypto-case-v02-candidate); outside S0"
+  },
+  {
+    "case_id": "deepseek_v4.prefill_compressor_ratio4_flash",
+    "argv": [
+      "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+      "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py",
+      "init",
+      "deepseek_v4.prefill_compressor_ratio4_flash",
+      "--out",
+      "/tmp/s0_missing_seed_rvhl54ht/workspace"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 139, in <module>\n    raise SystemExit(main())\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 135, in main\n    return args.func(args)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 33, in cmd_init\n    workspace.init_workspace(case_dir, sealed, case, args.out)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/workspace.py\", line 184, in init_workspace\n    _copy_candidate(case_dir / case[\"workspace\"], destination)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/workspace.py\", line 138, in _copy_candidate\n    for child in source.iterdir():\n  File \"/data1/home/ziruiwang/.local/share/uv/python/cpython-3.10-linux-aarch64-gnu/lib/python3.10/pathlib.py\", line 1017, in iterdir\n    for name in self._accessor.listdir(self):\nFileNotFoundError: [Errno 2] No such file or directory: '/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/cases/deepseek_v4/prefill_compressor_ratio4_flash/public/candidate_seed'\n",
+    "log": "reports/agent_upgrade/S0_evidence/init_deepseek_v4.prefill_compressor_ratio4_flash.log",
+    "owner": "Case Candidate Seed publication (publish-pypto-case-v02-candidate); outside S0"
+  },
+  {
+    "case_id": "deepseek_v4.prefill_compressor_ratio4_pro",
+    "argv": [
+      "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+      "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py",
+      "init",
+      "deepseek_v4.prefill_compressor_ratio4_pro",
+      "--out",
+      "/tmp/s0_missing_seed_kpo2n0ee/workspace"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 139, in <module>\n    raise SystemExit(main())\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 135, in main\n    return args.func(args)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 33, in cmd_init\n    workspace.init_workspace(case_dir, sealed, case, args.out)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/workspace.py\", line 184, in init_workspace\n    _copy_candidate(case_dir / case[\"workspace\"], destination)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/workspace.py\", line 138, in _copy_candidate\n    for child in source.iterdir():\n  File \"/data1/home/ziruiwang/.local/share/uv/python/cpython-3.10-linux-aarch64-gnu/lib/python3.10/pathlib.py\", line 1017, in iterdir\n    for name in self._accessor.listdir(self):\nFileNotFoundError: [Errno 2] No such file or directory: '/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/cases/deepseek_v4/prefill_compressor_ratio4_pro/public/candidate_seed'\n",
+    "log": "reports/agent_upgrade/S0_evidence/init_deepseek_v4.prefill_compressor_ratio4_pro.log",
+    "owner": "Case Candidate Seed publication (publish-pypto-case-v02-candidate); outside S0"
+  },
+  {
+    "case_id": "deepseek_v4.prefill_layer_ep2_hca_flash",
+    "argv": [
+      "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+      "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py",
+      "init",
+      "deepseek_v4.prefill_layer_ep2_hca_flash",
+      "--out",
+      "/tmp/s0_missing_seed_ewlps0kg/workspace"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 139, in <module>\n    raise SystemExit(main())\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 135, in main\n    return args.func(args)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 33, in cmd_init\n    workspace.init_workspace(case_dir, sealed, case, args.out)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/workspace.py\", line 184, in init_workspace\n    _copy_candidate(case_dir / case[\"workspace\"], destination)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/workspace.py\", line 138, in _copy_candidate\n    for child in source.iterdir():\n  File \"/data1/home/ziruiwang/.local/share/uv/python/cpython-3.10-linux-aarch64-gnu/lib/python3.10/pathlib.py\", line 1017, in iterdir\n    for name in self._accessor.listdir(self):\nFileNotFoundError: [Errno 2] No such file or directory: '/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/cases/deepseek_v4/prefill_layer_ep2_hca_flash/public/candidate_seed'\n",
+    "log": "reports/agent_upgrade/S0_evidence/init_deepseek_v4.prefill_layer_ep2_hca_flash.log",
+    "owner": "Case Candidate Seed publication (publish-pypto-case-v02-candidate); outside S0"
+  },
+  {
+    "case_id": "deepseek_v4.qkv_proj_rope_compat_demo",
+    "argv": [
+      "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+      "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py",
+      "init",
+      "deepseek_v4.qkv_proj_rope_compat_demo",
+      "--out",
+      "/tmp/s0_missing_seed_porcw_tl/workspace"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 139, in <module>\n    raise SystemExit(main())\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 135, in main\n    return args.func(args)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 33, in cmd_init\n    workspace.init_workspace(case_dir, sealed, case, args.out)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/workspace.py\", line 184, in init_workspace\n    _copy_candidate(case_dir / case[\"workspace\"], destination)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/workspace.py\", line 138, in _copy_candidate\n    for child in source.iterdir():\n  File \"/data1/home/ziruiwang/.local/share/uv/python/cpython-3.10-linux-aarch64-gnu/lib/python3.10/pathlib.py\", line 1017, in iterdir\n    for name in self._accessor.listdir(self):\nFileNotFoundError: [Errno 2] No such file or directory: '/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/cases/deepseek_v4/qkv_proj_rope_compat_demo/public/candidate_seed'\n",
+    "log": "reports/agent_upgrade/S0_evidence/init_deepseek_v4.qkv_proj_rope_compat_demo.log",
+    "owner": "Case Candidate Seed publication (publish-pypto-case-v02-candidate); outside S0"
+  },
+  {
+    "case_id": "deepseek_v4.qkv_proj_rope_compat_flash",
+    "argv": [
+      "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+      "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py",
+      "init",
+      "deepseek_v4.qkv_proj_rope_compat_flash",
+      "--out",
+      "/tmp/s0_missing_seed_f0sf8u8t/workspace"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 139, in <module>\n    raise SystemExit(main())\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 135, in main\n    return args.func(args)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/bench.py\", line 33, in cmd_init\n    workspace.init_workspace(case_dir, sealed, case, args.out)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/workspace.py\", line 184, in init_workspace\n    _copy_candidate(case_dir / case[\"workspace\"], destination)\n  File \"/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/evaluator/workspace.py\", line 138, in _copy_candidate\n    for child in source.iterdir():\n  File \"/data1/home/ziruiwang/.local/share/uv/python/cpython-3.10-linux-aarch64-gnu/lib/python3.10/pathlib.py\", line 1017, in iterdir\n    for name in self._accessor.listdir(self):\nFileNotFoundError: [Errno 2] No such file or directory: '/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/cases/deepseek_v4/qkv_proj_rope_compat_flash/public/candidate_seed'\n",
+    "log": "reports/agent_upgrade/S0_evidence/init_deepseek_v4.qkv_proj_rope_compat_flash.log",
+    "owner": "Case Candidate Seed publication (publish-pypto-case-v02-candidate); outside S0"
+  }
+]

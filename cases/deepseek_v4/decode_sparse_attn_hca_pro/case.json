@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.decode_sparse_attn_hca_pro",
+  "description": "DeepSeek-V4 PRO sparse HCA decode with grouped output projection, one step",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "sparse_attn_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["attn_out"]},
+  "state": {"behavior": "none", "initial_state": [], "restore_before_each_launch": false},
+  "runtime": {"platform": "a2a3", "device_id": 0}
+}

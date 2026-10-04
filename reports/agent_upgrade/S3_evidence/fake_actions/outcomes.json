@@ -1,0 +1,139 @@
+[
+  {
+    "argv": [
+      "evaluate"
+    ],
+    "exit_code": 0,
+    "result": {
+      "status": "PASS",
+      "error_code": null,
+      "exit_code": 0,
+      "event_seq": 1,
+      "workspace": "/tmp/s2_uitjs1ei/custom_runs/codex/test.case/20261002T184829Z_278d450c34a5/workspaces/worker_000",
+      "correctness": "PASS",
+      "latency_us": 10.0,
+      "snapshot_id": "snapshot_000001",
+      "remaining_hardware_actions": 19,
+      "message": null,
+      "integrity_passed": true
+    }
+  },
+  {
+    "argv": [
+      "profile",
+      "runtime"
+    ],
+    "exit_code": 0,
+    "result": {
+      "status": "PASS",
+      "error_code": null,
+      "exit_code": 0,
+      "event_seq": 2,
+      "workspace": "/tmp/s2_uitjs1ei/custom_runs/codex/test.case/20261002T184829Z_278d450c34a5/workspaces/worker_000",
+      "correctness": "PASS",
+      "latency_us": null,
+      "snapshot_id": "snapshot_000002",
+      "remaining_hardware_actions": 18,
+      "message": null,
+      "integrity_passed": true
+    }
+  },
+  {
+    "argv": [
+      "profile",
+      "pmu"
+    ],
+    "exit_code": 0,
+    "result": {
+      "status": "PASS",
+      "error_code": null,
+      "exit_code": 0,
+      "event_seq": 3,
+      "workspace": "/tmp/s2_uitjs1ei/custom_runs/codex/test.case/20261002T184829Z_278d450c34a5/workspaces/worker_000",
+      "correctness": "PASS",
+      "latency_us": null,
+      "snapshot_id": "snapshot_000003",
+      "remaining_hardware_actions": 17,
+      "message": null,
+      "integrity_passed": true
+    }
+  },
+  {
+    "argv": [
+      "profile",
+      "compiler"
+    ],
+    "exit_code": 0,
+    "result": {
+      "status": "PASS",
+      "error_code": null,
+      "exit_code": 0,
+      "event_seq": 4,
+      "workspace": "/tmp/s2_uitjs1ei/custom_runs/codex/test.case/20261002T184829Z_278d450c34a5/workspaces/worker_000",
+      "correctness": "PASS",
+      "latency_us": null,
+      "snapshot_id": "snapshot_000004",
+      "remaining_hardware_actions": 16,
+      "message": null,
+      "integrity_passed": true
+    }
+  },
+  {
+    "argv": [
+      "fork"
+    ],
+    "exit_code": 0,
+    "result": {
+      "status": "PASS",
+      "error_code": null,
+      "exit_code": 0,
+      "event_seq": 5,
+      "workspace": "/tmp/s2_uitjs1ei/custom_runs/codex/test.case/20261002T184829Z_278d450c34a5/workspaces/worker_001",
+      "correctness": null,
+      "latency_us": null,
+      "snapshot_id": null,
+      "remaining_hardware_actions": 16,
+      "message": null,
+      "integrity_passed": null
+    }
+  },
+  {
+    "argv": [
+      "profile",
+      "hardware"
+    ],
+    "exit_code": 2,
+    "result": {
+      "status": "REJECTED",
+      "error_code": "invalid_request",
+      "exit_code": 2,
+      "event_seq": 6,
+      "workspace": null,
+      "correctness": null,
+      "latency_us": null,
+      "snapshot_id": null,
+      "remaining_hardware_actions": 16,
+      "message": "argument mode: invalid choice: 'hardware' (choose from 'runtime', 'pmu', 'compiler')",
+      "integrity_passed": null
+    }
+  },
+  {
+    "argv": [
+      "evaluate"
+    ],
+    "exit_code": 1,
+    "result": {
+      "status": "FAIL",
+      "error_code": "action_failed",
+      "exit_code": 1,
+      "event_seq": 7,
+      "workspace": "/tmp/s2_uitjs1ei/custom_runs/codex/test.case/20261002T184829Z_278d450c34a5/workspaces/worker_000",
+      "correctness": null,
+      "latency_us": null,
+      "snapshot_id": null,
+      "remaining_hardware_actions": 15,
+      "message": "Evaluator/correctness failed",
+      "integrity_passed": true
+    }
+  }
+]

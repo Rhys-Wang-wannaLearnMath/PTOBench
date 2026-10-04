@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+"""Repository-local experiment launcher."""
+import sys
+from pathlib import Path
+root = Path(__file__).resolve().parent
+sys.path.insert(0, str(root))
+sys.path.insert(0, str(root / 'evaluator'))
+from launcher.main import main
+raise SystemExit(main())

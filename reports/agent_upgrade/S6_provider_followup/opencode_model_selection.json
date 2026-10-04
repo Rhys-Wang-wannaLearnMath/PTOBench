@@ -1,0 +1,47 @@
+[
+  {
+    "log": "opencode_deepseek-flash.log",
+    "sessionID": "ses_eff491b65ffeSrd7W3A6SkFCwG",
+    "export_exit_code": 0,
+    "assistant_models": [
+      {
+        "providerID": "profile-gateway",
+        "modelID": "deepseek-flash"
+      },
+      {
+        "providerID": "profile-gateway",
+        "modelID": "deepseek-flash"
+      }
+    ]
+  },
+  {
+    "log": "opencode_glm-5.3-flash.log",
+    "sessionID": "ses_eff491c25ffedcIQ7so7VcmskN",
+    "export_exit_code": 0,
+    "assistant_models": [
+      {
+        "providerID": "profile-gateway",
+        "modelID": "glm-5.3-flash"
+      },
+      {
+        "providerID": "profile-gateway",
+        "modelID": "glm-5.3-flash"
+      }
+    ]
+  },
+  {
+    "log": "opencode_gpt-6.1-sol.log",
+    "sessionID": "ses_eff491b54ffeAIzM5CgjeZz3ow",
+    "export_exit_code": 0,
+    "assistant_models": [
+      {
+        "providerID": "profile-gateway",
+        "modelID": "gpt-6.1-sol"
+      },
+      {
+        "providerID": "profile-gateway",
+        "modelID": "gpt-6.1-sol"
+      }
+    ]
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.expert_shared_demo",
+  "description": "DeepSeek-V4 DEMO shared expert INT8 decode MLP",
+  "workspace": "public/candidate_seed",
+  "module": "expert_shared.py",
+  "entry": "expert_shared_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["sh"]},
+  "state": {"behavior": "none", "initial_state": [], "restore_before_each_launch": false}
+}

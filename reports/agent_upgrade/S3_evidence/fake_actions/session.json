@@ -1,0 +1,65 @@
+{
+  "active_action": null,
+  "asset_hashes": {
+    "case": "ffcd155aab2ae277342a04a089e3330bc60381cc2dd1d16c9c247305af362cd5",
+    "environment": "3d16d37377ca495efbe663bbec0c1595e0d225a7366b0aa0abe3729cb9505ae2",
+    "evaluator": "feda4f8d13f31ad040eeb06657c13291968dd092dae543934d5ef3655927fec2",
+    "family_5": "6888fa981090ac067c68ef196cbdd85c284ba2b948c4f2df32f3df741a9bf940",
+    "golden": "c6b5fc91a36f22c22a35c2df0aab11c182df725b7486a6ad6f429d1bbc090841",
+    "public_launcher": "7d489b5ae80ddcd2703cfe3ec79764181b783826d18404020d437d466fca85c5",
+    "public_ptobench": "6adcc25874f2850a5265d0e5a3f7fce0ba99505f3c7117f26111856bf6088b52",
+    "sealed": "64b1f76210693e90d96446cff059815d7ec9536b438c3c661adaa25ad9eb6262"
+  },
+  "bench_python": "3.10.20",
+  "benchmark_root": "/tmp/s2_uitjs1ei/benchmarks/pypto_lib_bench-v0.2",
+  "budget": {
+    "finish_actions": 1,
+    "max_hardware_actions": 20
+  },
+  "case_dir": "/tmp/s2_uitjs1ei/benchmarks/pypto_lib_bench-v0.2/cases/test/case",
+  "case_id": "test.case",
+  "close_reason": null,
+  "command": null,
+  "completed_at": null,
+  "created_at": "2026-10-02T18:48:29.564050+00:00",
+  "environment": {
+    "device": 0,
+    "name": "cpu",
+    "platform": "cpu"
+  },
+  "exploration_closed": false,
+  "next_event_seq": 8,
+  "next_workspace_index": 2,
+  "optimizer": {
+    "backend": "codex",
+    "profile": "default"
+  },
+  "optimizer_id": "codex",
+  "profiling_modes": [
+    "runtime",
+    "pmu",
+    "compiler"
+  ],
+  "runs_root": "/tmp/s2_uitjs1ei/custom_runs",
+  "schema_version": 1,
+  "sealed_dir": "/tmp/s2_uitjs1ei/benchmarks/pypto_lib_bench-v0.2/sealed_assets/test/case",
+  "session_id": "20261002T184829Z_278d450c34a5",
+  "session_root": "/tmp/s2_uitjs1ei/custom_runs/codex/test.case/20261002T184829Z_278d450c34a5",
+  "snapshots_root": "/tmp/s2_uitjs1ei/custom_snapshots/codex/test.case/20261002T184829Z_278d450c34a5",
+  "status": "running",
+  "tool_version": null,
+  "usage": {
+    "finish_actions": 0,
+    "hardware_actions": 5
+  },
+  "workspaces": {
+    "worker_000": {
+      "parent": null,
+      "path": "workspaces/worker_000"
+    },
+    "worker_001": {
+      "parent": "worker_000",
+      "path": "workspaces/worker_001"
+    }
+  }
+}

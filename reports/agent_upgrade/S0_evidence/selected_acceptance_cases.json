@@ -1,0 +1,988 @@
+[
+  {
+    "case_id": "deepseek_v4.compressor_ratio4_flash",
+    "case_path": "cases/deepseek_v4/compressor_ratio4_flash/case.json",
+    "certification": {
+      "schema_version": 1,
+      "status": "ready",
+      "case_id": "deepseek_v4.compressor_ratio4_flash",
+      "ref_output_cache": "ready",
+      "cpu_oracle_role": "one_time_ref_certification",
+      "comparator_sha256": "ad6a3169d5f38ba52e66cf8ab7dd4583a2e963e2d6ecf750989543ed5f794bde"
+    },
+    "evaluator_exists": true,
+    "comparator_factories": [
+      {
+        "name": "_compare",
+        "signature": "case_dir, case"
+      }
+    ],
+    "comparator_sha256": "ad6a3169d5f38ba52e66cf8ab7dd4583a2e963e2d6ecf750989543ed5f794bde",
+    "certification_comparator_matches": true,
+    "custom_outputs": {},
+    "environment": "a2a3_single_card",
+    "environment_profile": {
+      "name": "a2a3_single_card",
+      "platform": "a2a3",
+      "device": 0,
+      "benchmark": {
+        "warmup": 5,
+        "rounds": 10
+      },
+      "python": ".venv-official/bin/python",
+      "setup_scripts": [
+        "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh"
+      ],
+      "prepend_env": {
+        "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin"
+      },
+      "env": {
+        "PYTHONPATH": "{repo_root}",
+        "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60"
+      }
+    },
+    "runtime": {
+      "device_id": 0
+    },
+    "state": {
+      "behavior": "mutating",
+      "initial_state": [
+        "kv_state",
+        "score_state",
+        "kv_cache"
+      ],
+      "restore_before_each_launch": true
+    },
+    "candidate_seed_sources": {
+      "candidate.py": "4172af7142a7c33b90546b820603739589727a75961802a729a3e0cfa6a8c992"
+    },
+    "ref_sources": {
+      "ref_npu.py": "4172af7142a7c33b90546b820603739589727a75961802a729a3e0cfa6a8c992"
+    },
+    "fixtures": [
+      {
+        "fixture_id": "fixture_000",
+        "manifest": {
+          "schema_version": 1,
+          "fixture_id": "fixture_000",
+          "source_id": "public_normal_0",
+          "seed": 0,
+          "generation": "official.build_tensor_specs",
+          "inputs_dir": "in",
+          "outputs_dir": "out",
+          "scalars": [
+            "start_pos",
+            "rotate"
+          ]
+        },
+        "inputs": [
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/in/ape.pt",
+            "size": 17480
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/in/cos.pt",
+            "size": 1224
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/in/even_select.pt",
+            "size": 5296
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/in/hadamard.pt",
+            "size": 525473
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/in/kv_cache.pt",
+            "size": 33555617
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/in/kv_state.pt",
+            "size": 263329
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/in/norm_w.pt",
+            "size": 3159
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/in/odd_select.pt",
+            "size": 5291
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/in/rotate.pt",
+            "size": 1175
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/in/score_state.pt",
+            "size": 263344
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/in/sin.pt",
+            "size": 1224
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/in/start_pos.pt",
+            "size": 1190
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/in/wgate.pt",
+            "size": 8389714
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/in/wkv.pt",
+            "size": 8389704
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/in/x.pt",
+            "size": 66558
+          }
+        ],
+        "ref_outputs": [
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/out/kv.pt",
+            "size": 17475
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/out/kv_cache.pt",
+            "size": 33555617
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/out/kv_state.pt",
+            "size": 263329
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/compressor_ratio4_flash/fixtures/fixture_000/out/score_state.pt",
+            "size": 263344
+          }
+        ],
+        "missing_declared_ref_outputs": [],
+        "ref_median_effective_us": 543.99,
+        "ref_latency_valid": true
+      }
+    ],
+    "asset_issues": []
+  },
+  {
+    "case_id": "deepseek_v4.decode_attention_hca_flash",
+    "case_path": "cases/deepseek_v4/decode_attention_hca_flash/case.json",
+    "certification": {
+      "schema_version": 1,
+      "status": "ready",
+      "case_id": "deepseek_v4.decode_attention_hca_flash",
+      "ref_output_cache": "ready",
+      "cpu_oracle_role": "one_time_ref_certification",
+      "comparator_sha256": "ca9d07a0c5bcecf8979e767ffbf1afdc295ca24d5eaf417d63a5570539df9d56"
+    },
+    "evaluator_exists": true,
+    "comparator_factories": [
+      {
+        "name": "_compare",
+        "signature": "case_dir, case"
+      }
+    ],
+    "comparator_sha256": "ca9d07a0c5bcecf8979e767ffbf1afdc295ca24d5eaf417d63a5570539df9d56",
+    "certification_comparator_matches": true,
+    "custom_outputs": {},
+    "environment": "a2a3_single_card",
+    "environment_profile": {
+      "name": "a2a3_single_card",
+      "platform": "a2a3",
+      "device": 0,
+      "benchmark": {
+        "warmup": 5,
+        "rounds": 10
+      },
+      "python": ".venv-official/bin/python",
+      "setup_scripts": [
+        "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh"
+      ],
+      "prepend_env": {
+        "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin"
+      },
+      "env": {
+        "PYTHONPATH": "{repo_root}",
+        "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60"
+      }
+    },
+    "runtime": {
+      "device_id": 0
+    },
+    "state": {
+      "behavior": "mutating",
+      "initial_state": [
+        "compress_state",
+        "kv_cache",
+        "cmp_kv"
+      ],
+      "restore_before_each_launch": true
+    },
+    "candidate_seed_sources": {
+      "candidate.py": "94ad8caf7ac34f97860dd0487402a2b10a188bbffbda09fd32cc2b0336b32628",
+      "decode_compressor_ratio128.py": "fb415a85d3d62a07f9142815a65ea0666d01d042b0ae2ec288134bbd8a9c7993",
+      "decode_qkv_proj_rope.py": "c98289b498155c9ab25df0541b2b80d43557d5e578187f40d60ffbff5021aab4",
+      "decode_sparse_attn.py": "dc2ae46f4f9d51e26f3756ed6c980978f792b326bcaf88f7436b62659e932d76",
+      "hc_post.py": "43875e57abd0b5116caafc9b46e26e99fd0656dab7cb2dcca90024b941a35daf",
+      "hc_pre.py": "4a1a1cce1484ca21bf01e5f89c3fa2ee7df80c92830b754488a5c50d0924a517"
+    },
+    "ref_sources": {
+      "decode_compressor_ratio128.py": "fb415a85d3d62a07f9142815a65ea0666d01d042b0ae2ec288134bbd8a9c7993",
+      "decode_qkv_proj_rope.py": "c98289b498155c9ab25df0541b2b80d43557d5e578187f40d60ffbff5021aab4",
+      "decode_sparse_attn.py": "dc2ae46f4f9d51e26f3756ed6c980978f792b326bcaf88f7436b62659e932d76",
+      "hc_post.py": "43875e57abd0b5116caafc9b46e26e99fd0656dab7cb2dcca90024b941a35daf",
+      "hc_pre.py": "4a1a1cce1484ca21bf01e5f89c3fa2ee7df80c92830b754488a5c50d0924a517",
+      "ref_npu.py": "94ad8caf7ac34f97860dd0487402a2b10a188bbffbda09fd32cc2b0336b32628"
+    },
+    "fixtures": [
+      {
+        "fixture_id": "fixture_000",
+        "manifest": {
+          "schema_version": 1,
+          "fixture_id": "fixture_000",
+          "source_id": "public_normal_0",
+          "seed": 0,
+          "generation": "official.build_tensor_specs",
+          "inputs_dir": "in",
+          "outputs_dir": "out",
+          "scalars": []
+        },
+        "inputs": [
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/attn_norm_w.pt",
+            "size": 17584
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/attn_sink.pt",
+            "size": 1446
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/cmp_ape.pt",
+            "size": 263324
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/cmp_block_table.pt",
+            "size": 3268
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/cmp_kv.pt",
+            "size": 67109975
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/cmp_norm_w.pt",
+            "size": 3243
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/cmp_wgate.pt",
+            "size": 4195494
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/cmp_wkv.pt",
+            "size": 4195484
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/compress_state.pt",
+            "size": 16778431
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/compress_state_block_table.pt",
+            "size": 3387
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/freqs_cos.pt",
+            "size": 2098342
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/freqs_sin.pt",
+            "size": 2098342
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/gamma_ckv.pt",
+            "size": 2214
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/gamma_cq.pt",
+            "size": 3233
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/hc_attn_base.pt",
+            "size": 1269
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/hc_attn_fn.pt",
+            "size": 1574059
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/hc_attn_scale.pt",
+            "size": 1210
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/kv_cache.pt",
+            "size": 1049761
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/ori_block_table.pt",
+            "size": 1220
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/seqused_kv.pt",
+            "size": 1195
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/start_pos.pt",
+            "size": 1190
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/wkv.pt",
+            "size": 4195400
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/wo_a.pt",
+            "size": 67109965
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/wo_b.pt",
+            "size": 33555533
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/wo_b_scale.pt",
+            "size": 17579
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/wq_a.pt",
+            "size": 8389709
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/wq_b.pt",
+            "size": 33555533
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/wq_b_scale.pt",
+            "size": 132267
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/in/x_hc.pt",
+            "size": 263245
+          }
+        ],
+        "ref_outputs": [
+          {
+            "path": "sealed_assets/deepseek_v4/decode_attention_hca_flash/fixtures/fixture_000/out/x_out.pt",
+            "size": 263250
+          }
+        ],
+        "missing_declared_ref_outputs": [],
+        "ref_median_effective_us": 1115.789,
+        "ref_latency_valid": true
+      }
+    ],
+    "asset_issues": []
+  },
+  {
+    "case_id": "deepseek_v4.prefill_layer_ep2_hca_flash",
+    "case_path": "cases/deepseek_v4/prefill_layer_ep2_hca_flash/case.json",
+    "certification": {
+      "schema_version": 1,
+      "status": "ready",
+      "case_id": "deepseek_v4.prefill_layer_ep2_hca_flash",
+      "ref_output_cache": "ready",
+      "cpu_oracle_role": "one_time_ref_certification",
+      "comparator_sha256": "653d2c13c1b143687ce2bdaf22aa3e0d0816eafef9d74f5e8af652d76dfb0655"
+    },
+    "evaluator_exists": true,
+    "comparator_factories": [
+      {
+        "name": "_compare",
+        "signature": "case_dir: Path, case: dict"
+      }
+    ],
+    "comparator_sha256": "653d2c13c1b143687ce2bdaf22aa3e0d0816eafef9d74f5e8af652d76dfb0655",
+    "certification_comparator_matches": true,
+    "custom_outputs": {
+      "x_next": {
+        "method": "custom",
+        "name": "valid_ratio_reldiff",
+        "diff_thd": 0.01,
+        "pct_thd": 0.05,
+        "chunk_lens_input": "chunk_lens",
+        "chunk_offsets_input": "chunk_offsets"
+      }
+    },
+    "environment": "a2a3_deepseek_v4_moe_ep2",
+    "environment_profile": {
+      "name": "a2a3_deepseek_v4_moe_ep2",
+      "platform": "a2a3",
+      "device": 0,
+      "runtime": {
+        "device_ids": [
+          0,
+          1
+        ]
+      },
+      "benchmark": {
+        "warmup": 5,
+        "rounds": 10
+      },
+      "python": ".venv-official/bin/python",
+      "setup_scripts": [
+        "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh"
+      ],
+      "prepend_env": {
+        "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin"
+      },
+      "env": {
+        "PYTHONPATH": "{repo_root}",
+        "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60"
+      }
+    },
+    "runtime": {
+      "device_id": 0,
+      "device_ids": [
+        0,
+        1
+      ],
+      "ring_heap": [
+        1073741824,
+        1073741824,
+        1073741824,
+        2147483648
+      ]
+    },
+    "state": {
+      "behavior": "mutating",
+      "initial_state": [
+        "hca_cmp_kv_state",
+        "hca_cmp_score_state",
+        "csa_cmp_kv_state",
+        "csa_cmp_score_state",
+        "csa_inner_kv_state",
+        "csa_inner_score_state",
+        "kv_cache",
+        "cmp_kv",
+        "idx_kv_cache",
+        "idx_kv_scale"
+      ],
+      "restore_before_each_launch": true
+    },
+    "candidate_seed_sources": {},
+    "ref_sources": {
+      "expert_routed.py": "5a6ddff5ba0ebd0a3c8a83913c6a6f7c680e851cda4da3b9c09d6505bf4778a0",
+      "expert_shared.py": "72eaaca06de4531f0968b5db23dd39ae8ef5c0224abc1296e299f818f9c1cad6",
+      "gate.py": "1a085469cfb80ef740e953774d9928c20b99fd9f5ffd8105a661a920d3789d20",
+      "hc_post_v2.py": "ca9f5c79a8943d7c4a2dffe6ddd8103fa6a623fcfaf61933349591e28e0fbf97",
+      "hc_pre_v2.py": "43611bb7f9cc9ff8381a5d384aa38bb4bd794cf4c38c58b8232b1f40086050d9",
+      "moe.py": "74f463da5c2caed2e441f7a5df9ad58a07504b2aeff414f55eece9e4fedf4b53",
+      "prefill_attention_csa.py": "5a825a74014348689ed4c9fccef0f18b8bef200122d5edbe28d3a8f132e2f393",
+      "prefill_attention_hca.py": "e7b09ad0f85efa3a34d49ee9c636d397df1972df2c8467b9f23781a70499b91e",
+      "prefill_attention_swa.py": "89d89f95feb22b950f8a522e2ceacb72e01f771dd6f84abdad7fed98df088820",
+      "prefill_compressor_ratio128.py": "b8e5f120476d70ccdeeac3b92ed89108618841d0870c9672119679dbc0e58b5e",
+      "prefill_compressor_ratio4.py": "4f0bb3ef4c8250ced54707178034e2350418cd47da8a7c9be427fdc600d8834f",
+      "prefill_hc_post.py": "33979675d26204179a4482a0145387a4840dd2c8a52a6a21a421d4fec42f2f5a",
+      "prefill_hc_pre.py": "ab3a0f3702572a98430d431cf081cb5e7236fcfffec772de2dcf425b994e1e0c",
+      "prefill_indexer.py": "28c736274df466160c32e32db12a6a3f6a1258aa5db867469762f45722a18dbd",
+      "prefill_indexer_compressor.py": "3726b6da597a5d361cf9d83a1d0ca4d9b5d2a4e155b9c1851119fec56145b8ef",
+      "prefill_qkv_proj_rope_v2.py": "2f5959ba4f95a3dafb41211c2f6e273cab61fc73f11fd777a713ba83eba3dbd9",
+      "prefill_sparse_attn_v2.py": "4897fdedc8261373d0667f8935cb8a8466d01a865842d0bb6950a18bcbd756c7",
+      "ref_npu.py": "019f5e7be634d06658ce88ac8abc3e34d03797b450f1417609643a40b0f30101",
+      "rmsnorm.py": "a3a7e3264d7ab50cd04ad5febc5407184c85186cbc814813afc4f52a89958281",
+      "rope_tables.py": "04850df920edd8d9968ca2e2b868507a6ce51a6ed520d531dceff38dd85dce34"
+    },
+    "fixtures": [
+      {
+        "fixture_id": "fixture_000",
+        "manifest": {
+          "schema_version": 1,
+          "fixture_id": "fixture_000",
+          "source_id": "public_normal_0",
+          "seed": 0,
+          "generation": "official.build_tensor_specs",
+          "inputs_dir": "in",
+          "outputs_dir": "out",
+          "scalars": [
+            "layer_id"
+          ]
+        },
+        "inputs": [
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/attn_norm_w.pt",
+            "size": 17584
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/attn_sink.pt",
+            "size": 1702
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/chunk_lens.pt",
+            "size": 1195
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/chunk_offsets.pt",
+            "size": 1210
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/chunk_tile_offsets.pt",
+            "size": 1235
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/cmp_block_table.pt",
+            "size": 1732
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/cmp_kv.pt",
+            "size": 134218839
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/cmp_sparse_indices.pt",
+            "size": 1967315
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/cmp_sparse_lens.pt",
+            "size": 4292
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_cmp_ape.pt",
+            "size": 33968
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_cmp_kv_state.pt",
+            "size": 268436681
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_cmp_norm_w.pt",
+            "size": 3263
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_cmp_score_state.pt",
+            "size": 268436696
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_cmp_slot_mapping.pt",
+            "size": 7389
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_cmp_wgate.pt",
+            "size": 16778426
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_cmp_wkv.pt",
+            "size": 16778416
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_compress_state_block_table.pt",
+            "size": 66895
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_hadamard_idx.pt",
+            "size": 66761
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_idx_slot_mapping.pt",
+            "size": 7389
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_idx_wq_b.pt",
+            "size": 16778421
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_idx_wq_b_scale.pt",
+            "size": 66771
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_inner_ape.pt",
+            "size": 9402
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_inner_compress_state_block_table.pt",
+            "size": 66925
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_inner_kv_state.pt",
+            "size": 67110099
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_inner_norm_w.pt",
+            "size": 1737
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_inner_score_state.pt",
+            "size": 67110114
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_inner_state_slot_mapping.pt",
+            "size": 7493
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_inner_wgate.pt",
+            "size": 4195524
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_inner_wkv.pt",
+            "size": 4195514
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_state_slot_mapping.pt",
+            "size": 7463
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/csa_weights_proj.pt",
+            "size": 1049801
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/freqs_cos.pt",
+            "size": 4195494
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/freqs_sin.pt",
+            "size": 4195494
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/gamma_ckv.pt",
+            "size": 3238
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/gamma_cq.pt",
+            "size": 5281
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/gate_bias.pt",
+            "size": 1702
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/gate_w.pt",
+            "size": 2098263
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/hc_attn_base.pt",
+            "size": 1397
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/hc_attn_fn.pt",
+            "size": 3146923
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/hc_attn_scale.pt",
+            "size": 1210
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/hc_ffn_base.pt",
+            "size": 1392
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/hc_ffn_fn.pt",
+            "size": 3146918
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/hc_ffn_scale.pt",
+            "size": 1205
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/hca_cmp_ape.pt",
+            "size": 525488
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/hca_cmp_kv_state.pt",
+            "size": 134218953
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/hca_cmp_norm_w.pt",
+            "size": 3263
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/hca_cmp_score_state.pt",
+            "size": 134218968
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/hca_cmp_slot_mapping.pt",
+            "size": 7389
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/hca_cmp_wgate.pt",
+            "size": 8389818
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/hca_cmp_wkv.pt",
+            "size": 8389808
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/hca_compress_state_block_table.pt",
+            "size": 34127
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/hca_state_slot_mapping.pt",
+            "size": 7463
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/idx_block_table.pt",
+            "size": 2244
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/idx_kv_cache.pt",
+            "size": 33555637
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/idx_kv_scale.pt",
+            "size": 1049781
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/input_ids.pt",
+            "size": 7334
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/kv_cache.pt",
+            "size": 525473
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/layer_id.pt",
+            "size": 1185
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/norm_w.pt",
+            "size": 17495
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/ori_block_table.pt",
+            "size": 1220
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/ori_slot_mapping.pt",
+            "size": 7369
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/position_ids.pt",
+            "size": 4277
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/routed_w1.pt",
+            "size": 536872102
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/routed_w1_scale.pt",
+            "size": 525508
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/routed_w2.pt",
+            "size": 536872102
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/routed_w2_scale.pt",
+            "size": 1049796
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/routed_w3.pt",
+            "size": 536872102
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/routed_w3_scale.pt",
+            "size": 525508
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/seq_lens.pt",
+            "size": 1185
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/shared_w1.pt",
+            "size": 16778406
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/shared_w1_scale.pt",
+            "size": 17604
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/shared_w2.pt",
+            "size": 16778406
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/shared_w2_scale.pt",
+            "size": 33988
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/shared_w3.pt",
+            "size": 16778406
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/shared_w3_scale.pt",
+            "size": 17604
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/tid2eid.pt",
+            "size": 6206620
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/wkv.pt",
+            "size": 8389704
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/wo_a.pt",
+            "size": 134218829
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/wo_b.pt",
+            "size": 67109965
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/wo_b_scale.pt",
+            "size": 33963
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/wq_a.pt",
+            "size": 16778317
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/wq_b.pt",
+            "size": 67109965
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/wq_b_scale.pt",
+            "size": 263339
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/in/x_hc.pt",
+            "size": 25166925
+          }
+        ],
+        "ref_outputs": [
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/out/cmp_kv.pt",
+            "size": 134218839
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/out/csa_cmp_kv_state.pt",
+            "size": 268436681
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/out/csa_cmp_score_state.pt",
+            "size": 268436696
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/out/csa_inner_kv_state.pt",
+            "size": 67110099
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/out/csa_inner_score_state.pt",
+            "size": 67110114
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/out/hca_cmp_kv_state.pt",
+            "size": 134218953
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/out/hca_cmp_score_state.pt",
+            "size": 134218968
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/out/idx_kv_cache.pt",
+            "size": 33555637
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/out/idx_kv_scale.pt",
+            "size": 1049781
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/out/kv_cache.pt",
+            "size": 525473
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/prefill_layer_ep2_hca_flash/fixtures/fixture_000/out/x_next.pt",
+            "size": 25166935
+          }
+        ],
+        "missing_declared_ref_outputs": [],
+        "ref_median_effective_us": 16674.7995,
+        "ref_latency_valid": true
+      }
+    ],
+    "asset_issues": [
+      "missing_candidate_seed_entry"
+    ]
+  },
+  {
+    "case_id": "deepseek_v4.rmsnorm_decode_flash",
+    "case_path": "cases/deepseek_v4/rmsnorm_decode_flash/case.json",
+    "certification": {
+      "schema_version": 1,
+      "status": "ready",
+      "case_id": "deepseek_v4.rmsnorm_decode_flash",
+      "ref_output_cache": "ready",
+      "cpu_oracle_role": "one_time_ref_certification",
+      "comparator_sha256": "b56cd8971e54ecef73ed99eed42df99525fca5428356d7b3e441766d957abb27"
+    },
+    "evaluator_exists": true,
+    "comparator_factories": [
+      {
+        "name": "_compare",
+        "signature": "case_dir, case"
+      }
+    ],
+    "comparator_sha256": "b56cd8971e54ecef73ed99eed42df99525fca5428356d7b3e441766d957abb27",
+    "certification_comparator_matches": true,
+    "custom_outputs": {},
+    "environment": "a2a3_single_card",
+    "environment_profile": {
+      "name": "a2a3_single_card",
+      "platform": "a2a3",
+      "device": 0,
+      "benchmark": {
+        "warmup": 5,
+        "rounds": 10
+      },
+      "python": ".venv-official/bin/python",
+      "setup_scripts": [
+        "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh"
+      ],
+      "prepend_env": {
+        "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin"
+      },
+      "env": {
+        "PYTHONPATH": "{repo_root}",
+        "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60"
+      }
+    },
+    "runtime": {
+      "device_id": 0
+    },
+    "state": {
+      "behavior": "none",
+      "initial_state": [],
+      "restore_before_each_launch": false
+    },
+    "candidate_seed_sources": {
+      "candidate.py": "c5726f627b31356b35de5553dcc924ef43c8f9370501f6a37d92ea06ea9d9dbd"
+    },
+    "ref_sources": {
+      "ref_npu.py": "c5726f627b31356b35de5553dcc924ef43c8f9370501f6a37d92ea06ea9d9dbd"
+    },
+    "fixtures": [
+      {
+        "fixture_id": "fixture_000",
+        "manifest": {
+          "schema_version": 1,
+          "fixture_id": "fixture_000",
+          "source_id": "public_normal_0",
+          "seed": 0,
+          "generation": "official.build_tensor_specs",
+          "inputs_dir": "in",
+          "outputs_dir": "out",
+          "scalars": []
+        },
+        "inputs": [
+          {
+            "path": "sealed_assets/deepseek_v4/rmsnorm_decode_flash/fixtures/fixture_000/in/norm_w.pt",
+            "size": 9303
+          },
+          {
+            "path": "sealed_assets/deepseek_v4/rmsnorm_decode_flash/fixtures/fixture_000/in/x.pt",
+            "size": 66558
+          }
+        ],
+        "ref_outputs": [
+          {
+            "path": "sealed_assets/deepseek_v4/rmsnorm_decode_flash/fixtures/fixture_000/out/x_normed.pt",
+            "size": 66721
+          }
+        ],
+        "missing_declared_ref_outputs": [],
+        "ref_median_effective_us": 17.4895,
+        "ref_latency_valid": true
+      }
+    ],
+    "asset_issues": []
+  }
+]

@@ -1,0 +1,1 @@
+{"schema_version": 1, "case_id": "test.case", "workspace": "public/candidate_seed", "module": "candidate.py", "entry": "entry", "config": "public/config.py", "comparator": "public/comparator.json", "environment": "cpu", "fixture_ids": ["fixture_000"], "correctness": {"outputs": ["out"]}, "state": {"initial_state": ["out"]}}

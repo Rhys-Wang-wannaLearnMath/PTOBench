@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.expert_routed_flash",
+  "description": "DeepSeek-V4 FLASH routed local-expert compute, decode single-card EP",
+  "workspace": "public/candidate_seed",
+  "module": "expert_routed.py",
+  "entry": "expert_routed_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": ["recv_y"]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  }
+}

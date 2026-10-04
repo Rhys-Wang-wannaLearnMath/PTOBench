@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v3_2.deepseek_v3_2_decode_front",
+  "description": "DeepSeek V3.2 fused decode front scope1-4",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "build_deepseek_v3_2_decode_front_scope1234_program",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["kv_cache", "pe_cache", "k_cache_idx", "dispatch_buf"]},
+  "state": {
+    "behavior": "mutating",
+    "initial_state": ["kv_cache", "pe_cache", "k_cache_idx", "dispatch_buf"],
+    "restore_before_each_launch": true
+  }
+}

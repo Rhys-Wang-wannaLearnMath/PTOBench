@@ -1,0 +1,4 @@
+argv: [codex, exec, --skip-git-repo-check, --dangerously-bypass-approvals-and-sandbox, "{prompt}"]
+version_argv: [codex, --version]
+help_argv: [codex, exec, --help]
+env: {}

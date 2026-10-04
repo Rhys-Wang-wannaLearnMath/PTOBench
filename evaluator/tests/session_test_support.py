@@ -1,0 +1,106 @@
+"""Small prepared Case assets for S2 tests; never dispatch hardware."""
+import json
+import os
+from pathlib import Path
+import sys
+import tempfile
+import unittest
+import uuid
+from unittest import mock
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import common
+import session
+import workspace
+
+
+def write_json(path, value):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists():
+        path.chmod(0o600)
+    path.write_text(json.dumps(value) + '\n')
+
+
+class SessionTestBase(unittest.TestCase):
+    def setUp(self):
+        # Prepared CPU fixtures own their temporary roots. An operator's
+        # standalone deployment settings must not redirect these test assets.
+        environment = {key: value for key, value in os.environ.items()
+                       if key not in {'PTOBENCH_REPO_ROOT', 'PTOBENCH_SEALED_ROOT'}}
+        patcher = mock.patch.dict(os.environ, environment, clear=True)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.temporary = tempfile.TemporaryDirectory(prefix='s2_')
+        self.addCleanup(self.temporary.cleanup)
+        self.repo = Path(self.temporary.name)
+        self.bench = self.repo / 'benchmark'
+        self.bench.mkdir()
+        for path in (self.bench / 'evaluator/helper.py', self.bench / 'launcher/runner.py',
+                     self.bench / 'ptobench', self.repo / 'golden/core.py',
+                     self.bench / 'sealed_assets/test/family_helper.py'):
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('# protected public implementation\n')
+        write_json(self.bench / 'environments/cpu.json', {'name': 'cpu', 'platform': 'cpu', 'device': 0})
+        for attribute, value in (('BENCHMARK_ROOT', self.bench), ('REPO_ROOT', self.repo)):
+            patcher = mock.patch.object(common, attribute, value)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+        self.case_id = 'test.case'
+        self.make_case(self.case_id)
+        self.output = {'runs_root': self.repo / 'custom_runs', 'snapshots_root': self.repo / 'custom_snapshots'}
+
+    def make_case(self, case_id):
+        family, name = case_id.split('.')
+        case_dir = self.bench / 'cases' / family / name
+        sealed = self.bench / 'sealed_assets' / family / name
+        seed = case_dir / 'public/candidate_seed'
+        seed.mkdir(parents=True)
+        (seed / 'candidate.py').write_text('from helper import VALUE\n')
+        (seed / 'helper.py').write_text('VALUE = 1\n')
+        (seed / 'empty').mkdir()
+        (case_dir / 'public/config.py').write_text('SIZE = 2\n')
+        policy = {'schema_version': 1, 'outputs': {'out': {'method': 'exact'}}}
+        write_json(case_dir / 'public/comparator.json', policy)
+        case = {'schema_version': 1, 'case_id': case_id, 'workspace': 'public/candidate_seed',
+                'module': 'candidate.py', 'entry': 'entry', 'config': 'public/config.py',
+                'comparator': 'public/comparator.json', 'environment': 'cpu', 'fixture_ids': ['fixture_000'],
+                'correctness': {'outputs': ['out']}, 'state': {'initial_state': ['out']}}
+        write_json(case_dir / 'case.json', case)
+        write_json(sealed / 'certification.json', {'schema_version': 1, 'status': 'ready',
+                   'case_id': case_id, 'ref_output_cache': 'ready',
+                   'comparator_sha256': common.sha256_file(case_dir / 'public/comparator.json')})
+        write_json(sealed / 'ref_performance.json', {'schema_version': 1, 'status': 'ready',
+                   'fixtures': {'fixture_000': {'median_effective_us': 1.0}}})
+        write_json(sealed / 'fixtures/fixture_000/manifest.json', {'schema_version': 1, 'fixture_id': 'fixture_000',
+                   'inputs_dir': 'in', 'outputs_dir': 'out', 'seed': 0})
+        for relative in ('ref/ref_npu.py', 'oracle/ref_cpu.py', 'evaluate.py'):
+            path = sealed / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('raise AssertionError("S2 must not execute this implementation")\n')
+        (sealed / 'fixture_builder.py').write_text('''from types import SimpleNamespace
+
+def build(case_dir, sealed, case, seed):
+    def forbidden():
+        raise AssertionError("Fixture generation is forbidden in S2")
+    return [SimpleNamespace(name=n, shape=(2,), create_tensor=forbidden) for n in ("x", "y", "out")] + [SimpleNamespace(name="count", value=2)]
+''')
+        for name in ('x', 'y', 'out', 'count'):
+            path = sealed / 'fixtures/fixture_000/in' / f'{name}.pt'
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(b'prepared small tensor ' + name.encode())
+        output = sealed / 'fixtures/fixture_000/out/out.pt'
+        output.parent.mkdir()
+        output.write_bytes(b'certified reference output')
+        return case_dir, sealed
+
+    def create(self, budget=2, optimizer='codex', case_id=None, output=None):
+        return session.create_session(case_id or self.case_id, optimizer, output or self.output,
+                   {'max_hardware_actions': budget, 'finish_actions': 1})
+
+    def reserve(self, handle, kind='evaluate', mode=None):
+        record = session.read_session(handle.session_root)
+        target = handle.initial_workspace if kind != 'finish' else handle.session_root / 'final/workspace'
+        frozen = handle.session_root / 'staging' / f'action_{record["next_event_seq"]:06d}_{uuid.uuid4().hex}'
+        manifest = workspace.copy_candidate_tree(target, frozen)
+        return session.reserve_action(handle.session_root, record['next_event_seq'], kind,
+                       workspace_path=target, mode=mode, source_manifest=manifest)

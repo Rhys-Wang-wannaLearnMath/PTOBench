@@ -1,0 +1,129 @@
+"""Real CLI subprocesses in a copied public layer with a controlled CPU Evaluator."""
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import time
+
+from session_test_support import SessionTestBase, write_json
+import common
+import session
+
+SOURCE_BENCHMARK = Path(__file__).resolve().parents[2]
+
+FAKE_EVALUATOR = r'''
+import argparse, json, os, signal, subprocess, sys, time
+from pathlib import Path
+import common
+common.await_action_start()
+p=argparse.ArgumentParser()
+for name in ('case','candidate','phase','profile-mode','result'):
+    p.add_argument('--'+name, required=True)
+a=p.parse_args()
+control=json.loads(Path(os.environ['S3_CONTROL']).read_text())
+with open(os.environ['S3_COUNTER'],'a') as f: f.write(json.dumps(vars(a))+'\n')
+root=Path(__file__).resolve().parents[1]
+w=Path(a.candidate)
+artifacts=w/'.benchmark_outputs'/a.profile_mode
+artifacts.mkdir(parents=True,exist_ok=True)
+(artifacts/'generation.txt').write_text(str(control.get('generation',1)))
+if control.get('generation',1)==1: (artifacts/'first_only.txt').write_text('first')
+if control.get('huge_logs'):
+    os.write(1,b'O'*1048576+b'\n')
+    os.write(2,b'E'*1048576+b'\n')
+print('fake evaluator stdout',flush=True)
+print('fake evaluator stderr',file=sys.stderr,flush=True)
+if control.get('pause'):
+    Path(control['ready']).write_text('ready')
+    deadline=time.monotonic()+15
+    while not Path(control['release']).exists() and time.monotonic()<deadline: time.sleep(.01)
+if control.get('child'):
+    child=subprocess.Popen([sys.executable,'-c','import time; time.sleep(30)'])
+    Path(control['child_pid']).write_text(str(child.pid))
+if control.get('hang'):
+    if control.get('ignore_term'): signal.signal(signal.SIGTERM,signal.SIG_IGN)
+    Path(control['ready']).write_text('ready')
+    while True: time.sleep(.05)
+if control.get('tamper')=='source': (w/'helper.py').write_text('VALUE = 999\n')
+if control.get('tamper')=='source_link':
+    (w/'helper.py').unlink(); (w/'helper.py').symlink_to(control['sentinel'])
+if control.get('tamper')=='context':
+    q=w/'.benchmark_context/config.py'; q.chmod(0o600); q.write_text('tampered\n')
+if control.get('tamper')=='fixed': (root/'cases/test/case/public/config.py').write_text('tampered\n')
+if control.get('tamper')=='record': Path(control['session_root'],'session.json').write_text('{}')
+if control.get('crash'): raise RuntimeError('fake Evaluator exception')
+if control.get('missing'): sys.exit(0)
+run={'fixture_id':'fixture_000','passed':not control.get('fail'),'median_effective_us':10.0 if a.profile_mode=='clean' else None}
+if a.profile_mode=='clean': run['speedup']=2.0
+if control.get('latency')=='nan': run['median_effective_us']=float('nan')
+if control.get('latency')=='zero': run['median_effective_us']=0
+if control.get('bad_fixture'): run['fixture_id']='fixture_001'
+if control.get('missing_speedup'): run.pop('speedup',None)
+result={'schema_version':1,'case_id':a.case,'candidate':str(w),'phase':a.phase,'profiling_mode':a.profile_mode,
+        'official_score':a.profile_mode=='clean','diagnostic_only':a.profile_mode!='clean',
+        'verdict':'FAIL' if control.get('fail') else 'PASS','runs':[run],
+        'bootstrap_marker':os.environ.get('PYPTO_BENCH_ENV'),'inherited_profile':os.environ.get('PYPTO_BENCH_PROFILE')}
+if control.get('bad_case'): result['case_id']='evil.case'
+if control.get('bad_mode'): result['profiling_mode']='clean'
+if control.get('bad_phase'): result['phase']='performance'
+Path(a.result).write_text(json.dumps(result)+'\n')
+sys.exit(1 if control.get('fail') or control.get('nonzero') else 0)
+'''
+
+
+class ActionTestBase(SessionTestBase):
+    def setUp(self):
+        super().setUp()
+        old = self.bench
+        self.bench = self.repo / 'benchmarks/pypto_lib_bench-v0.2'
+        self.bench.parent.mkdir()
+        old.rename(self.bench)
+        common.BENCHMARK_ROOT = self.bench
+        # Copy only the public layer; real canonical Case assets are never copied.
+        for path in (SOURCE_BENCHMARK / 'evaluator').glob('*.py'):
+            shutil.copyfile(path, self.bench / 'evaluator' / path.name)
+        shutil.copyfile(SOURCE_BENCHMARK / 'ptobench', self.bench / 'ptobench')
+        (self.bench / 'evaluator/evaluate.py').write_text(FAKE_EVALUATOR)
+        (self.bench / 'bench').unlink(missing_ok=True)
+        self.control = self.repo / 'control.json'
+        self.counter = self.repo / 'calls.jsonl'
+        write_json(self.control, {})
+        self.env = {**os.environ, 'S3_CONTROL': str(self.control), 'S3_COUNTER': str(self.counter),
+                    'PYTHONDONTWRITEBYTECODE': '1', 'PYPTO_BENCH_ENV': 'wrong:bootstrap', 'PYPTO_BENCH_PROFILE': 'hardware'}
+        self.handle = self.create(budget=20)
+        self.env['PTOBENCH_SESSION_ROOT'] = str(self.handle.session_root)
+        self.python = str(Path(sys.executable).resolve())
+
+    def cli(self, args, *, cwd=None, env=None, timeout=30):
+        process = subprocess.run([self.python, str(self.bench / 'ptobench'), *args],
+                  cwd=cwd or self.handle.initial_workspace, env=env or self.env,
+                  stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
+        lines = process.stdout.decode().splitlines()
+        value = json.loads(lines[-1]) if lines else None
+        return process, value
+
+    def start_cli(self, args):
+        process = subprocess.Popen([self.python, str(self.bench / 'ptobench'), *args], cwd=self.handle.initial_workspace,
+                                   env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.addCleanup(lambda: process.kill() if process.poll() is None else None)
+        return process
+
+    def calls(self):
+        return [json.loads(line) for line in self.counter.read_text().splitlines()] if self.counter.exists() else []
+
+    def events(self):
+        return [json.loads(line) for line in (self.handle.session_root / 'events.jsonl').read_text().splitlines()]
+
+    def configure(self, **values):
+        write_json(self.control, values)
+
+    def wait_file(self, path, process, timeout=10):
+        deadline=time.monotonic()+timeout
+        while not path.exists() and process.poll() is None and time.monotonic()<deadline:
+            time.sleep(.01)
+        self.assertTrue(path.exists(), f'child did not reach {path}: exit={process.poll()}')
+
+    def snapshot(self, result):
+        return self.handle.snapshots_root / result['snapshot_id']

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.moe_combine_pro",
+  "description": "DeepSeek-V4 PRO packed local-expert MoE combine, decode single step",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "moe_combine_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": ["ffn_out"]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  }
+}

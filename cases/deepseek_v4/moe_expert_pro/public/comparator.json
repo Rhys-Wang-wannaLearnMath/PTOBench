@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "recv_y": {
+      "method": "custom",
+      "name": "active_recv_ratio_reldiff",
+      "count_input": "recv_expert_count",
+      "diff_thd": 0.01,
+      "pct_thd": 0.05,
+      "max_diff_hd": null
+    },
+    "sh": {
+      "method": "custom",
+      "name": "ratio_reldiff",
+      "diff_thd": 0.01,
+      "pct_thd": 0.05,
+      "max_diff_hd": null
+    }
+  }
+}

@@ -1,0 +1,6 @@
+test_blocked_terminal_does_not_stall_finalization_or_exit (test_launcher.LauncherTests) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 9.260s
+
+OK

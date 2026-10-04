@@ -1,0 +1,17 @@
+--- benchmarks/pypto_lib_bench-v0.2/evaluator/workflow.py.before
++++ benchmarks/pypto_lib_bench-v0.2/evaluator/workflow.py
+@@ -103,12 +103,12 @@
+ ) -> list[dict[str, Any]]:
+     certification = common.read_json(sealed / "certification.json")
+     if certification.get("status") != "ready":
+-        raise RuntimeError("Ref cache is not ready; run bench prepare-ref first")
++        raise RuntimeError("Ref cache is not ready; run maintenance prepare_ref.py --case <family.case> first")
+     expected_comparator_sha256 = common.comparator_sha256(case_dir, case)
+     if certification.get("comparator_sha256") != expected_comparator_sha256:
+         raise RuntimeError(
+             "Ref cache certification does not match public comparator; "
+-            "run bench prepare-ref again"
++            "run maintenance prepare_ref.py --case <family.case> again"
+         )
+     baseline = common.read_json(sealed / "ref_performance.json")
+     compare = make_compare()

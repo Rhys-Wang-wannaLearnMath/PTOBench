@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "logical_tails_out": {
+      "method": "allclose",
+      "rtol": 0,
+      "atol": 0
+    },
+    "decode_raw_window_out": {
+      "method": "allclose",
+      "rtol": 0,
+      "atol": 0
+    }
+  }
+}

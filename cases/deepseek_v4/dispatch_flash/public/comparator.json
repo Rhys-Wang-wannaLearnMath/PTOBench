@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "recv_x": {"method": "custom", "name": "valid_rows_allclose", "count_output": "recv_expert_count", "recv_max": 64, "is_3d": true, "rtol": 0.001, "atol": 0.001},
+    "recv_scale_dq": {"method": "custom", "name": "valid_rows_allclose", "count_output": "recv_expert_count", "recv_max": 64, "is_3d": false, "rtol": 0.001, "atol": 0.001},
+    "recv_weights": {"method": "custom", "name": "valid_rows_allclose", "count_output": "recv_expert_count", "recv_max": 64, "is_3d": false, "rtol": 0.001, "atol": 0.001},
+    "recv_token": {"method": "custom", "name": "valid_rows_allclose", "count_output": "recv_expert_count", "recv_max": 64, "is_3d": false, "rtol": 0.001, "atol": 0.001},
+    "recv_expert_count": {"method": "allclose", "rtol": 0.001, "atol": 0.001}
+  }
+}

@@ -1,0 +1,117 @@
+from __future__ import annotations
+
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+from unittest import mock
+
+
+EVALUATOR_DIR = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(EVALUATOR_DIR))
+import workspace
+import common
+
+
+class WorkspaceDocumentationTest(unittest.TestCase):
+    def test_disabled_profiling_is_absent_from_context_and_readme(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            case_dir = root / "case"
+            sealed = root / "sealed"
+            destination = root / "workspace"
+            seed = case_dir / "public/candidate_seed"
+            seed.mkdir(parents=True)
+            sealed.mkdir()
+            (seed / "candidate.py").write_text("def entry():\n    pass\n", encoding="utf-8")
+            (case_dir / "case.json").write_text("{}\n", encoding="utf-8")
+            (case_dir / "public/config.py").write_text("VALUE = 1\n", encoding="utf-8")
+            (case_dir / "public/comparator.json").write_text("{}\n", encoding="utf-8")
+            (sealed / "certification.json").write_text(
+                '{"status": "ready"}\n', encoding="utf-8",
+            )
+            case = {
+                "case_id": "test.case",
+                "workspace": "public/candidate_seed",
+                "module": "candidate.py",
+                "entry": "entry",
+                "config": "public/config.py",
+                "comparator": "public/comparator.json",
+                "environment": "a2a3_single_card",
+            }
+
+            with mock.patch.object(workspace.profile_modes, "enabled_modes", return_value={}), \
+                 mock.patch.object(common, "resolve_case", return_value=(case_dir, sealed, case)):
+                workspace.init_workspace(case_dir, sealed, case, destination)
+
+            context = destination / ".benchmark_context"
+            self.assertFalse((context / "profiling_modes.json").exists())
+            self.assertNotIn("profil", (context / "README.md").read_text().lower())
+            self.assertEqual(
+                (context / "starting_point" / "candidate.py").read_text(encoding="utf-8"),
+                "def entry():\n    pass\n",
+            )
+
+    def test_init_rejects_nonempty_destination(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            destination = root / "workspace"
+            destination.mkdir()
+            (destination / "existing.py").write_text("", encoding="utf-8")
+            with self.assertRaises(SystemExit):
+                workspace.init_workspace(Path("case"), Path("sealed"), {}, destination)
+
+    def test_fork_copies_candidate_and_regenerates_context(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            case_dir = root / "case"
+            sealed = root / "sealed"
+            parent = root / "parent"
+            child = root / "child"
+            seed = case_dir / "public/candidate_seed"
+            seed.mkdir(parents=True)
+            sealed.mkdir()
+            (seed / "candidate.py").write_text("VALUE = 1\n", encoding="utf-8")
+            (case_dir / "case.json").write_text("{}\n", encoding="utf-8")
+            (case_dir / "public/config.py").write_text("VALUE = 1\n", encoding="utf-8")
+            (case_dir / "public/comparator.json").write_text("{}\n", encoding="utf-8")
+            (sealed / "certification.json").write_text(
+                '{"status": "ready"}\n', encoding="utf-8",
+            )
+            case = {
+                "case_id": "test.case",
+                "workspace": "public/candidate_seed",
+                "module": "candidate.py",
+                "entry": "entry",
+                "config": "public/config.py",
+                "comparator": "public/comparator.json",
+                "environment": "a2a3_single_card",
+            }
+            with mock.patch.object(workspace.profile_modes, "enabled_modes", return_value={}), \
+                 mock.patch.object(common, "resolve_case", return_value=(case_dir, sealed, case)):
+                workspace.init_workspace(case_dir, sealed, case, parent)
+                (parent / "candidate.py").write_text("VALUE = 2\n", encoding="utf-8")
+                (parent / ".benchmark_outputs").mkdir()
+                (parent / ".benchmark_outputs" / "latest_result.json").write_text("{}\n")
+                result = workspace.fork_workspace(
+                    parent, child,
+                )
+
+            self.assertEqual(result["parent_workspace"], str(parent.resolve()))
+            self.assertEqual(
+                (child / "candidate.py").read_text(encoding="utf-8"), "VALUE = 2\n",
+            )
+            self.assertEqual(
+                (child / ".benchmark_context" / "starting_point" / "candidate.py").read_text(
+                    encoding="utf-8"
+                ),
+                "VALUE = 2\n",
+            )
+            self.assertFalse((child / ".benchmark_outputs").exists())
+            binding = common.read_json(child / ".benchmark_context" / "workspace.json")
+            self.assertEqual(binding["parent_workspace"], str(parent.resolve()))
+            self.assertEqual(binding["workspace"], str(child.resolve()))
+
+
+if __name__ == "__main__":
+    unittest.main()

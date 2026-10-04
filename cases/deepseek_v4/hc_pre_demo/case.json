@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.hc_pre_demo",
+  "description": "DeepSeek-V4 DEMO hyper-connections pre-mix for one decode step",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "hc_pre_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["x_mixed", "post", "comb"]},
+  "state": {"behavior": "none", "initial_state": [], "restore_before_each_launch": false},
+  "runtime": {}
+}

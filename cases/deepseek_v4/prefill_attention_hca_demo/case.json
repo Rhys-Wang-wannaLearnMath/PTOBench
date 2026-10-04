@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.prefill_attention_hca_demo",
+  "description": "prefill_attention_hca DEMO; original named preset",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "prefill_attention_hca_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_prefill_attention_hca_demo_admission_20261003",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "scalars": [
+    "num_tokens"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "x_out",
+      "kv_cache",
+      "cmp_kv"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "kv_cache",
+      "cmp_kv",
+      "cmp_kv_state",
+      "cmp_score_state"
+    ],
+    "restore_before_each_launch": true
+  },
+  "runtime": {
+    "ring_heap": 1073741824
+  }
+}

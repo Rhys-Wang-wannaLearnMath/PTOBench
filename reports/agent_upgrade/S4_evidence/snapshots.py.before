@@ -1,0 +1,66 @@
+"""Publish successful frozen Candidate trees, with immutable protection (S3)."""
+from __future__ import annotations
+import os
+from pathlib import Path
+import uuid
+
+import file_tree
+import integrity
+import session
+import workspace
+
+
+def create_snapshot(session_root, frozen_source, event):
+    session._require_execution()
+    record = session.read_session(session_root)
+    if event.get('correctness') != 'PASS' or not event.get('integrity_passed') or event.get('exit_code') != 0:
+        raise session.SessionError('only successful, intact observations can create a Snapshot')
+    seq = event['seq']
+    snapshot_id = f'snapshot_{seq:06d}'
+    parent = session._path(record['snapshots_root'])
+    target = parent / snapshot_id
+    temporary = parent / f'.{snapshot_id}.{uuid.uuid4().hex}'
+    try:
+        with file_tree.open_directory(parent) as fd:
+            try:
+                os.stat(snapshot_id, dir_fd=fd, follow_symlinks=False)
+            except FileNotFoundError:
+                pass
+            else:
+                raise integrity.InfrastructureError('Snapshot ID already exists')
+        with file_tree.open_directory(temporary, create=True):
+            pass
+        manifest = workspace.copy_candidate_tree(frozen_source, temporary / 'source')
+        if manifest['content_sha256'] != event['content_sha256']:
+            raise integrity.InfrastructureError('Snapshot source differs from accepted frozen source')
+        metadata = {
+            'schema_version': 1, 'snapshot_id': snapshot_id,
+            'session_id': record['session_id'], 'case_id': record['case_id'], 'optimizer_id': record['optimizer_id'],
+            'source_workspace': event['workspace'], 'event_seq': seq,
+            'content_sha256': manifest['content_sha256'], 'observation': event['observation'],
+        }
+        file_tree.atomic_bytes(temporary / 'metadata.json', session._bytes(metadata), mode=0o444)
+        entries = file_tree.scan_tree(temporary / 'source', reject_special=True)
+        for relative, entry in entries.items():
+            path = temporary / 'source' / relative
+            if entry['kind'] == 'file':
+                with file_tree.open_file(path) as fd:
+                    os.fchmod(fd, 0o444)
+        for relative, entry in sorted(entries.items(), key=lambda item: item[0].count('/'), reverse=True):
+            if entry['kind'] == 'directory':
+                with file_tree.open_directory(temporary / 'source' / relative) as fd:
+                    os.fchmod(fd, 0o555)
+        with file_tree.open_directory(temporary) as fd:
+            os.fchmod(fd, 0o555)
+        with file_tree.open_directory(parent) as fd:
+            os.rename(temporary.name, target.name, src_dir_fd=fd, dst_dir_fd=fd)
+            os.fsync(fd)
+        if session._read(target / 'metadata.json') != metadata or workspace.source_manifest(target / 'source') != manifest:
+            raise integrity.InfrastructureError('published Snapshot does not match its metadata/source')
+        integrity.register_roots(Path(session_root) / 'protection', {
+            f'snapshot_{seq:06d}': integrity.ProtectionRoot(target, 'snapshots', readonly=True),
+        })
+        return snapshot_id
+    finally:
+        with file_tree.open_directory(parent) as fd:
+            file_tree.remove_at(fd, temporary.name)

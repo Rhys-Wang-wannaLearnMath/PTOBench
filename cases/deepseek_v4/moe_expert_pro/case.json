@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.moe_expert_pro",
+  "description": "deepseek_v4.moe_expert_pro: DeepSeek-V4 PRO combined local routed and shared INT8 experts, one decode step",
+  "workspace": "public/candidate_seed",
+  "module": "moe_expert.py",
+  "entry": "moe_expert_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "recv_y",
+      "sh"
+    ]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  }
+}

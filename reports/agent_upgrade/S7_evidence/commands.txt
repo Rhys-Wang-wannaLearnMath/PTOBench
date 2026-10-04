@@ -1,0 +1,4 @@
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python -m unittest discover -s benchmarks/pypto_lib_bench-v0.2/evaluator/tests -p 'test_*.py' -v
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python -m unittest discover -s benchmarks/pypto_lib_bench-v0.2/evaluator/tests -p 'test_accept_all_cases.py' -v
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python benchmarks/pypto_lib_bench-v0.2/evaluator/accept_all_cases.py --out benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/full_v02/20261004_S7_01
+npu-smi info

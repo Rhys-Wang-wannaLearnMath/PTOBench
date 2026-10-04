@@ -1,0 +1,11 @@
+budget:
+  finish_actions: 1
+  max_hardware_actions: 2
+case: deepseek_v4.rmsnorm_decode_flash
+optimizer:
+  backend: pi
+  id: s6_provider_pi_deepseek-flash
+  profile: deepseek-flash
+output:
+  runs_root: /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs
+  snapshots_root: /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/snapshots

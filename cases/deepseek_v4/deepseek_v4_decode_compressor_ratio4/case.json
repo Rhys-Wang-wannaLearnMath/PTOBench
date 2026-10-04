@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.deepseek_v4_decode_compressor_ratio4",
+  "description": "DeepSeek-V4 legacy decode incremental KV compressor, compression ratio 4 with overlap, one step",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "deepseek_v4_decode_compressor_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "scalars": ["start_pos"],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": ["out", "kv_state", "score_state"]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": ["kv_state", "score_state"],
+    "restore_before_each_launch": true
+  }
+}

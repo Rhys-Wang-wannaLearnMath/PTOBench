@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "x_next": {
+      "method": "custom",
+      "name": "token_partition_ratio_reldiff",
+      "valid_rows": 8,
+      "token_axis": 1,
+      "base_rule": {
+        "method": "custom",
+        "name": "ratio_reldiff",
+        "diff_threshold": 0.003,
+        "max_error_ratio": 0.05,
+        "max_relative_diff": null
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "recv_y": {"method": "allclose", "rtol": 0.001, "atol": 0.001},
+    "sh": {"method": "allclose", "rtol": 0.001, "atol": 0.001}
+  }
+}

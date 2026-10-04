@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.deepseek_v4_decode_swa",
+  "description": "DeepSeek-V4 legacy sliding-window attention decode orchestration, one step",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "deepseek_v4_decode_swa",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["x_out"]},
+  "state": {"behavior": "none", "initial_state": [], "restore_before_each_launch": false},
+  "runtime": {"platform": "a2a3", "device_id": 0}
+}

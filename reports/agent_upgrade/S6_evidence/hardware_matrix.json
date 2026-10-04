@@ -1,0 +1,2168 @@
+{
+  "deepseek_v4.rmsnorm_decode_flash": {
+    "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c",
+    "environment": {
+      "name": "a2a3_single_card",
+      "platform": "a2a3",
+      "device": 0,
+      "benchmark": {
+        "warmup": 5,
+        "rounds": 10
+      },
+      "python": ".venv-official/bin/python",
+      "setup_scripts": [
+        "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh"
+      ],
+      "prepend_env": {
+        "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin"
+      },
+      "env": {
+        "PYTHONPATH": "{repo_root}",
+        "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60"
+      }
+    },
+    "seed_manifest": {
+      "schema_version": 1,
+      "files": [
+        {
+          "path": "candidate.py",
+          "sha256": "c5726f627b31356b35de5553dcc924ef43c8f9370501f6a37d92ea06ea9d9dbd"
+        }
+      ],
+      "directories": [
+        ""
+      ],
+      "content_sha256": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e"
+    },
+    "pairs": [
+      {
+        "index": 1,
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_01/result.json",
+          "profiling_mode": "clean",
+          "source_hash": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+          "source_intact": true,
+          "samples_effective_us": [
+            18.3,
+            17.52,
+            25.199,
+            17.54,
+            18.06,
+            16.98,
+            18.0,
+            24.52,
+            18.34,
+            17.66
+          ],
+          "median_effective_us": 18.03,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_01/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 12,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_01/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_tvx16q3b/compiled_meta.json",
+                "bytes": 517
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_01/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_tvx16q3b/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_01/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_tvx16q3b/report/perf_hints.log",
+                "bytes": 1848
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000001/authority_result.json",
+          "profiling_mode": "clean",
+          "source_hash": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+          "source_intact": true,
+          "samples_effective_us": [
+            17.38,
+            17.8,
+            17.28,
+            16.939,
+            17.94,
+            16.08,
+            17.319,
+            17.5,
+            17.38,
+            17.14
+          ],
+          "median_effective_us": 17.3495,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000001/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 12,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000001/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_cmcj7ru2/compiled_meta.json",
+                "bytes": 517
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000001/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_cmcj7ru2/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000001/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_cmcj7ru2/report/perf_hints.log",
+                "bytes": 2024
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          },
+          "event_seq": 1,
+          "snapshot_id": "snapshot_000001",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c",
+          "error_code": null
+        }
+      },
+      {
+        "index": 2,
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_02/result.json",
+          "profiling_mode": "clean",
+          "source_hash": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+          "source_intact": true,
+          "samples_effective_us": [
+            19.08,
+            17.86,
+            29.66,
+            17.72,
+            18.98,
+            18.12,
+            17.28,
+            16.84,
+            18.46,
+            16.519
+          ],
+          "median_effective_us": 17.990000000000002,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_02/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 12,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_02/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_xx_523ln/compiled_meta.json",
+                "bytes": 517
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_02/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_xx_523ln/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_02/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_xx_523ln/report/perf_hints.log",
+                "bytes": 1848
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000002/authority_result.json",
+          "profiling_mode": "clean",
+          "source_hash": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+          "source_intact": true,
+          "samples_effective_us": [
+            17.519,
+            17.4,
+            17.6,
+            18.259,
+            17.16,
+            16.84,
+            17.34,
+            17.478,
+            17.4,
+            17.56
+          ],
+          "median_effective_us": 17.439,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000002/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 12,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000002/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_pklp56fr/compiled_meta.json",
+                "bytes": 517
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000002/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_pklp56fr/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000002/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_pklp56fr/report/perf_hints.log",
+                "bytes": 2024
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          },
+          "event_seq": 2,
+          "snapshot_id": "snapshot_000002",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c",
+          "error_code": null
+        }
+      },
+      {
+        "index": 3,
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_03/result.json",
+          "profiling_mode": "clean",
+          "source_hash": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+          "source_intact": true,
+          "samples_effective_us": [
+            17.58,
+            24.14,
+            17.78,
+            18.14,
+            17.838,
+            16.94,
+            16.88,
+            17.159,
+            17.359,
+            17.179
+          ],
+          "median_effective_us": 17.4695,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_03/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 12,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_03/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_avqw0d0u/compiled_meta.json",
+                "bytes": 517
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_03/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_avqw0d0u/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_03/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_avqw0d0u/report/perf_hints.log",
+                "bytes": 1848
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000003/authority_result.json",
+          "profiling_mode": "clean",
+          "source_hash": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+          "source_intact": true,
+          "samples_effective_us": [
+            17.84,
+            18.06,
+            17.72,
+            17.359,
+            17.139,
+            16.88,
+            17.06,
+            17.02,
+            16.518,
+            17.08
+          ],
+          "median_effective_us": 17.109499999999997,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000003/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 12,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000003/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_z346hjz6/compiled_meta.json",
+                "bytes": 517
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000003/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_z346hjz6/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000003/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_z346hjz6/report/perf_hints.log",
+                "bytes": 2024
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          },
+          "event_seq": 3,
+          "snapshot_id": "snapshot_000003",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c",
+          "error_code": null
+        }
+      },
+      {
+        "index": 4,
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_04/result.json",
+          "profiling_mode": "clean",
+          "source_hash": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+          "source_intact": true,
+          "samples_effective_us": [
+            17.86,
+            17.799,
+            17.139,
+            18.481,
+            17.399,
+            18.921,
+            18.12,
+            18.8,
+            17.199,
+            16.6
+          ],
+          "median_effective_us": 17.8295,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_04/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 12,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_04/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_z5__oomy/compiled_meta.json",
+                "bytes": 517
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_04/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_z5__oomy/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_04/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_z5__oomy/report/perf_hints.log",
+                "bytes": 1848
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000004/authority_result.json",
+          "profiling_mode": "clean",
+          "source_hash": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+          "source_intact": true,
+          "samples_effective_us": [
+            17.538,
+            17.06,
+            17.42,
+            17.22,
+            17.62,
+            17.96,
+            16.52,
+            16.78,
+            17.119,
+            16.859
+          ],
+          "median_effective_us": 17.1695,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000004/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 12,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000004/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_jdo4j7h9/compiled_meta.json",
+                "bytes": 517
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000004/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_jdo4j7h9/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000004/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_jdo4j7h9/report/perf_hints.log",
+                "bytes": 2024
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          },
+          "event_seq": 4,
+          "snapshot_id": "snapshot_000004",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c",
+          "error_code": null
+        }
+      },
+      {
+        "index": 5,
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_05/result.json",
+          "profiling_mode": "clean",
+          "source_hash": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+          "source_intact": true,
+          "samples_effective_us": [
+            18.74,
+            17.879,
+            17.979,
+            17.9,
+            17.54,
+            16.7,
+            17.78,
+            26.72,
+            17.021,
+            16.219
+          ],
+          "median_effective_us": 17.829500000000003,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_05/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 12,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_05/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_n1vfx3ki/compiled_meta.json",
+                "bytes": 517
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_05/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_n1vfx3ki/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/pair_05/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_n1vfx3ki/report/perf_hints.log",
+                "bytes": 1848
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000005/authority_result.json",
+          "profiling_mode": "clean",
+          "source_hash": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+          "source_intact": true,
+          "samples_effective_us": [
+            17.079,
+            17.2,
+            17.359,
+            16.96,
+            17.619,
+            17.379,
+            17.34,
+            18.44,
+            17.259,
+            18.08
+          ],
+          "median_effective_us": 17.3495,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000005/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 12,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000005/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_kvd7v973/compiled_meta.json",
+                "bytes": 517
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000005/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_kvd7v973/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000005/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test_kvd7v973/report/perf_hints.log",
+                "bytes": 2024
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          },
+          "event_seq": 5,
+          "snapshot_id": "snapshot_000005",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c",
+          "error_code": null
+        }
+      }
+    ],
+    "profiles": {
+      "runtime": {
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_runtime/result.json",
+          "profiling_mode": "runtime",
+          "source_hash": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_runtime/workspace/.benchmark_outputs/runtime",
+            "nonempty_files": 17,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test_breios3a/compiled_meta.json",
+                "bytes": 517
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test_breios3a/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test_breios3a/dfx_outputs/name_map__jit_rms_norm_test_breios3a.json",
+                "bytes": 97
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test_breios3a/dfx_outputs/merged_swimlane_20261003_144753.json",
+                "bytes": 10647
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test_breios3a/dfx_outputs/chip_swimlane_records.json",
+                "bytes": 2374
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test_breios3a/dfx_outputs/deps.json",
+                "bytes": 914
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test_breios3a/report/perf_hints.log",
+                "bytes": 1880
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "runtime"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/authority_result.json",
+          "profiling_mode": "runtime",
+          "source_hash": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime",
+            "nonempty_files": 17,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test__kf_qj_t/compiled_meta.json",
+                "bytes": 517
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test__kf_qj_t/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test__kf_qj_t/dfx_outputs/name_map__jit_rms_norm_test__kf_qj_t.json",
+                "bytes": 97
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test__kf_qj_t/dfx_outputs/merged_swimlane_20261003_144812.json",
+                "bytes": 10742
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test__kf_qj_t/dfx_outputs/chip_swimlane_records.json",
+                "bytes": 2373
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test__kf_qj_t/dfx_outputs/deps.json",
+                "bytes": 914
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_rms_norm_test__kf_qj_t/report/perf_hints.log",
+                "bytes": 2024
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "runtime"
+          },
+          "event_seq": 6,
+          "snapshot_id": "snapshot_000006",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c",
+          "error_code": null
+        }
+      },
+      "pmu": {
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_pmu/result.json",
+          "profiling_mode": "hardware",
+          "source_hash": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_pmu/workspace/.benchmark_outputs/hardware",
+            "nonempty_files": 13,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_pmu/workspace/.benchmark_outputs/hardware/build_output/_jit_rms_norm_test_e8g4x8mq/compiled_meta.json",
+                "bytes": 517
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_pmu/workspace/.benchmark_outputs/hardware/build_output/_jit_rms_norm_test_e8g4x8mq/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_pmu/workspace/.benchmark_outputs/hardware/build_output/_jit_rms_norm_test_e8g4x8mq/dfx_outputs/pmu.csv",
+                "bytes": 269
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_pmu/workspace/.benchmark_outputs/hardware/build_output/_jit_rms_norm_test_e8g4x8mq/report/perf_hints.log",
+                "bytes": 1864
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "hardware"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000007/authority_result.json",
+          "profiling_mode": "hardware",
+          "source_hash": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000007/workspace/.benchmark_outputs/hardware",
+            "nonempty_files": 13,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000007/workspace/.benchmark_outputs/hardware/build_output/_jit_rms_norm_test_om5s3zkh/compiled_meta.json",
+                "bytes": 517
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000007/workspace/.benchmark_outputs/hardware/build_output/_jit_rms_norm_test_om5s3zkh/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000007/workspace/.benchmark_outputs/hardware/build_output/_jit_rms_norm_test_om5s3zkh/dfx_outputs/pmu.csv",
+                "bytes": 269
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000007/workspace/.benchmark_outputs/hardware/build_output/_jit_rms_norm_test_om5s3zkh/report/perf_hints.log",
+                "bytes": 2024
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "hardware"
+          },
+          "event_seq": 7,
+          "snapshot_id": "snapshot_000007",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c",
+          "error_code": null
+        }
+      },
+      "compiler": {
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_compiler/result.json",
+          "profiling_mode": "compile",
+          "source_hash": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_compiler/workspace/.benchmark_outputs/compile",
+            "nonempty_files": 69,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_mxyc0h96/compiled_meta.json",
+                "bytes": 517
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_mxyc0h96/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_mxyc0h96/report/perf_hints.log",
+                "bytes": 1884
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_mxyc0h96/report/pipeline_profile.json",
+                "bytes": 7111
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.rmsnorm_decode_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_mxyc0h96/report/pipeline_profile.txt",
+                "bytes": 3301
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "compile"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/authority_result.json",
+          "profiling_mode": "compile",
+          "source_hash": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile",
+            "nonempty_files": 69,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/compiled_meta.json",
+                "bytes": 517
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/report/perf_hints.log",
+                "bytes": 2024
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/report/pipeline_profile.json",
+                "bytes": 7113
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_rms_norm_test_zh8d37ic/report/pipeline_profile.txt",
+                "bytes": 3301
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "compile"
+          },
+          "event_seq": 8,
+          "snapshot_id": "snapshot_000008",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c",
+          "error_code": null
+        }
+      }
+    },
+    "equivalence": {
+      "status": "PASS",
+      "direct_medians_us": [
+        18.03,
+        17.990000000000002,
+        17.4695,
+        17.8295,
+        17.829500000000003
+      ],
+      "managed_medians_us": [
+        17.3495,
+        17.439,
+        17.109499999999997,
+        17.1695,
+        17.3495
+      ],
+      "D": 17.829500000000003,
+      "M": 17.3495,
+      "MAD_D": 0.16049999999999898,
+      "allowed": 0.1,
+      "relative_difference": 0.026921674752517114
+    },
+    "final": {
+      "schema_version": 1,
+      "session_id": "20261003T064538Z_b8d2f782df7c",
+      "optimizer_id": "s6_hardware",
+      "case_id": "deepseek_v4.rmsnorm_decode_flash",
+      "status": "completed",
+      "close_reason": "s6_acceptance_complete",
+      "selection_policy": "lowest_observed_latency_else_latest_pass",
+      "selection_reason": "lowest_observed_latency",
+      "selected_snapshot": "snapshot_000003",
+      "selected_event_seq": 3,
+      "selected_content_sha256": "3bd6b917e3ca22087aa5191c0f55819a05913968959866d3c70d2d598f45907e",
+      "selected_observation": {
+        "kind": "evaluate",
+        "mode": null,
+        "correctness": "PASS",
+        "latency_us": 17.109499999999997,
+        "metric_name": "median_effective_us",
+        "unit": "us"
+      },
+      "best_observed_source": "evaluate",
+      "best_observed_mode": null,
+      "best_observed_latency_us": 17.109499999999997,
+      "best_observed_metric_name": "median_effective_us",
+      "best_observed_unit": "us",
+      "final_verified_correctness": "passed",
+      "final_verified_latency_us": 17.590000000000003,
+      "final_verified_speedup": 0.9942865264354744,
+      "final_integrity_passed": true,
+      "hardware_actions_used": 8,
+      "finish_actions_used": 1,
+      "finish_event_seq": 9,
+      "error_code": null,
+      "completed_at": "2026-10-03T06:49:23.733924+00:00",
+      "message": null
+    },
+    "usage": {
+      "finish_actions": 1,
+      "hardware_actions": 8
+    },
+    "active_action": null,
+    "final_artifacts": {
+      "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/final/workspace/.benchmark_outputs/clean",
+      "nonempty_files": 12,
+      "diagnostic_files": [
+        {
+          "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/final/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test__5i7hmdn/compiled_meta.json",
+          "bytes": 517
+        },
+        {
+          "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/final/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test__5i7hmdn/cache/binary_context.json",
+          "bytes": 218
+        },
+        {
+          "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.rmsnorm_decode_flash/20261003T064538Z_b8d2f782df7c/final/workspace/.benchmark_outputs/clean/build_output/_jit_rms_norm_test__5i7hmdn/report/perf_hints.log",
+          "bytes": 1960
+        }
+      ],
+      "build_inside_artifacts": true,
+      "mode": "clean"
+    },
+    "status": "PASS"
+  },
+  "deepseek_v4.compressor_ratio4_flash": {
+    "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4",
+    "environment": {
+      "name": "a2a3_single_card",
+      "platform": "a2a3",
+      "device": 0,
+      "benchmark": {
+        "warmup": 5,
+        "rounds": 10
+      },
+      "python": ".venv-official/bin/python",
+      "setup_scripts": [
+        "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh"
+      ],
+      "prepend_env": {
+        "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin"
+      },
+      "env": {
+        "PYTHONPATH": "{repo_root}",
+        "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60"
+      }
+    },
+    "seed_manifest": {
+      "schema_version": 1,
+      "files": [
+        {
+          "path": "candidate.py",
+          "sha256": "4172af7142a7c33b90546b820603739589727a75961802a729a3e0cfa6a8c992"
+        }
+      ],
+      "directories": [
+        ""
+      ],
+      "content_sha256": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a"
+    },
+    "pairs": [
+      {
+        "index": 1,
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_01/result.json",
+          "profiling_mode": "clean",
+          "source_hash": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+          "source_intact": true,
+          "samples_effective_us": [
+            537.038,
+            544.48,
+            544.6,
+            541.979,
+            546.96,
+            535.321,
+            533.359,
+            538.96,
+            532.681,
+            542.64
+          ],
+          "median_effective_us": 540.4695,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_01/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 77,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_01/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_y3e4b7nj/compiled_meta.json",
+                "bytes": 2279
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_01/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_y3e4b7nj/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_01/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_y3e4b7nj/report/perf_hints.log",
+                "bytes": 19496
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000001/authority_result.json",
+          "profiling_mode": "clean",
+          "source_hash": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+          "source_intact": true,
+          "samples_effective_us": [
+            537.86,
+            538.42,
+            530.44,
+            543.82,
+            536.241,
+            528.981,
+            538.7,
+            540.42,
+            519.859,
+            541.54
+          ],
+          "median_effective_us": 538.14,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000001/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 77,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000001/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_d7xutxxe/compiled_meta.json",
+                "bytes": 2279
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000001/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_d7xutxxe/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000001/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_d7xutxxe/report/perf_hints.log",
+                "bytes": 21520
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          },
+          "event_seq": 1,
+          "snapshot_id": "snapshot_000001",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4",
+          "error_code": null
+        }
+      },
+      {
+        "index": 2,
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_02/result.json",
+          "profiling_mode": "clean",
+          "source_hash": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+          "source_intact": true,
+          "samples_effective_us": [
+            548.04,
+            545.72,
+            535.68,
+            545.28,
+            544.44,
+            533.4,
+            548.979,
+            539.8,
+            544.14,
+            536.26
+          ],
+          "median_effective_us": 544.29,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_02/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 77,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_02/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_n7zrocpn/compiled_meta.json",
+                "bytes": 2279
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_02/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_n7zrocpn/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_02/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_n7zrocpn/report/perf_hints.log",
+                "bytes": 19496
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000002/authority_result.json",
+          "profiling_mode": "clean",
+          "source_hash": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+          "source_intact": true,
+          "samples_effective_us": [
+            544.96,
+            534.06,
+            535.6,
+            554.48,
+            542.1,
+            549.84,
+            541.28,
+            541.38,
+            548.12,
+            540.42
+          ],
+          "median_effective_us": 541.74,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000002/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 77,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000002/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_wu7vzbga/compiled_meta.json",
+                "bytes": 2279
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000002/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_wu7vzbga/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000002/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_wu7vzbga/report/perf_hints.log",
+                "bytes": 21520
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          },
+          "event_seq": 2,
+          "snapshot_id": "snapshot_000002",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4",
+          "error_code": null
+        }
+      },
+      {
+        "index": 3,
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_03/result.json",
+          "profiling_mode": "clean",
+          "source_hash": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+          "source_intact": true,
+          "samples_effective_us": [
+            544.4,
+            533.44,
+            544.22,
+            543.559,
+            548.44,
+            538.52,
+            534.861,
+            549.84,
+            544.219,
+            535.82
+          ],
+          "median_effective_us": 543.889,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_03/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 77,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_03/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_xvh4o2r4/compiled_meta.json",
+                "bytes": 2279
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_03/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_xvh4o2r4/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_03/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_xvh4o2r4/report/perf_hints.log",
+                "bytes": 19496
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000003/authority_result.json",
+          "profiling_mode": "clean",
+          "source_hash": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+          "source_intact": true,
+          "samples_effective_us": [
+            544.18,
+            552.201,
+            544.1,
+            545.28,
+            534.94,
+            545.521,
+            531.82,
+            553.38,
+            536.3,
+            541.46
+          ],
+          "median_effective_us": 544.14,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000003/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 77,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000003/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_wjl9dxzq/compiled_meta.json",
+                "bytes": 2279
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000003/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_wjl9dxzq/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000003/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_wjl9dxzq/report/perf_hints.log",
+                "bytes": 21520
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          },
+          "event_seq": 3,
+          "snapshot_id": "snapshot_000003",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4",
+          "error_code": null
+        }
+      },
+      {
+        "index": 4,
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_04/result.json",
+          "profiling_mode": "clean",
+          "source_hash": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+          "source_intact": true,
+          "samples_effective_us": [
+            547.5,
+            536.32,
+            544.7,
+            543.94,
+            538.64,
+            548.5,
+            555.54,
+            558.94,
+            546.579,
+            553.98
+          ],
+          "median_effective_us": 547.0395,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_04/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 77,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_04/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_j1mfbi8_/compiled_meta.json",
+                "bytes": 2279
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_04/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_j1mfbi8_/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_04/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_j1mfbi8_/report/perf_hints.log",
+                "bytes": 19496
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000004/authority_result.json",
+          "profiling_mode": "clean",
+          "source_hash": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+          "source_intact": true,
+          "samples_effective_us": [
+            557.46,
+            546.019,
+            545.9,
+            533.96,
+            538.679,
+            547.36,
+            539.179,
+            541.679,
+            540.88,
+            542.88
+          ],
+          "median_effective_us": 542.2795,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000004/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 77,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000004/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_g3e8wmpt/compiled_meta.json",
+                "bytes": 2279
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000004/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_g3e8wmpt/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000004/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_g3e8wmpt/report/perf_hints.log",
+                "bytes": 21520
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          },
+          "event_seq": 4,
+          "snapshot_id": "snapshot_000004",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4",
+          "error_code": null
+        }
+      },
+      {
+        "index": 5,
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_05/result.json",
+          "profiling_mode": "clean",
+          "source_hash": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+          "source_intact": true,
+          "samples_effective_us": [
+            541.499,
+            540.06,
+            542.579,
+            537.38,
+            536.38,
+            542.739,
+            546.32,
+            540.799,
+            540.88,
+            536.42
+          ],
+          "median_effective_us": 540.8395,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_05/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 77,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_05/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_ckd7xuye/compiled_meta.json",
+                "bytes": 2279
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_05/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_ckd7xuye/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/pair_05/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_ckd7xuye/report/perf_hints.log",
+                "bytes": 19496
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000005/authority_result.json",
+          "profiling_mode": "clean",
+          "source_hash": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+          "source_intact": true,
+          "samples_effective_us": [
+            540.399,
+            540.72,
+            545.681,
+            535.319,
+            542.38,
+            549.039,
+            548.6,
+            546.98,
+            543.18,
+            545.739
+          ],
+          "median_effective_us": 544.4304999999999,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000005/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 77,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000005/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_rrg5j0zh/compiled_meta.json",
+                "bytes": 2279
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000005/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_rrg5j0zh/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000005/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_rrg5j0zh/report/perf_hints.log",
+                "bytes": 21520
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          },
+          "event_seq": 5,
+          "snapshot_id": "snapshot_000005",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4",
+          "error_code": null
+        }
+      }
+    ],
+    "profiles": {
+      "runtime": {
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_runtime/result.json",
+          "profiling_mode": "runtime",
+          "source_hash": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_runtime/workspace/.benchmark_outputs/runtime",
+            "nonempty_files": 82,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_w216tpby/compiled_meta.json",
+                "bytes": 2279
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_w216tpby/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_w216tpby/dfx_outputs/chip_swimlane_records.json",
+                "bytes": 202834
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_w216tpby/dfx_outputs/deps.json",
+                "bytes": 130482
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_w216tpby/dfx_outputs/name_map__jit_compressor_test_w216tpby.json",
+                "bytes": 439
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_w216tpby/dfx_outputs/merged_swimlane_20261003_145201.json",
+                "bytes": 2771683
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_w216tpby/report/perf_hints.log",
+                "bytes": 19864
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "runtime"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/authority_result.json",
+          "profiling_mode": "runtime",
+          "source_hash": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime",
+            "nonempty_files": 82,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_t6teft7b/compiled_meta.json",
+                "bytes": 2279
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_t6teft7b/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_t6teft7b/dfx_outputs/name_map__jit_compressor_test_t6teft7b.json",
+                "bytes": 439
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_t6teft7b/dfx_outputs/chip_swimlane_records.json",
+                "bytes": 201050
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_t6teft7b/dfx_outputs/deps.json",
+                "bytes": 130482
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_t6teft7b/dfx_outputs/merged_swimlane_20261003_145224.json",
+                "bytes": 2759922
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000006/workspace/.benchmark_outputs/runtime/build_output/_jit_compressor_test_t6teft7b/report/perf_hints.log",
+                "bytes": 21520
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "runtime"
+          },
+          "event_seq": 6,
+          "snapshot_id": "snapshot_000006",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4",
+          "error_code": null
+        }
+      },
+      "pmu": {
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_pmu/result.json",
+          "profiling_mode": "hardware",
+          "source_hash": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_pmu/workspace/.benchmark_outputs/hardware",
+            "nonempty_files": 78,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_pmu/workspace/.benchmark_outputs/hardware/build_output/_jit_compressor_test__6q8925m/compiled_meta.json",
+                "bytes": 2279
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_pmu/workspace/.benchmark_outputs/hardware/build_output/_jit_compressor_test__6q8925m/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_pmu/workspace/.benchmark_outputs/hardware/build_output/_jit_compressor_test__6q8925m/dfx_outputs/pmu.csv",
+                "bytes": 64236
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_pmu/workspace/.benchmark_outputs/hardware/build_output/_jit_compressor_test__6q8925m/report/perf_hints.log",
+                "bytes": 19680
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "hardware"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000007/authority_result.json",
+          "profiling_mode": "hardware",
+          "source_hash": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000007/workspace/.benchmark_outputs/hardware",
+            "nonempty_files": 78,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000007/workspace/.benchmark_outputs/hardware/build_output/_jit_compressor_test_n94q0etk/compiled_meta.json",
+                "bytes": 2279
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000007/workspace/.benchmark_outputs/hardware/build_output/_jit_compressor_test_n94q0etk/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000007/workspace/.benchmark_outputs/hardware/build_output/_jit_compressor_test_n94q0etk/dfx_outputs/pmu.csv",
+                "bytes": 64231
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000007/workspace/.benchmark_outputs/hardware/build_output/_jit_compressor_test_n94q0etk/report/perf_hints.log",
+                "bytes": 21520
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "hardware"
+          },
+          "event_seq": 7,
+          "snapshot_id": "snapshot_000007",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4",
+          "error_code": null
+        }
+      },
+      "compiler": {
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_compiler/result.json",
+          "profiling_mode": "compile",
+          "source_hash": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_compiler/workspace/.benchmark_outputs/compile",
+            "nonempty_files": 134,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_77ivy4kc/compiled_meta.json",
+                "bytes": 2279
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_77ivy4kc/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_77ivy4kc/report/perf_hints.log",
+                "bytes": 19910
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_77ivy4kc/report/pipeline_profile.json",
+                "bytes": 12178
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.compressor_ratio4_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_77ivy4kc/report/pipeline_profile.txt",
+                "bytes": 5474
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "compile"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/authority_result.json",
+          "profiling_mode": "compile",
+          "source_hash": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile",
+            "nonempty_files": 134,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/compiled_meta.json",
+                "bytes": 2279
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/report/perf_hints.log",
+                "bytes": 21520
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/report/pipeline_profile.json",
+                "bytes": 12176
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/staging/action_000008/workspace/.benchmark_outputs/compile/build_output/_jit_compressor_test_y1akdvrc/report/pipeline_profile.txt",
+                "bytes": 5474
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "compile"
+          },
+          "event_seq": 8,
+          "snapshot_id": "snapshot_000008",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4",
+          "error_code": null
+        }
+      }
+    },
+    "equivalence": {
+      "status": "PASS",
+      "direct_medians_us": [
+        540.4695,
+        544.29,
+        543.889,
+        547.0395,
+        540.8395
+      ],
+      "managed_medians_us": [
+        538.14,
+        541.74,
+        544.14,
+        542.2795,
+        544.4304999999999
+      ],
+      "D": 543.889,
+      "M": 542.2795,
+      "MAD_D": 3.0494999999999663,
+      "allowed": 0.1,
+      "relative_difference": 0.0029592435221157728
+    },
+    "final": {
+      "schema_version": 1,
+      "session_id": "20261003T064924Z_39b6a006d6d4",
+      "optimizer_id": "s6_hardware",
+      "case_id": "deepseek_v4.compressor_ratio4_flash",
+      "status": "completed",
+      "close_reason": "s6_acceptance_complete",
+      "selection_policy": "lowest_observed_latency_else_latest_pass",
+      "selection_reason": "lowest_observed_latency",
+      "selected_snapshot": "snapshot_000001",
+      "selected_event_seq": 1,
+      "selected_content_sha256": "e87e71d7a578cebb6e9cdf0e3d7601590b6fbaac22b47ebec9131d514cf8657a",
+      "selected_observation": {
+        "kind": "evaluate",
+        "mode": null,
+        "correctness": "PASS",
+        "latency_us": 538.14,
+        "metric_name": "median_effective_us",
+        "unit": "us"
+      },
+      "best_observed_source": "evaluate",
+      "best_observed_mode": null,
+      "best_observed_latency_us": 538.14,
+      "best_observed_metric_name": "median_effective_us",
+      "best_observed_unit": "us",
+      "final_verified_correctness": "passed",
+      "final_verified_latency_us": 543.56,
+      "final_verified_speedup": 1.0007910810214145,
+      "final_integrity_passed": true,
+      "hardware_actions_used": 8,
+      "finish_actions_used": 1,
+      "finish_event_seq": 9,
+      "error_code": null,
+      "completed_at": "2026-10-03T06:53:48.069991+00:00",
+      "message": null
+    },
+    "usage": {
+      "finish_actions": 1,
+      "hardware_actions": 8
+    },
+    "active_action": null,
+    "final_artifacts": {
+      "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/final/workspace/.benchmark_outputs/clean",
+      "nonempty_files": 77,
+      "diagnostic_files": [
+        {
+          "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/final/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_hqjk784p/compiled_meta.json",
+          "bytes": 2279
+        },
+        {
+          "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/final/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_hqjk784p/cache/binary_context.json",
+          "bytes": 218
+        },
+        {
+          "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.compressor_ratio4_flash/20261003T064924Z_39b6a006d6d4/final/workspace/.benchmark_outputs/clean/build_output/_jit_compressor_test_hqjk784p/report/perf_hints.log",
+          "bytes": 20784
+        }
+      ],
+      "build_inside_artifacts": true,
+      "mode": "clean"
+    },
+    "status": "PASS"
+  },
+  "deepseek_v4.decode_attention_hca_flash": {
+    "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a",
+    "environment": {
+      "name": "a2a3_single_card",
+      "platform": "a2a3",
+      "device": 0,
+      "benchmark": {
+        "warmup": 5,
+        "rounds": 10
+      },
+      "python": ".venv-official/bin/python",
+      "setup_scripts": [
+        "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh"
+      ],
+      "prepend_env": {
+        "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin"
+      },
+      "env": {
+        "PYTHONPATH": "{repo_root}",
+        "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60"
+      }
+    },
+    "seed_manifest": {
+      "schema_version": 1,
+      "files": [
+        {
+          "path": "candidate.py",
+          "sha256": "94ad8caf7ac34f97860dd0487402a2b10a188bbffbda09fd32cc2b0336b32628"
+        },
+        {
+          "path": "decode_compressor_ratio128.py",
+          "sha256": "fb415a85d3d62a07f9142815a65ea0666d01d042b0ae2ec288134bbd8a9c7993"
+        },
+        {
+          "path": "decode_qkv_proj_rope.py",
+          "sha256": "c98289b498155c9ab25df0541b2b80d43557d5e578187f40d60ffbff5021aab4"
+        },
+        {
+          "path": "decode_sparse_attn.py",
+          "sha256": "dc2ae46f4f9d51e26f3756ed6c980978f792b326bcaf88f7436b62659e932d76"
+        },
+        {
+          "path": "hc_post.py",
+          "sha256": "43875e57abd0b5116caafc9b46e26e99fd0656dab7cb2dcca90024b941a35daf"
+        },
+        {
+          "path": "hc_pre.py",
+          "sha256": "4a1a1cce1484ca21bf01e5f89c3fa2ee7df80c92830b754488a5c50d0924a517"
+        }
+      ],
+      "directories": [
+        ""
+      ],
+      "content_sha256": "470396dd529438be7990f0ab37a320156fcb8a4d84d358063f3fa8b0c97f4655"
+    },
+    "pairs": [
+      {
+        "index": 1,
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/pair_01/result.json",
+          "profiling_mode": "clean",
+          "source_hash": "470396dd529438be7990f0ab37a320156fcb8a4d84d358063f3fa8b0c97f4655",
+          "source_intact": true,
+          "samples_effective_us": [
+            1118.72,
+            1126.22,
+            1120.101,
+            1109.22,
+            1117.479,
+            1115.98,
+            1121.06,
+            1130.159,
+            1120.8,
+            1131.919
+          ],
+          "median_effective_us": 1120.4505,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/pair_01/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 182,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/pair_01/workspace/.benchmark_outputs/clean/build_output/_jit_attention_hca_test_v5lp2x57/compiled_meta.json",
+                "bytes": 4286
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/pair_01/workspace/.benchmark_outputs/clean/build_output/_jit_attention_hca_test_v5lp2x57/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/pair_01/workspace/.benchmark_outputs/clean/build_output/_jit_attention_hca_test_v5lp2x57/report/perf_hints.log",
+                "bytes": 54905
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000001/authority_result.json",
+          "profiling_mode": "clean",
+          "source_hash": "470396dd529438be7990f0ab37a320156fcb8a4d84d358063f3fa8b0c97f4655",
+          "source_intact": true,
+          "samples_effective_us": [
+            1135.02,
+            1118.661,
+            1120.74,
+            1088.161,
+            1134.718,
+            1105.059,
+            1122.859,
+            1119.86,
+            1098.76,
+            1119.88
+          ],
+          "median_effective_us": 1119.87,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000001/workspace/.benchmark_outputs/clean",
+            "nonempty_files": 182,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000001/workspace/.benchmark_outputs/clean/build_output/_jit_attention_hca_test_ifvay9t7/compiled_meta.json",
+                "bytes": 4286
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000001/workspace/.benchmark_outputs/clean/build_output/_jit_attention_hca_test_ifvay9t7/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000001/workspace/.benchmark_outputs/clean/build_output/_jit_attention_hca_test_ifvay9t7/report/perf_hints.log",
+                "bytes": 60229
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "clean"
+          },
+          "event_seq": 1,
+          "snapshot_id": "snapshot_000001",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a",
+          "error_code": null
+        }
+      }
+    ],
+    "profiles": {
+      "runtime": {
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_runtime/result.json",
+          "profiling_mode": "runtime",
+          "source_hash": "470396dd529438be7990f0ab37a320156fcb8a4d84d358063f3fa8b0c97f4655",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_runtime/workspace/.benchmark_outputs/runtime",
+            "nonempty_files": 187,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_zneeevyf/compiled_meta.json",
+                "bytes": 4286
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_zneeevyf/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_zneeevyf/dfx_outputs/merged_swimlane_20261003_145458.json",
+                "bytes": 2963656
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_zneeevyf/dfx_outputs/name_map__jit_attention_hca_test_zneeevyf.json",
+                "bytes": 988
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_zneeevyf/dfx_outputs/chip_swimlane_records.json",
+                "bytes": 217001
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_zneeevyf/dfx_outputs/deps.json",
+                "bytes": 61489
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_runtime/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_zneeevyf/report/perf_hints.log",
+                "bytes": 55873
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "runtime"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/authority_result.json",
+          "profiling_mode": "runtime",
+          "source_hash": "470396dd529438be7990f0ab37a320156fcb8a4d84d358063f3fa8b0c97f4655",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime",
+            "nonempty_files": 187,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_nj0evkxg/compiled_meta.json",
+                "bytes": 4286
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_nj0evkxg/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_nj0evkxg/dfx_outputs/merged_swimlane_20261003_145527.json",
+                "bytes": 2946099
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_nj0evkxg/dfx_outputs/chip_swimlane_records.json",
+                "bytes": 212820
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_nj0evkxg/dfx_outputs/deps.json",
+                "bytes": 61489
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_nj0evkxg/dfx_outputs/name_map__jit_attention_hca_test_nj0evkxg.json",
+                "bytes": 988
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000002/workspace/.benchmark_outputs/runtime/build_output/_jit_attention_hca_test_nj0evkxg/report/perf_hints.log",
+                "bytes": 60229
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "runtime"
+          },
+          "event_seq": 2,
+          "snapshot_id": "snapshot_000002",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a",
+          "error_code": null
+        }
+      },
+      "pmu": {
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_pmu/result.json",
+          "profiling_mode": "hardware",
+          "source_hash": "470396dd529438be7990f0ab37a320156fcb8a4d84d358063f3fa8b0c97f4655",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_pmu/workspace/.benchmark_outputs/hardware",
+            "nonempty_files": 183,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_pmu/workspace/.benchmark_outputs/hardware/build_output/_jit_attention_hca_test_i0c4_egv/compiled_meta.json",
+                "bytes": 4286
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_pmu/workspace/.benchmark_outputs/hardware/build_output/_jit_attention_hca_test_i0c4_egv/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_pmu/workspace/.benchmark_outputs/hardware/build_output/_jit_attention_hca_test_i0c4_egv/dfx_outputs/pmu.csv",
+                "bytes": 82816
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_pmu/workspace/.benchmark_outputs/hardware/build_output/_jit_attention_hca_test_i0c4_egv/report/perf_hints.log",
+                "bytes": 55389
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "hardware"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000003/authority_result.json",
+          "profiling_mode": "hardware",
+          "source_hash": "470396dd529438be7990f0ab37a320156fcb8a4d84d358063f3fa8b0c97f4655",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000003/workspace/.benchmark_outputs/hardware",
+            "nonempty_files": 183,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000003/workspace/.benchmark_outputs/hardware/build_output/_jit_attention_hca_test_3quu00ia/compiled_meta.json",
+                "bytes": 4286
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000003/workspace/.benchmark_outputs/hardware/build_output/_jit_attention_hca_test_3quu00ia/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000003/workspace/.benchmark_outputs/hardware/build_output/_jit_attention_hca_test_3quu00ia/dfx_outputs/pmu.csv",
+                "bytes": 82707
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000003/workspace/.benchmark_outputs/hardware/build_output/_jit_attention_hca_test_3quu00ia/report/perf_hints.log",
+                "bytes": 60229
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "hardware"
+          },
+          "event_seq": 3,
+          "snapshot_id": "snapshot_000003",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a",
+          "error_code": null
+        }
+      },
+      "compiler": {
+        "direct": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_compiler/result.json",
+          "profiling_mode": "compile",
+          "source_hash": "470396dd529438be7990f0ab37a320156fcb8a4d84d358063f3fa8b0c97f4655",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_compiler/workspace/.benchmark_outputs/compile",
+            "nonempty_files": 239,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_grdbconm/compiled_meta.json",
+                "bytes": 4286
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_grdbconm/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_grdbconm/report/perf_hints.log",
+                "bytes": 55994
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_grdbconm/report/pipeline_profile.json",
+                "bytes": 19113
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_controls/deepseek_v4.decode_attention_hca_flash/profile_compiler/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_grdbconm/report/pipeline_profile.txt",
+                "bytes": 8468
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "compile"
+          }
+        },
+        "managed": {
+          "status": "PASS",
+          "exit_code": 0,
+          "result_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/authority_result.json",
+          "profiling_mode": "compile",
+          "source_hash": "470396dd529438be7990f0ab37a320156fcb8a4d84d358063f3fa8b0c97f4655",
+          "source_intact": true,
+          "samples_effective_us": [],
+          "median_effective_us": null,
+          "artifacts": {
+            "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile",
+            "nonempty_files": 239,
+            "diagnostic_files": [
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/compiled_meta.json",
+                "bytes": 4286
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/cache/binary_context.json",
+                "bytes": 218
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/report/perf_hints.log",
+                "bytes": 60229
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/report/pipeline_profile.json",
+                "bytes": 19111
+              },
+              {
+                "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/staging/action_000004/workspace/.benchmark_outputs/compile/build_output/_jit_attention_hca_test_xnqyqj1q/report/pipeline_profile.txt",
+                "bytes": 8468
+              }
+            ],
+            "build_inside_artifacts": true,
+            "mode": "compile"
+          },
+          "event_seq": 4,
+          "snapshot_id": "snapshot_000004",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a",
+          "error_code": null
+        }
+      }
+    },
+    "final": {
+      "schema_version": 1,
+      "session_id": "20261003T065352Z_da8fce01870a",
+      "optimizer_id": "s6_hardware",
+      "case_id": "deepseek_v4.decode_attention_hca_flash",
+      "status": "completed",
+      "close_reason": "s6_acceptance_complete",
+      "selection_policy": "lowest_observed_latency_else_latest_pass",
+      "selection_reason": "lowest_observed_latency",
+      "selected_snapshot": "snapshot_000001",
+      "selected_event_seq": 1,
+      "selected_content_sha256": "470396dd529438be7990f0ab37a320156fcb8a4d84d358063f3fa8b0c97f4655",
+      "selected_observation": {
+        "kind": "evaluate",
+        "mode": null,
+        "correctness": "PASS",
+        "latency_us": 1119.87,
+        "metric_name": "median_effective_us",
+        "unit": "us"
+      },
+      "best_observed_source": "evaluate",
+      "best_observed_mode": null,
+      "best_observed_latency_us": 1119.87,
+      "best_observed_metric_name": "median_effective_us",
+      "best_observed_unit": "us",
+      "final_verified_correctness": "passed",
+      "final_verified_latency_us": 1125.7505,
+      "final_verified_speedup": 0.9911512364418225,
+      "final_integrity_passed": true,
+      "hardware_actions_used": 4,
+      "finish_actions_used": 1,
+      "finish_event_seq": 5,
+      "error_code": null,
+      "completed_at": "2026-10-03T06:57:17.157877+00:00",
+      "message": null
+    },
+    "usage": {
+      "finish_actions": 1,
+      "hardware_actions": 4
+    },
+    "active_action": null,
+    "final_artifacts": {
+      "root": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/final/workspace/.benchmark_outputs/clean",
+      "nonempty_files": 182,
+      "diagnostic_files": [
+        {
+          "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/final/workspace/.benchmark_outputs/clean/build_output/_jit_attention_hca_test_hryiry2m/compiled_meta.json",
+          "bytes": 4286
+        },
+        {
+          "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/final/workspace/.benchmark_outputs/clean/build_output/_jit_attention_hca_test_hryiry2m/cache/binary_context.json",
+          "bytes": 218
+        },
+        {
+          "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/runs/s6_hardware/deepseek_v4.decode_attention_hca_flash/20261003T065352Z_da8fce01870a/final/workspace/.benchmark_outputs/clean/build_output/_jit_attention_hca_test_hryiry2m/report/perf_hints.log",
+          "bytes": 58293
+        }
+      ],
+      "build_inside_artifacts": true,
+      "mode": "clean"
+    },
+    "status": "PASS"
+  },
+  "deepseek_v4.prefill_layer_ep2_hca_flash": {
+    "status": "BLOCKED",
+    "error_type": "SessionError",
+    "reason": "unsafe directory: /data1/home/ziruiwang/pypto-lib/benchmarks/pypto_lib_bench-v0.2/cases/deepseek_v4/prefill_layer_ep2_hca_flash/public/candidate_seed: [Errno 2] No such file or directory: 'candidate_seed'",
+    "environment": {
+      "name": "a2a3_deepseek_v4_moe_ep2",
+      "platform": "a2a3",
+      "device": 0,
+      "runtime": {
+        "device_ids": [
+          0,
+          1
+        ]
+      },
+      "benchmark": {
+        "warmup": 5,
+        "rounds": 10
+      },
+      "python": ".venv-official/bin/python",
+      "setup_scripts": [
+        "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh"
+      ],
+      "prepend_env": {
+        "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin"
+      },
+      "env": {
+        "PYTHONPATH": "{repo_root}",
+        "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60"
+      }
+    },
+    "certification": {
+      "status": "ready",
+      "ref_output_cache": "ready",
+      "case_id": "deepseek_v4.prefill_layer_ep2_hca_flash"
+    },
+    "missing_asset": "benchmarks/pypto_lib_bench-v0.2/cases/deepseek_v4/prefill_layer_ep2_hca_flash/public/candidate_seed",
+    "baseline_seed_absent": true,
+    "owner": "Case migration Stage 4: Candidate Seed publication; outside S6 canonical write boundary",
+    "required_runs": {
+      "managed_clean": {
+        "status": "BLOCKED",
+        "reason": "canonical Candidate Seed directory is absent"
+      },
+      "managed_compiler": {
+        "status": "BLOCKED",
+        "reason": "canonical Candidate Seed directory is absent"
+      },
+      "independent_finish": {
+        "status": "BLOCKED",
+        "reason": "canonical Candidate Seed directory is absent"
+      }
+    },
+    "hardware_actions_executed": 0,
+    "finish_actions_executed": 0
+  }
+}

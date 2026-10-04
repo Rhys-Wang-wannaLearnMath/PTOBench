@@ -1,0 +1,9 @@
+{
+  "pairs": 5,
+  "ordering": "direct then managed, repeated five times",
+  "D": "median(direct median_effective_us)",
+  "M": "median(managed median_effective_us)",
+  "MAD_D": "median(abs(direct median - D))",
+  "allowed": "max(0.10, 3 * MAD_D / D)",
+  "pass": "abs(M - D) / D <= allowed"
+}

@@ -1,0 +1,18 @@
+--- benchmarks/mig_workflow/04_repair_and_recertify.md.before
++++ benchmarks/mig_workflow/04_repair_and_recertify.md
+@@ -1,4 +1,6 @@
+ # Optional branch after Stage 3: repair and recertify
++
++Current runtime and certification interfaces: `benchmarks/mig_workflow/SESSION_ACCEPTANCE.md`. Use a fresh Session from Seed, protected action evidence, and independent clean finalization. Public profile names are runtime/pmu/compiler; internal artifact names remain runtime/hardware/compile.
+ 
+ Skill: `repair-and-recertify-pypto-case-v02`
+ 
+@@ -40,7 +42,7 @@
+ proposal binds the full before/after manifest and may not carry unrelated
+ helper/resource or import-layout drift.
+ 
+-A branch `PASS` requires plain `bench prepare-ref` against the existing fixed
++A branch `PASS` requires plain `prepare_ref.py --case <family.case>` against the existing fixed
+ Fixture inputs, ready certification with the canonical comparator hash, and a
+ nonempty Ref performance record. It produces a deterministic proposal binding
+ the strict failure, before/after Ref manifests and patch, protected contract

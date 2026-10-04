@@ -1,0 +1,29 @@
+{
+  "name": "a2a3_moe_ep4_pro_admission_20261003",
+  "platform": "a2a3",
+  "device": 0,
+  "runtime": {
+    "device_ids": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "benchmark": {
+    "warmup": 5,
+    "rounds": 10
+  },
+  "python": ".venv-official/bin/python",
+  "setup_scripts": [
+    "{cann_root}/set_env.sh"
+  ],
+  "prepend_env": {
+    "PATH": "{ptoas_root}/bin",
+    "LD_LIBRARY_PATH": "{miniforge_root}/lib"
+  },
+  "env": {
+    "PYTHONPATH": "{repo_root}",
+    "PTOAS_ROOT": "{ptoas_root}"
+  }
+}

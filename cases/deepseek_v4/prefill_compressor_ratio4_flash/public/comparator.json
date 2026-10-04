@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "kv_state": {
+      "method": "ratio_allclose",
+      "rtol": 0.001,
+      "atol": 0.001,
+      "max_error_ratio": 0.0
+    },
+    "score_state": {
+      "method": "ratio_allclose",
+      "rtol": 0.001,
+      "atol": 0.001,
+      "max_error_ratio": 0.0
+    },
+    "cmp_kv": {
+      "method": "ratio_allclose",
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 0.0
+    }
+  }
+}

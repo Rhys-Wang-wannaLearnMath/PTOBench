@@ -1,0 +1,909 @@
+"""Internal Session registry, Linux locks and durable action accounting (S2).
+
+Execution callers hold execution_lock across preparation, reservation, execution
+and completion. Status readers acquire only a short record lock. No CLI routing,
+Evaluator launch, Snapshot selection or Optimizer lifecycle lives here.
+"""
+from __future__ import annotations
+
+import contextlib
+import copy
+from dataclasses import dataclass
+from datetime import datetime, timezone
+import fcntl
+import hashlib
+import json
+import math
+import os
+from pathlib import Path
+import re
+import stat
+import sys
+import threading
+import uuid
+
+import common
+import file_tree
+import integrity
+import profile_modes
+import workspace
+
+PUBLIC_MODES = {"runtime": "runtime", "pmu": "hardware", "compiler": "compile"}
+ERROR_CODES = {"action_failed", "invalid_workspace", "invalid_request", "budget_exceeded",
+               "session_closed", "integrity_failed", "infrastructure_error", "interrupted"}
+_LOCKS = threading.local()
+
+
+class SessionError(ValueError):
+    def __init__(self, message, error_code="invalid_request"):
+        super().__init__(message)
+        self.error_code = error_code
+
+
+@dataclass(frozen=True)
+class SessionHandle:
+    session_root: Path
+    snapshots_root: Path
+    protection_root: Path
+    initial_workspace: Path
+
+
+SessionRecord = dict
+
+
+def _now():
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _bytes(value):
+    return (json.dumps(value, sort_keys=True, ensure_ascii=False, allow_nan=False,
+                       indent=2) + "\n").encode("utf-8")
+
+
+def _read(path):
+    try:
+        with file_tree.open_file(path) as fd, os.fdopen(os.dup(fd), "rb") as stream:
+            return json.load(stream)
+    except (OSError, ValueError, file_tree.UnsafeTreeError) as error:
+        raise integrity.InfrastructureError(f"cannot read {path}: {error}") from error
+
+
+def _id(value, label):
+    if not isinstance(value, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", value):
+        raise SessionError(f"invalid {label}")
+    return value
+
+
+def _path(value, *, missing=False, code="invalid_workspace"):
+    """Check raw components before normalization (including link/../ tricks)."""
+    try:
+        value = Path(value)
+        raw = value if value.is_absolute() else Path.cwd() / value
+        current = Path("/")
+        for part in raw.parts[1:]:
+            if part == "..":
+                current = current.parent
+                continue
+            current /= part
+            try:
+                with file_tree.open_directory(current):
+                    pass
+            except FileNotFoundError:
+                if not missing:
+                    raise
+        return file_tree.absolute_path(raw)
+    except (OSError, ValueError, TypeError, file_tree.UnsafeTreeError) as error:
+        raise SessionError(f"unsafe directory: {value}: {error}", code) from error
+
+
+@contextlib.contextmanager
+def _flock(path, *, create=False):
+    with file_tree.open_directory(path.parent, create=create) as parent:
+        fd = os.open(path.name, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW |
+                     os.O_NONBLOCK | os.O_CLOEXEC, 0o600, dir_fd=parent)
+        try:
+            if not stat.S_ISREG(os.fstat(fd).st_mode):
+                raise integrity.InfrastructureError("lock is not a regular file")
+            fcntl.flock(fd, fcntl.LOCK_EX)
+            yield
+        finally:
+            os.close(fd)
+
+
+@contextlib.contextmanager
+def execution_lock():
+    """Fixed benchmark lock; never acquire it while holding a Session lock."""
+    if getattr(_LOCKS, "session", False) or getattr(_LOCKS, "execution", None):
+        raise integrity.InfrastructureError("lock order violation or recursive execution lock")
+    root = _path(common.BENCHMARK_ROOT, code="invalid_request")
+    try:
+        with _flock(root / ".ptobench/execution.lock", create=True):
+            _LOCKS.execution = (os.getpid(), root)
+            try:
+                yield
+            finally:
+                _LOCKS.execution = None
+    except (OSError, file_tree.UnsafeTreeError) as error:
+        raise integrity.InfrastructureError(f"execution lock unavailable: {error}") from error
+
+
+def _require_execution():
+    if getattr(_LOCKS, "execution", None) != (os.getpid(), file_tree.absolute_path(common.BENCHMARK_ROOT)):
+        raise integrity.InfrastructureError("operation requires the benchmark execution lock")
+
+
+@contextlib.contextmanager
+def _session_lock(root):
+    root = _path(root, code="invalid_request")
+    if getattr(_LOCKS, "session", False):
+        raise integrity.InfrastructureError("recursive Session lock")
+    try:
+        with _flock(root / ".session.lock"):
+            _LOCKS.session = True
+            try:
+                yield root
+            finally:
+                _LOCKS.session = False
+    except (OSError, file_tree.UnsafeTreeError) as error:
+        raise integrity.InfrastructureError(f"Session lock unavailable: {error}") from error
+
+
+def _budget(value):
+    if value is not None and not isinstance(value, dict):
+        raise SessionError("budget must be an object")
+    value = {"max_hardware_actions": 20, "finish_actions": 1, **(value or {})}
+    if (set(value) != {"max_hardware_actions", "finish_actions"}
+            or type(value["max_hardware_actions"]) is not int or value["max_hardware_actions"] <= 0
+            or type(value["finish_actions"]) is not int or value["finish_actions"] != 1):
+        raise SessionError("budget requires positive integer exploration actions and exactly one finish action")
+    return value
+
+
+def _asset_file(path):
+    with file_tree.open_file(path) as fd:
+        if os.fstat(fd).st_size == 0:
+            raise SessionError(f"empty asset: {path}")
+        return file_tree.descriptor_sha256(fd)
+
+
+def _inside(base, relative):
+    if (not isinstance(relative, str) or not relative or Path(relative).is_absolute()
+            or any(p in {"", ".", ".."} for p in relative.split("/"))):
+        raise SessionError(f"invalid Case-relative path: {relative!r}")
+    return base / relative
+
+
+def preflight_case(case_id):
+    """Check recorded certification and prepared files, without Ref preparation.
+
+    The official builder is called only for spec metadata. No create_tensor,
+    golden.run, Ref/Oracle/Candidate entry, or hardware dispatch is called.
+    """
+    _id(case_id, "Case ID")
+    if len(case_id.split(".")) != 2:
+        raise SessionError("Case ID must be family.name")
+    family, name = case_id.split(".")
+    case_dir = _path(common.BENCHMARK_ROOT / "cases" / family / name, code="invalid_request")
+    sealed = _path(common.BENCHMARK_ROOT / "sealed_assets" / family / name, code="invalid_request")
+    try:
+        case = _read(case_dir / "case.json")
+        if type(case.get("schema_version")) is not int or case.get("schema_version") != 1 or case.get("case_id") != case_id:
+            raise SessionError("Case identity/schema mismatch")
+        cert = _read(sealed / "certification.json")
+        if (type(cert.get("schema_version")) is not int or cert.get("schema_version") != 1 or cert.get("case_id") != case_id
+                or cert.get("status") != "ready" or cert.get("ref_output_cache") != "ready"):
+            raise SessionError("Case certification/Ref cache is not ready")
+        policy_path = _inside(case_dir, case["comparator"])
+        if _asset_file(policy_path) != cert.get("comparator_sha256"):
+            raise SessionError("certified comparator hash does not match")
+        policy = _read(policy_path)
+        outputs = case["correctness"]["outputs"]
+        if (not isinstance(outputs, list) or not outputs or len(set(outputs)) != len(outputs)
+                or any(not isinstance(n, str) or not re.fullmatch(r"[A-Za-z0-9_]+", n) for n in outputs)
+                or type(policy.get("schema_version")) is not int or policy.get("schema_version") != 1 or set(policy.get("outputs", {})) != set(outputs)):
+            raise SessionError("invalid comparator/output contract")
+        _asset_file(_inside(case_dir, case["config"]))
+        seed = _path(_inside(case_dir, case["workspace"]), code="invalid_request")
+        _asset_file(_inside(seed, case["module"]))
+        workspace.source_manifest(seed)
+        for path in (sealed / "evaluate.py", sealed / "ref/ref_npu.py", sealed / "oracle/ref_cpu.py",
+                     sealed / "fixture_builder.py"):
+            _asset_file(path)
+        if case.get("fixture_ids") != ["fixture_000"]:
+            raise SessionError("exactly fixture_000 is required")
+        fixture = _path(sealed / "fixtures/fixture_000", code="invalid_request")
+        manifest = _read(fixture / "manifest.json")
+        if (type(manifest.get("schema_version")) is not int or manifest.get("schema_version") != 1 or manifest.get("fixture_id") != "fixture_000"
+                or manifest.get("inputs_dir") != "in" or manifest.get("outputs_dir") != "out"):
+            raise SessionError("invalid Fixture manifest")
+        _path(fixture / "in", code="invalid_request")
+        _path(fixture / "out", code="invalid_request")
+        # Existing official metadata provides the entire input ABI, including
+        # scalar tensors and initial mutating output state. Never regenerate it.
+        builder = common.load_isolated_module(sealed / "fixture_builder.py", f"session_specs_{uuid.uuid4().hex}")
+        specs = builder.build(case_dir, sealed, case, manifest["seed"])
+        initial = set(case.get("state", {}).get("initial_state", []))
+        required = set()
+        names = set()
+        for spec in specs:
+            spec_name = spec.name
+            if not isinstance(spec_name, str) or not re.fullmatch(r"[A-Za-z0-9_]+", spec_name) or spec_name in names:
+                raise SessionError("invalid or duplicate official spec name")
+            names.add(spec_name)
+            if (hasattr(spec, "value") and not hasattr(spec, "shape")) or spec_name not in outputs or spec_name in initial:
+                required.add(spec_name)
+        if not required or not set(outputs) <= names or not initial <= required:
+            raise SessionError("incomplete official Fixture contract")
+        for spec_name in sorted(required):
+            _asset_file(fixture / "in" / f"{spec_name}.pt")
+        for output_name in outputs:
+            _asset_file(fixture / "out" / f"{output_name}.pt")
+        performance = _read(sealed / "ref_performance.json")
+        median = performance.get("fixtures", {}).get("fixture_000", {}).get("median_effective_us")
+        if (type(performance.get("schema_version")) is not int or performance.get("schema_version") != 1
+                or performance.get("status") != "ready" or type(median) not in (int, float)
+                or not math.isfinite(median) or median <= 0):
+            raise SessionError("Ref baseline must be finite and positive")
+        env_name = _id(case["environment"], "environment")
+        environment = _read(common.BENCHMARK_ROOT / "environments" / f"{env_name}.json")
+        if environment.get("name") != env_name or not isinstance(environment.get("platform"), str):
+            raise SessionError("invalid environment profile")
+        return case_dir, sealed, case, environment
+    except SessionError:
+        raise
+    except (OSError, KeyError, TypeError, ValueError, AttributeError, ImportError, RuntimeError,
+            file_tree.UnsafeTreeError, integrity.InfrastructureError) as error:
+        raise SessionError(f"Case assets unavailable: {error}") from error
+
+
+def _fixed_roots(case_dir, sealed, case):
+    root = common.BENCHMARK_ROOT
+    declarations = {
+        "case": integrity.ProtectionRoot(case_dir, "fixed"),
+        "sealed": integrity.ProtectionRoot(sealed, "fixed"),
+        "environment": integrity.ProtectionRoot(root / "environments" / f"{case['environment']}.json", "fixed"),
+        "evaluator": integrity.ProtectionRoot(root / "evaluator", "fixed"),
+        "golden": integrity.ProtectionRoot(common.REPO_ROOT / "golden", "fixed"),
+    }
+    with file_tree.open_directory(sealed.parent) as fd:
+        for name in sorted(os.listdir(fd)):
+            if name.endswith(".py"):
+                declarations[f"family_{len(declarations)}"] = integrity.ProtectionRoot(sealed.parent / name, "fixed")
+    for name in ("launcher", "bench", "ptobench", "pto-launcher"):
+        path = root / name
+        with file_tree.open_directory(root) as fd:
+            try:
+                os.stat(name, dir_fd=fd, follow_symlinks=False)
+            except FileNotFoundError:
+                continue
+        declarations[f"public_{name}"] = integrity.ProtectionRoot(path, "fixed")
+    return declarations
+
+
+def _output(output):
+    if output is None:
+        output = {}
+    if not isinstance(output, dict) or set(output) - {"runs_root", "snapshots_root"}:
+        raise SessionError("output accepts runs_root and snapshots_root")
+    bench = file_tree.absolute_path(common.BENCHMARK_ROOT)
+    runs = _path(output.get("runs_root", bench / "runs"), missing=True, code="invalid_request")
+    snapshots = _path(output.get("snapshots_root", bench / "snapshots"), missing=True, code="invalid_request")
+    forbidden = [bench / p for p in ("cases", "sealed_assets", "environments", "evaluator", "launcher", ".ptobench")]
+    forbidden.append(file_tree.absolute_path(common.REPO_ROOT / "golden"))
+    if any(a.is_relative_to(b) or b.is_relative_to(a) for a in (runs, snapshots) for b in forbidden):
+        raise SessionError("output overlaps canonical assets or public/control code")
+    if runs.is_relative_to(snapshots) or snapshots.is_relative_to(runs):
+        raise SessionError("runs_root and snapshots_root must not overlap")
+    return runs, snapshots
+
+
+def create_session(case_id, optimizer, output=None, budget=None) -> SessionHandle:
+    budget = _budget(budget)
+    if isinstance(optimizer, str):
+        optimizer = {"backend": optimizer, "profile": "default"}
+    if not isinstance(optimizer, dict) or set(optimizer) - {"id", "backend", "profile", "command", "tool_version"}:
+        raise SessionError("invalid optimizer configuration")
+    optimizer = copy.deepcopy(optimizer)
+    optimizer_id = _id(optimizer.get("id", optimizer.get("backend")), "Optimizer ID")
+    _id(optimizer.get("backend"), "backend")
+    _id(optimizer.setdefault("profile", "default"), "profile")
+    if (optimizer.get("command") is not None and (not isinstance(optimizer["command"], list)
+            or any(not isinstance(arg, str) for arg in optimizer["command"]))
+            or optimizer.get("tool_version") is not None and not isinstance(optimizer["tool_version"], str)):
+        raise SessionError("optimizer command must be an argv list; tool_version must be text")
+    runs, snapshots = _output(output)
+    with execution_lock():
+        case_dir, sealed, case, environment = preflight_case(case_id)
+        session_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ_") + uuid.uuid4().hex[:12]
+        root = runs / optimizer_id / case_id / session_id
+        snapshot_root = snapshots / optimizer_id / case_id / session_id
+        created = []
+        publishing = False
+        try:
+            for target in (root, snapshot_root):
+                with file_tree.open_directory(target.parent, create=True) as fd:
+                    os.mkdir(target.name, mode=0o700, dir_fd=fd)
+                created.append(target)
+            for name in ("workspaces", "staging", "final", "protection"):
+                with file_tree.open_directory(root / name, create=True):
+                    pass
+            file_tree.atomic_bytes(root / "process.log", b"")
+            with _session_lock(root):
+                declarations = _fixed_roots(case_dir, sealed, case)
+                declarations.update({name: integrity.ProtectionRoot(root / filename, "records")
+                                     for name, filename in (("session", "session.json"), ("events", "events.jsonl"), ("final_result", "final_result.json"))})
+                manifest = integrity.capture_protection(root / "protection", declarations)
+            initial = root / "workspaces/worker_000"
+            workspace.init_workspace(case_dir, sealed, case, initial)
+            with _session_lock(root):
+                integrity.register_roots(root / "protection", {"context_worker_000": integrity.ProtectionRoot(initial / ".benchmark_context", "context", readonly=True)})
+                record = {
+                    "schema_version": 1, "session_id": session_id, "optimizer_id": optimizer_id,
+                    "case_id": case_id, "status": "running", "exploration_closed": False, "close_reason": None,
+                    "budget": budget, "usage": {"hardware_actions": 0, "finish_actions": 0},
+                    "workspaces": {"worker_000": {"path": "workspaces/worker_000", "parent": None}},
+                    "next_workspace_index": 1, "next_event_seq": 1, "active_action": None,
+                    "snapshots_root": str(snapshot_root), "runs_root": str(runs), "session_root": str(root),
+                    "benchmark_root": str(file_tree.absolute_path(common.BENCHMARK_ROOT)),
+                    "case_dir": str(case_dir), "sealed_dir": str(sealed), "optimizer": optimizer,
+                    "created_at": _now(), "completed_at": None, "environment": environment,
+                    "profiling_modes": [public for public, internal in PUBLIC_MODES.items() if internal in profile_modes.enabled_modes()],
+                    "command": optimizer.get("command"), "tool_version": optimizer.get("tool_version"),
+                    "bench_python": sys.version.split()[0], "asset_hashes": {
+                        name: hashlib.sha256(_bytes(info["entries"])).hexdigest()
+                        for name, info in manifest["roots"].items() if info["group"] == "fixed"},
+                }
+                _validate_record(root, record)
+                payload = _bytes(record)
+                publishing = True
+                integrity.commit_records(root / "protection", {"session": payload, "events": b""})
+            return SessionHandle(root, snapshot_root, root / "protection", initial)
+        except BaseException:
+            # A manifest-published record may already be durable. Leave it for
+            # normal S1 recovery rather than deleting a possibly live Session.
+            if not publishing:
+                for target in reversed(created):
+                    with file_tree.open_parent(target) as (fd, name):
+                        file_tree.remove_at(fd, name)
+            raise
+
+
+def _validate_record(root, record):
+    try:
+        if not isinstance(record, dict) or type(record["schema_version"]) is not int or record["schema_version"] != 1:
+            raise ValueError("schema")
+        for name in ("session_id", "optimizer_id", "case_id"):
+            _id(record[name], name)
+        if not re.fullmatch(r"\d{8}T\d{6}Z_[a-f0-9]{12}", record["session_id"]):
+            raise ValueError("Session ID")
+        if len(record["case_id"].split(".")) != 2:
+            raise ValueError("Case ID")
+        _id(record["optimizer"]["backend"], "backend")
+        _id(record["optimizer"]["profile"], "profile")
+        if record["optimizer"].get("id", record["optimizer"]["backend"]) != record["optimizer_id"]:
+            raise ValueError("Optimizer identity")
+        if (not isinstance(record["created_at"], str) or not isinstance(record["environment"], dict)
+                or not isinstance(record["asset_hashes"], dict)
+                or not {"case", "sealed", "environment", "evaluator", "golden"} <= record["asset_hashes"].keys()
+                or any(not isinstance(v, str) or not re.fullmatch(r"[a-f0-9]{64}", v) for v in record["asset_hashes"].values())):
+            raise ValueError("provenance")
+        if (record["session_root"] != str(root) or record["benchmark_root"] != str(file_tree.absolute_path(common.BENCHMARK_ROOT))
+                or root != Path(record["runs_root"]) / record["optimizer_id"] / record["case_id"] / record["session_id"]):
+            raise ValueError("frozen location")
+        expected_case = common.BENCHMARK_ROOT / "cases" / Path(*record["case_id"].split("."))
+        expected_sealed = common.BENCHMARK_ROOT / "sealed_assets" / Path(*record["case_id"].split("."))
+        if record["case_dir"] != str(expected_case) or record["sealed_dir"] != str(expected_sealed):
+            raise ValueError("Case identity")
+        if not Path(record["snapshots_root"]).is_absolute() or Path(record["snapshots_root"]).parts[-3:] != (record["optimizer_id"], record["case_id"], record["session_id"]):
+            raise ValueError("Snapshot location")
+        if record["status"] not in {"running", "exhausted", "completed", "failed"} or type(record["exploration_closed"]) is not bool:
+            raise ValueError("state")
+        _budget(record["budget"])
+        if set(record["usage"]) != {"hardware_actions", "finish_actions"}:
+            raise ValueError("usage")
+        for name, maximum in (("hardware_actions", record["budget"]["max_hardware_actions"]), ("finish_actions", 1)):
+            if type(record["usage"][name]) is not int or not 0 <= record["usage"][name] <= maximum:
+                raise ValueError("usage limits")
+        used = record["usage"]["hardware_actions"]
+        if record["status"] == "running" and used == record["budget"]["max_hardware_actions"]:
+            raise ValueError("exhausted status missing")
+        if record["status"] == "exhausted" and used != record["budget"]["max_hardware_actions"]:
+            raise ValueError("premature exhaustion")
+        if record["status"] in {"failed", "completed"} and not record["exploration_closed"]:
+            raise ValueError("terminal exploration")
+        if (record["exploration_closed"] and (not isinstance(record["close_reason"], str) or not record["close_reason"])) or (not record["exploration_closed"] and record["close_reason"] is not None):
+            raise ValueError("close reason")
+        if type(record["next_workspace_index"]) is not int or record["next_workspace_index"] < 1 or type(record["next_event_seq"]) is not int or record["next_event_seq"] < 1:
+            raise ValueError("counters")
+        if not isinstance(record["workspaces"], dict) or "worker_000" not in record["workspaces"]:
+            raise ValueError("registry")
+        for name, info in record["workspaces"].items():
+            if not re.fullmatch(r"worker_\d{3,}", name) or int(name[7:]) >= record["next_workspace_index"] or set(info) != {"path", "parent"} or info["path"] != f"workspaces/{name}":
+                raise ValueError("workspace binding")
+            if name == "worker_000":
+                if info["parent"] is not None:
+                    raise ValueError("initial parent")
+            elif info["parent"] not in record["workspaces"] or int(info["parent"][7:]) >= int(name[7:]):
+                raise ValueError("workspace parent")
+        if (not isinstance(record["profiling_modes"], list) or len(set(record["profiling_modes"])) != len(record["profiling_modes"])
+                or not set(record["profiling_modes"]) <= PUBLIC_MODES.keys()):
+            raise ValueError("public modes")
+        active = record["active_action"]
+        if active is not None:
+            if (not isinstance(active, dict) or type(active["event_seq"]) is not int
+                    or not 0 < active["event_seq"] < record["next_event_seq"]
+                    or active["kind"] not in {"evaluate", "profile", "finish"}
+                    or not re.fullmatch(r"[a-f0-9]{64}", active["content_sha256"])
+                    or active["workspace"] is None or not isinstance(active["started_at"], str)):
+                raise ValueError("active action")
+            if (active["process_state"] not in {"not_started", "starting", "running"}
+                    or (active["process_state"] == "running") != (active["process"] is not None)
+                    or active["owner"] is None):
+                raise ValueError("action process state")
+            if active["kind"] == "finish":
+                if active["workspace"] != "final" or not record["exploration_closed"] or record["usage"]["finish_actions"] != 1:
+                    raise ValueError("finish binding")
+            elif active["workspace"] not in record["workspaces"] or record["usage"]["hardware_actions"] == 0:
+                raise ValueError("exploration binding")
+            if (active["kind"] == "profile" and active["mode"] not in record["profiling_modes"]
+                    or active["kind"] != "profile" and active["mode"] is not None):
+                raise ValueError("action mode")
+            for identity in (active["owner"], active["process"]):
+                if identity is not None and (set(identity) != {"pid", "start_ticks", "pgid"} or any(type(v) is not int or v <= 0 for v in identity.values())):
+                    raise ValueError("process identity")
+    except (KeyError, TypeError, ValueError, SessionError) as error:
+        raise integrity.InfrastructureError(f"invalid Session schema: {error}") from error
+
+
+def _load_locked(root, repair=True):
+    protection = root / "protection"
+    # S1 validates the complete manifest, even when inspecting one group.
+    report = integrity.check_only(protection, "records")
+    manifest = _read(protection / "manifest.json")
+    for name, info in manifest["roots"].items():
+        if info["group"] == "records" and not Path(info["path"]).is_relative_to(root):
+            raise integrity.InfrastructureError("record recovery path is outside this Session")
+        if info["group"] == "context":
+            if re.fullmatch(r"context_worker_\d{3,}", name):
+                expected = root / "workspaces" / name[8:] / ".benchmark_context"
+            elif name == "context_final":
+                expected = root / "final/workspace/.benchmark_context"
+            else:
+                raise integrity.InfrastructureError("invalid context protection name")
+            if info["path"] != str(expected) or not info["readonly"]:
+                raise integrity.InfrastructureError("context recovery path is outside its workspace")
+    for name, filename in (("session", "session.json"), ("events", "events.jsonl"), ("final_result", "final_result.json")):
+        info = manifest["roots"].get(name, {})
+        if info.get("path") != str(root / filename) or info.get("group") != "records":
+            raise integrity.InfrastructureError("manifest does not bind this Session's records")
+    if repair:
+        integrity.check_and_restore(protection, "records")
+    elif not report.passed:
+        raise integrity.InfrastructureError("Session records changed", report)
+    record = _read(root / "session.json")
+    _validate_record(root, record)
+    fixed = {name: info for name, info in manifest["roots"].items() if info["group"] == "fixed"}
+    expected_paths = {
+        "case": Path(record["case_dir"]), "sealed": Path(record["sealed_dir"]),
+        "evaluator": common.BENCHMARK_ROOT / "evaluator", "golden": common.REPO_ROOT / "golden",
+        "environment": common.BENCHMARK_ROOT / "environments" / f"{record['environment']['name']}.json",
+    }
+    if fixed.keys() != record["asset_hashes"].keys():
+        raise integrity.InfrastructureError("fixed asset protection scope changed")
+    for name, info in fixed.items():
+        path = Path(info["path"])
+        if hashlib.sha256(_bytes(info["entries"])).hexdigest() != record["asset_hashes"][name]:
+            raise integrity.InfrastructureError("initial fixed asset inventory changed")
+        if name in expected_paths:
+            valid = path == expected_paths[name]
+        elif name.startswith("family_"):
+            valid = path.parent == Path(record["sealed_dir"]).parent and path.suffix == ".py"
+        elif name.startswith("public_"):
+            valid = name[7:] in {"bench", "ptobench", "pto-launcher", "launcher"} and path == common.BENCHMARK_ROOT / name[7:]
+        else:
+            valid = False
+        if not valid:
+            raise integrity.InfrastructureError("fixed asset path binding changed")
+    for name, info in record["workspaces"].items():
+        context = manifest["roots"].get(f"context_{name}", {})
+        if context.get("path") != str(root / info["path"] / ".benchmark_context") or context.get("group") != "context":
+            raise integrity.InfrastructureError("registry context is not protected")
+    events = _events(root, record)
+    return record, events
+
+
+def _events(root, record):
+    with file_tree.open_file(root / "events.jsonl") as fd, os.fdopen(os.dup(fd), "rb") as stream:
+        try:
+            events = [json.loads(line) for line in stream if line.strip()]
+        except (ValueError, UnicodeError) as error:
+            raise integrity.InfrastructureError("malformed events") from error
+    seen = set()
+    counters = {"hardware_actions": 0, "finish_actions": 0}
+    for event in events:
+        seq = event.get("seq") if isinstance(event, dict) else None
+        if type(seq) is not int or not 0 < seq < record["next_event_seq"] or seq in seen:
+            raise integrity.InfrastructureError("invalid/duplicate event sequence")
+        seen.add(seq)
+        fields = {"seq", "time", "action", "mode", "workspace", "content_sha256", "exit_code",
+                  "error_code", "hardware_action", "action_started", "integrity_passed", "repaired_paths",
+                  "result", "snapshot_id", "hardware_actions_used"}
+        if (not fields <= event.keys() or event["action"] not in {"evaluate", "profile", "fork", "finish"}
+                or any(type(event[key]) is not bool for key in ("hardware_action", "action_started", "integrity_passed"))
+                or type(event["exit_code"]) is not int or event["error_code"] is not None and event["error_code"] not in ERROR_CODES
+                or not isinstance(event["repaired_paths"], list)
+                or type(event["hardware_actions_used"]) is not int
+                or not 0 <= event["hardware_actions_used"] <= record["usage"]["hardware_actions"]):
+            raise integrity.InfrastructureError("invalid event schema")
+        if event["hardware_action"]:
+            if event["action"] == "fork" or not isinstance(event["content_sha256"], str) or not re.fullmatch(r"[a-f0-9]{64}", event["content_sha256"]):
+                raise integrity.InfrastructureError("invalid accepted event")
+            counters["finish_actions" if event["action"] == "finish" else "hardware_actions"] += 1
+    active = record["active_action"]
+    if active and active["event_seq"] in seen:
+        raise integrity.InfrastructureError("active action already has a completed event")
+    if active:
+        seen.add(active["event_seq"])
+        counters["finish_actions" if active["kind"] == "finish" else "hardware_actions"] += 1
+    if seen != set(range(1, record["next_event_seq"])) or counters != record["usage"]:
+        raise integrity.InfrastructureError("event/active sequence or budget ledger mismatch")
+    return events
+
+
+def read_session(session_root, repair=True) -> SessionRecord:
+    with _session_lock(session_root) as root:
+        return copy.deepcopy(_load_locked(root, repair)[0])
+
+
+def _commit(root, record, events=None):
+    _validate_record(root, record)
+    replacements = {"session": _bytes(record)}
+    if events is not None:
+        replacements["events"] = b"".join((json.dumps(event, sort_keys=True, ensure_ascii=False, allow_nan=False) + "\n").encode("utf-8") for event in events)
+    integrity.commit_records(root / "protection", replacements)
+
+
+def _open_exploration(record):
+    if record["status"] in {"failed", "completed"} or record["exploration_closed"]:
+        raise SessionError("Session exploration is closed", "session_closed")
+    if record["status"] == "exhausted":
+        raise SessionError("exploration budget exhausted", "budget_exceeded")
+    if record["active_action"] is not None:
+        raise SessionError("another accepted action still needs completion")
+
+
+def _workspace_path(root, record, value):
+    target = _path(value)
+    if not target.is_relative_to(root / "workspaces"):
+        raise SessionError("workspace is outside this Session", "invalid_workspace")
+    for name, info in record["workspaces"].items():
+        if target == root / info["path"]:
+            return name, target
+    raise SessionError("workspace must be a registered root", "invalid_workspace")
+
+
+def resolve_workspace(session_root, value):
+    """Explicit Session root only. Public metadata never determines identity."""
+    with _session_lock(session_root) as root:
+        record, _ = _load_locked(root)
+        name, target = _workspace_path(root, record, value)
+        return name, target, record["case_id"]
+
+
+def repair_assets(session_root):
+    _require_execution()
+    with _session_lock(session_root) as root:
+        _load_locked(root)
+    try:
+        return integrity.check_and_restore(root / "protection", {"fixed", "context"})
+    except integrity.InfrastructureError:
+        with _session_lock(root):
+            record, _ = _load_locked(root)
+            record["status"] = "failed"
+            record["exploration_closed"] = True
+            record["close_reason"] = "asset_recovery_failed"
+            record["completed_at"] = _now()
+            _commit(root, record)
+        raise
+
+
+def register_workspace(session_root, workspace_path, parent_id=None):
+    """Register a Bench-allocated, completely built worker; caller holds global lock."""
+    _require_execution()
+    with _session_lock(session_root) as root:
+        record, _ = _load_locked(root)
+        _open_exploration(record)
+        target = _path(workspace_path)
+        name = target.name
+        if (target.parent != root / "workspaces" or not re.fullmatch(r"worker_\d{3,}", name)
+                or name in record["workspaces"] or int(name[7:]) != record["next_workspace_index"] - 1
+                or parent_id not in record["workspaces"]):
+            raise SessionError("not the allocated workspace or parent", "invalid_workspace")
+    workspace.source_manifest(target)
+    with file_tree.open_directory(target / ".benchmark_context"):
+        pass
+    workspace.source_manifest(target / ".benchmark_context/starting_point")
+    protection = root / "protection"
+    integrity.register_roots(protection, {f"context_{name}": integrity.ProtectionRoot(target / ".benchmark_context", "context", readonly=True)})
+    with _session_lock(root):
+        record, _ = _load_locked(root)
+        _open_exploration(record)
+        record["workspaces"][name] = {"path": f"workspaces/{name}", "parent": parent_id}
+        _commit(root, record)
+        return name
+
+
+def fork_workspace(session_root, parent_workspace):
+    """Allocate, copy and publish a child using the Session's canonical Case."""
+    with execution_lock():
+        repair_assets(session_root)
+        with _session_lock(session_root) as root:
+            record, _ = _load_locked(root)
+            _open_exploration(record)
+            parent_id, parent = _workspace_path(root, record, parent_workspace)
+            index = record["next_workspace_index"]
+            name = f"worker_{index:03d}"
+            target = root / "workspaces" / name
+            with file_tree.open_directory(target.parent) as fd:
+                try:
+                    os.stat(name, dir_fd=fd, follow_symlinks=False)
+                except FileNotFoundError:
+                    pass
+                else:
+                    raise SessionError("allocated child already exists", "invalid_workspace")
+            # Consume the ID before copying. Failed/unregistered publications
+            # cannot cause an ID to be reused after a crash.
+            record["next_workspace_index"] += 1
+            _commit(root, record)
+        temporary = target.parent / f".{name}.fork_{uuid.uuid4().hex}"
+        try:
+            workspace.copy_candidate_tree(parent, temporary)
+            case_dir, sealed = Path(record["case_dir"]), Path(record["sealed_dir"])
+            case = _read(case_dir / "case.json")
+            workspace.write_context(case_dir, sealed, case, temporary,
+                                    parent_workspace=parent, workspace_path=target)
+            with file_tree.open_directory(target.parent) as fd:
+                os.rename(temporary.name, target.name, src_dir_fd=fd, dst_dir_fd=fd)
+                os.fsync(fd)
+            return register_workspace(root, target, parent_id)
+        finally:
+            with file_tree.open_directory(target.parent) as fd:
+                file_tree.remove_at(fd, temporary.name)
+            # A published but unregistered child remains inaccessible. Its ID
+            # is consumed, and any manifest-registered context stays recoverable.
+
+
+def process_identity(pid=None):
+    pid = os.getpid() if pid is None else pid
+    if type(pid) is not int or pid <= 0:
+        raise SessionError("process PID must be a positive integer")
+    try:
+        data = Path(f"/proc/{pid}/stat").read_text()
+        fields = data[data.rfind(")") + 2:].split()
+        if fields[0] == "Z":
+            return None
+        return {"pid": pid, "start_ticks": int(fields[19]), "pgid": int(fields[2])}
+    except FileNotFoundError:
+        return None
+    except (OSError, ValueError, IndexError) as error:
+        raise integrity.InfrastructureError(f"cannot establish process identity: {error}") from error
+
+
+def _group_alive(identity):
+    # Only a separately created action group is owned by Bench. Shared parent
+    # groups cannot be attributed to a single action and are never scanned/killed.
+    if identity is None or identity["pgid"] != identity["pid"]:
+        return False
+    for path in Path("/proc").iterdir():
+        if path.name.isdecimal():
+            member = process_identity(int(path.name))
+            if member is not None and member["pgid"] == identity["pgid"]:
+                return True
+    return False
+
+
+def _validate_source_manifest(value):
+    try:
+        if (not isinstance(value, dict) or set(value) != {"schema_version", "files", "directories", "content_sha256"}
+                or type(value["schema_version"]) is not int or value["schema_version"] != 1
+                or not isinstance(value["files"], list) or not isinstance(value["directories"], list)):
+            raise ValueError("schema")
+        previous = None
+        for entry in value["files"]:
+            if not isinstance(entry, dict) or set(entry) != {"path", "sha256"}:
+                raise ValueError("file entry")
+            _inside(Path("/source"), entry["path"])
+            if not isinstance(entry["sha256"], str) or not re.fullmatch(r"[a-f0-9]{64}", entry["sha256"]):
+                raise ValueError("file hash")
+            if previous is not None and entry["path"] <= previous:
+                raise ValueError("file order")
+            previous = entry["path"]
+        if not value["directories"] or value["directories"][0] != "" or value["directories"] != sorted(set(value["directories"])):
+            raise ValueError("directories")
+        for relative in value["directories"][1:]:
+            _inside(Path("/source"), relative)
+        encoded = json.dumps(value["files"], ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        if value["content_sha256"] != hashlib.sha256(encoded).hexdigest():
+            raise ValueError("tree hash")
+    except (KeyError, TypeError, ValueError, UnicodeError) as error:
+        raise SessionError(f"a valid stable source manifest is required: {error}") from error
+
+
+def reserve_action(session_root, event_seq, kind, *, workspace_path=None,
+                   mode=None, source_manifest=None):
+    """Prechecks completed before this call; global lock remains held afterwards.
+
+    A frozen manifest from S1's copy tool is mandatory. Finish callers supply a
+    clean final workspace and first close exploration. This API launches nothing.
+    """
+    _require_execution()
+    if kind not in {"evaluate", "profile", "finish"} or type(event_seq) is not int:
+        raise SessionError("invalid action kind/sequence")
+    if kind == "profile" and mode not in PUBLIC_MODES or kind != "profile" and mode is not None:
+        raise SessionError("invalid public profiling mode")
+    _validate_source_manifest(source_manifest)
+    with _session_lock(session_root) as root:
+        record, _ = _load_locked(root)
+        if kind == "finish":
+            if record["status"] in {"completed", "failed"} or not record["exploration_closed"]:
+                raise SessionError("finish requires closed nonterminal exploration", "session_closed")
+            if record["active_action"] is not None:
+                raise SessionError("active exploration must finish first")
+            if record["usage"]["finish_actions"]:
+                raise SessionError("finish budget already used", "budget_exceeded")
+            target = _path(workspace_path)
+            if target != root / "final/workspace":
+                raise SessionError("finish requires the clean final workspace", "invalid_workspace")
+            workspace_id = "final"
+        else:
+            _open_exploration(record)
+            workspace_id, target = _workspace_path(root, record, workspace_path)
+            if kind == "profile" and mode not in record["profiling_modes"]:
+                raise SessionError("profile is not enabled in this Session")
+        if event_seq != record["next_event_seq"]:
+            raise SessionError("event sequence is stale")
+    # Full tree/hash checks never hold the short Session record lock.
+    workspace.source_manifest(target)
+    clean = integrity.check_only(root / "protection", {"fixed", "context"})
+    if not clean.passed:
+        raise SessionError("protected files must be repaired before reservation", "integrity_failed")
+    with _session_lock(root):
+        record, _ = _load_locked(root)
+        if kind == "finish":
+            if record["status"] in {"completed", "failed"} or not record["exploration_closed"]:
+                raise SessionError("finish requires closed nonterminal exploration", "session_closed")
+            if record["active_action"] is not None or record["usage"]["finish_actions"]:
+                raise SessionError("finish is active or already used", "budget_exceeded")
+        else:
+            _open_exploration(record)
+        if record["next_event_seq"] != event_seq:
+            raise SessionError("event sequence is stale")
+        counter = "finish_actions" if kind == "finish" else "hardware_actions"
+        record["usage"][counter] += 1
+        if record["usage"]["hardware_actions"] == record["budget"]["max_hardware_actions"]:
+            record["status"] = "exhausted"
+        record["next_event_seq"] += 1
+        record["active_action"] = {
+            "event_seq": event_seq, "kind": kind, "mode": mode, "workspace": workspace_id,
+            "content_sha256": source_manifest["content_sha256"], "started_at": _now(),
+            "owner": process_identity(), "process": None,
+            "process_state": "not_started",
+        }
+        _commit(root, record)
+        return copy.deepcopy(record["usage"])
+
+
+def mark_action_starting(session_root, event_seq):
+    """Commit the spawn boundary before launching; S3 binds the PID afterwards."""
+    _require_execution()
+    with _session_lock(session_root) as root:
+        record, _ = _load_locked(root)
+        active = record["active_action"]
+        if active is None or active["event_seq"] != event_seq or active["process_state"] != "not_started":
+            raise SessionError("no matching action awaiting spawn")
+        active["process_state"] = "starting"
+        _commit(root, record)
+
+
+def set_action_process(session_root, event_seq, pid):
+    _require_execution()
+    identity = process_identity(pid)
+    if identity is None:
+        raise integrity.InfrastructureError("action subprocess is no longer alive")
+    if identity["pgid"] != identity["pid"]:
+        raise SessionError("action subprocess must own a separate process group")
+    with _session_lock(session_root) as root:
+        record, _ = _load_locked(root)
+        active = record["active_action"]
+        if active is None or active["event_seq"] != event_seq or active["process_state"] != "starting":
+            raise SessionError("no matching unbound active action")
+        active["process"] = identity
+        active["process_state"] = "running"
+        _commit(root, record)
+
+
+def complete_action(session_root, event_seq, *, exit_code, error_code=None,
+                    integrity_passed=False, result=None, repaired_paths=None,
+                    snapshot_id=None, action_started=True):
+    """Atomically save the event and clear active_action, even when exhausted.
+
+    Result validation and Snapshot creation are S3/S4 responsibilities. The
+    caller supplies their evidence here; this function never executes hardware.
+    """
+    _require_execution()
+    if (type(event_seq) is not int or type(exit_code) is not int or error_code is not None and error_code not in ERROR_CODES
+            or type(integrity_passed) is not bool or type(action_started) is not bool
+            or repaired_paths is not None and (not isinstance(repaired_paths, list) or any(not isinstance(p, str) for p in repaired_paths))):
+        raise SessionError("invalid action completion evidence")
+    with _session_lock(session_root) as root:
+        record, events = _load_locked(root)
+        active = record["active_action"]
+        existing = next((e for e in events if e["seq"] == event_seq), None)
+        if existing is not None:
+            return copy.deepcopy(existing)
+        if active is None:
+            raise SessionError("no matching active action")
+        if active["event_seq"] != event_seq:
+            raise SessionError("active action sequence mismatch")
+        event = {
+            "seq": event_seq, "time": _now(), "action": active["kind"], "mode": active["mode"],
+            "workspace": active["workspace"], "content_sha256": active["content_sha256"],
+            "exit_code": exit_code, "error_code": error_code, "hardware_action": True,
+            "action_started": action_started, "integrity_passed": integrity_passed,
+            "repaired_paths": repaired_paths or [], "result": result, "snapshot_id": snapshot_id,
+            "hardware_actions_used": record["usage"]["hardware_actions"],
+        }
+        record["active_action"] = None
+        if active["kind"] == "finish":
+            record["status"] = "completed" if exit_code == 0 and error_code is None and integrity_passed else "failed"
+            record["completed_at"] = _now()
+        events.append(event)
+        _commit(root, record, events)
+        return copy.deepcopy(event)
+
+
+def close_exploration(session_root, reason):
+    if not isinstance(reason, str) or not reason:
+        raise SessionError("a close reason is required")
+    with _session_lock(session_root) as root:
+        record, _ = _load_locked(root)
+        if not record["exploration_closed"]:
+            record["exploration_closed"] = True
+            record["close_reason"] = reason
+            _commit(root, record)
+
+
+def reconcile_active_action(session_root):
+    """Launcher recovery: record a dead action once; refuse live/unknown workers.
+
+    S3/S5 owns terminating confirmed child process groups. S2 never kills an
+    unrelated process. An ambiguous live identity makes the Session terminal,
+    keeps active_action as evidence, and blocks final measurement.
+    """
+    _require_execution()
+    with _session_lock(session_root) as root:
+        record, _ = _load_locked(root)
+        active = record["active_action"]
+        if active is None:
+            return None
+        owner = active["owner"]
+        process = active["process"]
+        live_owner = owner is not None and process_identity(owner["pid"]) == owner
+        live_child = process is not None and process_identity(process["pid"]) == process
+        live_group = _group_alive(process)
+        if live_owner:
+            raise SessionError("the accepted action is still running")
+        ambiguous = active["process_state"] == "starting"
+        if live_child or live_group or ambiguous:
+            record["exploration_closed"] = True
+            record["close_reason"] = "unresolved_active_process"
+            record["status"] = "failed"
+            record["completed_at"] = _now()
+            _commit(root, record)
+            raise integrity.InfrastructureError("active process still alive or cannot be attributed; final execution blocked")
+        seq = active["event_seq"]
+        record["exploration_closed"] = True
+        record["close_reason"] = record["close_reason"] or "interrupted"
+        _commit(root, record)
+    return complete_action(root, seq, exit_code=130, error_code="interrupted",
+                           action_started=active["process_state"] != "not_started")

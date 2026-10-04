@@ -1,0 +1,31 @@
+All commands run from /data1/home/ziruiwang/pypto-lib unless recorded otherwise.
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_evidence/hash_canonical.py benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_evidence/canonical_before.json
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python -m unittest discover -s benchmarks/pypto_lib_bench-v0.2/evaluator/tests -p test_maintenance_execution.py -v
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python -m unittest discover -s benchmarks/pypto_lib_bench-v0.2/evaluator/tests -p test_launcher.py -v
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python -m unittest discover -s benchmarks/pypto_lib_bench-v0.2/evaluator/tests -p test_*.py -v
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_evidence/accept_s6.py hardware
+npu-smi info
+npu-smi info -t health -i 0
+npu-smi info -t health -i 1
+codex --version
+claude --version
+pi --version
+opencode --version
+codex login status (output consumed, not retained)
+claude auth status (output consumed, not retained)
+pi --print 'Reply only READY.' (only sanitized error retained)
+opencode auth list (only credential count classification retained)
+open_proxy >/dev/null (before network tasks; no proxy values recorded)
+Direct Evaluator argv/cwd: runs/s6_controls/<case>/<action>/command.json
+Managed ptobench argv/cwd: S6_evidence/managed_*.command.json
+Backend version/profile/actual argv/cwd/prompt: each real Session's backend.json/profile.json/prompt.txt
+
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python -m unittest discover -s benchmarks/pypto_lib_bench-v0.2/evaluator/tests -p test_process_identity.py -v
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python -m unittest discover -s benchmarks/mig_workflow/tests -p test_bootstrap_cutover.py -v
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_evidence/accept_s6.py optimizer codex
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_evidence/accept_s6.py optimizer claudecode
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_evidence/hash_canonical.py benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_evidence/canonical_after.json 4
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_evidence/check_evidence.py hardware
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_evidence/check_evidence.py hashes
+PYTHONDONTWRITEBYTECODE=1 .venv-official/bin/python benchmarks/pypto_lib_bench-v0.2/reports/agent_upgrade/S6_evidence/make_report.py
+git diff --check

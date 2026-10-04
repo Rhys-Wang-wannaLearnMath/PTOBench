@@ -1,0 +1,205 @@
+{
+  "utc": "2026-10-02T15:22:21.865451+00:00",
+  "cwd": "/data1/home/ziruiwang/pypto-lib",
+  "python": "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+  "resolved_python": "/data1/home/ziruiwang/.local/share/uv/python/cpython-3.10.20-linux-aarch64-gnu/bin/python3.10",
+  "python_version": "3.10.20 (main, Apr 14 2026, 14:26:21) [Clang 22.1.3 ]",
+  "packages": {
+    "torch": "2.6.0+cpu",
+    "torch-npu": null,
+    "pypto": "0.1.0",
+    "numpy": "2.2.6",
+    "PyYAML": null
+  },
+  "tools": {
+    "codex": "/data1/home/ziruiwang/.local/npm/bin/codex",
+    "claude": null,
+    "pi": null,
+    "opencode": null,
+    "npu-smi": "/usr/local/bin/npu-smi",
+    "bisheng": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/bin/bisheng",
+    "clang": null
+  },
+  "environment_profiles": {
+    "a2a3_deepseek_v4_moe_ep2.json": {
+      "name": "a2a3_deepseek_v4_moe_ep2",
+      "platform": "a2a3",
+      "device": 0,
+      "runtime": {
+        "device_ids": [
+          0,
+          1
+        ]
+      },
+      "benchmark": {
+        "warmup": 5,
+        "rounds": 10
+      },
+      "python": ".venv-official/bin/python",
+      "setup_scripts": [
+        "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh"
+      ],
+      "prepend_env": {
+        "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin"
+      },
+      "env": {
+        "PYTHONPATH": "{repo_root}",
+        "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60"
+      }
+    },
+    "a2a3_deepseek_v4_moe_ep8.json": {
+      "name": "a2a3_deepseek_v4_moe_ep8",
+      "platform": "a2a3",
+      "device": 0,
+      "runtime": {
+        "device_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      "benchmark": {
+        "warmup": 5,
+        "rounds": 10
+      },
+      "python": ".venv-official/bin/python",
+      "setup_scripts": [
+        "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh"
+      ],
+      "prepend_env": {
+        "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin"
+      },
+      "env": {
+        "PYTHONPATH": "{repo_root}",
+        "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60"
+      }
+    },
+    "a2a3_deepseek_v4_prefill_layer_ep4_csa_flash.json": {
+      "name": "a2a3_deepseek_v4_prefill_layer_ep4_csa_flash",
+      "platform": "a2a3",
+      "device": 0,
+      "runtime": {
+        "device_ids": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "benchmark": {
+        "warmup": 5,
+        "rounds": 10
+      },
+      "python": ".venv-official/bin/python",
+      "setup_scripts": [
+        "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh"
+      ],
+      "prepend_env": {
+        "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin"
+      },
+      "env": {
+        "PYTHONPATH": "{repo_root}",
+        "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60"
+      }
+    },
+    "a2a3_single_card.json": {
+      "name": "a2a3_single_card",
+      "platform": "a2a3",
+      "device": 0,
+      "benchmark": {
+        "warmup": 5,
+        "rounds": 10
+      },
+      "python": ".venv-official/bin/python",
+      "setup_scripts": [
+        "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh"
+      ],
+      "prepend_env": {
+        "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin"
+      },
+      "env": {
+        "PYTHONPATH": "{repo_root}",
+        "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60"
+      }
+    },
+    "a2a3_synthetic_token_loop_ep2_idle67.json": {
+      "name": "a2a3_synthetic_token_loop_ep2_idle67",
+      "platform": "a2a3",
+      "device": 6,
+      "runtime": {
+        "device_ids": [
+          6,
+          7
+        ]
+      },
+      "benchmark": {
+        "warmup": 5,
+        "rounds": 10
+      },
+      "python": ".venv-official/bin/python",
+      "setup_scripts": [
+        "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh"
+      ],
+      "prepend_env": {
+        "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin"
+      },
+      "env": {
+        "PYTHONPATH": "{repo_root}",
+        "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60"
+      }
+    },
+    "a2a3_synthetic_token_loop_ep2_libstdcxx_idle67.json": {
+      "name": "a2a3_synthetic_token_loop_ep2_libstdcxx_idle67",
+      "platform": "a2a3",
+      "device": 6,
+      "runtime": {
+        "device_ids": [
+          6,
+          7
+        ]
+      },
+      "benchmark": {
+        "warmup": 5,
+        "rounds": 10
+      },
+      "python": ".venv-official/bin/python",
+      "setup_scripts": [
+        "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh"
+      ],
+      "prepend_env": {
+        "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin",
+        "LD_LIBRARY_PATH": "/data1/home/ziruiwang/miniforge3/lib"
+      },
+      "env": {
+        "PYTHONPATH": "{repo_root}",
+        "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60"
+      }
+    },
+    "qwen3_14b_decode_layer_single_layer_max_seq_127.json": {
+      "name": "qwen3_14b_decode_layer_single_layer_max_seq_127",
+      "platform": "a2a3",
+      "device": 0,
+      "benchmark": {
+        "warmup": 5,
+        "rounds": 10
+      },
+      "python": ".venv-official/bin/python",
+      "setup_scripts": [
+        "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh"
+      ],
+      "prepend_env": {
+        "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin"
+      },
+      "env": {
+        "PYTHONPATH": "{repo_root}",
+        "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60",
+        "PTO2_MANUAL_MAX_SEQ": "127"
+      }
+    }
+  }
+}

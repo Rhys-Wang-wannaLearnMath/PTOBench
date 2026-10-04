@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.qkv_proj_rope_compat_demo",
+  "description": "DeepSeek-V4 DEMO single-token decode fused attention RMSNorm, Q/KV projection, quantization, and RoPE compatibility workload",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "qkv_proj_rope_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["q", "kv", "qr", "qr_scale"]},
+  "state": {"behavior": "none", "initial_state": [], "restore_before_each_launch": false}
+}

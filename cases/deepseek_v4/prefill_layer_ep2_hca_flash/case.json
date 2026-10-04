@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.prefill_layer_ep2_hca_flash",
+  "description": "DeepSeek-V4 FLASH packed prefill layer HCA EP2",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "l3_prefill_layer",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_deepseek_v4_moe_ep2",
+  "fixture_ids": ["fixture_000"],
+  "scalars": ["layer_id"],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "hca_cmp_kv_state",
+      "hca_cmp_score_state",
+      "csa_cmp_kv_state",
+      "csa_cmp_score_state",
+      "csa_inner_kv_state",
+      "csa_inner_score_state",
+      "kv_cache",
+      "cmp_kv",
+      "idx_kv_cache",
+      "idx_kv_scale",
+      "x_next"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "hca_cmp_kv_state",
+      "hca_cmp_score_state",
+      "csa_cmp_kv_state",
+      "csa_cmp_score_state",
+      "csa_inner_kv_state",
+      "csa_inner_score_state",
+      "kv_cache",
+      "cmp_kv",
+      "idx_kv_cache",
+      "idx_kv_scale"
+    ],
+    "restore_before_each_launch": true
+  },
+  "runtime": {
+    "ring_heap": [1073741824, 1073741824, 1073741824, 2147483648]
+  }
+}

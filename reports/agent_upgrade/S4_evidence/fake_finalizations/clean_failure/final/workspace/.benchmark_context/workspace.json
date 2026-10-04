@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "case_id": "test.case",
+  "candidate_module": "candidate.py",
+  "entry": "entry",
+  "workspace": "/tmp/s2_v0lihqx0/custom_runs/opencode/test.case/20261002T192840Z_e181b69e277f/final/workspace",
+  "parent_workspace": "/tmp/s2_v0lihqx0/custom_snapshots/opencode/test.case/20261002T192840Z_e181b69e277f/snapshot_000001/source"
+}

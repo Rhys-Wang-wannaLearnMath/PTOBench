@@ -1,0 +1,101 @@
+# Evaluator Contract
+
+The top-level evaluator resolves the Case, loads its environment and dispatches to
+`sealed_assets/<family>/<case>/evaluate.py`. The shared lifecycle in
+`workflow.py` owns fixture iteration, Ref certification, output caching, timing,
+and Candidate result formatting. The Case-local evaluator supplies only the
+TensorSpec/ScalarSpec ABI, official entry, comparator, runner, output capture,
+and CPU-oracle callback extracted from that Case's source.
+
+Each Case-local evaluator provides two functions:
+
+```python
+prepare_ref(case_dir, sealed, case, platform=None)
+evaluate_candidate(case_dir, sealed, case, candidate_workspace,
+                   platform=None, phase="all")
+```
+
+This is the only Case interface. Do not add Case-name branches or a global
+official replay module to the evaluator. Family-specific ABI helpers belong in
+that family's sealed directory. Effective comparator settings remain public.
+
+Candidate and Ref implementations may each be one file or multiple local files,
+depending on the actual Case. Candidate Seed is an independent copy of the
+final Ref implementation tree, with only `ref_npu.py` renamed to `candidate.py`.
+Case adapters use `common.load_candidate(...)`, `common.load_ref(...)`, and
+`common.load_oracle(...)`: all see canonical public config, while their local
+helpers resolve from the Workspace, sealed `ref/`, and sealed `oracle/`
+respectively. Oracle loading isolates same-named local modules from Ref's Python
+module cache. `bench init` recursively copies the complete Candidate seed tree.
+Fixture generation runs in a separate process before Ref loading so official
+and Ref helpers with the same module name cannot share Python import cache.
+
+The CLI reads the Case environment profile before importing PyPTO code. It
+sources the configured toolchain scripts, sets the Case environment and
+re-executes itself with the configured Python interpreter when necessary.
+Callers do not need to activate the virtual environment or source CANN.
+
+Prepare a Case once:
+
+```bash
+python benchmarks/pypto_lib_bench-v0.2/evaluator/prepare_ref.py \
+  --case deepseek_v4.compressor_ratio4_flash --platform a2a3
+```
+
+Evaluate a Candidate:
+
+```bash
+python benchmarks/pypto_lib_bench-v0.2/evaluator/evaluate.py \
+  --case deepseek_v4.compressor_ratio4_flash --platform a2a3 \
+  --phase all --result latest_result.json
+```
+
+`correctness` executes one step. `performance` and `all` additionally run five
+warmups and ten measured launches, restoring the fixture state before every
+launch. State restoration is outside the measured device interval.
+
+Optional profiling modes are configured in `profile_modes.py`:
+
+```bash
+bench profile runtime ./workspace
+bench profile hardware ./workspace
+bench profile compile ./workspace
+```
+
+Every profiling mode performs exactly one correctness dispatch. `bench profile`
+does not expose a phase override: profiling checks availability and emitted
+diagnostics, not warmups, measured rounds, or performance.
+
+`bench init` writes only enabled modes to
+`.benchmark_context/profiling_modes.json` and lists only those modes in the
+generated README. If no mode is enabled, neither the file nor a profiling
+section is generated. Calling a mode absent from the workspace reports that it
+is not enabled.
+
+Every Workspace owns its evaluator output:
+
+```text
+.benchmark_outputs/
+├── clean/
+│   ├── latest_result.json
+│   └── build_output/
+├── runtime/
+├── hardware/
+└── compile/
+```
+
+The evaluator runs with the Workspace as its current directory and sets the
+official PyPTO `PYPTO_PROG_BUILD_DIR` to that mode's `build_output/`. Different
+Workspaces and profiling modes therefore cannot overwrite one another's result,
+compiler, or diagnostic files. An explicit `--result` path overrides only the
+default result location.
+
+The result records the exact JIT output directory in its top-level `build_dir`
+field. This value comes from the compiled program rather than from scanning for
+the most recently modified directory.
+
+Profiling runs only the Candidate. Every Case has exactly one fixed formal
+Fixture, used by Ref preparation, clean evaluation, and profiling. The
+profiling timing is diagnostic only and no Ref speedup is reported.
+`bench evaluate` always sets `profiling_mode` to `clean` and cannot inherit
+profiling into the official score.

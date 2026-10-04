@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "modes": {
+    "runtime": {
+      "description": "Runtime scheduling, dependency, and scope diagnostics."
+    },
+    "pmu": {
+      "description": "Hardware PMU diagnostics."
+    },
+    "compiler": {
+      "description": "Compiler pass IR and compile-time diagnostics."
+    }
+  }
+}

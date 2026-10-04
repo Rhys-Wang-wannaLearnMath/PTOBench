@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "pre_hc_hidden_out": {
+      "method": "exact"
+    },
+    "hidden_out": {
+      "method": "exact"
+    },
+    "logits": {
+      "method": "exact"
+    },
+    "sampled_ids": {
+      "method": "exact"
+    },
+    "kv_cache": {
+      "method": "exact"
+    },
+    "cmp_kv": {
+      "method": "exact"
+    },
+    "hca_compress_state": {
+      "method": "exact"
+    },
+    "csa_compress_state": {
+      "method": "exact"
+    },
+    "csa_inner_compress_state": {
+      "method": "exact"
+    },
+    "idx_kv_cache": {
+      "method": "exact"
+    },
+    "idx_kv_scale": {
+      "method": "allclose",
+      "rtol": 0.0078125,
+      "atol": 0
+    }
+  }
+}

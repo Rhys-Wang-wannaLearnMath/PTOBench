@@ -1,0 +1,10 @@
+{
+  "canonical_changed_paths": [],
+  "tracked_changed_paths": [],
+  "previous_public_and_history_changed_paths": [],
+  "index_unchanged": true,
+  "canonical_file_count": 6701,
+  "tensor_metadata_count": 2992,
+  "non_tensor_content_hash_count": 3709,
+  "tensor_verification": "size/mtime_ns/mode only; no full byte hashes"
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "topk_values": {
+      "method": "allclose",
+      "rtol": 0.00001,
+      "atol": 0.00001
+    },
+    "topk_indices": {
+      "method": "custom",
+      "name": "topk_pair_compare",
+      "values_output": "topk_values",
+      "dim": -1,
+      "descending": true
+    }
+  }
+}

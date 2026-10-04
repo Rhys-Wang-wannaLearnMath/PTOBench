@@ -1,0 +1,28 @@
+{
+  "source_profile": "/data1/home/ziruiwang/pypto-lib/benchmarks/mig_workflow/profiles_codex/glm-5.3-flash-max",
+  "base_url": "https://slb-v1.api.fan/v1",
+  "credential_source": "existing profile auth.json; value not recorded",
+  "models": [
+    {
+      "requested_model": "glm-5.3-flash",
+      "protocol": "responses",
+      "status": "FAIL",
+      "error_type": "URLError",
+      "elapsed_seconds": 47.037
+    },
+    {
+      "requested_model": "deepseek-flash",
+      "protocol": "responses",
+      "status": "FAIL",
+      "error_type": "URLError",
+      "elapsed_seconds": 47.292
+    },
+    {
+      "requested_model": "gpt-6.1-sol",
+      "protocol": "responses",
+      "status": "FAIL",
+      "error_type": "URLError",
+      "elapsed_seconds": 47.293
+    }
+  ]
+}
