@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "files": [
+    {"path": "ref_cpu.py", "reason": "independent CPU implementation of CP4 logical ordering and final window"}
+  ],
+  "excluded": ["NPU Ref/Candidate implementation", "Fixture generation", "evaluator code", "RunConfig/profiling harness", "standalone CLI"]
+}

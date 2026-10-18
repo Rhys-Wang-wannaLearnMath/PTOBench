@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.expert_routed_flash",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "8f2e7667f79f70bc75df613ccb288f9b612a4c008536cd447236bd45a100c5ff"
+}

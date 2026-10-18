@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "initial_hidden": {
+      "method": "allclose",
+      "rtol": 0.001,
+      "atol": 0.001
+    },
+    "intermediate_hidden": {
+      "method": "allclose",
+      "rtol": 0.001,
+      "atol": 0.001
+    },
+    "kv_caches": {
+      "method": "ratio_allclose",
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 0
+    },
+    "head_hidden": {
+      "method": "allclose",
+      "rtol": 0.001,
+      "atol": 0.001
+    }
+  }
+}

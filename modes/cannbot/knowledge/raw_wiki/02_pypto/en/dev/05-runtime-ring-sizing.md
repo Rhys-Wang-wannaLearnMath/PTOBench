@@ -1,0 +1,180 @@
+# Per-Task Ring Sizing
+
+PyPTO exposes Simpler's per-task ring sizing as three optional overrides on
+[`RunConfig`](../../../python/pypto/runtime/runner.py). They let you size the
+runtime's per-task ring resources for a single dispatch without touching the
+compiled artifact or any global state. This works on both the L2 single-chip
+path (`compiled(...)` / `CompiledProgram.from_dir(...)` / `ChipWorker.run()`) and the L3 distributed path
+(`DistributedWorker.run()` / the one-shot `compiled(...)`).
+
+The runtime keeps its task-launch resources in *ring buffers*. Each override
+maps 1:1 to a field on Simpler's `CallConfig.runtime_env` and is sized **per
+task submission** — per `compiled(...)` / `rt.run()` call — so different submissions of
+the same kernel can use different ring sizes. On the L3 path the override is
+applied per dispatch on top of the program's `DistributedConfig` baseline
+(`aicpu_thread_num`) and reaches every chip in that dispatch.
+
+## Field matrix
+
+| `RunConfig` field | `CallConfig.runtime_env` member | Controls | Constraint |
+| ----------------- | ------------------------------- | -------- | ---------- |
+| `ring_task_window: int \| list[int] \| tuple[int, ...] \| None` | `ring_task_window` | Number of in-flight task slots in the task ring | power of 2, `>= 4` |
+| `ring_heap: int \| list[int] \| tuple[int, ...] \| None` | `ring_heap` | Bytes of the per-ring task-output heap | power of 2, `>= 1024` |
+| `ring_dep_pool: int \| list[int] \| tuple[int, ...] \| None` | `ring_dep_pool` | Dependency-edge pool capacity | `[4, INT32_MAX]` |
+
+Each field accepts either a scalar, which is broadcast to every scope-depth
+ring, or a list/tuple of exactly four entries for rings 0 through 3. In the
+per-ring form, `0` leaves that ring at its runtime default; every nonzero entry
+must satisfy the constraint in the table. Scalar `0` is invalid—use `None` to
+leave the entire field unset.
+
+`None` (the default) leaves the field **unset** (`0` on `CallConfig`). PyPTO
+writes the value into `CallConfig.runtime_env` only when it is not `None`, so an
+unset field defers entirely to the runtime.
+
+## Precedence
+
+For each value the runtime resolves the effective size as:
+
+```text
+per-task CallConfig.runtime_env value   (RunConfig override — highest priority)
+  └─ falls back to → compile-time default (lowest priority)
+```
+
+So a `RunConfig` override wins over the runtime's built-in defaults, and there
+is no tier in between. The process-wide `PTO2_RING_TASK_WINDOW` /
+`PTO2_RING_HEAP` / `PTO2_RING_DEP_POOL` environment variables are **retired** —
+the runtime no longer reads them, and warns once per bind if one is exported.
+
+## Validation
+
+`RunConfig` validates the overrides at construction (in `__post_init__`),
+mirroring the runtime's `RuntimeEnv::validate()`. This surfaces a clear
+`ValueError` at the call site rather than a deep failure inside the runtime's
+own `CallConfig::validate()` at dispatch time:
+
+```python
+RunConfig(platform="a2a3", ring_heap=1000)
+# ValueError: ring_heap must be a power of 2 >= 1024 (bytes per ring), got 1000
+```
+
+Non-integers (including `bool`) are rejected with the same `ValueError` rather
+than raising an opaque `TypeError` from the power-of-two check.
+
+## Usage
+
+### L2 single-chip (`compiled(...)` / `ChipWorker.run`)
+
+```python
+from pypto import ir
+from pypto.runtime import RunConfig
+
+config = RunConfig(
+    platform="a2a3",
+    ring_task_window=128,        # 128 in-flight task slots
+    ring_heap=8 * 1024 * 1024,   # 8 MiB output heap per ring
+    ring_dep_pool=256,           # 256 dependency-edge entries
+)
+compiled = ir.compile(MyProgram, **config.compile_kwargs())
+compiled(a, b, c, config=config)
+```
+
+A handle rebuilt from a build directory takes the same per-dispatch config, so
+a replay can be re-sized without recompiling:
+
+```python
+from pypto.ir import CompiledProgram
+from pypto.runtime import RunConfig
+
+CompiledProgram.from_dir(work_dir, platform="a2a3")(
+    a,
+    b,
+    c,
+    config=RunConfig(platform="a2a3", ring_heap=512 * 1024 * 1024),
+)
+```
+
+The same ring sizing is used for worker prewarm, the device dispatch, and the
+dependency-capture subprocess used by onboard swimlane collection.
+
+### L3 distributed (`DistributedWorker` / `compiled(...)`)
+
+Pass the same `RunConfig` to a per-dispatch call. The prepared worker's shared
+config is never mutated, so consecutive dispatches — and, in multi-program
+serving, different programs (e.g. prefill vs. decode) — can each use their own
+ring sizes:
+
+```python
+from pypto.runtime import RunConfig
+
+prefill_cfg = RunConfig(platform="a2a3", ring_task_window=256)
+decode_cfg = RunConfig(platform="a2a3", ring_task_window=64)
+
+with compiled.prepare(prefill_cfg) as rt:              # setup once + prewarm
+    rt(host_x, weight, host_out, config=prefill_cfg)   # large window for prefill
+    rt(host_x, weight, host_out, config=decode_cfg)    # smaller window for decode
+
+# One-shot path honors the same override:
+compiled(a, b, c, config=RunConfig(platform="a2a3", ring_heap=8 * 1024 * 1024))
+```
+
+The L3 dispatch path consumes both the `ring_*` fields and runtime DFX fields
+from `RunConfig`. DFX artifacts are namespaced under
+`<output_dir>/dfx_outputs/rank{r}/d{k}/`; see
+[Runtime DFX](03-runtime-dfx.md). Other compile-side fields are ignored.
+
+Set only the fields you want to override; the rest stay unset and fall back per
+the precedence above.
+
+## Arena prewarm and the single-slot cache
+
+A ring sizing's runtime arena costs ~800 ms to build the first time it is used.
+Workers build it eagerly at `init` — `prepare(config)` / `ChipWorker` /
+`_execute_on_device` — so the cold build lands in setup instead of inside the
+first (usually timed) dispatch.
+
+The arena cache is keyed on the **full per-ring sizing vector** (all four rings'
+`ring_task_window` / `ring_heap` / `ring_dep_pool`, hashed together). So a single
+dispatch that sizes rings differently — the list form, e.g.
+`ring_task_window=[256, 128, 64, 0]` — is one key and one arena: prewarm covers
+it completely, as long as `prepare(...)` gets that same `RunConfig`. The
+single-slot limit below is only about *different dispatches* using *different*
+sizing vectors, never about per-ring differences within one dispatch.
+
+The cache holds exactly **one** sizing vector per worker, and every arena build
+overwrites that slot. So:
+
+- Pass the dispatch `RunConfig` to `prepare(...)`. It is used for the prewarm
+  only — it is not stored, so every dispatch still needs its own `config=`.
+  In the example above, pass `prefill_cfg` to both `prepare(...)` and the first
+  prefill dispatch; the decode dispatch uses `decode_cfg`.
+- The prewarm only removes the cold build from the **first** dispatch, and only
+  when that dispatch's sizing matches the prewarmed one — so prewarm the sizing
+  your *first* dispatch uses, not the most frequent one. Any first dispatch with
+  a different sizing misses, rebuilds, and overwrites the prewarmed slot, wasting
+  the prewarm.
+- Keep the ring sizing **constant across a worker's dispatches**. The single
+  slot is per worker and is overwritten on every switch, so alternating sizings
+  rebuild the arena on **each** switch regardless of prewarm (the `decode_cfg`
+  dispatch above pays a build, and the next `prefill_cfg` pays another). Splitting
+  the sizings across separate workers is usually not an option — the reason to
+  hold one worker (`prepare(..., extra_compiled=[...])`) is to share device-
+  resident state such as a KV cache, which separate workers cannot. So pick one
+  sizing that serves all of that worker's dispatch shapes rather than varying it
+  per dispatch.
+- L2 dispatch takes its ring sizing from the per-call `RunConfig`, so a
+  `ChipWorker` prewarms the runtime's default sizing; a per-call `RunConfig` that
+  sizes the rings differently rebuilds once.
+
+## Related
+
+- Simpler's runtime-side implementation: the `tensormap_and_ringbuffer` runtime
+  under `runtime/src/<arch>/runtime/tensormap_and_ringbuffer/` and the
+  `RuntimeEnv` / `CallConfig` definitions in
+  `runtime/src/common/task_interface/call_config.h`.
+- Worker-API examples: `runtime/examples/workers/{l2,l3}/per_task_runtime_env/`.
+- L3 dispatch entry points that accept the per-dispatch `RunConfig`:
+  `DistributedWorker.run` and `DistributedCompiledProgram.__call__`, which
+  reaches [`distributed_runner.py`](../../../python/pypto/runtime/distributed_runner.py).
+- Orthogonal runtime diagnostics on the same `RunConfig`:
+  [03-runtime-dfx.md](03-runtime-dfx.md).

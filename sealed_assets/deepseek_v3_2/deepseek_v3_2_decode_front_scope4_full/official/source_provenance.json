@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v3_2/deepseek_v3_2_decode_front_scope4.py",
+  "source_sha256": "6966063727a27a126061ca31da21d00121543e821de4fa7cbb8d0e82a5b8b248",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "6966063727a27a126061ca31da21d00121543e821de4fa7cbb8d0e82a5b8b248",
+  "dependencies": [],
+  "selection": "Frozen standalone Scope 4 source; the exact workload was removed upstream and its unified successor changes ABI, state, and outputs.",
+  "fixture_authority": "real TensorSpec builder and official golden_fn"
+}

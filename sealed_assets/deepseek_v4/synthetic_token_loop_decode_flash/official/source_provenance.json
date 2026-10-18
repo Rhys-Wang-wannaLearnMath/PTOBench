@@ -1,0 +1,218 @@
+{
+  "schema_version": 1,
+  "authority": "frozen_git_commit",
+  "source_revision": "98b38024692d67d732cb732ca8c65614fca82cd0",
+  "source_path": "models/0912/deepseek_v4_pro/synthetic_token_loop.py",
+  "source_git_path": "models/deepseek_v4_pro/synthetic_token_loop.py",
+  "source_sha256": "cd0915472de7628154024ac8b2605fe01ce893ce87024a91ee0816f5daede3c3",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "cd0915472de7628154024ac8b2605fe01ce893ce87024a91ee0816f5daede3c3",
+  "selection": "Approved reduced seven-layer synthetic zero-weight Flash decode EP2/TP2 contract (deepseek_v4.synthetic_token_loop_decode_flash); current upstream changed workload and quantized ABI. Preserve the selected frozen source and every approved dependency byte-exact.",
+  "fixture_authority": "Preserved session zero-weight recipe, component entry annotations and pure serving metadata; decode history independently derives the fixed-zero prefill scale writes.",
+  "dependencies": [
+    {
+      "source_path": "models/deepseek_v4_pro/config.py",
+      "source_sha256": "198d6c30d56ed0f343005702c698d2fd7b3b3fa36a8db1c728628301820a7e51",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "198d6c30d56ed0f343005702c698d2fd7b3b3fa36a8db1c728628301820a7e51"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/decode_attention_csa.py",
+      "source_sha256": "2dd2c54bdbd20c344c053bef6949a786cfcf52fb80e5a8e0487ee0836a25de09",
+      "frozen_copy": "decode_attention_csa.py",
+      "frozen_copy_sha256": "2dd2c54bdbd20c344c053bef6949a786cfcf52fb80e5a8e0487ee0836a25de09"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/decode_attention_hca.py",
+      "source_sha256": "785d40ef6826cff8893a6d6979d35533ab359f636abab08529a7f12f73747cf0",
+      "frozen_copy": "decode_attention_hca.py",
+      "frozen_copy_sha256": "785d40ef6826cff8893a6d6979d35533ab359f636abab08529a7f12f73747cf0"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/decode_attention_swa.py",
+      "source_sha256": "9e29dbdbc9976fae0d13308e202d808081b0f14891cad6b4899b349fb9f115f2",
+      "frozen_copy": "decode_attention_swa.py",
+      "frozen_copy_sha256": "9e29dbdbc9976fae0d13308e202d808081b0f14891cad6b4899b349fb9f115f2"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/decode_compressor_ratio128.py",
+      "source_sha256": "227117243ff9dd88d7f0572f9b14b5928a64e7216c432282d1000601284be172",
+      "frozen_copy": "decode_compressor_ratio128.py",
+      "frozen_copy_sha256": "227117243ff9dd88d7f0572f9b14b5928a64e7216c432282d1000601284be172"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/decode_compressor_ratio4.py",
+      "source_sha256": "5f0d86d4bfe775477930dbc980bf5728d892c92c7732c0af3a98bb9b9736fe05",
+      "frozen_copy": "decode_compressor_ratio4.py",
+      "frozen_copy_sha256": "5f0d86d4bfe775477930dbc980bf5728d892c92c7732c0af3a98bb9b9736fe05"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/decode_fwd.py",
+      "source_sha256": "ecd6539f1debd8eb76b22e176ced34bcf9d42750932c0cd1570e1a7f4835f492",
+      "frozen_copy": "decode_fwd.py",
+      "frozen_copy_sha256": "ecd6539f1debd8eb76b22e176ced34bcf9d42750932c0cd1570e1a7f4835f492"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/decode_indexer.py",
+      "source_sha256": "af7f42cf6fdb0748bf63e66760089b302ae6a4536764e1f955abe71f801325dc",
+      "frozen_copy": "decode_indexer.py",
+      "frozen_copy_sha256": "af7f42cf6fdb0748bf63e66760089b302ae6a4536764e1f955abe71f801325dc"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/decode_indexer_compressor.py",
+      "source_sha256": "79698b30006ea0f770123df3fc33d70b9fa43b0625c211a3b9a210694322446f",
+      "frozen_copy": "decode_indexer_compressor.py",
+      "frozen_copy_sha256": "79698b30006ea0f770123df3fc33d70b9fa43b0625c211a3b9a210694322446f"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/decode_metadata.py",
+      "source_sha256": "5f1021fbbf0e65d0608608f4a70d49bc3604b6dca085d0ef35fd1652b9bac531",
+      "frozen_copy": "decode_metadata.py",
+      "frozen_copy_sha256": "5f1021fbbf0e65d0608608f4a70d49bc3604b6dca085d0ef35fd1652b9bac531"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/decode_sparse_attn.py",
+      "source_sha256": "f53beb9a8eb067ff49113b10decdcc5e90d0342eaf5c45e2a907cf838e8cc942",
+      "frozen_copy": "decode_sparse_attn.py",
+      "frozen_copy_sha256": "f53beb9a8eb067ff49113b10decdcc5e90d0342eaf5c45e2a907cf838e8cc942"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/decode_sparse_attn_hca.py",
+      "source_sha256": "8c762578893db843dceaba3d2cc9efdd39f6a0e9f6408861e2e5f8008f41d658",
+      "frozen_copy": "decode_sparse_attn_hca.py",
+      "frozen_copy_sha256": "8c762578893db843dceaba3d2cc9efdd39f6a0e9f6408861e2e5f8008f41d658"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/decode_sparse_attn_swa.py",
+      "source_sha256": "53994c12a32ad9f28eb942551a595f0b2f1ad66277146b654b4b4cf1b6d0b5b0",
+      "frozen_copy": "decode_sparse_attn_swa.py",
+      "frozen_copy_sha256": "53994c12a32ad9f28eb942551a595f0b2f1ad66277146b654b4b4cf1b6d0b5b0"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/expert_routed.py",
+      "source_sha256": "0afe212a2633757f74cf579e00e8d0383844cadb68beb5c70e7d0cc3e894f66f",
+      "frozen_copy": "expert_routed.py",
+      "frozen_copy_sha256": "0afe212a2633757f74cf579e00e8d0383844cadb68beb5c70e7d0cc3e894f66f"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/expert_shared.py",
+      "source_sha256": "64cb72af64a494951a277ef7eafcc973dd27ff0e4d4d35eed5d4becca4073e73",
+      "frozen_copy": "expert_shared.py",
+      "frozen_copy_sha256": "64cb72af64a494951a277ef7eafcc973dd27ff0e4d4d35eed5d4becca4073e73"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/gate.py",
+      "source_sha256": "dade003e2c5c70c7a89400ef173a74be3016823b7f50f217d5ef1096d5d85f87",
+      "frozen_copy": "gate.py",
+      "frozen_copy_sha256": "dade003e2c5c70c7a89400ef173a74be3016823b7f50f217d5ef1096d5d85f87"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/hc_head.py",
+      "source_sha256": "2d68d73ef5cc5595ffde4723a2cfe4f02e4154021a76da2760a16e98d6c5f9c7",
+      "frozen_copy": "hc_head.py",
+      "frozen_copy_sha256": "2d68d73ef5cc5595ffde4723a2cfe4f02e4154021a76da2760a16e98d6c5f9c7"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/hc_post.py",
+      "source_sha256": "09b58838c6bcfcd000962321691ac06fc04bb81f9953703a91ea6f0572c9c182",
+      "frozen_copy": "hc_post.py",
+      "frozen_copy_sha256": "09b58838c6bcfcd000962321691ac06fc04bb81f9953703a91ea6f0572c9c182"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/hc_pre.py",
+      "source_sha256": "9faee8d9d31b5a33654f74064751db65f3dabbe41432d16a5fed4ed2b659439a",
+      "frozen_copy": "hc_pre.py",
+      "frozen_copy_sha256": "9faee8d9d31b5a33654f74064751db65f3dabbe41432d16a5fed4ed2b659439a"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/input_pack.py",
+      "source_sha256": "66c787473b1ed0bcddbb02ea53dac0a27c27496270862cf6e3f2564da1ce265e",
+      "frozen_copy": "input_pack.py",
+      "frozen_copy_sha256": "66c787473b1ed0bcddbb02ea53dac0a27c27496270862cf6e3f2564da1ce265e"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/lm_head.py",
+      "source_sha256": "b4fcddf8c82fe67d76132bac32090dff78d3d11cb2e7d9a145f43a047ede4128",
+      "frozen_copy": "lm_head.py",
+      "frozen_copy_sha256": "b4fcddf8c82fe67d76132bac32090dff78d3d11cb2e7d9a145f43a047ede4128"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/moe.py",
+      "source_sha256": "ff23e0bc67ba9c01c55e87463b52da71cdd9ea90cb0ee480fa795176d1d55bb5",
+      "frozen_copy": "moe.py",
+      "frozen_copy_sha256": "ff23e0bc67ba9c01c55e87463b52da71cdd9ea90cb0ee480fa795176d1d55bb5"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/prefill_attention_csa.py",
+      "source_sha256": "b4da8918c2d7c7d1eaf52cfc32fe7b856313d557d646981855516520b9b1bad4",
+      "frozen_copy": "prefill_attention_csa.py",
+      "frozen_copy_sha256": "b4da8918c2d7c7d1eaf52cfc32fe7b856313d557d646981855516520b9b1bad4"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/prefill_attention_hca.py",
+      "source_sha256": "ca745283b71a2dbc6b686bd94b5b9872c0555dbf01db3d3f2fa5387d4cbe3732",
+      "frozen_copy": "prefill_attention_hca.py",
+      "frozen_copy_sha256": "ca745283b71a2dbc6b686bd94b5b9872c0555dbf01db3d3f2fa5387d4cbe3732"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/prefill_attention_swa.py",
+      "source_sha256": "03effb99b9efca7fd7dc99112ac59a09a48080db34e43d550680feeb54291c35",
+      "frozen_copy": "prefill_attention_swa.py",
+      "frozen_copy_sha256": "03effb99b9efca7fd7dc99112ac59a09a48080db34e43d550680feeb54291c35"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/prefill_compressor_ratio128.py",
+      "source_sha256": "8936ff3075bc6cf4b111ed3fe0f2faa88a09226da199a3125fc8f9032f7c6bec",
+      "frozen_copy": "prefill_compressor_ratio128.py",
+      "frozen_copy_sha256": "8936ff3075bc6cf4b111ed3fe0f2faa88a09226da199a3125fc8f9032f7c6bec"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/prefill_compressor_ratio4.py",
+      "source_sha256": "e57f310fe25d02fc5d14e309e74d9672098789db00e5f59f08686a93b07307bb",
+      "frozen_copy": "prefill_compressor_ratio4.py",
+      "frozen_copy_sha256": "e57f310fe25d02fc5d14e309e74d9672098789db00e5f59f08686a93b07307bb"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/prefill_fwd.py",
+      "source_sha256": "c7ba473fa33ef8bccb31d6628be9f02b403c1dafc6510c5e053c5fb927066060",
+      "frozen_copy": "prefill_fwd.py",
+      "frozen_copy_sha256": "c7ba473fa33ef8bccb31d6628be9f02b403c1dafc6510c5e053c5fb927066060"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/prefill_indexer.py",
+      "source_sha256": "24e6d0f19ccc8dae76fa939908a354396919c4e57e8ca0868dc015136bd15b26",
+      "frozen_copy": "prefill_indexer.py",
+      "frozen_copy_sha256": "24e6d0f19ccc8dae76fa939908a354396919c4e57e8ca0868dc015136bd15b26"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/prefill_indexer_compressor.py",
+      "source_sha256": "fa085795084d068e42c52c1da7fd63afababc97070dfb8396d4ea4a364caadcf",
+      "frozen_copy": "prefill_indexer_compressor.py",
+      "frozen_copy_sha256": "fa085795084d068e42c52c1da7fd63afababc97070dfb8396d4ea4a364caadcf"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/prefill_sparse_attn.py",
+      "source_sha256": "e14e3547a99130bed356efe7d1345f87078e742170edbfbb10301cf27589b3b6",
+      "frozen_copy": "prefill_sparse_attn.py",
+      "frozen_copy_sha256": "e14e3547a99130bed356efe7d1345f87078e742170edbfbb10301cf27589b3b6"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/qkv_proj_rope.py",
+      "source_sha256": "20785839a0fe735837dbce0c59f5d035a152c80756db42382b4873e011fbfc6c",
+      "frozen_copy": "qkv_proj_rope.py",
+      "frozen_copy_sha256": "20785839a0fe735837dbce0c59f5d035a152c80756db42382b4873e011fbfc6c"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/rmsnorm.py",
+      "source_sha256": "55f198a454719bf4c08a2abba084f6cb8f03c804d00fe2f09debc084d39237d1",
+      "frozen_copy": "rmsnorm.py",
+      "frozen_copy_sha256": "55f198a454719bf4c08a2abba084f6cb8f03c804d00fe2f09debc084d39237d1"
+    },
+    {
+      "source_path": "models/deepseek_v4_pro/rope_tables.py",
+      "source_sha256": "66cc4b31527b72534d1f918e838c4d48ce81e484b4c375e6e3ac37aac007fabf",
+      "frozen_copy": "rope_tables.py",
+      "frozen_copy_sha256": "66cc4b31527b72534d1f918e838c4d48ce81e484b4c375e6e3ac37aac007fabf"
+    }
+  ]
+}

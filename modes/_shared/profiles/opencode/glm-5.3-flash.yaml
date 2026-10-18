@@ -1,0 +1,5 @@
+argv: ["{repo_root}/benchmarks/mig_workflow/agent_provider/launch.py", opencode, run, --model, provider-default/glm-5.3-flash, "{prompt}"]
+version_argv: [opencode, --version]
+help_argv: [opencode, run, --help]
+env: {}
+model: provider-default/glm-5.3-flash

@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "kv_cache": {
+      "method": "custom",
+      "comparator": "mapped_pool_ratio_allclose",
+      "mapping_name": "swa_slot_mapping",
+      "mapping_shape": [
+        2,
+        128
+      ],
+      "block_size": 32,
+      "leading_rank_axis": true,
+      "atol": 0.0001,
+      "rtol": 0.0078125,
+      "max_error_ratio": 0.005
+    },
+    "x_attn_active": {
+      "method": "custom",
+      "comparator": "ratio_reldiff",
+      "diff_thd": 0.003,
+      "pct_thd": 0.008,
+      "max_diff_hd": 1,
+      "valid_rows": null,
+      "valid_axis": 0,
+      "zero_tail": false,
+      "small_value_floor_numerator": 6.103515625e-05,
+      "denominator_epsilon": 1e-09
+    },
+    "x_moe_next": {
+      "method": "custom",
+      "comparator": "ratio_reldiff",
+      "diff_thd": 0.01,
+      "pct_thd": 0.05,
+      "max_diff_hd": null,
+      "valid_rows": 128,
+      "valid_axis": 1,
+      "zero_tail": false,
+      "small_value_floor_numerator": 6.103515625e-05,
+      "denominator_epsilon": 1e-09
+    },
+    "x_next": {
+      "method": "custom",
+      "comparator": "ratio_reldiff",
+      "diff_thd": 0.01,
+      "pct_thd": 0.05,
+      "max_diff_hd": null,
+      "valid_rows": null,
+      "valid_axis": 0,
+      "zero_tail": false,
+      "small_value_floor_numerator": 6.103515625e-05,
+      "denominator_epsilon": 1e-09
+    }
+  }
+}

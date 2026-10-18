@@ -1,0 +1,2644 @@
+[
+  {
+    "url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0008.html",
+    "fetched_at": "2026-10-05T08:44:02.771042+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0008.html",
+    "content_type": "text/html",
+    "last_modified": "Mon, 20 Jul 2026 01:06:41 GMT",
+    "etag": "\"c9f0faf7bff85573040fbdb839844986\"",
+    "file": "03_npu_910b/raw/68fe64e90ce6e9be.html",
+    "sha256": "c2a4a4f6962075fdd8cd7a4f70450690aad93af549ee2e17dc442d77beb6adee",
+    "bytes": 35167,
+    "title": "",
+    "topic": "basic_architecture",
+    "locale": "en",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0008.html",
+    "body_h1": [
+      "Basic Architecture"
+    ],
+    "heading_count": 7,
+    "tables": [
+      [
+        [
+          "Storage Unit",
+          "Description"
+        ],
+        [
+          "L1 Buffer",
+          "As a general part of the local memory, the L1 Buffer offers a large data buffer in the AI Core. It can temporarily store data that needs to be repeatedly used in the Cube Unit, thereby reducing the frequency that data is read from or written to the bus."
+        ],
+        [
+          "L0A Buffer/L0B Buffer",
+          "They store the inputs of Cube instructions."
+        ],
+        [
+          "L0C Buffer",
+          "It stores the outputs of Cube instructions, which are part of the inputs for accumulation."
+        ],
+        [
+          "Unified Buffer",
+          "The Unified Buffer stores the inputs and outputs of vector and scalar computations."
+        ],
+        [
+          "BT Buffer",
+          "The BiasTable (BT) Buffer stores the bias in cube computations."
+        ],
+        [
+          "FP Buffer",
+          "The FixPipe (FP) Buffer stores quantization parameters and ReLU parameters."
+        ]
+      ],
+      [
+        [
+          "DMA Unit",
+          "Description"
+        ],
+        [
+          "MTE1",
+          "Moves data in the following paths:\n         \n          L1->L0A/L0B\n          L1->BT Buffer"
+        ],
+        [
+          "MTE2",
+          "Moves data in the following paths:\n         \n          GM->{L1, L0A/B}. In this path, data is moved based on the fractal size. If the data movement meets the cache line size alignment requirements, the performance is better.\n          GM->UB. Data movement based on the cache line size will achieve better performance."
+        ],
+        [
+          "MTE3",
+          "Moves data in the following paths:\n         \n          UB -> GM"
+        ],
+        [
+          "FixPipe",
+          "Moves data in the following paths. (The data format or type can be converted during data movement.)\n         \n          L0C->{GM/L1}\n          L1->FP Buffer"
+        ]
+      ]
+    ],
+    "code_blocks": [],
+    "reading_file": "03_npu_910b/en/basic_architecture.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0011.html",
+    "fetched_at": "2026-10-05T08:44:02.772523+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0011.html",
+    "content_type": "text/html",
+    "last_modified": "Mon, 20 Jul 2026 01:06:42 GMT",
+    "etag": "\"7691fc6a58c94327fda1a3a71561e9af\"",
+    "file": "03_npu_910b/raw/161af31fefa71e71.html",
+    "sha256": "451e1704e5328e3c478442ec68b892515142a662ebd1d5a975e53646ccb7d4bc",
+    "bytes": 32527,
+    "title": "",
+    "topic": "architecture_220x",
+    "locale": "en",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0011.html",
+    "body_h1": [
+      "NPU Architecture Version 220x"
+    ],
+    "heading_count": 6,
+    "tables": [
+      [
+        [
+          "Core",
+          "Storage Unit",
+          "Alignment Requirement"
+        ],
+        [
+          "AIV",
+          "Unified Buffer",
+          "32-byte aligned."
+        ],
+        [
+          "AIC",
+          "L1 Buffer",
+          "32-byte aligned."
+        ],
+        [
+          "L0A Buffer",
+          "512-byte aligned."
+        ],
+        [
+          "L0B Buffer",
+          "512-byte aligned."
+        ],
+        [
+          "L0C Buffer",
+          "64-byte aligned."
+        ],
+        [
+          "BiasTable Buffer",
+          "64-byte aligned."
+        ],
+        [
+          "Fixpipe Buffer",
+          "64-byte aligned."
+        ]
+      ]
+    ],
+    "code_blocks": [],
+    "reading_file": "03_npu_910b/en/architecture_220x.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_00048.html",
+    "fetched_at": "2026-10-05T08:44:02.772919+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_00048.html",
+    "content_type": "text/html",
+    "last_modified": "Mon, 20 Jul 2026 01:06:48 GMT",
+    "etag": "\"676f99af5b7304122c102c3af3fea90f\"",
+    "file": "03_npu_910b/raw/51e599e1a46e9c41.html",
+    "sha256": "5a235c95be8eb88f40decf6a635089f53204eee8e42642f4279c19ab29906dce",
+    "bytes": 22018,
+    "title": "",
+    "topic": "constraints_220x",
+    "locale": "en",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_00048.html",
+    "body_h1": [
+      "NPU Architecture Version 220x"
+    ],
+    "heading_count": 1,
+    "tables": [
+      [
+        [
+          "Category",
+          "Hardware Constraint",
+          "Recommended Solution"
+        ],
+        [
+          "Memory access (L0 Buffer/L1 Buffer/UB)",
+          "The minimum access granularities/alignment requirements of each storage unit are as follows:\nUnified Buffer: 32-byte aligned\nL1 Buffer: 32-byte aligned\nL0A Buffer/L0B Buffer: 512-byte aligned\nL0C Buffer: 64-byte aligned\nBiasTable Buffer: 64-byte aligned\nFixPipe Buffer: 128-byte aligned",
+          "During data movement, alignment constraints need to be considered.For the UB, in some non-aligned scenarios, you can use the non-aligned movement API or use some techniques (for example, including redundant data during move-in and removing redundant data during move-out) to solve the problem. For details, see Non-Alignment Scenario."
+        ],
+        [
+          "Memory access (UB)",
+          "UB bank access conflicts (vector computation access/movement access).",
+          "The addresses need to be staggered during software implementation based on the chip requirements to resolve bank conflicts. For details, see Avoiding Bank Conflicts in the Unified Buffer."
+        ],
+        [
+          "Memory access (GM)",
+          "When multiple cores concurrently access the GM at the same address, the access is serialized by hardware.",
+          "Access to the same address is serialized by hardware, and the performance (queuing time) decreases by about 10% to 20%.\nMulti-core access is staggered (by adjusting the data access sequence and modifying the tiling policy) so that the first data load to the L2 cache improves subsequent access performance. For details, see Avoiding Same-Address Access."
+        ],
+        [
+          "Memory access (GM)",
+          "When the length of data moved at a time is greater than 16 KB, the optimal bandwidth performance can be achieved.",
+          "According to the test experience, optimal bandwidth performance can be achieved when data to be moved at a time is greater than 16 KB. Therefore, it is recommended that a large data block be moved at a time. (The size varies with the chip.)\nFor details, see Transferring a Large Data Block at a Time."
+        ],
+        [
+          "Memory access (GM-->L1)",
+          "The interval between adjacent data blocks of the source operand in DataCopy (the interval between the tail of the previous data block and the head of the next data block) does not exceed 65535. The unit is a data block (32 bytes).",
+          "If the interval between the tail of the previous data block and the head of the next data block exceeds 65535, the instruction needs to be split into multiple ones."
+        ],
+        [
+          "Memory access (GM)",
+          "Data is 128-byte, 256-byte, and 512-byte aligned for movement. If the data is not aligned, the length is rounded up.",
+          "Ensure that the inner axis of the tiling is 128-byte, 256-byte, or 512-byte aligned.\nFor details, see Using 512-Byte Alignment for the GM Address."
+        ],
+        [
+          "Cube",
+          "The depth of the MTE1 and MMAD instruction queues is 32.",
+          "The corresponding instruction queue is prone to be full, which blocks the delivery of other instructions and causes pipeline interruption.\nTo move data from the L1 Buffer to the L0 Buffer using Load2D, 32 instructions need to be transmitted. However, Load3D requires only one instruction to implement data movement. Therefore, Load3D is recommended."
+        ],
+        [
+          "iCache",
+          "The iCache hardware specification is limited to 32 KB.",
+          "Split the Tiling_key or use template functions to reduce code segments. For details, see Tiling Template Programming."
+        ],
+        [
+          "iCache",
+          "When multiple cores concurrently access the iCache at the same address, the access is serialized by hardware.",
+          "In small-shape scenarios, reduce the number of started cores to the greatest extent to minimize the issue of concurrent access to the same address by multiple cores."
+        ],
+        [
+          "DCache",
+          "The DCache hardware specification is limited to 32 KB.",
+          "None"
+        ],
+        [
+          "Scalar",
+          "When scalar data is written to the GM, the data is cached in the DCache. The hardware does not ensure the consistency between the DCache and GM. You need to ensure the consistency.",
+          "Use DataCacheCleanAndInvalid to ensure consistency."
+        ],
+        [
+          "Cube",
+          "The L0C Buffer capacity is 128 KB.",
+          "None"
+        ],
+        [
+          "Cube",
+          "The BiasTable Buffer is 1 KB.",
+          "None"
+        ],
+        [
+          "Cube",
+          "In cube computation scenarios, the float computing power is 1/4 of the half computing power.",
+          "None"
+        ],
+        [
+          "Cube",
+          "In the cube output channel quantization scenario, quantization from int32_t to bfloat16_t is not supported.",
+          "The AIV involves conversions from int32_t to float and from float to bfloat16_t.The AIC supports channel quantization from float to bfloat16_t."
+        ],
+        [
+          "Vector",
+          "For the Reduce API, the performance of half data is poorer than that of float data.",
+          "When half data is written back to the UB, it is not 32-byte aligned, resulting in performance deterioration. It is recommended that half data be converted to float data for computation. In this scenario, the float data type is recommended."
+        ],
+        [
+          "Vector",
+          "The time taken by the Exp/Ln API to process the same amount of half/float data is the same.",
+          "The float data type has been optimized internally, so the performance of the two data types is similar. You can select a proper precision type as needed."
+        ],
+        [
+          "Pipeline synchronization (intra-core)",
+          "If the set/wait synchronization does not match, the status remains, affecting subsequent operators.",
+          "Use the twin debugging/mssanitizer tool to identify such issues in advance."
+        ],
+        [
+          "Pipeline synchronization (inter-core)",
+          "The CrossCoreSetFlag counter has a limit. If the number of times exceeds 15, reverse synchronization is required. Otherwise, the system may be suspended.",
+          "Use the twin debugging/mssanitizer tool to report errors in advance in scenarios where the limit is exceeded."
+        ],
+        [
+          "General API restrictions",
+          "General restrictions on the overlapping of the source and destination operand addresses when using Ascend C APIs",
+          "To save memory space when using high-dimensional tensor sharding compute APIs of basic APIs, you can define a tensor shared by the source and destination operands (by address overlapping). Pay attention to the following restrictions when using this:\nIn a single repeat, the source operand must completely overlap the destination operand. Partial overlapping is not supported.Among multiple repeats, the destination operand of a previous repeat cannot overlap the source operand of a subsequent repeat. For example, the destination operand of the Nth repeat is the source operand of the (N+1)th repeat. In this case, the N th repeat may overwrite the value of the source operand, resulting in an unexpected result. In particular, for some two-operand compute APIs (Add, Sub, Mul, Max, Min, AddRelu, and SubRelu), when the data type is half, int32_t, or float, the destination operand of a previous repeat can overlap the source operand of a subsequent repeat. This is only applicable when the destination operand overlaps the second source operand, and src1RepStride or dstRepStride must be 0."
+        ]
+      ]
+    ],
+    "code_blocks": [],
+    "reading_file": "03_npu_910b/en/constraints_220x.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0072.html",
+    "fetched_at": "2026-10-05T08:44:02.773278+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0072.html",
+    "content_type": "text/html",
+    "last_modified": "Mon, 20 Jul 2026 01:06:40 GMT",
+    "etag": "\"e834a4e3822968d269c5e8ee7f168e48\"",
+    "file": "03_npu_910b/raw/e6de3fa2598ea596.html",
+    "sha256": "4dbdd87d731451ee630f0eb21c710aa8abd8ac7ed13bf9dab7d4d0a52dcb25ac",
+    "bytes": 7587,
+    "title": "",
+    "topic": "debugging_overview",
+    "locale": "en",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0072.html",
+    "body_h1": [
+      "Overview"
+    ],
+    "heading_count": 1,
+    "tables": [
+      [
+        [
+          "Category",
+          "Subcategory",
+          "Method"
+        ],
+        [
+          "Function debugging",
+          "CPU twin debugging",
+          "Twin debugging: The same operator code can be used to debug accuracy on the CPU and performance on the NPU. In the CPU domain, you can perform GDB debugging and use the printf command to print information."
+        ],
+        [
+          "Board debugging on the NPU",
+          "printf/assert: printf is used to print scalar and string information. assert is used to set checkpoints in the code. When a condition is not met, the program terminates immediately and reports an error."
+        ],
+        [
+          "DumpTensor: Use the DumpTensor API to print the data of a specified tensor. It is supported only in SIMD programming scenarios."
+        ],
+        [
+          "Board debugging tool: Use the msDebug tool to debug the operator program running on the NPU. In a real hardware environment, test the input and output of the operator to verify whether the operator functions properly. The specific functions include setting breakpoints, printing variables and memory, performing single-step debugging, and interrupting execution. Currently, the SIMT programming scenario is not supported."
+        ],
+        [
+          "Memory check tool: Use the msSanitizer tool to check the memory. It can detect and report memory access exceptions such as out-of-bounds and misalignment of the external storage (global memory) and internal storage (local memory) during operator running."
+        ],
+        [
+          "Performance tuning",
+          "-",
+          "msProf tool:\nThe msProf performance analysis tool is used to collect and analyze key performance metrics of operators running on AI processors. You can efficiently locate software and hardware performance bottlenecks of operators based on the output performance data, thereby enhancing the overall efficiency of operator performance analysis.\nPerformance data can currently be collected and automatically parsed based on various running modes (onboard or simulation) and file formats (executable files or operator binary .o files)."
+        ]
+      ]
+    ],
+    "code_blocks": [],
+    "reading_file": "03_npu_910b/en/debugging_overview.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0073.html",
+    "fetched_at": "2026-10-05T08:44:02.773612+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0073.html",
+    "content_type": "text/html",
+    "last_modified": "Mon, 20 Jul 2026 01:06:35 GMT",
+    "etag": "\"dca1a5aa6922a3fcd99788ba62e4d2c9\"",
+    "file": "03_npu_910b/raw/a9661f37008bfa90.html",
+    "sha256": "a4464b15b3c86f19e0e457b2fb83ca4ee34a2dc44ab32f988c11a6b25784a76f",
+    "bytes": 24034,
+    "title": "",
+    "topic": "cpu_twin_debugging",
+    "locale": "en",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0073.html",
+    "body_h1": [
+      "CPU Twin Debugging"
+    ],
+    "heading_count": 4,
+    "tables": [
+      [
+        [
+          "1\n2\n3",
+          "#ifdef ASCENDC_CPU_DEBUG\n#include \"cpu_debug_launch.h\"\n#endif"
+        ]
+      ],
+      [
+        [
+          "1",
+          "(gdb) set detach-on-fork off"
+        ]
+      ],
+      [
+        [
+          "1",
+          "(gdb) show detach-on-fork"
+        ]
+      ],
+      [
+        [
+          "1",
+          "(gdb) catch fork"
+        ]
+      ],
+      [
+        [
+          "1\n2\n3",
+          "(gdb) info inferiors\n  Num  Description\n* 1    process 19613"
+        ]
+      ],
+      [
+        [
+          "1\n2\n3\n4",
+          "(gdb) info inferiors\n  Num  Description \n* 1    process 19613\n  2    process 19626"
+        ]
+      ],
+      [
+        [
+          "1\n2\n3\n4\n5\n6",
+          "(gdb) inferior 2\n[Switching to inferior 2 [process 19626] ($HOME/demo)]\n(gdb) info inferiors\n  Num  Description\n  1    process 19613\n* 2    process 19626"
+        ]
+      ],
+      [
+        [
+          "1\n2",
+          "printf(\"xLocal size: %d\\n\", xLocal.GetSize()); \nprintf(\"tileLength: %d\\n\", tileLength);"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2\n3",
+      "#ifdef ASCENDC_CPU_DEBUG\n#include \"cpu_debug_launch.h\"\n#endif\n",
+      "cmake -B build -DCMAKE_ASC_RUN_MODE=cpu -DCMAKE_ASC_ARCHITECTURES=dav-2201",
+      "gdb --args add_custom_cpu  // Start the GDB. add_custom_cpu is the executable file of the operator.\n(gdb) set follow-fork-mode child",
+      "1",
+      "(gdb) set detach-on-fork off\n",
+      "1",
+      "(gdb) show detach-on-fork\n",
+      "1",
+      "(gdb) catch fork\n",
+      "1\n2\n3",
+      "(gdb) info inferiors\n  Num  Description\n* 1    process 19613\n",
+      "1\n2\n3\n4",
+      "(gdb) info inferiors\n  Num  Description \n* 1    process 19613\n  2    process 19626\n",
+      "1\n2\n3\n4\n5\n6",
+      "(gdb) inferior 2\n[Switching to inferior 2 [process 19626] ($HOME/demo)]\n(gdb) info inferiors\n  Num  Description\n  1    process 19613\n* 2    process 19626\n",
+      "gdb --args add_custom_cpu\nset follow-fork-mode child\nbreak add_custom.cpp:45\nrun\nlist\nbacktrace\nprint i\nbreak add_custom.cpp:56\ncontinue\ndisplay xLocal\nquit",
+      "1\n2",
+      "printf(\"xLocal size: %d\\n\", xLocal.GetSize()); \nprintf(\"tileLength: %d\\n\", tileLength);\n"
+    ],
+    "reading_file": "03_npu_910b/en/cpu_twin_debugging.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0075.html",
+    "fetched_at": "2026-10-05T08:44:02.773972+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0075.html",
+    "content_type": "text/html",
+    "last_modified": "Mon, 20 Jul 2026 01:08:06 GMT",
+    "etag": "\"fe615f6e9bc79e4356e9e0ff9a2152a8\"",
+    "file": "03_npu_910b/raw/6ef273448c98b9bc.html",
+    "sha256": "554d0fec5a1d950064644fdf3f807cd082ebc7f5b06e3a793244cffd28d792fa",
+    "bytes": 24659,
+    "title": "",
+    "topic": "npu_debugging",
+    "locale": "en",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0075.html",
+    "body_h1": [
+      "Board Debugging on the NPU"
+    ],
+    "heading_count": 5,
+    "tables": [
+      [
+        [
+          "1",
+          "printf(\"fmt string %d\", 0x123);"
+        ]
+      ],
+      [
+        [
+          "1",
+          "DumpTensor(srcLocal,5, dataLen);"
+        ]
+      ],
+      [
+        [
+          "1\n 2\n 3\n 4\n 5\n 6\n 7\n 8\n 9\n10",
+          "DumpTensor: desc=5, addr=0, data_type=float16, position=UB, dump_size=32\n[19.000000, 4.000000, 38.000000, 50.000000, 39.000000, 67.000000, 84.000000, 98.000000, 21.000000, 36.000000, 18.000000, 46.000000, 10.000000, 92.000000, 26.000000, 38.000000, 39.000000, 9.000000, 82.000000, 37.000000, 35.000000, 65.000000, 97.000000, 59.000000, 89.000000, 63.000000, 70.000000, 57.000000, 35.000000, 3.000000, 16.000000,\n42.000000]\nDumpTensor: desc=5, addr=100, data_type=float16, position=UB, dump_size=32\n[6.000000, 34.000000, 52.000000, 38.000000, 73.000000, 38.000000, 35.000000, 14.000000, 67.000000, 62.000000, 30.000000, 49.000000, 86.000000, 37.000000, 84.000000, 18.000000, 38.000000, 18.000000, 44.000000, 21.000000, 86.000000, 99.000000, 13.000000, 79.000000, 84.000000, 9.000000, 48.000000, 74.000000, 52.000000, 99.000000, 80.000000,\n53.000000]\n...\nDumpTensor: desc=5, addr=0, data_type=float16, position=UB, dump_size=32\n[35.000000, 41.000000, 41.000000, 22.000000, 84.000000, 49.000000, 60.000000, 0.000000, 90.000000, 14.000000, 67.000000, 80.000000, 16.000000, 46.000000, 16.000000, 83.000000, 6.000000, 70.000000, 97.000000, 28.000000, 97.000000, 62.000000, 80.000000, 22.000000, 53.000000, 37.000000, 23.000000, 58.000000, 65.000000, 28.000000, 4.000000,\n29.000000]"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1",
+      "printf(\"fmt string %d\", 0x123);\n",
+      "1",
+      "DumpTensor(srcLocal,5, dataLen);\n",
+      " 1\n 2\n 3\n 4\n 5\n 6\n 7\n 8\n 9\n10",
+      "DumpTensor: desc=5, addr=0, data_type=float16, position=UB, dump_size=32\n[19.000000, 4.000000, 38.000000, 50.000000, 39.000000, 67.000000, 84.000000, 98.000000, 21.000000, 36.000000, 18.000000, 46.000000, 10.000000, 92.000000, 26.000000, 38.000000, 39.000000, 9.000000, 82.000000, 37.000000, 35.000000, 65.000000, 97.000000, 59.000000, 89.000000, 63.000000, 70.000000, 57.000000, 35.000000, 3.000000, 16.000000,\n42.000000]\nDumpTensor: desc=5, addr=100, data_type=float16, position=UB, dump_size=32\n[6.000000, 34.000000, 52.000000, 38.000000, 73.000000, 38.000000, 35.000000, 14.000000, 67.000000, 62.000000, 30.000000, 49.000000, 86.000000, 37.000000, 84.000000, 18.000000, 38.000000, 18.000000, 44.000000, 21.000000, 86.000000, 99.000000, 13.000000, 79.000000, 84.000000, 9.000000, 48.000000, 74.000000, 52.000000, 99.000000, 80.000000,\n53.000000]\n...\nDumpTensor: desc=5, addr=0, data_type=float16, position=UB, dump_size=32\n[35.000000, 41.000000, 41.000000, 22.000000, 84.000000, 49.000000, 60.000000, 0.000000, 90.000000, 14.000000, 67.000000, 80.000000, 16.000000, 46.000000, 16.000000, 83.000000, 6.000000, 70.000000, 97.000000, 28.000000, 97.000000, 62.000000, 80.000000, 22.000000, 53.000000, 37.000000, 23.000000, 58.000000, 65.000000, 28.000000, 4.000000,\n29.000000]\n"
+    ],
+    "reading_file": "03_npu_910b/en/npu_debugging.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_best_practices_10_00020.html",
+    "fetched_at": "2026-10-05T08:44:02.957930+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_best_practices_10_00020.html",
+    "content_type": "text/html",
+    "last_modified": "Mon, 20 Jul 2026 01:06:30 GMT",
+    "etag": "\"dec795afd9891621ba170d8405bdafca\"",
+    "file": "03_npu_910b/raw/95197eda21dbafe1.html",
+    "sha256": "afc2364ab3b915c6649229e19f4afe064f7941385e676779d0d5ffefcd88d23d",
+    "bytes": 49340,
+    "title": "",
+    "topic": "bank_conflicts_220x",
+    "locale": "en",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_best_practices_10_00020.html",
+    "body_h1": [
+      "Avoiding Bank Conflicts (NPU Architecture Version 220x)"
+    ],
+    "heading_count": 3,
+    "tables": [
+      [
+        [
+          "No.",
+          "src addr",
+          "dst addr",
+          "bank",
+          "bank group",
+          "Conclusion"
+        ],
+        [
+          "Example 1",
+          "0x10020",
+          "0x10000",
+          "bank_id0 != bank_id1",
+          "bank_group_id0 != bank_group_id1",
+          "The addresses of src and dst are in bank16 and bank17, respectively. Therefore, no conflict occurs."
+        ],
+        [
+          "Example 2",
+          "0x10020",
+          "0x10E20",
+          "bank_id0 == bank_id1",
+          "bank_group_id0 == bank_group_id1",
+          "The addresses of src and dst are both in bank17. Therefore, a conflict occurs."
+        ]
+      ],
+      [
+        [
+          "No.",
+          "dst addr",
+          "blk_stride",
+          "block0_addr",
+          "block1_addr",
+          "block2_addr",
+          "...",
+          "Conclusion"
+        ],
+        [
+          "Example 1",
+          "0x1FE00",
+          "16",
+          "0x1FE00",
+          "0x20000",
+          "0x20200",
+          "...",
+          "All eight data blocks are in the same bank group. Therefore, conflicts occur. One repeat is written in eight cycles."
+        ],
+        [
+          "Example 2",
+          "0x1FE00",
+          "8",
+          "0x1FE00",
+          "0x1FF00",
+          "0x20000",
+          "...",
+          "block0 and block2 are in the same bank group and conflict with each other. One repeat is written in four cycles."
+        ]
+      ],
+      [
+        [
+          "No.",
+          "src0 addr",
+          "src1 addr",
+          "bank",
+          "bank group",
+          "Conclusion"
+        ],
+        [
+          "Example 1",
+          "0x10020",
+          "0x20020",
+          "bank_id0 != bank_id1",
+          "bank_group_id0 == bank_group_id1",
+          "Conflict"
+        ],
+        [
+          "Example 2",
+          "0x10020",
+          "0x10000",
+          "bank_id0 != bank_id1",
+          "bank_group_id0 != bank_group_id1",
+          "No conflict"
+        ]
+      ],
+      [
+        [
+          "No.",
+          "src addr",
+          "blk_stride",
+          "block0_addr",
+          "block1_addr",
+          "block2_addr",
+          "...",
+          "Conclusion"
+        ],
+        [
+          "Example 1",
+          "0x1FE00",
+          "16",
+          "0x1FE00",
+          "0x20000",
+          "0x20200",
+          "...",
+          "All eight data blocks are in the same bank group. Therefore, conflicts occur. One repeat is read in eight cycles."
+        ],
+        [
+          "Example 2",
+          "0x1FE00",
+          "8",
+          "0x1FE00",
+          "0x1FF00",
+          "0x20000",
+          "...",
+          "block0 and block2 are in the same bank group. Therefore, a conflict occurs. One repeat is completed in four cycles."
+        ]
+      ],
+      [
+        [
+          "Implementation",
+          "Original Implementation",
+          "Optimized Implementation"
+        ],
+        [
+          "Implementation method",
+          "Read skipping, continuous write\n           The eight data blocks input in the same repeat are in the same bank group, causing a read/read conflict.",
+          "Continuous read, skip write\n           The eight data blocks input in the same repeat are not in the same bank group, avoiding a read/read conflict."
+        ],
+        [
+          "Diagram",
+          "",
+          ""
+        ],
+        [
+          "Sample code",
+          "1\n2\n3\n4\n5\n6\n7\n                 \n                \n                 \n                  uint64_t mask = 128;\nUnaryRepeatParams params;\nparams.dstBlkStride  = 1;\nparams.srcBlkStride = 16;\nfor(uint32_t i=0; i<16; i++)   {\n    AscendC::Adds(dstLocal[i * 128], srcLocal[i * 16], 0, mask, 1, params);\n}",
+          "1\n2\n3\n4\n5\n6\n7\n                 \n                \n                 \n                  uint64_t mask = 128;\nUnaryRepeatParams params;\nparams.dstBlkStride  = 8;\nparams.srcBlkStride = 1;\nfor(uint32_t i=0; i<8; i++)   {\n    AscendC::Adds(dstLocal[i * 16], srcLocal[i * 256], 0, mask, 2, params);\n}"
+        ]
+      ],
+      [
+        [
+          "Implementation",
+          "Original Implementation",
+          "Optimized Implementation"
+        ],
+        [
+          "Implementation method",
+          "No address optimization is performed. InitBuffer is directly used to allocate memory. The addresses of each tensor are as follows:\n           x: The start address is 0x0, and the tensor length is 4096 x sizeof(float) bytes.\n           y: The start address is 0x4000, and the tensor length is 4096 x sizeof(float) bytes.\n           z: The start address is 0x8000, and the tensor length is 4096 x sizeof(float) bytes.\n           In a repeat, x and y read the same bank group at the same time, and x/y and z read and write the same bank at the same time.",
+          "Optimize the address. When InitBuffer is used to allocate memory, properly allocate more memory. The addresses of each tensor are as follows:\n           x: The start address is 0x0, and the tensor length is (4096 x sizeof(float) + 256) bytes.\n           y: The start address is 0x4100, and the tensor length is (64 x 1024 – (4096 x sizeof(float) + 256)) bytes.\n           z: The start address is 0x10000, and the tensor length is 4096 x sizeof(float) bytes.\n           Allocate 256 bytes more for x to prevent x and y from reading the same bank group in a repeat. Allocate more space for y to ensure that z does not fall into the same bank as x or y."
+        ],
+        [
+          "Diagram",
+          "",
+          ""
+        ],
+        [
+          "Sample code",
+          "1\n2\n3\n                 \n                \n                 \n                  pipe.InitBuffer(inQueueX, 1, 4096 * sizeof(float));\npipe.InitBuffer(inQueueY, 1, 4096 * sizeof(float));\npipe.InitBuffer(outQueueZ, 1, 4096 * sizeof(float));",
+          "1\n2\n3\n                 \n                \n                 \n                  pipe.InitBuffer(inQueueX, 1, 4096 * sizeof(float) + 256); // Allocate 256 bytes more.\npipe.InitBuffer(inQueueY, 1, 64 * 1024 - (4096 * sizeof(float) + 256)); // Allocate more space to ensure that z does not fall into the same bank as x/y. 64 * 1024 is the space of 16 banks, and 4096 * sizeof(float) + 256 is the space occupied by x.\npipe.InitBuffer(outQueueZ, 1, 4096 * sizeof(float));"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2\n3\n4\n5\n6\n7",
+      "uint64_t mask = 128;\nUnaryRepeatParams params;\nparams.dstBlkStride  = 1;\nparams.srcBlkStride = 16;\nfor(uint32_t i=0; i<16; i++)   {\n    AscendC::Adds(dstLocal[i * 128], srcLocal[i * 16], 0, mask, 1, params);\n}\n",
+      "1\n2\n3\n4\n5\n6\n7",
+      "uint64_t mask = 128;\nUnaryRepeatParams params;\nparams.dstBlkStride  = 8;\nparams.srcBlkStride = 1;\nfor(uint32_t i=0; i<8; i++)   {\n    AscendC::Adds(dstLocal[i * 16], srcLocal[i * 256], 0, mask, 2, params);\n}\n",
+      "1\n2\n3",
+      "pipe.InitBuffer(inQueueX, 1, 4096 * sizeof(float));\npipe.InitBuffer(inQueueY, 1, 4096 * sizeof(float));\npipe.InitBuffer(outQueueZ, 1, 4096 * sizeof(float));\n",
+      "1\n2\n3",
+      "pipe.InitBuffer(inQueueX, 1, 4096 * sizeof(float) + 256); // Allocate 256 bytes more.\npipe.InitBuffer(inQueueY, 1, 64 * 1024 - (4096 * sizeof(float) + 256)); // Allocate more space to ensure that z does not fall into the same bank as x/y. 64 * 1024 is the space of 16 banks, and 4096 * sizeof(float) + 256 is the space occupied by x.\npipe.InitBuffer(outQueueZ, 1, 4096 * sizeof(float));\n"
+    ],
+    "reading_file": "03_npu_910b/en/bank_conflicts_220x.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_10047.html",
+    "fetched_at": "2026-10-05T08:44:03.160566+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_10047.html",
+    "content_type": "text/html",
+    "last_modified": "Mon, 20 Jul 2026 01:06:46 GMT",
+    "etag": "\"e35bda4141d9165a8dc9dafdae660b21\"",
+    "file": "03_npu_910b/raw/18984ecf935e3464.html",
+    "sha256": "c1d672f490b49074bb0ae9d0bc7bae5d438fe1558d9ff9c2fbb133e984316718",
+    "bytes": 3897,
+    "title": "",
+    "topic": "tiling_headers",
+    "locale": "en",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_10047.html",
+    "body_h1": [
+      "How to Use the Header File on Which Tiling Depends"
+    ],
+    "heading_count": 1,
+    "tables": [
+      [
+        [
+          "1\n2\n3\n4",
+          "#include \"kernel_tiling/kernel_tiling.h\"\n\n// ...\nAscendC::tiling::TCubeTiling cubeTilingData;"
+        ]
+      ],
+      [
+        [
+          "1\n2\n3\n4\n5",
+          "#include \"tiling/tiling_api.h\"\n\nnamespace optiling {\n// ...\n}"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2\n3\n4",
+      "#include \"kernel_tiling/kernel_tiling.h\"\n\n// ...\nAscendC::tiling::TCubeTiling cubeTilingData;\n",
+      "1\n2\n3\n4\n5",
+      "#include \"tiling/tiling_api.h\"\n\nnamespace optiling {\n// ...\n}\n"
+    ],
+    "reading_file": "03_npu_910b/en/tiling_headers.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0270.html",
+    "fetched_at": "2026-10-05T08:44:03.207499+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0270.html",
+    "content_type": "text/html",
+    "last_modified": "Wed, 12 Aug 2026 06:26:25 GMT",
+    "etag": "\"07588aef8a2fb6d898361d2e8059b2d5\"",
+    "file": "03_npu_910b/raw/4aa1ffc57df8bdd8.html",
+    "sha256": "eeb6ced11b2cbe4e4c509723e2a224340e8c020ca718f0dcfece348ee3c2b062",
+    "bytes": 21319,
+    "title": "",
+    "topic": "setflag_waitflag",
+    "locale": "en",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0270.html",
+    "body_h1": [
+      "SetFlag/WaitFlag(ISASI)"
+    ],
+    "heading_count": 8,
+    "tables": [
+      [
+        [
+          "Product",
+          "Supported"
+        ],
+        [
+          "Atlas 350 Accelerator Card",
+          "√"
+        ],
+        [
+          "Atlas A3 training product/Atlas A3 inference product",
+          "√"
+        ],
+        [
+          "Atlas A2 training product/Atlas A2 inference product",
+          "√"
+        ],
+        [
+          "Atlas 200I/500 A2 inference product",
+          "x"
+        ],
+        [
+          "Atlas inference product AI Core",
+          "√"
+        ],
+        [
+          "Atlas inference product Vector Core",
+          "x"
+        ],
+        [
+          "Atlas training product",
+          "√"
+        ]
+      ],
+      [
+        [
+          "1\n2\n3\n4",
+          "template <HardEvent event>\n__aicore__ inline void SetFlag(int32_t eventID)\ntemplate <HardEvent event>\n__aicore__ inline void WaitFlag(int32_t eventID)"
+        ]
+      ],
+      [
+        [
+          "Parameter",
+          "Input/Output",
+          "Description"
+        ],
+        [
+          "event",
+          "Input",
+          "Template parameter.\nSynchronization event of the HardEvent data type. For details, see the following description of synchronization types."
+        ],
+        [
+          "eventID",
+          "Input",
+          "Event ID. The data type is int32_t. The definition is as follows:\nIn TPipe- and TQue-based programming scenarios, the event ID needs to be obtained by using AllocEventID (AllocEventID) or FetchEventID (FetchEventID).\nAtlas training product: The value ranges from 0 to 3.\nAtlas inference product AI Core: The value ranges from 0 to 7.\nAtlas A2 training product/Atlas A2 inference product: The value ranges from 0 to 7.\nAtlas A3 training product/Atlas A3 inference product: The value ranges from 0 to 7.\nAtlas 350 Accelerator Card: The value ranges from 0 to 7."
+        ]
+      ],
+      [
+        [
+          "1\n 2\n 3\n 4\n 5\n 6\n 7\n 8\n 9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n32\n33\n34\n35",
+          "enum class HardEvent : uint8_t {\n   // Name (source pipeline_target pipeline). For example, MTE2_V indicates that PIPE_MTE2 is the source pipeline and PIPE_V is the target pipeline. Synchronization is performed between PIPE_MTE2 and PIPE_V, and PIPE_V waits for PIPE_MTE2.\n    MTE2_MTE1\n    MTE1_MTE2\n    MTE1_M\n    M_MTE1\n    MTE2_V\n    V_MTE2\n    MTE3_V\n    V_MTE3\n    M_V\n    V_M\n    V_V\n    MTE3_MTE1\n    MTE1_MTE3\n    MTE1_V\n    MTE2_M\n    M_MTE2\n    V_MTE1\n    M_FIX\n    FIX_M\n    MTE3_MTE2\n    MTE2_MTE3\n    S_V\n    V_S\n    S_MTE2\n    MTE2_S\n    S_MTE3\n    MTE3_S\n    MTE2_FIX\n    FIX_MTE2\n    FIX_S\n    M_S\n    FIX_MTE3\n}"
+        ]
+      ],
+      [
+        [
+          "1\n 2\n 3\n 4\n 5\n 6\n 7\n 8\n 9\n10\n11\n12",
+          "AscendC::GlobalTensor<half> dstGlobal;\nAscendC::LocalTensor<half> dstLocal;\ndstLocal.SetValue(0, 0);\nuint32_t dataSize = 512;\n// In TPipe- and TQue-based programming scenarios, the event ID needs to be obtained by using AllocEventID or FetchEventID.\nint32_t eventIDSToMTE3 = static_cast<int32_t>(GetTPipePtr()->FetchEventID(AscendC::HardEvent::S_MTE3));\nAscendC::SetFlag<AscendC::HardEvent::S_MTE3>(eventIDSToMTE3);\nAscendC::WaitFlag<AscendC::HardEvent::S_MTE3>(eventIDSToMTE3);\n// In static tensor programming scenarios, the event ID is managed by developers.\n// AscendC::SetFlag<AscendC::HardEvent::S_MTE3>(EVENT_ID0);\n// AscendC::WaitFlag<AscendC::HardEvent::S_MTE3>(EVENT_ID0);\nAscendC::DataCopy(dstGlobal, dstLocal, dataSize);"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2\n3\n4",
+      "template <HardEvent event>\n__aicore__ inline void SetFlag(int32_t eventID)\ntemplate <HardEvent event>\n__aicore__ inline void WaitFlag(int32_t eventID)\n",
+      " 1\n 2\n 3\n 4\n 5\n 6\n 7\n 8\n 9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n32\n33\n34\n35",
+      "enum class HardEvent : uint8_t {\n   // Name (source pipeline_target pipeline). For example, MTE2_V indicates that PIPE_MTE2 is the source pipeline and PIPE_V is the target pipeline. Synchronization is performed between PIPE_MTE2 and PIPE_V, and PIPE_V waits for PIPE_MTE2.\n    MTE2_MTE1\n    MTE1_MTE2\n    MTE1_M\n    M_MTE1\n    MTE2_V\n    V_MTE2\n    MTE3_V\n    V_MTE3\n    M_V\n    V_M\n    V_V\n    MTE3_MTE1\n    MTE1_MTE3\n    MTE1_V\n    MTE2_M\n    M_MTE2\n    V_MTE1\n    M_FIX\n    FIX_M\n    MTE3_MTE2\n    MTE2_MTE3\n    S_V\n    V_S\n    S_MTE2\n    MTE2_S\n    S_MTE3\n    MTE3_S\n    MTE2_FIX\n    FIX_MTE2\n    FIX_S\n    M_S\n    FIX_MTE3\n}\n",
+      " 1\n 2\n 3\n 4\n 5\n 6\n 7\n 8\n 9\n10\n11\n12",
+      "AscendC::GlobalTensor<half> dstGlobal;\nAscendC::LocalTensor<half> dstLocal;\ndstLocal.SetValue(0, 0);\nuint32_t dataSize = 512;\n// In TPipe- and TQue-based programming scenarios, the event ID needs to be obtained by using AllocEventID or FetchEventID.\nint32_t eventIDSToMTE3 = static_cast<int32_t>(GetTPipePtr()->FetchEventID(AscendC::HardEvent::S_MTE3));\nAscendC::SetFlag<AscendC::HardEvent::S_MTE3>(eventIDSToMTE3);\nAscendC::WaitFlag<AscendC::HardEvent::S_MTE3>(eventIDSToMTE3);\n// In static tensor programming scenarios, the event ID is managed by developers.\n// AscendC::SetFlag<AscendC::HardEvent::S_MTE3>(EVENT_ID0);\n// AscendC::WaitFlag<AscendC::HardEvent::S_MTE3>(EVENT_ID0);\nAscendC::DataCopy(dstGlobal, dstLocal, dataSize);\n"
+    ],
+    "reading_file": "03_npu_910b/en/setflag_waitflag.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0271.html",
+    "fetched_at": "2026-10-05T08:44:03.225123+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0271.html",
+    "content_type": "text/html",
+    "last_modified": "Wed, 12 Aug 2026 06:28:51 GMT",
+    "etag": "\"590d86353a719421faca7f455ab291ef\"",
+    "file": "03_npu_910b/raw/af6dd6898eee46f6.html",
+    "sha256": "29945f511a6d94c676dfc5b32ed4467d45c9e8025050bf5bb36286eb1e39f12d",
+    "bytes": 13131,
+    "title": "",
+    "topic": "pipe_barrier",
+    "locale": "en",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0271.html",
+    "body_h1": [
+      "PipeBarrier(ISASI)"
+    ],
+    "heading_count": 8,
+    "tables": [
+      [
+        [
+          "Product",
+          "Supported"
+        ],
+        [
+          "Atlas 350 Accelerator Card",
+          "√"
+        ],
+        [
+          "Atlas A3 training product/Atlas A3 inference product",
+          "√"
+        ],
+        [
+          "Atlas A2 training product/Atlas A2 inference product",
+          "√"
+        ],
+        [
+          "Atlas 200I/500 A2 inference product",
+          "√"
+        ],
+        [
+          "Atlas inference product AI Core",
+          "√"
+        ],
+        [
+          "Atlas inference product Vector Core",
+          "x"
+        ],
+        [
+          "Atlas training product",
+          "√"
+        ]
+      ],
+      [
+        [
+          "1\n2",
+          "template <pipe_t pipe>\n__aicore__ inline void PipeBarrier()"
+        ]
+      ],
+      [
+        [
+          "Parameter",
+          "Description"
+        ],
+        [
+          "pipe",
+          "Template parameter, indicating the type of a blocked pipeline.\nFor details about supported pipelines, see Pipelines.\nIf you do not care about the pipeline type and want to block all pipelines, you can pass PIPE_ALL."
+        ]
+      ],
+      [
+        [
+          "1\n2\n3\n4\n5\n6\n7\n8\n9",
+          "AscendC::LocalTensor<half> src0Local;\nAscendC::LocalTensor<half> src1Local;\nAscendC::LocalTensor<half> src2Local;\nAscendC::LocalTensor<half> dst0Local;\nAscendC::LocalTensor<half> dst1Local;\n\nAscendC::Add(dst0Local, src0Local, src1Local, 512);\nAscendC::PipeBarrier<PIPE_V>();\nAscendC::Mul(dst1Local, dst0Local, src2Local, 512);"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2",
+      "template <pipe_t pipe>\n__aicore__ inline void PipeBarrier()\n",
+      "1\n2\n3\n4\n5\n6\n7\n8\n9",
+      "AscendC::LocalTensor<half> src0Local;\nAscendC::LocalTensor<half> src1Local;\nAscendC::LocalTensor<half> src2Local;\nAscendC::LocalTensor<half> dst0Local;\nAscendC::LocalTensor<half> dst1Local;\n\nAscendC::Add(dst0Local, src0Local, src1Local, 512);\nAscendC::PipeBarrier<PIPE_V>();\nAscendC::Mul(dst1Local, dst0Local, src2Local, 512);\n"
+    ],
+    "reading_file": "03_npu_910b/en/pipe_barrier.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0273.html",
+    "fetched_at": "2026-10-05T08:44:03.240872+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0273.html",
+    "content_type": "text/html",
+    "last_modified": "Wed, 12 Aug 2026 06:26:44 GMT",
+    "etag": "\"3f60019e6d34beb1c293fbe44c149a2e\"",
+    "file": "03_npu_910b/raw/e94a412289da05e2.html",
+    "sha256": "0450980ca479f190a2297cfc013d10fb4b285c7101f34861e1377b1217964d4c",
+    "bytes": 27970,
+    "title": "",
+    "topic": "cross_core_setflag",
+    "locale": "en",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0273.html",
+    "body_h1": [
+      "CrossCoreSetFlag (ISASI)"
+    ],
+    "heading_count": 8,
+    "tables": [
+      [
+        [
+          "Product",
+          "Supported"
+        ],
+        [
+          "Atlas 350 Accelerator Card",
+          "√"
+        ],
+        [
+          "Atlas A3 training product\n           /\n            Atlas A3 inference product",
+          "√"
+        ],
+        [
+          "Atlas A2 training product\n           /\n            Atlas A2 inference product",
+          "√"
+        ],
+        [
+          "Atlas 200I/500 A2 inference product",
+          "x"
+        ],
+        [
+          "Atlas inference product\n            AI Core",
+          "x"
+        ],
+        [
+          "Atlas inference product\n            Vector Core",
+          "x"
+        ],
+        [
+          "Atlas training product",
+          "x"
+        ]
+      ],
+      [
+        [
+          "1\n2",
+          "template <uint8_t modeId, pipe_t pipe>\n__aicore__ inline void CrossCoreSetFlag(uint16_t flagId)"
+        ]
+      ],
+      [
+        [
+          "Parameter",
+          "Description"
+        ],
+        [
+          "modeId",
+          "Inter-core synchronization mode. The options are as follows:\n         \n          Mode 0: synchronization control between AI Cores.\n          Mode 1: synchronization control between AIV cores in the AI Core.\n          Mode 2: synchronization control between AIC and AIV cores in the AI Core.\n          Mode 4: synchronization control between AIC and AIV cores in the AI Core. AIV0 and AIV1 can trigger AIC wait independently."
+        ],
+        [
+          "pipe",
+          "The pipeline type of the instruction. For details about the pipeline types, see Pipelines.\n         Note that the PIPE_S type is supported only by the Atlas 350 Accelerator Card."
+        ]
+      ],
+      [
+        [
+          "Parameter",
+          "Input/Output",
+          "Description"
+        ],
+        [
+          "flagId",
+          "Input",
+          "Flag ID of the inter-core synchronization.\n         For the \n            Atlas A2 training product\n           /\n            Atlas A2 inference product\n           , the value ranges from 0 to 10.\n         For the \n            Atlas A3 training product\n           /\n            Atlas A3 inference product\n           , the value ranges from 0 to 10.\n         For the Atlas 350 Accelerator Card, the value ranges are as follows:\n         The operations with flag IDs 0 to 10 in CrossCoreSetFlag initiated by AIV0 correspond to the operations with flag IDs 0 to 10 in CrossCoreWaitFlag on the AIC.\n         The operations with flag IDs 0 to 10 in CrossCoreSetFlag initiated by AIV1 correspond to the operations with flag IDs 16 to 26 in CrossCoreWaitFlag on the AIC.\n         The operations with flag IDs 0 to 10 in CrossCoreSetFlag initiated by AIC correspond to the operations with flag IDs 0 to 10 in CrossCoreWaitFlag on AIV0.\n         The operations with flag IDs 16 to 26 in CrossCoreSetFlag initiated by AIC correspond to the operations with flag IDs 0 to 10 in CrossCoreWaitFlag on AIV1."
+        ]
+      ],
+      [
+        [
+          "1\n 2\n 3\n 4\n 5\n 6\n 7\n 8\n 9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24",
+          "// Synchronize all AIV cores in mode 0.\nif (g_coreType == AscendC::AIV) {\n    AscendC::CrossCoreSetFlag<0x0, PIPE_MTE3>(0x8);\n    AscendC::CrossCoreWaitFlag(0x8);\n}\n\n// Synchronize all AIV cores in the AI Core in mode 1.\nif (g_coreType == AscendC::AIV) {\n    AscendC::CrossCoreSetFlag<0x1, PIPE_MTE3>(0x8);\n    AscendC::CrossCoreWaitFlag(0x8);\n}\n\n// Note that if the high-level API is called, you do not need to process the synchronization between the AIC and AIV cores.\n// Take Matmul as an example. The AIC core instructs the AIV to perform subsequent processing after completing the Matmul computation.\nif (g_coreType == AscendC::AIC) {\n    // Matmul computation\n    AscendC::CrossCoreSetFlag<0x2, PIPE_FIX>(0x8);\n}\n\n// The AIV waits for the AIC Set message and performs subsequent processing.\nif (g_coreType == AscendC::AIV) {\n    AscendC::CrossCoreWaitFlag(0x8);\n    // Subsequent AIV processing.\n}"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2",
+      "template <uint8_t modeId, pipe_t pipe>\n__aicore__ inline void CrossCoreSetFlag(uint16_t flagId)\n",
+      " 1\n 2\n 3\n 4\n 5\n 6\n 7\n 8\n 9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24",
+      "// Synchronize all AIV cores in mode 0.\nif (g_coreType == AscendC::AIV) {\n    AscendC::CrossCoreSetFlag<0x0, PIPE_MTE3>(0x8);\n    AscendC::CrossCoreWaitFlag(0x8);\n}\n\n// Synchronize all AIV cores in the AI Core in mode 1.\nif (g_coreType == AscendC::AIV) {\n    AscendC::CrossCoreSetFlag<0x1, PIPE_MTE3>(0x8);\n    AscendC::CrossCoreWaitFlag(0x8);\n}\n\n// Note that if the high-level API is called, you do not need to process the synchronization between the AIC and AIV cores.\n// Take Matmul as an example. The AIC core instructs the AIV to perform subsequent processing after completing the Matmul computation.\nif (g_coreType == AscendC::AIC) {\n    // Matmul computation\n    AscendC::CrossCoreSetFlag<0x2, PIPE_FIX>(0x8);\n}\n\n// The AIV waits for the AIC Set message and performs subsequent processing.\nif (g_coreType == AscendC::AIV) {\n    AscendC::CrossCoreWaitFlag(0x8);\n    // Subsequent AIV processing.\n}\n"
+    ],
+    "reading_file": "03_npu_910b/en/cross_core_setflag.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0274.html",
+    "fetched_at": "2026-10-05T08:44:03.296303+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0274.html",
+    "content_type": "text/html",
+    "last_modified": "Wed, 12 Aug 2026 06:28:56 GMT",
+    "etag": "\"d4a73f35bba0870abdd8fe6ca7457014\"",
+    "file": "03_npu_910b/raw/09ddd675979158aa.html",
+    "sha256": "121c0cfc5d90dd3e77c7a85ac4a4ef3e3b4dd621b28536e640a38f9827fe213f",
+    "bytes": 21117,
+    "title": "",
+    "topic": "cross_core_waitflag",
+    "locale": "en",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0274.html",
+    "body_h1": [
+      "CrossCoreWaitFlag (ISASI)"
+    ],
+    "heading_count": 8,
+    "tables": [
+      [
+        [
+          "Product",
+          "Supported"
+        ],
+        [
+          "Atlas 350 Accelerator Card",
+          "√"
+        ],
+        [
+          "Atlas A3 training product\n           /\n            Atlas A3 inference product",
+          "√"
+        ],
+        [
+          "Atlas A2 training product\n           /\n            Atlas A2 inference product",
+          "√"
+        ],
+        [
+          "Atlas 200I/500 A2 inference product",
+          "x"
+        ],
+        [
+          "Atlas inference product\n            AI Core",
+          "x"
+        ],
+        [
+          "Atlas inference product\n            Vector Core",
+          "x"
+        ],
+        [
+          "Atlas training product",
+          "x"
+        ]
+      ],
+      [
+        [
+          "1\n2",
+          "template <uint8_t modeId = 0, pipe_t pipe = PIPE_S>\n__aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)"
+        ]
+      ],
+      [
+        [
+          "Parameter",
+          "Description"
+        ],
+        [
+          "modeId",
+          "Inter-core synchronization mode. The options are as follows:\n         \n          Mode 0: synchronization control between AI Cores.\n          Mode 1: synchronization control between AIV cores in the AI Core.\n          Mode 2: synchronization control between AIC and AIV cores in the AI Core.\n          Mode 4: synchronization control between AIC and AIV cores in the AI Core. AIV0 and AIV1 can trigger AIC wait independently."
+        ],
+        [
+          "pipe",
+          "The pipeline type of the instruction. For details about the pipeline types, see Pipelines.\n         Note that the PIPE_S type is supported only by the Atlas 350 Accelerator Card."
+        ]
+      ],
+      [
+        [
+          "Parameter",
+          "Input/Output",
+          "Description"
+        ],
+        [
+          "flagId",
+          "Input",
+          "Flag ID of the inter-core synchronization.\n         For the \n            Atlas A2 training product\n           /\n            Atlas A2 inference product\n           , the value ranges from 0 to 10.\n         For the \n            Atlas A3 training product\n           /\n            Atlas A3 inference product\n           , the value ranges from 0 to 10.\n         For the Atlas 350 Accelerator Card, the value ranges are as follows:\n         The operations with flag IDs 0 to 10 in CrossCoreSetFlag initiated by AIV0 correspond to the operations with flag IDs 0 to 10 in CrossCoreWaitFlag on the AIC.\n         The operations with flag IDs 0 to 10 in CrossCoreSetFlag initiated by AIV1 correspond to the operations with flag IDs 16 to 26 in CrossCoreWaitFlag on the AIC.\n         The operations with flag IDs 0 to 10 in CrossCoreSetFlag initiated by AIC correspond to the operations with flag IDs 0 to 10 in CrossCoreWaitFlag on AIV0.\n         The operations with flag IDs 16 to 26 in CrossCoreSetFlag initiated by AIC correspond to the operations with flag IDs 0 to 10 in CrossCoreWaitFlag on AIV1."
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2",
+      "template <uint8_t modeId = 0, pipe_t pipe = PIPE_S>\n__aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)\n"
+    ],
+    "reading_file": "03_npu_910b/en/cross_core_waitflag.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0114.html",
+    "fetched_at": "2026-10-05T08:44:03.313836+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0114.html",
+    "content_type": "text/html",
+    "last_modified": "Wed, 12 Aug 2026 06:27:54 GMT",
+    "etag": "\"550ad7362c9a24f2cc5e9056f63867fe\"",
+    "file": "03_npu_910b/raw/9ebc16bfcefbf089.html",
+    "sha256": "fab064cabf16fba47693262b5751e1c0743f889a4e8213dc5aa66bedc767bddb",
+    "bytes": 11508,
+    "title": "",
+    "topic": "alloc_event_id",
+    "locale": "en",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0114.html",
+    "body_h1": [
+      "AllocEventID"
+    ],
+    "heading_count": 8,
+    "tables": [
+      [
+        [
+          "Product",
+          "Supported"
+        ],
+        [
+          "Atlas 350 Accelerator Card",
+          "√"
+        ],
+        [
+          "Atlas A3 training product/Atlas A3 inference product",
+          "√"
+        ],
+        [
+          "Atlas A2 training product/Atlas A2 inference product",
+          "√"
+        ],
+        [
+          "Atlas 200I/500 A2 inference product",
+          "x"
+        ],
+        [
+          "Atlas inference product AI Core",
+          "√"
+        ],
+        [
+          "Atlas inference product Vector Core",
+          "x"
+        ],
+        [
+          "Atlas training product",
+          "√"
+        ]
+      ],
+      [
+        [
+          "1\n2",
+          "template <HardEvent evt>\n__aicore__ inline TEventID AllocEventID()"
+        ]
+      ],
+      [
+        [
+          "Parameter",
+          "Description"
+        ],
+        [
+          "evt",
+          "HardEvent hardware synchronization type. For details about this type, see the description of synchronization types in SetFlag/WaitFlag(ISASI)."
+        ]
+      ],
+      [
+        [
+          "1\n2\n3\n4\n5\n6\n7\n8",
+          "AscendC::TEventID eventID = GetTPipePtr()->AllocEventID<AscendC::HardEvent::V_S>(); //The scalar needs to wait for vector synchronization and the HardEvent ID is required.\nAscendC::SetFlag<AscendC::HardEvent::V_S>(eventID);\n......\n......\n......\nAscendC::WaitFlag<AscendC::HardEvent::V_S>(eventID);\nGetTPipePtr()->ReleaseEventID<AscendC::HardEvent::V_S>(eventID); //Release the ID of the hard event (scalar waiting for vector synchronization).\n......"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2",
+      "template <HardEvent evt>\n__aicore__ inline TEventID AllocEventID()\n",
+      "1\n2\n3\n4\n5\n6\n7\n8",
+      "AscendC::TEventID eventID = GetTPipePtr()->AllocEventID<AscendC::HardEvent::V_S>(); //The scalar needs to wait for vector synchronization and the HardEvent ID is required.\nAscendC::SetFlag<AscendC::HardEvent::V_S>(eventID);\n......\n......\n......\nAscendC::WaitFlag<AscendC::HardEvent::V_S>(eventID);\nGetTPipePtr()->ReleaseEventID<AscendC::HardEvent::V_S>(eventID); //Release the ID of the hard event (scalar waiting for vector synchronization).\n......\n"
+    ],
+    "reading_file": "03_npu_910b/en/alloc_event_id.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0116.html",
+    "fetched_at": "2026-10-05T08:44:03.323629+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0116.html",
+    "content_type": "text/html",
+    "last_modified": "Wed, 12 Aug 2026 06:27:55 GMT",
+    "etag": "\"d23cbe0a3ac98b9fd45be4dc1334d20d\"",
+    "file": "03_npu_910b/raw/d49e7a2cca51e5ea.html",
+    "sha256": "66d4e1b47ad2ca8a81b8ed5fb839ce85dcfd6209b729a5e584652269b36dac24",
+    "bytes": 11890,
+    "title": "",
+    "topic": "fetch_event_id",
+    "locale": "en",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0116.html",
+    "body_h1": [
+      "FetchEventID"
+    ],
+    "heading_count": 8,
+    "tables": [
+      [
+        [
+          "Product",
+          "Supported"
+        ],
+        [
+          "Atlas 350 Accelerator Card",
+          "√"
+        ],
+        [
+          "Atlas A3 training product/Atlas A3 inference product",
+          "√"
+        ],
+        [
+          "Atlas A2 training product/Atlas A2 inference product",
+          "√"
+        ],
+        [
+          "Atlas 200I/500 A2 inference product",
+          "x"
+        ],
+        [
+          "Atlas inference product AI Core",
+          "√"
+        ],
+        [
+          "Atlas inference product Vector Core",
+          "x"
+        ],
+        [
+          "Atlas training product",
+          "√"
+        ]
+      ],
+      [
+        [
+          "1\n2\n3",
+          "template <HardEvent evt>\n__aicore__ inline TEventID FetchEventID()\n__aicore__ inline TEventID FetchEventID(HardEvent evt)"
+        ]
+      ],
+      [
+        [
+          "Parameter",
+          "Input/Output",
+          "Meaning"
+        ],
+        [
+          "evt",
+          "Input",
+          "HardEvent hardware synchronization type.\nFor details about this type, see the description of synchronization types in SetFlag/WaitFlag(ISASI)."
+        ]
+      ],
+      [
+        [
+          "1\n2\n3",
+          "AscendC::TEventID eventIdVToS = GetTPipePtr()->FetchEventID(AscendC::HardEvent::V_S); //The scalar needs to wait for vector synchronization and the HardEvent ID is required.\nAscendC::SetFlag<AscendC::HardEvent::V_S>(eventIdVToS);\nAscendC::WaitFlag<AscendC::HardEvent::V_S>(eventIdVToS);"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2\n3",
+      "template <HardEvent evt>\n__aicore__ inline TEventID FetchEventID()\n__aicore__ inline TEventID FetchEventID(HardEvent evt)\n",
+      "1\n2\n3",
+      "AscendC::TEventID eventIdVToS = GetTPipePtr()->FetchEventID(AscendC::HardEvent::V_S); //The scalar needs to wait for vector synchronization and the HardEvent ID is required.\nAscendC::SetFlag<AscendC::HardEvent::V_S>(eventIdVToS);\nAscendC::WaitFlag<AscendC::HardEvent::V_S>(eventIdVToS);\n"
+    ],
+    "reading_file": "03_npu_910b/en/fetch_event_id.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0008.html",
+    "fetched_at": "2026-10-05T08:44:03.372946+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0008.html",
+    "content_type": "text/html",
+    "last_modified": "Mon, 10 Aug 2026 07:17:10 GMT",
+    "etag": "\"81cbe66dff87307f0b9b17c1d38ee4ab\"",
+    "file": "03_npu_910b/raw/ad2430794986be25.html",
+    "sha256": "4b9d1a252ba5a7ff5d1ed7ac33b32178f39099a5b413d6561582beb7a9b282e6",
+    "bytes": 31995,
+    "title": "",
+    "topic": "basic_architecture",
+    "locale": "zh",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0008.html",
+    "body_h1": [
+      "基本架构"
+    ],
+    "heading_count": 7,
+    "tables": [
+      [
+        [
+          "存储单元",
+          "描述"
+        ],
+        [
+          "L1 Buffer",
+          "L1缓冲区，通用内部存储，是AI Core内比较大的一块数据中转区，可暂存Cube计算单元需要反复使用的一些数据从而减少从总线读写的次数。"
+        ],
+        [
+          "L0A Buffer / L0B Buffer",
+          "Cube指令的输入。"
+        ],
+        [
+          "L0C Buffer",
+          "Cube指令的输出，但进行累加计算的时候，也是输入的一部分。"
+        ],
+        [
+          "Unified Buffer",
+          "统一缓冲区，向量和标量计算的输入和输出。"
+        ],
+        [
+          "BT Buffer",
+          "BiasTable Buffer，存放矩阵计算中的Bias。"
+        ],
+        [
+          "FP Buffer",
+          "Fixpipe Buffer，存放量化参数、Relu参数等。"
+        ]
+      ],
+      [
+        [
+          "搬运单元",
+          "描述"
+        ],
+        [
+          "MTE1",
+          "负责如下通路的数据搬运：\n         \n          L1->L0A/L0B\n          L1->BT Buffer"
+        ],
+        [
+          "MTE2",
+          "负责如下通路的数据搬运：\n         \n          GM->{L1, L0A/B}，在该通路下，基于分形大小搬运，搬运时满足Cache Line大小对齐，性能更优。\n          GM->UB，基于Cache Line大小搬运性能更优。"
+        ],
+        [
+          "MTE3",
+          "负责如下通路的数据搬运：\n         \n          UB -> GM"
+        ],
+        [
+          "FixPipe",
+          "负责如下通路的数据搬运，搬运过程中可以完成随路数据格式/类型转换：\n         \n          L0C->{GM/L1}\n          L1->FP Buffer"
+        ]
+      ]
+    ],
+    "code_blocks": [],
+    "reading_file": "03_npu_910b/zh/basic_architecture.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0011.html",
+    "fetched_at": "2026-10-05T08:44:03.385159+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0011.html",
+    "content_type": "text/html",
+    "last_modified": "Mon, 10 Aug 2026 07:18:03 GMT",
+    "etag": "\"40f180b0d4c1a9ff2f09335e7dfe8450\"",
+    "file": "03_npu_910b/raw/7fde6f8c4c345647.html",
+    "sha256": "6dcf65e26359e37fd8068269a7e91a7e28f7b2f3051090b6a837a5f886eedf24",
+    "bytes": 27067,
+    "title": "",
+    "topic": "architecture_220x",
+    "locale": "zh",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0011.html",
+    "body_h1": [
+      "NPU架构版本220x"
+    ],
+    "heading_count": 6,
+    "tables": [
+      [
+        [
+          "核",
+          "存储单元",
+          "对齐要求"
+        ],
+        [
+          "AIV",
+          "Unified Buffer",
+          "32Byte对齐。"
+        ],
+        [
+          "AIC",
+          "L1 Buffer",
+          "32Byte对齐。"
+        ],
+        [
+          "L0A Buffer",
+          "512Byte对齐。"
+        ],
+        [
+          "L0B Buffer",
+          "512Byte对齐。"
+        ],
+        [
+          "L0C Buffer",
+          "64Byte对齐。"
+        ],
+        [
+          "BiasTable Buffer",
+          "64Byte对齐。"
+        ],
+        [
+          "Fixpipe Buffer",
+          "64Byte对齐。"
+        ]
+      ]
+    ],
+    "code_blocks": [],
+    "reading_file": "03_npu_910b/zh/architecture_220x.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_00048.html",
+    "fetched_at": "2026-10-05T08:44:03.439927+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_00048.html",
+    "content_type": "text/html",
+    "last_modified": "Mon, 10 Aug 2026 07:17:15 GMT",
+    "etag": "\"e28b25d400ceff806fd57608ba0a65a8\"",
+    "file": "03_npu_910b/raw/b966b7e4215b309d.html",
+    "sha256": "5f674f11662c75ede9d47e9de1876fbac03ac53baf0eda3906a20257c5d7d70c",
+    "bytes": 19376,
+    "title": "",
+    "topic": "constraints_220x",
+    "locale": "zh",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_00048.html",
+    "body_h1": [
+      "NPU架构版本220x"
+    ],
+    "heading_count": 1,
+    "tables": [
+      [
+        [
+          "分类",
+          "硬件约束描述",
+          "解决方案建议"
+        ],
+        [
+          "内存访问（L0 Buffer/L1 Buffer/UB等）",
+          "各存储单元的最小访问粒度/地址对齐要求：\nUnified Buffer：32Byte对齐。\nL1 Buffer：32Byte对齐。\nL0A Buffer/L0B Buffer：512Byte对齐。\nL0C Buffer：64Byte对齐。\nBiasTable Buffer：64Byte对齐。\nFixpipe Buffer：128Byte对齐。",
+          "进行数据搬运时，需要感知对齐约束。针对UB，遇到一些非对齐的场景，可以使用非对齐搬运的接口或者通过一些技巧（比如搬入时包含冗余数据，搬出时去除冗余数据）来解决。详情见非对齐场景。"
+        ],
+        [
+          "内存访问（UB）",
+          "UB bank访问冲突（Vector计算访问/搬运访问）。",
+          "需要按照芯片要求，在软件实现时错开处理的地址，从而解决bank冲突。具体解决方案可参考避免Unified Buffer的bank冲突章节。"
+        ],
+        [
+          "内存访问（GM）",
+          "多核并行同地址访问GM，会被硬件串行化。",
+          "对相同地址的访问，会被硬件串行化，性能为排队时间，大约下降10%-20%；\n多核访问通过错峰访问（调整数据访问顺序和修改切分策略等），使得第一次加载数据到L2 Cache，后续访问性能反而提升。具体解决方案可参考避免同地址访问章节。"
+        ],
+        [
+          "内存访问（GM）",
+          "单次搬运数据长度16KB以上时，可发挥带宽的最佳性能。",
+          "根据实测经验，单次搬运数据长度16KB以上时，通常能较好地发挥出带宽的最佳性能。因此对于单次搬运，应考虑尽可能的搬运较大的数据块（不同芯片不一样）。\n具体解决方案可参考尽量一次搬运较大的数据块章节。"
+        ],
+        [
+          "内存访问（GM-->L1）",
+          "DataCopy中源操作数相邻连续数据块的间隔（前面一个数据块的尾与后面数据块的头的间隔）不要超出65535，单位为DataBlock（32字节）。",
+          "前面一个数据块的尾与后面数据块的头的间隔超出65535时，需要拆分成多条指令来实现。"
+        ],
+        [
+          "内存访问（GM）",
+          "数据搬运会被拆成128B/256B/512B不同长度进行搬运，非对齐会向上取整。",
+          "Tiling尽量让搬运的内轴128B、256B、512B对齐。\n具体解决方案可参考GM地址尽量512B对齐章节。"
+        ],
+        [
+          "Cube",
+          "MTE1和MMAD指令队列的深度为32。",
+          "对应指令队列容易满，会阻塞其他指令下发，引起流水断流。\nLoad2D从L1 Buffer搬运到L0 Buffer，需要发射32条指令，Load3D只需要一条指令，建议使用Load3D来实现。"
+        ],
+        [
+          "ICache",
+          "ICache硬件规格限制32KB。",
+          "拆分Tiling_key或使用模板函数来减少代码段。详情见Tiling模板编程。"
+        ],
+        [
+          "ICache",
+          "多核并行同地址访问ICache，会被硬件串行化。",
+          "小Shape场景尽量减少启动核数，减少多核同地址访问问题。"
+        ],
+        [
+          "DCache",
+          "DCache硬件规格限制32KB",
+          "无"
+        ],
+        [
+          "Scalar",
+          "标量写GM时，数据会被缓存在Dcache。硬件不保证DCache和GM一致性，需要用户保证。",
+          "使用DataCacheCleanAndInvalid来保证一致性。"
+        ],
+        [
+          "Cube",
+          "L0C Buffer容量128KB。",
+          "无"
+        ],
+        [
+          "Cube",
+          "BiasTable Buffer为1KB。",
+          "无"
+        ],
+        [
+          "Cube",
+          "Cube计算场景float算力为half算力的1/4。",
+          "无"
+        ],
+        [
+          "Cube",
+          "Cube输出随路量化场景，不支持int32_t到bfloat16_t类型量化。",
+          "AIV上存在int32_t->float、float>bfloat16_t的转换。AIC支持float->bfloat16_t的随路量化。"
+        ],
+        [
+          "Vector",
+          "Reduce接口half比float性能差。",
+          "half写回UB时存在非32Byte对齐，导致性能劣化，建议把half转float计算，此场景建议使用float数据类型。"
+        ],
+        [
+          "Vector",
+          "Exp/Ln接口处理同样数量的half/float的耗时是一样的",
+          "内部对float做了优化，故两者性能相当，开发者可以根据实际情况选择合适的精度类型。"
+        ],
+        [
+          "流水同步（核内）",
+          "set/wait同步不匹配，状态会残留，影响后续算子。",
+          "通过孪生调试/mssanitizer工具，提前识别此类问题。"
+        ],
+        [
+          "流水同步（核间）",
+          "CrossCoreSetFlag计数器存在限制，超出15次需要做一次反向同步，否则会出现卡死。",
+          "通过孪生调试/mssanitizer工具，超出场景提前报错。"
+        ],
+        [
+          "API通用约束",
+          "使用Ascend C API时，源操作数和目的操作数的地址重叠通用约束",
+          "使用基础API的Tensor高维切分计算接口时，为了节省地址空间，开发者可以定义一个Tensor，供源操作数与目的操作数同时使用（即地址重叠）。使用时需要注意以下约束：\n单次迭代内：源操作数与目的操作数必须100%完全重叠，不支持部分重叠。多次迭代间：不支持前序迭代的目的操作数与后序迭代的源操作数重叠。例如，第N次迭代的目的操作数是第N+1次的源操作数。在这种情况下，第N次迭代可能会改写覆盖源操作数的数值，导致无法得到预期结果。特别地，对于部分双目计算类的API（Add、Sub、Mul、Max、Min、AddRelu、SubRelu），当数据类型为half、int32_t、float时，支持前序迭代的目的操作数与后序迭代的源操作数重叠：仅针对目的操作数和第二个源操作数重叠的情况，且src1RepStride或者dstRepStride必须为0。"
+        ]
+      ]
+    ],
+    "code_blocks": [],
+    "reading_file": "03_npu_910b/zh/constraints_220x.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0072.html",
+    "fetched_at": "2026-10-05T08:44:03.447691+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0072.html",
+    "content_type": "text/html",
+    "last_modified": "Mon, 10 Aug 2026 07:17:08 GMT",
+    "etag": "\"71eba7e733ae4c18445bad1e5cefa75e\"",
+    "file": "03_npu_910b/raw/a1400f3245243806.html",
+    "sha256": "4c0425b50b1406617dce6ed2149222b3b1d3b306b7e571091f3fc8e3e1763ff7",
+    "bytes": 6838,
+    "title": "",
+    "topic": "debugging_overview",
+    "locale": "zh",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0072.html",
+    "body_h1": [
+      "概述"
+    ],
+    "heading_count": 1,
+    "tables": [
+      [
+        [
+          "分类",
+          "子分类",
+          "方法"
+        ],
+        [
+          "功能调试",
+          "CPU域孪生调试",
+          "孪生调试：相同的算子代码可以在CPU域调试精度，NPU域调试性能。在CPU域可以进行gdb调试、使用printf命令打印。"
+        ],
+        [
+          "NPU域上板调试",
+          "printf/assert：printf主要用于打印标量和字符串信息；assert主要用于在代码中设置检查点，当某个条件不满足时，程序会立即终止并报错。"
+        ],
+        [
+          "DumpTensor：使用DumpTensor接口打印指定Tensor的数据，只支持SIMD编程场景。"
+        ],
+        [
+          "上板调试工具：使用msDebug工具调试NPU侧运行的算子程序，在真实的硬件环境中，对算子的输入输出进行测试，以验证算子的功能是否正确。具体功能包括断点设置、打印变量和内存、单步调试、中断运行等。当前SIMT编程场景不支持。"
+        ],
+        [
+          "内存检测工具：使用msSanitizer工具进行内存检测，可以检测并报告算子运行中对外部存储（Global Memory）和内部存储（Local Memory）的越界及未对齐等内存访问异常。"
+        ],
+        [
+          "性能调优",
+          "-",
+          "msprof工具：\nmsProf工具用于采集和分析运行在AI处理器上算子的关键性能指标，用户可根据输出的性能数据，快速定位算子的软、硬件性能瓶颈，提升算子性能的分析效率。\n当前支持基于不同运行模式（上板或仿真）和不同文件形式（可执行文件或算子二进制.o文件）进行性能数据的采集和自动解析。"
+        ]
+      ]
+    ],
+    "code_blocks": [],
+    "reading_file": "03_npu_910b/zh/debugging_overview.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0073.html",
+    "fetched_at": "2026-10-05T08:44:03.497596+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0073.html",
+    "content_type": "text/html",
+    "last_modified": "Mon, 10 Aug 2026 07:17:16 GMT",
+    "etag": "\"43b1d66ef32b5627ff40554f5179ab2d\"",
+    "file": "03_npu_910b/raw/a7287b4f0bb0054f.html",
+    "sha256": "901269dbb4e6be4aabc2c02269e16c00a4824c4513700bfa63e0a97434300c12",
+    "bytes": 19315,
+    "title": "",
+    "topic": "cpu_twin_debugging",
+    "locale": "zh",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0073.html",
+    "body_h1": [
+      "CPU域孪生调试"
+    ],
+    "heading_count": 4,
+    "tables": [
+      [
+        [
+          "1\n2\n3",
+          "#ifdef ASCENDC_CPU_DEBUG\n#include \"cpu_debug_launch.h\"\n#endif"
+        ]
+      ],
+      [
+        [
+          "1",
+          "(gdb) set detach-on-fork off"
+        ]
+      ],
+      [
+        [
+          "1",
+          "(gdb) show detach-on-fork"
+        ]
+      ],
+      [
+        [
+          "1",
+          "(gdb) catch fork"
+        ]
+      ],
+      [
+        [
+          "1\n2\n3",
+          "(gdb) info inferiors\n  Num  Description\n* 1    process 19613"
+        ]
+      ],
+      [
+        [
+          "1\n2\n3\n4",
+          "(gdb) info inferiors\n  Num  Description \n* 1    process 19613\n  2    process 19626"
+        ]
+      ],
+      [
+        [
+          "1\n2\n3\n4\n5\n6",
+          "(gdb) inferior 2\n[Switching to inferior 2 [process 19626] ($HOME/demo)]\n(gdb) info inferiors\n  Num  Description\n  1    process 19613\n* 2    process 19626"
+        ]
+      ],
+      [
+        [
+          "1\n2",
+          "printf(\"xLocal size: %d\\n\", xLocal.GetSize()); \nprintf(\"tileLength: %d\\n\", tileLength);"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2\n3",
+      "#ifdef ASCENDC_CPU_DEBUG\n#include \"cpu_debug_launch.h\"\n#endif\n",
+      "cmake -B build -DCMAKE_ASC_RUN_MODE=cpu -DCMAKE_ASC_ARCHITECTURES=dav-2201",
+      "gdb --args add_custom_cpu  // 启动gdb，add_custom_cpu为算子可执行文件\n(gdb) set follow-fork-mode child",
+      "1",
+      "(gdb) set detach-on-fork off\n",
+      "1",
+      "(gdb) show detach-on-fork\n",
+      "1",
+      "(gdb) catch fork\n",
+      "1\n2\n3",
+      "(gdb) info inferiors\n  Num  Description\n* 1    process 19613\n",
+      "1\n2\n3\n4",
+      "(gdb) info inferiors\n  Num  Description \n* 1    process 19613\n  2    process 19626\n",
+      "1\n2\n3\n4\n5\n6",
+      "(gdb) inferior 2\n[Switching to inferior 2 [process 19626] ($HOME/demo)]\n(gdb) info inferiors\n  Num  Description\n  1    process 19613\n* 2    process 19626\n",
+      "gdb --args add_custom_cpu\nset follow-fork-mode child\nbreak add_custom.cpp:45\nrun\nlist\nbacktrace\nprint i\nbreak add_custom.cpp:56\ncontinue\ndisplay xLocal\nquit",
+      "1\n2",
+      "printf(\"xLocal size: %d\\n\", xLocal.GetSize()); \nprintf(\"tileLength: %d\\n\", tileLength);\n"
+    ],
+    "reading_file": "03_npu_910b/zh/cpu_twin_debugging.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0075.html",
+    "fetched_at": "2026-10-05T08:44:03.514275+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0075.html",
+    "content_type": "text/html",
+    "last_modified": "Mon, 10 Aug 2026 07:17:08 GMT",
+    "etag": "\"d9b85732e1417c818ef864453b0b9d05\"",
+    "file": "03_npu_910b/raw/053afa9998ba50b2.html",
+    "sha256": "d66985edbf234baf2ca0d0879728a18958ba4e9bd8bef7c6e6db1a2fb48c55e3",
+    "bytes": 22550,
+    "title": "",
+    "topic": "npu_debugging",
+    "locale": "zh",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0075.html",
+    "body_h1": [
+      "NPU域上板调试"
+    ],
+    "heading_count": 5,
+    "tables": [
+      [
+        [
+          "1",
+          "printf(\"fmt string %d\", 0x123);"
+        ]
+      ],
+      [
+        [
+          "1",
+          "DumpTensor(srcLocal,5, dataLen);"
+        ]
+      ],
+      [
+        [
+          "1\n 2\n 3\n 4\n 5\n 6\n 7\n 8\n 9\n10",
+          "DumpTensor: desc=5, addr=0, data_type=float16, position=UB, dump_size=32\n[19.000000, 4.000000, 38.000000, 50.000000, 39.000000, 67.000000, 84.000000, 98.000000, 21.000000, 36.000000, 18.000000, 46.000000, 10.000000, 92.000000, 26.000000, 38.000000, 39.000000, 9.000000, 82.000000, 37.000000, 35.000000, 65.000000, 97.000000, 59.000000, 89.000000, 63.000000, 70.000000, 57.000000, 35.000000, 3.000000, 16.000000,\n42.000000]\nDumpTensor: desc=5, addr=100, data_type=float16, position=UB, dump_size=32\n[6.000000, 34.000000, 52.000000, 38.000000, 73.000000, 38.000000, 35.000000, 14.000000, 67.000000, 62.000000, 30.000000, 49.000000, 86.000000, 37.000000, 84.000000, 18.000000, 38.000000, 18.000000, 44.000000, 21.000000, 86.000000, 99.000000, 13.000000, 79.000000, 84.000000, 9.000000, 48.000000, 74.000000, 52.000000, 99.000000, 80.000000,\n53.000000]\n...\nDumpTensor: desc=5, addr=0, data_type=float16, position=UB, dump_size=32\n[35.000000, 41.000000, 41.000000, 22.000000, 84.000000, 49.000000, 60.000000, 0.000000, 90.000000, 14.000000, 67.000000, 80.000000, 16.000000, 46.000000, 16.000000, 83.000000, 6.000000, 70.000000, 97.000000, 28.000000, 97.000000, 62.000000, 80.000000, 22.000000, 53.000000, 37.000000, 23.000000, 58.000000, 65.000000, 28.000000, 4.000000,\n29.000000]"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1",
+      "printf(\"fmt string %d\", 0x123);\n",
+      "1",
+      "DumpTensor(srcLocal,5, dataLen);\n",
+      " 1\n 2\n 3\n 4\n 5\n 6\n 7\n 8\n 9\n10",
+      "DumpTensor: desc=5, addr=0, data_type=float16, position=UB, dump_size=32\n[19.000000, 4.000000, 38.000000, 50.000000, 39.000000, 67.000000, 84.000000, 98.000000, 21.000000, 36.000000, 18.000000, 46.000000, 10.000000, 92.000000, 26.000000, 38.000000, 39.000000, 9.000000, 82.000000, 37.000000, 35.000000, 65.000000, 97.000000, 59.000000, 89.000000, 63.000000, 70.000000, 57.000000, 35.000000, 3.000000, 16.000000,\n42.000000]\nDumpTensor: desc=5, addr=100, data_type=float16, position=UB, dump_size=32\n[6.000000, 34.000000, 52.000000, 38.000000, 73.000000, 38.000000, 35.000000, 14.000000, 67.000000, 62.000000, 30.000000, 49.000000, 86.000000, 37.000000, 84.000000, 18.000000, 38.000000, 18.000000, 44.000000, 21.000000, 86.000000, 99.000000, 13.000000, 79.000000, 84.000000, 9.000000, 48.000000, 74.000000, 52.000000, 99.000000, 80.000000,\n53.000000]\n...\nDumpTensor: desc=5, addr=0, data_type=float16, position=UB, dump_size=32\n[35.000000, 41.000000, 41.000000, 22.000000, 84.000000, 49.000000, 60.000000, 0.000000, 90.000000, 14.000000, 67.000000, 80.000000, 16.000000, 46.000000, 16.000000, 83.000000, 6.000000, 70.000000, 97.000000, 28.000000, 97.000000, 62.000000, 80.000000, 22.000000, 53.000000, 37.000000, 23.000000, 58.000000, 65.000000, 28.000000, 4.000000,\n29.000000]\n"
+    ],
+    "reading_file": "03_npu_910b/zh/npu_debugging.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_best_practices_10_00020.html",
+    "fetched_at": "2026-10-05T08:44:03.524161+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_best_practices_10_00020.html",
+    "content_type": "text/html",
+    "last_modified": "Mon, 10 Aug 2026 07:17:04 GMT",
+    "etag": "\"ff34ed22cd56584ab0746c19cc6719e6\"",
+    "file": "03_npu_910b/raw/280be4665a5b3228.html",
+    "sha256": "6184e529666f301b7089617209c7f2178e5a9822d32c588876eb66ef28ea132f",
+    "bytes": 47714,
+    "title": "",
+    "topic": "bank_conflicts_220x",
+    "locale": "zh",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_best_practices_10_00020.html",
+    "body_h1": [
+      "避免bank冲突（NPU架构版本220x）"
+    ],
+    "heading_count": 3,
+    "tables": [
+      [
+        [
+          "序号",
+          "src地址",
+          "dst地址",
+          "bank",
+          "bank group",
+          "结论"
+        ],
+        [
+          "示例1",
+          "0x10020",
+          "0x10000",
+          "bank_id0 != bank_id1",
+          "bank_group_id0 != bank_group_id1",
+          "src地址和dst地址分别属于bank16和bank17，故无冲突。"
+        ],
+        [
+          "示例2",
+          "0x10020",
+          "0x10E20",
+          "bank_id0 == bank_id1",
+          "bank_group_id0 == bank_group_id1",
+          "src地址和dst地址的地址都在bank17，故存在冲突。"
+        ]
+      ],
+      [
+        [
+          "序号",
+          "dst地址",
+          "blk_stride",
+          "block0_addr",
+          "block1_addr",
+          "block2_addr",
+          "...",
+          "结论"
+        ],
+        [
+          "示例1",
+          "0x1FE00",
+          "16",
+          "0x1FE00",
+          "0x20000",
+          "0x20200",
+          "...",
+          "8个DataBlock均在一个bank group下，故全部冲突，8拍完成一个Repeat的写入。"
+        ],
+        [
+          "示例2",
+          "0x1FE00",
+          "8",
+          "0x1FE00",
+          "0x1FF00",
+          "0x20000",
+          "...",
+          "block0和block2在一个bank group，存在冲突，4拍完成一个Repeat的写入。"
+        ]
+      ],
+      [
+        [
+          "序号",
+          "src0地址",
+          "src1地址",
+          "bank",
+          "bank group",
+          "结论"
+        ],
+        [
+          "示例1",
+          "0x10020",
+          "0x20020",
+          "bank_id0 != bank_id1",
+          "bank_group_id0 == bank_group_id1",
+          "存在冲突。"
+        ],
+        [
+          "示例2",
+          "0x10020",
+          "0x10000",
+          "bank_id0 != bank_id1",
+          "bank_group_id0 != bank_group_id1",
+          "无冲突。"
+        ]
+      ],
+      [
+        [
+          "序号",
+          "src地址",
+          "blk_stride",
+          "block0_addr",
+          "block1_addr",
+          "block2_addr",
+          "...",
+          "结论"
+        ],
+        [
+          "示例1",
+          "0x1FE00",
+          "16",
+          "0x1FE00",
+          "0x20000",
+          "0x20200",
+          "...",
+          "8个DataBlock均在一个bank group下，故全部冲突，8拍完成一个Repeat的读操作。"
+        ],
+        [
+          "示例2",
+          "0x1FE00",
+          "8",
+          "0x1FE00",
+          "0x1FF00",
+          "0x20000",
+          "...",
+          "block0和block2在同一个bank group下，存在冲突，4拍完成一个Repeat。"
+        ]
+      ],
+      [
+        [
+          "实现方案",
+          "原始实现",
+          "优化实现"
+        ],
+        [
+          "实现方法",
+          "跳读，连续写\n           同一Repeat内输入的8个DataBlock都在同一个bank group而发生读读冲突。",
+          "连续读，跳写\n           同一个Repeat内输入的8个DataBlock不在同一个bank group内，避免了读读冲突。"
+        ],
+        [
+          "示意图",
+          "",
+          ""
+        ],
+        [
+          "示例代码",
+          "1\n2\n3\n4\n5\n6\n7\n                 \n                \n                 \n                  uint64_t mask = 128;\nUnaryRepeatParams params;\nparams.dstBlkStride  = 1;\nparams.srcBlkStride = 16;\nfor(uint32_t i=0; i<16; i++)   {\n    AscendC::Adds(dstLocal[i * 128], srcLocal[i * 16], 0, mask, 1, params);\n}",
+          "1\n2\n3\n4\n5\n6\n7\n                 \n                \n                 \n                  uint64_t mask = 128;\nUnaryRepeatParams params;\nparams.dstBlkStride  = 8;\nparams.srcBlkStride = 1;\nfor(uint32_t i=0; i<8; i++)   {\n    AscendC::Adds(dstLocal[i * 16], srcLocal[i * 256], 0, mask, 2, params);\n}"
+        ]
+      ],
+      [
+        [
+          "实现方案",
+          "原始实现",
+          "优化实现"
+        ],
+        [
+          "实现方法",
+          "不做地址优化，直接使用InitBuffer分配内存，各个Tensor的地址分别为：\n           x：起始地址0x0，tensor长度为4096 * sizeof(float)字节\n           y：起始地址0x4000，tensor长度为4096 * sizeof(float)字节\n           z：起始地址0x8000，tensor长度为4096 * sizeof(float)字节\n           在一个Repeat内，x和y同时读同一个bank group，x/y和z同时读写同一个bank。",
+          "优化地址，使用InitBuffer分配内存时适当扩大内存申请，各个Tensor的地址分别为：\n           x：起始地址0x0，tensor长度为(4096 * sizeof(float) + 256)字节\n           y：起始地址0x4100，tensor长度为(64 * 1024 - (4096 * sizeof(float) + 256))字节\n           z：起始地址0x10000，tensor长度为4096 * sizeof(float) 字节\n           x多申请256字节，避免一个Repeat内x y同时读同一个bank group；y多申请空间，确保z不会和x/y落入同一个bank"
+        ],
+        [
+          "示意图",
+          "",
+          ""
+        ],
+        [
+          "示例代码",
+          "1\n2\n3\n                 \n                \n                 \n                  pipe.InitBuffer(inQueueX, 1, 4096 * sizeof(float));\npipe.InitBuffer(inQueueY, 1, 4096 * sizeof(float));\npipe.InitBuffer(outQueueZ, 1, 4096 * sizeof(float));",
+          "1\n2\n3\n                 \n                \n                 \n                  pipe.InitBuffer(inQueueX, 1, 4096 * sizeof(float) + 256); // 多申请256字节\npipe.InitBuffer(inQueueY, 1, 64 * 1024 - (4096 * sizeof(float) + 256)); //多申请空间，确保z不会和x/y落入同一个bank， 64 * 1024是16个bank的空间，4096 * sizeof(float) + 256是x所占的空间\npipe.InitBuffer(outQueueZ, 1, 4096 * sizeof(float));"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2\n3\n4\n5\n6\n7",
+      "uint64_t mask = 128;\nUnaryRepeatParams params;\nparams.dstBlkStride  = 1;\nparams.srcBlkStride = 16;\nfor(uint32_t i=0; i<16; i++)   {\n    AscendC::Adds(dstLocal[i * 128], srcLocal[i * 16], 0, mask, 1, params);\n}\n",
+      "1\n2\n3\n4\n5\n6\n7",
+      "uint64_t mask = 128;\nUnaryRepeatParams params;\nparams.dstBlkStride  = 8;\nparams.srcBlkStride = 1;\nfor(uint32_t i=0; i<8; i++)   {\n    AscendC::Adds(dstLocal[i * 16], srcLocal[i * 256], 0, mask, 2, params);\n}\n",
+      "1\n2\n3",
+      "pipe.InitBuffer(inQueueX, 1, 4096 * sizeof(float));\npipe.InitBuffer(inQueueY, 1, 4096 * sizeof(float));\npipe.InitBuffer(outQueueZ, 1, 4096 * sizeof(float));\n",
+      "1\n2\n3",
+      "pipe.InitBuffer(inQueueX, 1, 4096 * sizeof(float) + 256); // 多申请256字节\npipe.InitBuffer(inQueueY, 1, 64 * 1024 - (4096 * sizeof(float) + 256)); //多申请空间，确保z不会和x/y落入同一个bank， 64 * 1024是16个bank的空间，4096 * sizeof(float) + 256是x所占的空间\npipe.InitBuffer(outQueueZ, 1, 4096 * sizeof(float));\n"
+    ],
+    "reading_file": "03_npu_910b/zh/bank_conflicts_220x.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_10047.html",
+    "fetched_at": "2026-10-05T08:44:03.535771+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_10047.html",
+    "content_type": "text/html",
+    "last_modified": "Mon, 10 Aug 2026 07:18:05 GMT",
+    "etag": "\"380ccd75904ecddb5f79c02c4110e19d\"",
+    "file": "03_npu_910b/raw/a040f854e95bb23f.html",
+    "sha256": "21a2039d49b1494726cfcd533397c830e6f0e8edd6cfb1a0bcc756d61bc3e18d",
+    "bytes": 3378,
+    "title": "",
+    "topic": "tiling_headers",
+    "locale": "zh",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_10047.html",
+    "body_h1": [
+      "如何使用Tiling依赖的头文件"
+    ],
+    "heading_count": 1,
+    "tables": [
+      [
+        [
+          "1\n2\n3\n4",
+          "#include \"kernel_tiling/kernel_tiling.h\"\n\n// ...\nAscendC::tiling::TCubeTiling cubeTilingData;"
+        ]
+      ],
+      [
+        [
+          "1\n2\n3\n4\n5",
+          "#include \"tiling/tiling_api.h\"\n\nnamespace optiling {\n// ...\n}"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2\n3\n4",
+      "#include \"kernel_tiling/kernel_tiling.h\"\n\n// ...\nAscendC::tiling::TCubeTiling cubeTilingData;\n",
+      "1\n2\n3\n4\n5",
+      "#include \"tiling/tiling_api.h\"\n\nnamespace optiling {\n// ...\n}\n"
+    ],
+    "reading_file": "03_npu_910b/zh/tiling_headers.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0270.html",
+    "fetched_at": "2026-10-05T08:44:03.564087+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0270.html",
+    "content_type": "text/html",
+    "last_modified": "Fri, 21 Aug 2026 01:56:00 GMT",
+    "etag": "\"23c1c99a701a6ff2fc42ad9cedabe631\"",
+    "file": "03_npu_910b/raw/1291d7ad59cffb01.html",
+    "sha256": "57781743feb317e7d574346fa1b5a7986c95b6122de214c56a80b439b53e0e48",
+    "bytes": 20211,
+    "title": "",
+    "topic": "setflag_waitflag",
+    "locale": "zh",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0270.html",
+    "body_h1": [
+      "SetFlag/WaitFlag(ISASI)"
+    ],
+    "heading_count": 8,
+    "tables": [
+      [
+        [
+          "产品",
+          "是否支持"
+        ],
+        [
+          "Atlas 350 加速卡",
+          "√"
+        ],
+        [
+          "Atlas A3 训练系列产品/Atlas A3 推理系列产品",
+          "√"
+        ],
+        [
+          "Atlas A2 训练系列产品/Atlas A2 推理系列产品",
+          "√"
+        ],
+        [
+          "Atlas 200I/500 A2 推理产品",
+          "x"
+        ],
+        [
+          "Atlas 推理系列产品AI Core",
+          "√"
+        ],
+        [
+          "Atlas 推理系列产品Vector Core",
+          "x"
+        ],
+        [
+          "Atlas 训练系列产品",
+          "√"
+        ]
+      ],
+      [
+        [
+          "1\n2\n3\n4",
+          "template <HardEvent event>\n__aicore__ inline void SetFlag(int32_t eventID)\ntemplate <HardEvent event>\n__aicore__ inline void WaitFlag(int32_t eventID)"
+        ]
+      ],
+      [
+        [
+          "参数名",
+          "输入/输出",
+          "描述"
+        ],
+        [
+          "event",
+          "输入",
+          "模板参数。\n同步事件，数据类型为HardEvent。详细内容参考下文中的同步类型说明。"
+        ],
+        [
+          "eventID",
+          "输入",
+          "事件ID。数据类型为int32_t类型。其定义如下：\n在基于TPipe和TQue编程场景中，eventID需要通过AllocEventID或者FetchEventID来获取。\nAtlas 训练系列产品，数据范围为：0-3\nAtlas 推理系列产品AI Core，数据范围为：0-7\nAtlas A2 训练系列产品/Atlas A2 推理系列产品，数据范围为：0-7\nAtlas A3 训练系列产品/Atlas A3 推理系列产品，数据范围为：0-7\nAtlas 350 加速卡，数据范围为：0-7"
+        ]
+      ],
+      [
+        [
+          "1\n 2\n 3\n 4\n 5\n 6\n 7\n 8\n 9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n32\n33\n34\n35",
+          "enum class HardEvent : uint8_t {\n    // 名称（源流水_目标流水），例如MTE2_V，代表PIPE_MTE2为源流水，PIPE_V为目标流水。标识从PIPE_MTE2到PIPE_V的同步，PIPE_V等待PIPE_MTE2。\n    MTE2_MTE1\n    MTE1_MTE2\n    MTE1_M\n    M_MTE1\n    MTE2_V\n    V_MTE2\n    MTE3_V\n    V_MTE3\n    M_V\n    V_M\n    V_V\n    MTE3_MTE1\n    MTE1_MTE3\n    MTE1_V\n    MTE2_M\n    M_MTE2\n    V_MTE1\n    M_FIX\n    FIX_M\n    MTE3_MTE2\n    MTE2_MTE3\n    S_V\n    V_S\n    S_MTE2\n    MTE2_S\n    S_MTE3\n    MTE3_S\n    MTE2_FIX\n    FIX_MTE2\n    FIX_S\n    M_S\n    FIX_MTE3\n}"
+        ]
+      ],
+      [
+        [
+          "1\n 2\n 3\n 4\n 5\n 6\n 7\n 8\n 9\n10\n11\n12",
+          "AscendC::GlobalTensor<half> dstGlobal;\nAscendC::LocalTensor<half> dstLocal;\ndstLocal.SetValue(0, 0);\nuint32_t dataSize = 512;\n// 基于TPipe和TQue编程场景中，eventID需要通过AllocEventID或FetchEventID获取\nint32_t eventIDSToMTE3 = static_cast<int32_t>(GetTPipePtr()->FetchEventID(AscendC::HardEvent::S_MTE3));\nAscendC::SetFlag<AscendC::HardEvent::S_MTE3>(eventIDSToMTE3);\nAscendC::WaitFlag<AscendC::HardEvent::S_MTE3>(eventIDSToMTE3);\n// 静态Tensor编程场景中，eventID由开发者自行管理\n// AscendC::SetFlag<AscendC::HardEvent::S_MTE3>(EVENT_ID0);\n// AscendC::WaitFlag<AscendC::HardEvent::S_MTE3>(EVENT_ID0);\nAscendC::DataCopy(dstGlobal, dstLocal, dataSize);"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2\n3\n4",
+      "template <HardEvent event>\n__aicore__ inline void SetFlag(int32_t eventID)\ntemplate <HardEvent event>\n__aicore__ inline void WaitFlag(int32_t eventID)\n",
+      " 1\n 2\n 3\n 4\n 5\n 6\n 7\n 8\n 9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n32\n33\n34\n35",
+      "enum class HardEvent : uint8_t {\n    // 名称（源流水_目标流水），例如MTE2_V，代表PIPE_MTE2为源流水，PIPE_V为目标流水。标识从PIPE_MTE2到PIPE_V的同步，PIPE_V等待PIPE_MTE2。\n    MTE2_MTE1\n    MTE1_MTE2\n    MTE1_M\n    M_MTE1\n    MTE2_V\n    V_MTE2\n    MTE3_V\n    V_MTE3\n    M_V\n    V_M\n    V_V\n    MTE3_MTE1\n    MTE1_MTE3\n    MTE1_V\n    MTE2_M\n    M_MTE2\n    V_MTE1\n    M_FIX\n    FIX_M\n    MTE3_MTE2\n    MTE2_MTE3\n    S_V\n    V_S\n    S_MTE2\n    MTE2_S\n    S_MTE3\n    MTE3_S\n    MTE2_FIX\n    FIX_MTE2\n    FIX_S\n    M_S\n    FIX_MTE3\n}\n",
+      " 1\n 2\n 3\n 4\n 5\n 6\n 7\n 8\n 9\n10\n11\n12",
+      "AscendC::GlobalTensor<half> dstGlobal;\nAscendC::LocalTensor<half> dstLocal;\ndstLocal.SetValue(0, 0);\nuint32_t dataSize = 512;\n// 基于TPipe和TQue编程场景中，eventID需要通过AllocEventID或FetchEventID获取\nint32_t eventIDSToMTE3 = static_cast<int32_t>(GetTPipePtr()->FetchEventID(AscendC::HardEvent::S_MTE3));\nAscendC::SetFlag<AscendC::HardEvent::S_MTE3>(eventIDSToMTE3);\nAscendC::WaitFlag<AscendC::HardEvent::S_MTE3>(eventIDSToMTE3);\n// 静态Tensor编程场景中，eventID由开发者自行管理\n// AscendC::SetFlag<AscendC::HardEvent::S_MTE3>(EVENT_ID0);\n// AscendC::WaitFlag<AscendC::HardEvent::S_MTE3>(EVENT_ID0);\nAscendC::DataCopy(dstGlobal, dstLocal, dataSize);\n"
+    ],
+    "reading_file": "03_npu_910b/zh/setflag_waitflag.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0271.html",
+    "fetched_at": "2026-10-05T08:44:03.586284+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0271.html",
+    "content_type": "text/html",
+    "last_modified": "Fri, 21 Aug 2026 01:59:07 GMT",
+    "etag": "\"09e30b83d4c55cdba1609cc358248da0\"",
+    "file": "03_npu_910b/raw/d851c84a82ed0863.html",
+    "sha256": "58262a54ee210a6265e8d8583e5cdb720bb5fc5ed52fd2c074759bd7bfa2cda5",
+    "bytes": 12438,
+    "title": "",
+    "topic": "pipe_barrier",
+    "locale": "zh",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0271.html",
+    "body_h1": [
+      "PipeBarrier(ISASI)"
+    ],
+    "heading_count": 8,
+    "tables": [
+      [
+        [
+          "产品",
+          "是否支持"
+        ],
+        [
+          "Atlas 350 加速卡",
+          "√"
+        ],
+        [
+          "Atlas A3 训练系列产品/Atlas A3 推理系列产品",
+          "√"
+        ],
+        [
+          "Atlas A2 训练系列产品/Atlas A2 推理系列产品",
+          "√"
+        ],
+        [
+          "Atlas 200I/500 A2 推理产品",
+          "√"
+        ],
+        [
+          "Atlas 推理系列产品AI Core",
+          "√"
+        ],
+        [
+          "Atlas 推理系列产品Vector Core",
+          "x"
+        ],
+        [
+          "Atlas 训练系列产品",
+          "√"
+        ]
+      ],
+      [
+        [
+          "1\n2",
+          "template <pipe_t pipe>\n__aicore__ inline void PipeBarrier()"
+        ]
+      ],
+      [
+        [
+          "参数名",
+          "描述"
+        ],
+        [
+          "pipe",
+          "模板参数，表示阻塞的流水类别。\n支持的流水参考硬件流水类型。\n如果不关注流水类别，希望阻塞所有流水，可以传入PIPE_ALL。"
+        ]
+      ],
+      [
+        [
+          "1\n2\n3\n4\n5\n6\n7\n8\n9",
+          "AscendC::LocalTensor<half> src0Local;\nAscendC::LocalTensor<half> src1Local;\nAscendC::LocalTensor<half> src2Local;\nAscendC::LocalTensor<half> dst0Local;\nAscendC::LocalTensor<half> dst1Local;\n\nAscendC::Add(dst0Local, src0Local, src1Local, 512);\nAscendC::PipeBarrier<PIPE_V>();\nAscendC::Mul(dst1Local, dst0Local, src2Local, 512);"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2",
+      "template <pipe_t pipe>\n__aicore__ inline void PipeBarrier()\n",
+      "1\n2\n3\n4\n5\n6\n7\n8\n9",
+      "AscendC::LocalTensor<half> src0Local;\nAscendC::LocalTensor<half> src1Local;\nAscendC::LocalTensor<half> src2Local;\nAscendC::LocalTensor<half> dst0Local;\nAscendC::LocalTensor<half> dst1Local;\n\nAscendC::Add(dst0Local, src0Local, src1Local, 512);\nAscendC::PipeBarrier<PIPE_V>();\nAscendC::Mul(dst1Local, dst0Local, src2Local, 512);\n"
+    ],
+    "reading_file": "03_npu_910b/zh/pipe_barrier.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0273.html",
+    "fetched_at": "2026-10-05T08:44:03.591888+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0273.html",
+    "content_type": "text/html",
+    "last_modified": "Fri, 21 Aug 2026 01:56:22 GMT",
+    "etag": "\"4f5bf3fb78e17721497d8d8fb3cf247e\"",
+    "file": "03_npu_910b/raw/3fd9dd7988e9e197.html",
+    "sha256": "0850e8d6bff6bcd5ec9121fc617acc52f9e8e13a264687a0afb7d3ff353aea08",
+    "bytes": 24739,
+    "title": "",
+    "topic": "cross_core_setflag",
+    "locale": "zh",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0273.html",
+    "body_h1": [
+      "CrossCoreSetFlag(ISASI)"
+    ],
+    "heading_count": 8,
+    "tables": [
+      [
+        [
+          "产品",
+          "是否支持"
+        ],
+        [
+          "Atlas 350 加速卡",
+          "√"
+        ],
+        [
+          "Atlas A3 训练系列产品\n           /\n            Atlas A3 推理系列产品",
+          "√"
+        ],
+        [
+          "Atlas A2 训练系列产品\n           /\n            Atlas A2 推理系列产品",
+          "√"
+        ],
+        [
+          "Atlas 200I/500 A2 推理产品",
+          "x"
+        ],
+        [
+          "Atlas 推理系列产品\n           AI Core",
+          "x"
+        ],
+        [
+          "Atlas 推理系列产品\n           Vector Core",
+          "x"
+        ],
+        [
+          "Atlas 训练系列产品",
+          "x"
+        ]
+      ],
+      [
+        [
+          "1\n2",
+          "template <uint8_t modeId, pipe_t pipe>\n__aicore__ inline void CrossCoreSetFlag(uint16_t flagId)"
+        ]
+      ],
+      [
+        [
+          "参数名",
+          "描述"
+        ],
+        [
+          "modeId",
+          "核间同步的模式，取值如下：\n         \n          模式0：AI Core核间的同步控制。\n          模式1：AI Core内部，Vector核（AIV）之间的同步控制。\n          模式2：AI Core内部，Cube核（AIC）与Vector核（AIV）之间的同步控制。\n          模式4：AI Core内部，AIC与AIV之间的同步控制。AIV0与AIV1可单独触发AIC等待。"
+        ],
+        [
+          "pipe",
+          "设置这条指令所在的流水类型，流水类型可参考硬件流水类型。\n         特别地，PIPE_S流水类型仅Atlas 350 加速卡支持。"
+        ]
+      ],
+      [
+        [
+          "参数名",
+          "输入/输出",
+          "描述"
+        ],
+        [
+          "flagId",
+          "输入",
+          "核间同步的标记。\n         \n            Atlas A2 训练系列产品\n           /\n            Atlas A2 推理系列产品\n           ，取值范围是0-10。\n         \n            Atlas A3 训练系列产品\n           /\n            Atlas A3 推理系列产品\n           ，取值范围是0-10。\n         Atlas 350 加速卡，取值范围如下：\n         AIV0发起的flagId 0-10的CrossCoreSetFlag操作对应AIC CrossCoreWaitFlag中flagId 0-10的操作。\n         AIV1发起的flagId 0-10的CrossCoreSetFlag操作对应AIC CrossCoreWaitFlag中flagId 16-26的操作。\n         AIC发起的flagId 0-10的CrossCoreSetFlag操作对应AIV0 CrossCoreWaitFlag中flagId 0-10的操作。\n         AIC发起的flagId 16-26的CrossCoreSetFlag操作对应AIV1 CrossCoreWaitFlag中flagId 0-10的操作。"
+        ]
+      ],
+      [
+        [
+          "1\n 2\n 3\n 4\n 5\n 6\n 7\n 8\n 9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24",
+          "// 使用模式0的方式同步所有的AIV核\nif (g_coreType == AscendC::AIV) {\n    AscendC::CrossCoreSetFlag<0x0, PIPE_MTE3>(0x8);\n    AscendC::CrossCoreWaitFlag(0x8);\n}\n\n// 使用模式1的方式同步当前AICore内的所有AIV子核\nif (g_coreType == AscendC::AIV) {\n    AscendC::CrossCoreSetFlag<0x1, PIPE_MTE3>(0x8);\n    AscendC::CrossCoreWaitFlag(0x8);\n}\n\n// 注意：如果调用高阶API,无需开发者处理AIC和AIV的同步\n// 以Matmul为例：AIC侧做完Matmul计算后通知AIV进行后处理\nif (g_coreType == AscendC::AIC) {\n    // Matmul处理\n    AscendC::CrossCoreSetFlag<0x2, PIPE_FIX>(0x8);\n}\n\n// AIV侧等待AIC Set消息, 进行Vector后处理\nif (g_coreType == AscendC::AIV) {\n    AscendC::CrossCoreWaitFlag(0x8);\n    // Vector后处理\n}"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2",
+      "template <uint8_t modeId, pipe_t pipe>\n__aicore__ inline void CrossCoreSetFlag(uint16_t flagId)\n",
+      " 1\n 2\n 3\n 4\n 5\n 6\n 7\n 8\n 9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24",
+      "// 使用模式0的方式同步所有的AIV核\nif (g_coreType == AscendC::AIV) {\n    AscendC::CrossCoreSetFlag<0x0, PIPE_MTE3>(0x8);\n    AscendC::CrossCoreWaitFlag(0x8);\n}\n\n// 使用模式1的方式同步当前AICore内的所有AIV子核\nif (g_coreType == AscendC::AIV) {\n    AscendC::CrossCoreSetFlag<0x1, PIPE_MTE3>(0x8);\n    AscendC::CrossCoreWaitFlag(0x8);\n}\n\n// 注意：如果调用高阶API,无需开发者处理AIC和AIV的同步\n// 以Matmul为例：AIC侧做完Matmul计算后通知AIV进行后处理\nif (g_coreType == AscendC::AIC) {\n    // Matmul处理\n    AscendC::CrossCoreSetFlag<0x2, PIPE_FIX>(0x8);\n}\n\n// AIV侧等待AIC Set消息, 进行Vector后处理\nif (g_coreType == AscendC::AIV) {\n    AscendC::CrossCoreWaitFlag(0x8);\n    // Vector后处理\n}\n"
+    ],
+    "reading_file": "03_npu_910b/zh/cross_core_setflag.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0274.html",
+    "fetched_at": "2026-10-05T08:44:03.633539+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0274.html",
+    "content_type": "text/html",
+    "last_modified": "Fri, 21 Aug 2026 01:59:14 GMT",
+    "etag": "\"19a70ddc77288fa614ac99a8734c3360\"",
+    "file": "03_npu_910b/raw/6168d3ced1f93c8d.html",
+    "sha256": "46e5bf226a8d1148f86b27dca555e398d6e1659504757726fa9336a669d938d4",
+    "bytes": 18378,
+    "title": "",
+    "topic": "cross_core_waitflag",
+    "locale": "zh",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0274.html",
+    "body_h1": [
+      "CrossCoreWaitFlag(ISASI)"
+    ],
+    "heading_count": 8,
+    "tables": [
+      [
+        [
+          "产品",
+          "是否支持"
+        ],
+        [
+          "Atlas 350 加速卡",
+          "√"
+        ],
+        [
+          "Atlas A3 训练系列产品\n           /\n            Atlas A3 推理系列产品",
+          "√"
+        ],
+        [
+          "Atlas A2 训练系列产品\n           /\n            Atlas A2 推理系列产品",
+          "√"
+        ],
+        [
+          "Atlas 200I/500 A2 推理产品",
+          "x"
+        ],
+        [
+          "Atlas 推理系列产品\n           AI Core",
+          "x"
+        ],
+        [
+          "Atlas 推理系列产品\n           Vector Core",
+          "x"
+        ],
+        [
+          "Atlas 训练系列产品",
+          "x"
+        ]
+      ],
+      [
+        [
+          "1\n2",
+          "template <uint8_t modeId = 0, pipe_t pipe = PIPE_S>\n__aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)"
+        ]
+      ],
+      [
+        [
+          "参数名",
+          "描述"
+        ],
+        [
+          "modeId",
+          "核间同步的模式，取值如下：\n         \n          模式0：AI Core核间的同步控制。\n          模式1：AI Core内部，Vector核（AIV）之间的同步控制。\n          模式2：AI Core内部，Cube核（AIC）与Vector核（AIV）之间的同步控制。\n          模式4：AI Core内部，AIC与AIV之间的同步控制。AIV0与AIV1可单独触发AIC等待。"
+        ],
+        [
+          "pipe",
+          "设置这条指令所在的流水类型，流水类型可参考硬件流水类型。\n         特别地，PIPE_S流水类型仅Atlas 350 加速卡支持。"
+        ]
+      ],
+      [
+        [
+          "参数名",
+          "输入/输出",
+          "描述"
+        ],
+        [
+          "flagId",
+          "输入",
+          "核间同步的标记。\n         \n            Atlas A2 训练系列产品\n           /\n            Atlas A2 推理系列产品\n           ，取值范围是0-10。\n         \n            Atlas A3 训练系列产品\n           /\n            Atlas A3 推理系列产品\n           ，取值范围是0-10。\n         Atlas 350 加速卡，取值范围如下：\n         AIV0发起的flagId 0-10的CrossCoreSetFlag操作对应AIC CrossCoreWaitFlag中flagId 0-10的操作。\n         AIV1发起的flagId 0-10的CrossCoreSetFlag操作对应AIC CrossCoreWaitFlag中flagId 16-26的操作。\n         AIC发起的flagId 0-10的CrossCoreSetFlag操作对应AIV0 CrossCoreWaitFlag中flagId 0-10的操作。\n         AIC发起的flagId 16-26的CrossCoreSetFlag操作对应AIV1 CrossCoreWaitFlag中flagId 0-10的操作。"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2",
+      "template <uint8_t modeId = 0, pipe_t pipe = PIPE_S>\n__aicore__ inline void CrossCoreWaitFlag(uint16_t flagId)\n"
+    ],
+    "reading_file": "03_npu_910b/zh/cross_core_waitflag.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0114.html",
+    "fetched_at": "2026-10-05T08:44:03.741276+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0114.html",
+    "content_type": "text/html",
+    "last_modified": "Fri, 21 Aug 2026 01:57:56 GMT",
+    "etag": "\"621ca6d07562ed55cfba7430bd4dd3c1\"",
+    "file": "03_npu_910b/raw/efce451fed82365c.html",
+    "sha256": "78c1ab66e57df34f5f45af113f1ffc2b2b7efc08e3abfe2d110526c88171f837",
+    "bytes": 11236,
+    "title": "",
+    "topic": "alloc_event_id",
+    "locale": "zh",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0114.html",
+    "body_h1": [
+      "AllocEventID"
+    ],
+    "heading_count": 8,
+    "tables": [
+      [
+        [
+          "产品",
+          "是否支持"
+        ],
+        [
+          "Atlas 350 加速卡",
+          "√"
+        ],
+        [
+          "Atlas A3 训练系列产品/Atlas A3 推理系列产品",
+          "√"
+        ],
+        [
+          "Atlas A2 训练系列产品/Atlas A2 推理系列产品",
+          "√"
+        ],
+        [
+          "Atlas 200I/500 A2 推理产品",
+          "x"
+        ],
+        [
+          "Atlas 推理系列产品AI Core",
+          "√"
+        ],
+        [
+          "Atlas 推理系列产品Vector Core",
+          "x"
+        ],
+        [
+          "Atlas 训练系列产品",
+          "√"
+        ]
+      ],
+      [
+        [
+          "1\n2",
+          "template <HardEvent evt>\n__aicore__ inline TEventID AllocEventID()"
+        ]
+      ],
+      [
+        [
+          "参数名",
+          "描述"
+        ],
+        [
+          "evt",
+          "HardEvent硬件同步类型。该类型的具体说明请参考SetFlag/WaitFlag(ISASI)中同步类型的说明。"
+        ]
+      ],
+      [
+        [
+          "1\n2\n3\n4\n5\n6\n7\n8",
+          "AscendC::TEventID eventID = GetTPipePtr()->AllocEventID<AscendC::HardEvent::V_S>(); //需要插入scalar等vector的同步，申请对应的HardEvent的ID\nAscendC::SetFlag<AscendC::HardEvent::V_S>(eventID);\n......\n......\n......\nAscendC::WaitFlag<AscendC::HardEvent::V_S>(eventID);\nGetTPipePtr()->ReleaseEventID<AscendC::HardEvent::V_S>(eventID); //释放scalar等vector的同步HardEvent的ID\n......"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2",
+      "template <HardEvent evt>\n__aicore__ inline TEventID AllocEventID()\n",
+      "1\n2\n3\n4\n5\n6\n7\n8",
+      "AscendC::TEventID eventID = GetTPipePtr()->AllocEventID<AscendC::HardEvent::V_S>(); //需要插入scalar等vector的同步，申请对应的HardEvent的ID\nAscendC::SetFlag<AscendC::HardEvent::V_S>(eventID);\n......\n......\n......\nAscendC::WaitFlag<AscendC::HardEvent::V_S>(eventID);\nGetTPipePtr()->ReleaseEventID<AscendC::HardEvent::V_S>(eventID); //释放scalar等vector的同步HardEvent的ID\n......\n"
+    ],
+    "reading_file": "03_npu_910b/zh/alloc_event_id.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0116.html",
+    "fetched_at": "2026-10-05T08:44:03.746228+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0116.html",
+    "content_type": "text/html",
+    "last_modified": "Fri, 21 Aug 2026 01:57:58 GMT",
+    "etag": "\"c5ae4e9c1149b348ce5d3c81971f36d3\"",
+    "file": "03_npu_910b/raw/de7765874c53f517.html",
+    "sha256": "07938a66bb0c482f34ee4d45ad3bb577a8974f6fac91d71ed55107ee20629cc1",
+    "bytes": 11428,
+    "title": "",
+    "topic": "fetch_event_id",
+    "locale": "zh",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0116.html",
+    "body_h1": [
+      "FetchEventID"
+    ],
+    "heading_count": 8,
+    "tables": [
+      [
+        [
+          "产品",
+          "是否支持"
+        ],
+        [
+          "Atlas 350 加速卡",
+          "√"
+        ],
+        [
+          "Atlas A3 训练系列产品/Atlas A3 推理系列产品",
+          "√"
+        ],
+        [
+          "Atlas A2 训练系列产品/Atlas A2 推理系列产品",
+          "√"
+        ],
+        [
+          "Atlas 200I/500 A2 推理产品",
+          "x"
+        ],
+        [
+          "Atlas 推理系列产品AI Core",
+          "√"
+        ],
+        [
+          "Atlas 推理系列产品Vector Core",
+          "x"
+        ],
+        [
+          "Atlas 训练系列产品",
+          "√"
+        ]
+      ],
+      [
+        [
+          "1\n2\n3",
+          "template <HardEvent evt>\n__aicore__ inline TEventID FetchEventID()\n__aicore__ inline TEventID FetchEventID(HardEvent evt)"
+        ]
+      ],
+      [
+        [
+          "参数名",
+          "输入/输出",
+          "含义"
+        ],
+        [
+          "evt",
+          "输入",
+          "HardEvent类型，硬件同步类型。\n该类型的具体说明请参考SetFlag/WaitFlag(ISASI)中同步类型的说明。"
+        ]
+      ],
+      [
+        [
+          "1\n2\n3",
+          "AscendC::TEventID eventIdVToS = GetTPipePtr()->FetchEventID(AscendC::HardEvent::V_S); //需要插scalar等vector的同步，申请对应的HardEvent的ID\nAscendC::SetFlag<AscendC::HardEvent::V_S>(eventIdVToS);\nAscendC::WaitFlag<AscendC::HardEvent::V_S>(eventIdVToS);"
+        ]
+      ]
+    ],
+    "code_blocks": [
+      "1\n2\n3",
+      "template <HardEvent evt>\n__aicore__ inline TEventID FetchEventID()\n__aicore__ inline TEventID FetchEventID(HardEvent evt)\n",
+      "1\n2\n3",
+      "AscendC::TEventID eventIdVToS = GetTPipePtr()->FetchEventID(AscendC::HardEvent::V_S); //需要插scalar等vector的同步，申请对应的HardEvent的ID\nAscendC::SetFlag<AscendC::HardEvent::V_S>(eventIdVToS);\nAscendC::WaitFlag<AscendC::HardEvent::V_S>(eventIdVToS);\n"
+    ],
+    "reading_file": "03_npu_910b/zh/fetch_event_id.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0179.html",
+    "fetched_at": "2026-10-05T08:54:52.581185+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0179.html",
+    "content_type": "text/html",
+    "last_modified": "Wed, 12 Aug 2026 06:25:59 GMT",
+    "etag": "\"d62e8494e8d5c3218428430c479a9b43\"",
+    "file": "03_npu_910b/raw/2abbd75b3a08a4ce.html",
+    "sha256": "87acce72e9a4c31fc170ffb87f0b0415648e45949006d0a7f57dce1eafad5f8c",
+    "bytes": 18057,
+    "title": "",
+    "topic": "sync_control_overview",
+    "locale": "en",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0179.html",
+    "body_h1": [
+      "Introduction to Synchronization Control"
+    ],
+    "heading_count": 5,
+    "tables": [
+      [
+        [
+          "Type",
+          "Meaning"
+        ],
+        [
+          "PIPE_S",
+          "Scalar computation pipeline, which is used when Tensor GetValue is used."
+        ],
+        [
+          "PIPE_V",
+          "Vector computation pipeline and data transfer pipeline from L0C Buffer to UB in some hardware architectures."
+        ],
+        [
+          "PIPE_M",
+          "Matrix computation pipeline."
+        ],
+        [
+          "PIPE_MTE1",
+          "Data transfer pipeline from L1 Buffer to L0A Buffer and from L1 Buffer to L0B Buffer."
+        ],
+        [
+          "PIPE_MTE2",
+          "Data transfer pipeline from GM to L1 Buffer, from GM to UB, and more."
+        ],
+        [
+          "PIPE_MTE3",
+          "Data transfer pipeline from UB to GM and more."
+        ],
+        [
+          "PIPE_FIX",
+          "Data transfer pipeline from L0C Buffer to GM, from L0C Buffer to L1, and more."
+        ]
+      ]
+    ],
+    "code_blocks": [],
+    "reading_file": "03_npu_910b/en/sync_control_overview.md"
+  },
+  {
+    "url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0179.html",
+    "fetched_at": "2026-10-05T08:54:52.746473+00:00",
+    "status": 200,
+    "final_url": "https://www.hiascend.com/doc_center/source/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0179.html",
+    "content_type": "text/html",
+    "last_modified": "Fri, 21 Aug 2026 01:55:28 GMT",
+    "etag": "\"f04f43c3e3d194f8728bab35952baa01\"",
+    "file": "03_npu_910b/raw/0588474b47f9b49e.html",
+    "sha256": "b2511fe514b5fad7744357b655258c1d072d3a8f4b4f1094c6139f7bb7a5a943",
+    "bytes": 14523,
+    "title": "",
+    "topic": "sync_control_overview",
+    "locale": "zh",
+    "version": "9.0.X",
+    "official_page_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0179.html",
+    "body_h1": [
+      "同步控制简介"
+    ],
+    "heading_count": 5,
+    "tables": [
+      [
+        [
+          "流水类型",
+          "含义"
+        ],
+        [
+          "PIPE_S",
+          "标量流水线，使用Tensor GetValue函数时为此流水"
+        ],
+        [
+          "PIPE_V",
+          "矢量计算流水及部分硬件架构下的L0C Buffer->UB数据搬运流水"
+        ],
+        [
+          "PIPE_M",
+          "矩阵计算流水"
+        ],
+        [
+          "PIPE_MTE1",
+          "L1 Buffer ->L0A Buffer、L1 Buffer->L0B Buffer数据搬运流水"
+        ],
+        [
+          "PIPE_MTE2",
+          "GM->L1 Buffer、GM->UB等数据搬运流水"
+        ],
+        [
+          "PIPE_MTE3",
+          "UB->GM等数据搬运流水"
+        ],
+        [
+          "PIPE_FIX",
+          "L0C Buffer->GM、L0C Buffer ->L1等数据搬运流水"
+        ]
+      ]
+    ],
+    "code_blocks": [],
+    "reading_file": "03_npu_910b/zh/sync_control_overview.md"
+  }
+]

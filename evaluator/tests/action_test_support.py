@@ -1,4 +1,5 @@
 """Real CLI subprocesses in a copied public layer with a controlled CPU Evaluator."""
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -13,6 +14,40 @@ import session
 
 SOURCE_BENCHMARK = Path(__file__).resolve().parents[2]
 
+
+def copy_test_modes(destination):
+    """Exercise bundle lifecycle with small pinned documents, not the 58 MB corpus.
+
+    test_knowledge independently checks every file in both real mode bundles.
+    The fake corpus follows the same manifest, pin and permissions contract.
+    """
+    from modes._shared import knowledge
+    source = SOURCE_BENCHMARK / 'modes'
+    bundles = {source / mode for mode in ('basic', 'cannbot')}
+    shutil.copytree(source, destination, ignore=lambda directory, names:
+                    ['knowledge'] if Path(directory) in bundles else
+                    [name for name in names if name in ('__pycache__', '.env')])
+    documents = {'README.md': b'Original test reference index\n',
+                 '01_pypto_lib/intro.md': b'PyPTO-Lib test reference\n',
+                 '02_pypto/intro.md': b'PyPTO test reference\n',
+                 '03_npu_910b/intro.md': b'Ascend test reference\n'}
+    for mode in ('basic', 'cannbot'):
+        folder = destination / mode / 'knowledge'
+        snapshot = folder / 'raw_wiki'
+        for name, data in documents.items():
+            path = snapshot / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data)
+        manifest = {'edition': 'test', 'captured_on': '2026-10-07',
+                    'pypto_revision': 'cpu-test-fixture', 'files': [
+                        {'path': name, 'sha256': hashlib.sha256(data).hexdigest()}
+                        for name, data in documents.items()]}
+        write_json(snapshot / 'manifest.json', manifest)
+        write_json(folder / 'knowledge.lock.json', knowledge.describe(snapshot))
+        for path in [snapshot, *snapshot.rglob('*')]:
+            path.chmod(0o555 if path.is_dir() else 0o444)
+        (folder / 'knowledge.lock.json').chmod(0o444)
+
 FAKE_EVALUATOR = r'''
 import argparse, json, os, signal, subprocess, sys, time
 from pathlib import Path
@@ -21,6 +56,8 @@ common.await_action_start()
 p=argparse.ArgumentParser()
 for name in ('case','candidate','phase','profile-mode','result'):
     p.add_argument('--'+name, required=True)
+p.add_argument('--measurement-mode', choices=('formal','exploration'), default='formal')
+p.add_argument('--skip-correctness', action='store_true')
 a=p.parse_args()
 control=json.loads(Path(os.environ['S3_CONTROL']).read_text())
 with open(os.environ['S3_COUNTER'],'a') as f: f.write(json.dumps(vars(a))+'\n')
@@ -61,6 +98,9 @@ if control.get('crash'): raise RuntimeError('fake Evaluator exception')
 if control.get('missing'): sys.exit(0)
 run={'fixture_id':'fixture_000','passed':not control.get('fail'),'median_effective_us':control.get('median',10.0 if a.profile_mode=='clean' else None)}
 if a.profile_mode=='clean': run['speedup']=control.get('speedup',2.0)
+run['samples_effective_us']=[run['median_effective_us']] if run['median_effective_us'] is not None else []
+run['raw_samples_effective_us']=list(run['samples_effective_us'])
+run['measurement_config']={'metric':'effective','unit':'us','requested_warmup':0,'requested_rounds':1,'actual_warmup':0,'actual_rounds':1}
 if control.get('latency')=='nan': run['median_effective_us']=float('nan')
 if control.get('latency')=='zero': run['median_effective_us']=0
 if control.get('bad_fixture'): run['fixture_id']='fixture_001'
@@ -88,6 +128,7 @@ class ActionTestBase(SessionTestBase):
         # Copy only the public layer; real canonical Case assets are never copied.
         for path in (SOURCE_BENCHMARK / 'evaluator').glob('*.py'):
             shutil.copyfile(path, self.bench / 'evaluator' / path.name)
+        copy_test_modes(self.bench / 'modes')
         shutil.copyfile(SOURCE_BENCHMARK / 'ptobench', self.bench / 'ptobench')
         (self.bench / 'evaluator/evaluate.py').write_text(FAKE_EVALUATOR)
         (self.bench / 'bench').unlink(missing_ok=True)

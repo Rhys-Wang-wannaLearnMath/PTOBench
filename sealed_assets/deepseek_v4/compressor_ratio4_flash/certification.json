@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.compressor_ratio4_flash",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "ad6a3169d5f38ba52e66cf8ab7dd4583a2e963e2d6ecf750989543ed5f794bde"
+}

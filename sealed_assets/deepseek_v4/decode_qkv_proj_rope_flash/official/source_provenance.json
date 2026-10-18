@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/decode_qkv_proj_rope.py",
+  "source_sha256": "2e5e6a13773af1e48160bbbb0657271fd0363adf10e7994501ab4e20194b88f4",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "2e5e6a13773af1e48160bbbb0657271fd0363adf10e7994501ab4e20194b88f4",
+  "dependencies": [{"source_path":"benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/config.py","source_sha256":"68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e","frozen_copy":"original_config.py","frozen_copy_sha256":"68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e"}],
+  "selection": "FLASH preset contract instantiated from the complete frozen DeepSeek-V4 config.",
+  "fixture_authority": "byte-exact official TensorSpec builder and golden function"
+}

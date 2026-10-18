@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/qwen3_14b/qwen3_14b_decode.py",
+  "source_sha256": "78559ebd250bae592f6c540b06704ecd02b749ed52412806de88913c3fb7f93d",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "78559ebd250bae592f6c540b06704ecd02b749ed52412806de88913c3fb7f93d",
+  "dependencies": [],
+  "selection": "The self-contained corpus source is the approved default Qwen3-14B single-layer decode workload; no separate configuration dependency or alternate named preset exists.",
+  "fixture_authority": "real TensorSpec builder and official golden_fn"
+}

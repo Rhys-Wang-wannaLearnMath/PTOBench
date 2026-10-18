@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.deepseek_v4_decode_compressor_ratio4",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "e3d698124e92cc4a791fde7c243cf3dda84f6d3873924351d636c8ec6e34e94b"
+}

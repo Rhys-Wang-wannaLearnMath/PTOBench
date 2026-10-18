@@ -16,7 +16,6 @@ class Qwen3TilingConfig:
     """Selected Qwen3 page-size ABI values."""
 
     seq_tile: int
-    vocab_chunk: int
 
     @property
     def block_size(self) -> int:
@@ -102,7 +101,10 @@ QWEN3_14B = Qwen3Config(
     q_head_batch=5,
     q_head_pad=16,
 )
-QWEN3_14B_TILING = Qwen3TilingConfig(seq_tile=128, vocab_chunk=512)
+CASE_CONFIG = QWEN3_14B
+
+# Only the external page size belongs to this decode contract.
+QWEN3_14B_TILING = Qwen3TilingConfig(seq_tile=128)
 
 
 @dataclass(frozen=True)
@@ -110,11 +112,6 @@ class Qwen3DynamicDims:
     batch: Any
     user_batch: Any
     kv_cache_rows: Any
-    block_table_flat: Any
-    rope_seq: Any
-    layer: Any
-    layer_hidden_rows: Any
-    layer_inter_rows: Any
 
 
 USER_BATCH_DYN = pl.dynamic("USER_BATCH_DYN")
@@ -122,47 +119,19 @@ QWEN3_14B_DIMS = Qwen3DynamicDims(
     batch=USER_BATCH_DYN,
     user_batch=USER_BATCH_DYN,
     kv_cache_rows=pl.dynamic("KV_CACHE_ROWS_DYN"),
-    block_table_flat=pl.dynamic("BLOCK_TABLE_FLAT_DYN"),
-    rope_seq=pl.dynamic("ROPE_SEQ_DYN"),
-    layer=pl.dynamic("LAYER_DYN"),
-    layer_hidden_rows=pl.dynamic("LAYER_HIDDEN_ROWS_DYN"),
-    layer_inter_rows=pl.dynamic("LAYER_INTER_ROWS_DYN"),
 )
 
 # Compatibility aliases required by the preserved official entry annotations.
-BATCH = QWEN3_14B.batch
-MAX_SEQ = QWEN3_14B.max_seq
-NUM_HEADS = QWEN3_14B.num_heads
-NUM_KV_HEADS = QWEN3_14B.num_kv_heads
-HEAD_DIM = QWEN3_14B.head_dim
-HIDDEN = QWEN3_14B.hidden
-INTERMEDIATE = QWEN3_14B.intermediate
-KV_HIDDEN = QWEN3_14B.kv_hidden
-VOCAB = QWEN3_14B.vocab
-REAL_VOCAB = QWEN3_14B.real_vocab
-NUM_LAYERS = QWEN3_14B.num_layers
-EPS = QWEN3_14B.eps
-HIDDEN_INV = QWEN3_14B.hidden_inv
-HEAD_DIM_INV = QWEN3_14B.head_dim_inv
-ATTN_SCALE = QWEN3_14B.attn_scale
-HALF_DIM = QWEN3_14B.half_dim
-Q_PER_KV = QWEN3_14B.q_per_kv
-Q_HEAD_BATCH = QWEN3_14B.q_head_batch
-Q_HEAD_PAD = QWEN3_14B.q_head_pad
-Q_GROUPS = QWEN3_14B.q_groups
-TOTAL_Q_GROUPS = QWEN3_14B.total_q_groups
 KV_CACHE_ROWS_DYN = QWEN3_14B_DIMS.kv_cache_rows
-BLOCK_TABLE_FLAT_DYN = QWEN3_14B_DIMS.block_table_flat
-ROPE_SEQ_DYN = QWEN3_14B_DIMS.rope_seq
-LAYER_DYN = QWEN3_14B_DIMS.layer
-LAYER_HIDDEN_ROWS_DYN = QWEN3_14B_DIMS.layer_hidden_rows
-LAYER_INTER_ROWS_DYN = QWEN3_14B_DIMS.layer_inter_rows
-
-CASE_CONFIG = QWEN3_14B
+VOCAB = CASE_CONFIG.vocab
+REAL_VOCAB = CASE_CONFIG.real_vocab
+NUM_LAYERS = CASE_CONFIG.num_layers
 
 # Fixed operator and paged-cache contract bindings.
 BATCH = CASE_CONFIG.batch
 MAX_SEQ = CASE_CONFIG.max_seq
+# The selected default runner samples varied sequence lengths.
+FULL_SEQ = False
 NUM_HEADS = CASE_CONFIG.num_heads
 NUM_KV_HEADS = CASE_CONFIG.num_kv_heads
 HEAD_DIM = CASE_CONFIG.head_dim
@@ -172,12 +141,16 @@ INTERMEDIATE = CASE_CONFIG.intermediate
 Q_PER_KV = NUM_HEADS // NUM_KV_HEADS
 HALF_DIM = HEAD_DIM // 2
 EPS = CASE_CONFIG.eps
+ATTN_SCALE = 1.0 / (HEAD_DIM ** 0.5)
+HIDDEN_INV = 1.0 / HIDDEN
+HEAD_DIM_INV = 1.0 / HEAD_DIM
 SEQ_TILE = QWEN3_14B_TILING.seq_tile
 BLOCK_SIZE = SEQ_TILE
 MAX_CTX_BLOCKS = (MAX_SEQ + SEQ_TILE - 1) // SEQ_TILE
 MAX_BLOCKS_PER_SEQ = MAX_CTX_BLOCKS
 NUM_PAGES = BATCH * MAX_BLOCKS_PER_SEQ
 CACHE_ROWS = NUM_PAGES * NUM_KV_HEADS * BLOCK_SIZE
-KV_SPLITS = MAX_CTX_BLOCKS
 Q_HEAD_BATCH = Q_PER_KV
 Q_HEAD_PAD = ((Q_HEAD_BATCH + 15) // 16) * 16
+Q_GROUPS = CASE_CONFIG.q_groups
+TOTAL_Q_GROUPS = CASE_CONFIG.total_q_groups

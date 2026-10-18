@@ -20,6 +20,7 @@ def fixtures_ready(sealed: Path, case: dict) -> bool:
 
 
 def main() -> int:
+    common.await_action_start()
     parser = argparse.ArgumentParser()
     parser.add_argument("--case", required=True)
     parser.add_argument("--platform")

@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "authority": "content_addressed_v0_1_formal_contract_and_reviewed_frozen_dependencies",
+  "source_path": "benchmarks/pypto_lib_bench-v0.1/cases/qwen3_14b/qwen3_14b_decode_tq_single_layer/official_golden/original.py",
+  "source_sha256": "926190f648c52c7a7f41479eb5f38ec9d75ea0e05dca1195ba36ce11c9e66f2d",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "926190f648c52c7a7f41479eb5f38ec9d75ea0e05dca1195ba36ce11c9e66f2d",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/qwen3_14b_legacy_decode_tq/config.py",
+      "source_sha256": "9dbbdee0ff07db71108ccc22837a87ca00d591573f33c559aea56ebf03c56b19",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "9dbbdee0ff07db71108ccc22837a87ca00d591573f33c559aea56ebf03c56b19"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/qwen3_14b_legacy_decode_tq/constants.py",
+      "source_sha256": "00db5be8040420fd5045e4b15969606c0e19b08e435d8cec076b7c7dfd6a942a",
+      "frozen_copy": "constants.py",
+      "frozen_copy_sha256": "00db5be8040420fd5045e4b15969606c0e19b08e435d8cec076b7c7dfd6a942a"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/qwen3_14b_legacy_decode_tq/rms_lm_head.py",
+      "source_sha256": "4506cd86d6ade4b415e9d56d02fac8501fa3d3f9a55aea7f692104296ba2de05",
+      "frozen_copy": "rms_lm_head.py",
+      "frozen_copy_sha256": "4506cd86d6ade4b415e9d56d02fac8501fa3d3f9a55aea7f692104296ba2de05"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/qwen3_14b_legacy_decode_tq/turboquant_kv.py",
+      "source_sha256": "d49c3cb4764e524b96be5bffd57cbf6138061e65c5b762ac4781741d2181bf7d",
+      "frozen_copy": "turboquant_kv.py",
+      "frozen_copy_sha256": "d49c3cb4764e524b96be5bffd57cbf6138061e65c5b762ac4781741d2181bf7d"
+    }
+  ],
+  "selection": "Preserve the coherent frozen single-layer TQ workload at max sequence 127. Current upstream changes peeled/conditional matmul topology, configuration and CLI default sequence. The five official Python files remain byte-exact; documented internal Ref correctness repairs are separately permitted by this source task's verified manual_repair_authorization.json without changing the public workload. The patched corpus source has no asserted exact upstream commit.",
+  "fixture_authority": "byte-exact official build_tensor_specs and golden_decode_fwd_tq",
+  "corpus_source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/qwen3_14b/qwen3_14b_decode_tq.py"
+}

@@ -1,0 +1,2789 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <url>
+        <loc>https://www.pypto.ai/pypto/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/api/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/api/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/api/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/api/array/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/api/array/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/api/array/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/api/language/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/api/language/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/api/language/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/api/optimizations/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/api/optimizations/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/api/optimizations/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/api/prefetch/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/api/prefetch/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/api/prefetch/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/api/system/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/api/system/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/api/system/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/api/tensor/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/api/tensor/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/api/tensor/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/api/tile/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/api/tile/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/api/tile/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/00-ecosystem/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/00-ecosystem/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/00-ecosystem/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/01-compile-profiling/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/01-compile-profiling/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/01-compile-profiling/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/02-error-handling/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/02-error-handling/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/02-error-handling/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/03-logging/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/03-logging/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/03-logging/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/03-runtime-dfx/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/03-runtime-dfx/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/03-runtime-dfx/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/03-runtime-replay/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/03-runtime-replay/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/03-runtime-replay/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/04-simulator-trace-cleaning/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/04-simulator-trace-cleaning/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/04-simulator-trace-cleaning/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/05-runtime-ring-sizing/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/05-runtime-ring-sizing/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/05-runtime-ring-sizing/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/06-persistent-l3/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/06-persistent-l3/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/06-persistent-l3/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/07-ir-lower-trace/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/07-ir-lower-trace/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/07-ir-lower-trace/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/07-memory-map/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/07-memory-map/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/07-memory-map/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/08-artifact-identity/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/08-artifact-identity/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/08-artifact-identity/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/08-entry-points/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/08-entry-points/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/08-entry-points/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/09-artifact-store/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/09-artifact-store/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/09-artifact-store/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/10-jit-cache/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/10-jit-cache/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/10-jit-cache/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/distributed_ops/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/distributed_ops/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/distributed_ops/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/fp4/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/fp4/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/fp4/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/ptoas-op-status/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ptoas-op-status/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ptoas-op-status/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/backend/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/backend/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/backend/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/backend/00-backend_handler/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/backend/00-backend_handler/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/backend/00-backend_handler/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/codegen/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/codegen/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/codegen/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/codegen/00-pto_codegen/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/codegen/00-pto_codegen/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/codegen/00-pto_codegen/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/codegen/01-orchestration_codegen/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/codegen/01-orchestration_codegen/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/codegen/01-orchestration_codegen/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/debug/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/debug/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/debug/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/debug/00-torch_codegen/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/debug/00-torch_codegen/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/debug/00-torch_codegen/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/ir/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/ir/00-overview/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/00-overview/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/00-overview/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/ir/01-hierarchy/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/01-hierarchy/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/01-hierarchy/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/ir/02-types/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/02-types/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/02-types/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/ir/03-structural_comparison/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/03-structural_comparison/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/03-structural_comparison/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/ir/04-serialization/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/04-serialization/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/04-serialization/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/ir/05-operators/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/05-operators/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/05-operators/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/ir/05-tensor-tile-ops/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/05-tensor-tile-ops/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/05-tensor-tile-ops/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/ir/06-builder/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/06-builder/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/06-builder/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/ir/07-parser/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/07-parser/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/07-parser/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/ir/08-param-directions/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/08-param-directions/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/08-param-directions/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/ir/09-multi_output_ops/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/09-multi_output_ops/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/09-multi_output_ops/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/ir/10-operator-effects/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/10-operator-effects/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/10-operator-effects/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/language/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/language/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/language/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/language/00-python_syntax/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/language/00-python_syntax/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/language/00-python_syntax/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/language/01-statements/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/language/01-statements/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/language/01-statements/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/language/02-manual_dependencies/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/language/02-manual_dependencies/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/language/02-manual_dependencies/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/language/03-functions/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/language/03-functions/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/language/03-functions/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/language/04-external-kernels/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/language/04-external-kernels/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/language/04-external-kernels/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/language/05-cache-policy/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/language/05-cache-policy/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/language/05-cache-policy/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/00-pass_manager/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/00-pass_manager/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/00-pass_manager/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/01-inline_functions/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/01-inline_functions/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/01-inline_functions/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/02-unroll_loops/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/02-unroll_loops/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/02-unroll_loops/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/03-ctrl_flow_transform/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/03-ctrl_flow_transform/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/03-ctrl_flow_transform/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/04-convert_to_ssa/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/04-convert_to_ssa/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/04-convert_to_ssa/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/05-simplify/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/05-simplify/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/05-simplify/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/06-flatten_call_expr/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/06-flatten_call_expr/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/06-flatten_call_expr/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/07-outline_hierarchy_scopes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/07-outline_hierarchy_scopes/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/07-outline_hierarchy_scopes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/08-outline_graph_scopes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/08-outline_graph_scopes/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/08-outline_graph_scopes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/09-outline_incore_scopes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/09-outline_incore_scopes/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/09-outline_incore_scopes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/10-outline_cluster_scopes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/10-outline_cluster_scopes/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/10-outline_cluster_scopes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/11-convert_tensor_to_tile_ops/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/11-convert_tensor_to_tile_ops/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/11-convert_tensor_to_tile_ops/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/12-optimize_orch_tensors/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/12-optimize_orch_tensors/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/12-optimize_orch_tensors/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/13-lower_composite_ops/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/13-lower_composite_ops/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/13-lower_composite_ops/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/14-flatten_tile_nd_to_2d/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/14-flatten_tile_nd_to_2d/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/14-flatten_tile_nd_to_2d/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/15-block_nz_tensor_views/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/15-block_nz_tensor_views/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/15-block_nz_tensor_views/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/16-block_mx_scale_tensor_views/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/16-block_mx_scale_tensor_views/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/16-block_mx_scale_tensor_views/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/17-legalize_tile_cast/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/17-legalize_tile_cast/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/17-legalize_tile_cast/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/18-auto_tile_matmul_l0/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/18-auto_tile_matmul_l0/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/18-auto_tile_matmul_l0/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/19-canonicalize_tile_slice/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/19-canonicalize_tile_slice/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/19-canonicalize_tile_slice/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/20-infer_tile_memory_space/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/20-infer_tile_memory_space/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/20-infer_tile_memory_space/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/21-insert_mx_scale_addr/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/21-insert_mx_scale_addr/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/21-insert_mx_scale_addr/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/22-resolve_backend_op_layouts/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/22-resolve_backend_op_layouts/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/22-resolve_backend_op_layouts/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/23-lower_auto_vector_split/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/23-lower_auto_vector_split/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/23-lower_auto_vector_split/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/24-expand_mixed_kernel/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/24-expand_mixed_kernel/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/24-expand_mixed_kernel/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/25-inject_gm_pipe_buffer/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/25-inject_gm_pipe_buffer/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/25-inject_gm_pipe_buffer/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/26-split_vector_kernel/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/26-split_vector_kernel/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/26-split_vector_kernel/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/27-stamp_tfree_split/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/27-stamp_tfree_split/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/27-stamp_tfree_split/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/28-normalize_return_order/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/28-normalize_return_order/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/28-normalize_return_order/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/29-skew_cross_core_pipeline/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/29-skew_cross_core_pipeline/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/29-skew_cross_core_pipeline/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/30-lower_pipeline_to_slots/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/30-lower_pipeline_to_slots/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/30-lower_pipeline_to_slots/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/31-lower_pipeline_loops/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/31-lower_pipeline_loops/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/31-lower_pipeline_loops/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/32-canonicalize_io_order/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/32-canonicalize_io_order/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/32-canonicalize_io_order/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/33-materialize_tensor_strides/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/33-materialize_tensor_strides/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/33-materialize_tensor_strides/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/34-init_memref/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/34-init_memref/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/34-init_memref/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/35-materialize_semantic_aliases/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/35-materialize_semantic_aliases/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/35-materialize_semantic_aliases/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/36-memory_reuse/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/36-memory_reuse/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/36-memory_reuse/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/37-allocate_memory_addr/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/37-allocate_memory_addr/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/37-allocate_memory_addr/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/38-fold_no_op_reshape/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/38-fold_no_op_reshape/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/38-fold_no_op_reshape/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/39-fuse_create_assemble_to_slice/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/39-fuse_create_assemble_to_slice/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/39-fuse_create_assemble_to_slice/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/40-lower_l2_tensor_collectives/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/40-lower_l2_tensor_collectives/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/40-lower_l2_tensor_collectives/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/41-legalize_spmd_launches/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/41-legalize_spmd_launches/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/41-legalize_spmd_launches/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/42-derive_call_directions/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/42-derive_call_directions/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/42-derive_call_directions/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/43-auto_derive_task_dependencies/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/43-auto_derive_task_dependencies/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/43-auto_derive_task_dependencies/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/44-expand_manual_phase_fence/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/44-expand_manual_phase_fence/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/44-expand_manual_phase_fence/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/45-synthesize_allreduce_signals/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/45-synthesize_allreduce_signals/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/45-synthesize_allreduce_signals/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/46-materialize_comm_domain_scopes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/46-materialize_comm_domain_scopes/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/46-materialize_comm_domain_scopes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/47-lower_host_tensor_collectives/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/47-lower_host_tensor_collectives/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/47-lower_host_tensor_collectives/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/48-materialize_dist_tensor_ctx/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/48-materialize_dist_tensor_ctx/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/48-materialize_dist_tensor_ctx/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/49-legalize_graph_boundary/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/49-legalize_graph_boundary/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/49-legalize_graph_boundary/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/50-materialize_runtime_scopes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/50-materialize_runtime_scopes/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/50-materialize_runtime_scopes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/51-classify_iter_arg_carry/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/51-classify_iter_arg_carry/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/51-classify_iter_arg_carry/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/52-insert_comm_fence/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/52-insert_comm_fence/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/52-insert_comm_fence/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/53-materialize_valid_shape_symbols/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/53-materialize_valid_shape_symbols/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/53-materialize_valid_shape_symbols/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/54-lower_tile_to_buffer/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/54-lower_tile_to_buffer/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/54-lower_tile_to_buffer/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/91-utility_passes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/91-utility_passes/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/91-utility_passes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/92-diagnostics/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/92-diagnostics/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/92-diagnostics/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/99-verifier/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/99-verifier/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/99-verifier/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/loop-carried-dep-compression/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/loop-carried-dep-compression/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/loop-carried-dep-compression/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/passes/utils/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/utils/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/utils/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/dev/runtime/kernel-mode/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/runtime/kernel-mode/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/runtime/kernel-mode/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/reference/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/reference/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/reference/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/reference/pto-isa/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/reference/pto-isa/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/reference/pto-isa/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/reference/pto-isa/00-cluster_architecture/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/reference/pto-isa/00-cluster_architecture/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/reference/pto-isa/00-cluster_architecture/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/reference/pto-isa/01-tpush_tpop/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/reference/pto-isa/01-tpush_tpop/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/reference/pto-isa/01-tpush_tpop/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/reference/pto-isa/02-buffer_management/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/reference/pto-isa/02-buffer_management/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/reference/pto-isa/02-buffer_management/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/00-getting_started/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/00-getting_started/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/00-getting_started/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/01-installation/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/01-installation/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/01-installation/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/02-quickstart/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/02-quickstart/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/02-quickstart/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/03-programming-model/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/03-programming-model/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/03-programming-model/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/04-dev-container/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/04-dev-container/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/04-dev-container/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/appendix/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/appendix/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/appendix/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/appendix/00-feature-matrix/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/appendix/00-feature-matrix/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/appendix/00-feature-matrix/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/appendix/01-faq/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/appendix/01-faq/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/appendix/01-faq/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/00-model/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/00-model/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/00-model/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/01-collectives/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/01-collectives/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/01-collectives/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/02-primitives/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/02-primitives/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/02-primitives/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/03-execution/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/03-execution/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/03-execution/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/04-debugging/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/04-debugging/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/04-debugging/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/05-tutorials/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/05-tutorials/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/05-tutorials/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/06-hello_rank/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/06-hello_rank/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/06-hello_rank/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/07-programming_model/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/07-programming_model/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/07-programming_model/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/08-window_buffer/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/08-window_buffer/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/08-window_buffer/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/09-barrier/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/09-barrier/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/09-barrier/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/10-remote_load_store/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/10-remote_load_store/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/10-remote_load_store/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/11-put_get/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/11-put_get/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/11-put_get/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/12-dynamic_rank_count/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/12-dynamic_rank_count/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/12-dynamic_rank_count/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/13-allreduce_mesh/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/13-allreduce_mesh/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/13-allreduce_mesh/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/14-allreduce_two_phase/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/14-allreduce_two_phase/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/14-allreduce_two_phase/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/15-allreduce_ring/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/15-allreduce_ring/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/15-allreduce_ring/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/16-allreduce_reveal/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/16-allreduce_reveal/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/16-allreduce_reveal/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/17-broadcast/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/17-broadcast/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/17-broadcast/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/18-allgather/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/18-allgather/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/18-allgather/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/19-reduce_scatter/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/19-reduce_scatter/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/19-reduce_scatter/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/20-all_to_all/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/20-all_to_all/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/20-all_to_all/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/distributed/21-putting_it_together/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/21-putting_it_together/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/21-putting_it_together/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/execution/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/execution/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/execution/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/execution/00-compile/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/execution/00-compile/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/execution/00-compile/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/execution/01-run/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/execution/01-run/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/execution/01-run/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/language/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/language/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/language/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/language/00-types/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/language/00-types/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/language/00-types/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/language/01-functions/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/language/01-functions/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/language/01-functions/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/language/02-control-flow/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/language/02-control-flow/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/language/02-control-flow/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/language/03-memory/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/language/03-memory/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/language/03-memory/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/language/04-scopes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/language/04-scopes/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/language/04-scopes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/language/05-directives/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/language/05-directives/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/language/05-directives/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/language/06-syntax/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/language/06-syntax/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/language/06-syntax/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/ops/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/ops/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/ops/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/ops/00-dispatch/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/ops/00-dispatch/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/ops/00-dispatch/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/ops/01-catalog/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/ops/01-catalog/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/ops/01-catalog/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/performance/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/performance/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/performance/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/performance/00-swimlane/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/performance/00-swimlane/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/performance/00-swimlane/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/performance/01-task-granularity/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/performance/01-task-granularity/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/performance/01-task-granularity/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/performance/02-runtime-overhead/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/performance/02-runtime-overhead/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/performance/02-runtime-overhead/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/performance/03-dependencies/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/performance/03-dependencies/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/performance/03-dependencies/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/performance/04-incore/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/performance/04-incore/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/performance/04-incore/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/performance/05-memory/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/performance/05-memory/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/performance/05-memory/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/performance/06-host/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/performance/06-host/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/performance/06-host/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/precision/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/precision/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/precision/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/precision/00-workflow/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/precision/00-workflow/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/precision/00-workflow/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/precision/01-cases/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/precision/01-cases/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/precision/01-cases/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tasks/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tasks/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tasks/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tasks/00-model/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tasks/00-model/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tasks/00-model/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tasks/01-scopes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tasks/01-scopes/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tasks/01-scopes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tasks/02-submit/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tasks/02-submit/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tasks/02-submit/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tasks/03-tuning/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tasks/03-tuning/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tasks/03-tuning/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tools/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tools/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tools/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tools/00-debugging/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tools/00-debugging/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tools/00-debugging/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tools/01-torch-codegen/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tools/01-torch-codegen/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tools/01-torch-codegen/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tools/02-memory-map/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tools/02-memory-map/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tools/02-memory-map/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tools/03-ir-trace/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tools/03-ir-trace/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tools/03-ir-trace/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tools/04-runtime-dfx/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tools/04-runtime-dfx/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tools/04-runtime-dfx/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tools/05-replay/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tools/05-replay/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tools/05-replay/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tools/06-incore-trace/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tools/06-incore-trace/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tools/06-incore-trace/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tutorials/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tutorials/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tutorials/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tutorials/00-elementwise/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tutorials/00-elementwise/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tutorials/00-elementwise/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tutorials/01-reduction-softmax/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tutorials/01-reduction-softmax/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tutorials/01-reduction-softmax/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tutorials/02-matmul/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tutorials/02-matmul/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tutorials/02-matmul/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tutorials/03-mixed-kernel/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tutorials/03-mixed-kernel/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tutorials/03-mixed-kernel/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tutorials/04-task-graph/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tutorials/04-task-graph/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tutorials/04-task-graph/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/user/tutorials/05-scheduling-tuning/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tutorials/05-scheduling-tuning/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tutorials/05-scheduling-tuning/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/api/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/api/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/api/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/api/array/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/api/array/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/api/array/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/api/language/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/api/language/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/api/language/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/api/optimizations/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/api/optimizations/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/api/optimizations/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/api/prefetch/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/api/prefetch/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/api/prefetch/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/api/system/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/api/system/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/api/system/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/api/tensor/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/api/tensor/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/api/tensor/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/api/tile/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/api/tile/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/api/tile/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/00-ecosystem/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/00-ecosystem/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/00-ecosystem/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/01-compile-profiling/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/01-compile-profiling/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/01-compile-profiling/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/02-error-handling/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/02-error-handling/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/02-error-handling/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/03-logging/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/03-logging/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/03-logging/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/03-runtime-dfx/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/03-runtime-dfx/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/03-runtime-dfx/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/03-runtime-replay/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/03-runtime-replay/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/03-runtime-replay/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/04-simulator-trace-cleaning/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/04-simulator-trace-cleaning/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/04-simulator-trace-cleaning/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/05-runtime-ring-sizing/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/05-runtime-ring-sizing/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/05-runtime-ring-sizing/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/06-persistent-l3/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/06-persistent-l3/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/06-persistent-l3/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/07-ir-lower-trace/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/07-ir-lower-trace/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/07-ir-lower-trace/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/07-memory-map/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/07-memory-map/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/07-memory-map/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/08-artifact-identity/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/08-artifact-identity/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/08-artifact-identity/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/08-entry-points/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/08-entry-points/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/08-entry-points/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/09-artifact-store/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/09-artifact-store/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/09-artifact-store/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/10-jit-cache/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/10-jit-cache/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/10-jit-cache/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/distributed_ops/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/distributed_ops/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/distributed_ops/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/fp4/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/fp4/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/fp4/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/ptoas-op-status/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ptoas-op-status/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ptoas-op-status/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/backend/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/backend/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/backend/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/backend/00-backend_handler/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/backend/00-backend_handler/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/backend/00-backend_handler/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/codegen/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/codegen/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/codegen/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/codegen/00-pto_codegen/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/codegen/00-pto_codegen/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/codegen/00-pto_codegen/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/codegen/01-orchestration_codegen/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/codegen/01-orchestration_codegen/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/codegen/01-orchestration_codegen/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/debug/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/debug/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/debug/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/debug/00-torch_codegen/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/debug/00-torch_codegen/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/debug/00-torch_codegen/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/ir/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/ir/00-overview/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/00-overview/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/00-overview/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/ir/01-hierarchy/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/01-hierarchy/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/01-hierarchy/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/ir/02-types/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/02-types/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/02-types/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/ir/03-structural_comparison/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/03-structural_comparison/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/03-structural_comparison/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/ir/04-serialization/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/04-serialization/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/04-serialization/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/ir/05-operators/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/05-operators/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/05-operators/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/ir/05-tensor-tile-ops/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/05-tensor-tile-ops/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/05-tensor-tile-ops/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/ir/06-builder/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/06-builder/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/06-builder/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/ir/07-parser/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/07-parser/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/07-parser/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/ir/08-param-directions/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/08-param-directions/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/08-param-directions/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/ir/09-multi_output_ops/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/09-multi_output_ops/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/09-multi_output_ops/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/ir/10-operator-effects/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/ir/10-operator-effects/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/ir/10-operator-effects/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/language/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/language/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/language/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/language/00-python_syntax/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/language/00-python_syntax/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/language/00-python_syntax/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/language/01-statements/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/language/01-statements/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/language/01-statements/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/language/02-manual_dependencies/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/language/02-manual_dependencies/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/language/02-manual_dependencies/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/language/03-functions/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/language/03-functions/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/language/03-functions/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/language/04-external-kernels/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/language/04-external-kernels/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/language/04-external-kernels/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/language/05-cache-policy/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/language/05-cache-policy/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/language/05-cache-policy/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/00-pass_manager/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/00-pass_manager/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/00-pass_manager/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/01-inline_functions/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/01-inline_functions/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/01-inline_functions/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/02-unroll_loops/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/02-unroll_loops/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/02-unroll_loops/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/03-ctrl_flow_transform/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/03-ctrl_flow_transform/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/03-ctrl_flow_transform/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/04-convert_to_ssa/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/04-convert_to_ssa/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/04-convert_to_ssa/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/05-simplify/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/05-simplify/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/05-simplify/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/06-flatten_call_expr/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/06-flatten_call_expr/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/06-flatten_call_expr/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/07-outline_hierarchy_scopes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/07-outline_hierarchy_scopes/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/07-outline_hierarchy_scopes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/08-outline_graph_scopes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/08-outline_graph_scopes/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/08-outline_graph_scopes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/09-outline_incore_scopes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/09-outline_incore_scopes/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/09-outline_incore_scopes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/10-outline_cluster_scopes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/10-outline_cluster_scopes/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/10-outline_cluster_scopes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/11-convert_tensor_to_tile_ops/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/11-convert_tensor_to_tile_ops/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/11-convert_tensor_to_tile_ops/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/12-optimize_orch_tensors/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/12-optimize_orch_tensors/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/12-optimize_orch_tensors/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/13-lower_composite_ops/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/13-lower_composite_ops/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/13-lower_composite_ops/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/14-flatten_tile_nd_to_2d/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/14-flatten_tile_nd_to_2d/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/14-flatten_tile_nd_to_2d/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/15-block_nz_tensor_views/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/15-block_nz_tensor_views/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/15-block_nz_tensor_views/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/16-block_mx_scale_tensor_views/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/16-block_mx_scale_tensor_views/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/16-block_mx_scale_tensor_views/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/17-legalize_tile_cast/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/17-legalize_tile_cast/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/17-legalize_tile_cast/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/18-auto_tile_matmul_l0/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/18-auto_tile_matmul_l0/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/18-auto_tile_matmul_l0/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/19-canonicalize_tile_slice/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/19-canonicalize_tile_slice/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/19-canonicalize_tile_slice/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/20-infer_tile_memory_space/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/20-infer_tile_memory_space/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/20-infer_tile_memory_space/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/21-insert_mx_scale_addr/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/21-insert_mx_scale_addr/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/21-insert_mx_scale_addr/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/22-resolve_backend_op_layouts/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/22-resolve_backend_op_layouts/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/22-resolve_backend_op_layouts/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/23-lower_auto_vector_split/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/23-lower_auto_vector_split/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/23-lower_auto_vector_split/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/24-expand_mixed_kernel/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/24-expand_mixed_kernel/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/24-expand_mixed_kernel/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/25-inject_gm_pipe_buffer/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/25-inject_gm_pipe_buffer/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/25-inject_gm_pipe_buffer/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/26-split_vector_kernel/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/26-split_vector_kernel/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/26-split_vector_kernel/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/27-stamp_tfree_split/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/27-stamp_tfree_split/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/27-stamp_tfree_split/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/28-normalize_return_order/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/28-normalize_return_order/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/28-normalize_return_order/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/29-skew_cross_core_pipeline/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/29-skew_cross_core_pipeline/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/29-skew_cross_core_pipeline/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/30-lower_pipeline_to_slots/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/30-lower_pipeline_to_slots/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/30-lower_pipeline_to_slots/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/31-lower_pipeline_loops/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/31-lower_pipeline_loops/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/31-lower_pipeline_loops/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/32-canonicalize_io_order/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/32-canonicalize_io_order/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/32-canonicalize_io_order/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/33-materialize_tensor_strides/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/33-materialize_tensor_strides/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/33-materialize_tensor_strides/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/34-init_memref/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/34-init_memref/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/34-init_memref/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/35-materialize_semantic_aliases/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/35-materialize_semantic_aliases/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/35-materialize_semantic_aliases/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/36-memory_reuse/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/36-memory_reuse/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/36-memory_reuse/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/37-allocate_memory_addr/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/37-allocate_memory_addr/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/37-allocate_memory_addr/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/38-fold_no_op_reshape/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/38-fold_no_op_reshape/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/38-fold_no_op_reshape/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/39-fuse_create_assemble_to_slice/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/39-fuse_create_assemble_to_slice/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/39-fuse_create_assemble_to_slice/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/40-lower_l2_tensor_collectives/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/40-lower_l2_tensor_collectives/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/40-lower_l2_tensor_collectives/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/41-legalize_spmd_launches/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/41-legalize_spmd_launches/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/41-legalize_spmd_launches/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/42-derive_call_directions/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/42-derive_call_directions/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/42-derive_call_directions/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/43-auto_derive_task_dependencies/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/43-auto_derive_task_dependencies/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/43-auto_derive_task_dependencies/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/44-expand_manual_phase_fence/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/44-expand_manual_phase_fence/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/44-expand_manual_phase_fence/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/45-synthesize_allreduce_signals/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/45-synthesize_allreduce_signals/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/45-synthesize_allreduce_signals/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/46-materialize_comm_domain_scopes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/46-materialize_comm_domain_scopes/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/46-materialize_comm_domain_scopes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/47-lower_host_tensor_collectives/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/47-lower_host_tensor_collectives/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/47-lower_host_tensor_collectives/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/48-materialize_dist_tensor_ctx/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/48-materialize_dist_tensor_ctx/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/48-materialize_dist_tensor_ctx/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/49-legalize_graph_boundary/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/49-legalize_graph_boundary/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/49-legalize_graph_boundary/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/50-materialize_runtime_scopes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/50-materialize_runtime_scopes/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/50-materialize_runtime_scopes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/51-classify_iter_arg_carry/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/51-classify_iter_arg_carry/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/51-classify_iter_arg_carry/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/52-insert_comm_fence/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/52-insert_comm_fence/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/52-insert_comm_fence/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/53-materialize_valid_shape_symbols/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/53-materialize_valid_shape_symbols/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/53-materialize_valid_shape_symbols/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/54-lower_tile_to_buffer/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/54-lower_tile_to_buffer/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/54-lower_tile_to_buffer/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/91-utility_passes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/91-utility_passes/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/91-utility_passes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/92-diagnostics/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/92-diagnostics/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/92-diagnostics/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/99-verifier/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/99-verifier/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/99-verifier/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/loop-carried-dep-compression/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/loop-carried-dep-compression/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/loop-carried-dep-compression/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/passes/utils/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/passes/utils/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/passes/utils/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/dev/runtime/kernel-mode/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/dev/runtime/kernel-mode/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/dev/runtime/kernel-mode/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/reference/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/reference/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/reference/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/reference/pto-isa/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/reference/pto-isa/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/reference/pto-isa/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/reference/pto-isa/00-cluster_architecture/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/reference/pto-isa/00-cluster_architecture/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/reference/pto-isa/00-cluster_architecture/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/reference/pto-isa/01-tpush_tpop/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/reference/pto-isa/01-tpush_tpop/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/reference/pto-isa/01-tpush_tpop/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/reference/pto-isa/02-buffer_management/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/reference/pto-isa/02-buffer_management/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/reference/pto-isa/02-buffer_management/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/00-getting_started/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/00-getting_started/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/00-getting_started/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/01-installation/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/01-installation/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/01-installation/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/02-quickstart/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/02-quickstart/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/02-quickstart/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/03-programming-model/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/03-programming-model/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/03-programming-model/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/04-dev-container/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/04-dev-container/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/04-dev-container/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/appendix/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/appendix/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/appendix/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/appendix/00-feature-matrix/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/appendix/00-feature-matrix/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/appendix/00-feature-matrix/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/appendix/01-faq/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/appendix/01-faq/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/appendix/01-faq/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/00-model/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/00-model/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/00-model/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/01-collectives/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/01-collectives/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/01-collectives/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/02-primitives/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/02-primitives/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/02-primitives/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/03-execution/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/03-execution/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/03-execution/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/04-debugging/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/04-debugging/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/04-debugging/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/05-tutorials/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/05-tutorials/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/05-tutorials/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/06-hello_rank/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/06-hello_rank/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/06-hello_rank/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/07-programming_model/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/07-programming_model/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/07-programming_model/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/08-window_buffer/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/08-window_buffer/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/08-window_buffer/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/09-barrier/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/09-barrier/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/09-barrier/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/10-remote_load_store/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/10-remote_load_store/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/10-remote_load_store/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/11-put_get/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/11-put_get/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/11-put_get/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/12-dynamic_rank_count/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/12-dynamic_rank_count/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/12-dynamic_rank_count/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/13-allreduce_mesh/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/13-allreduce_mesh/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/13-allreduce_mesh/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/14-allreduce_two_phase/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/14-allreduce_two_phase/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/14-allreduce_two_phase/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/15-allreduce_ring/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/15-allreduce_ring/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/15-allreduce_ring/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/16-allreduce_reveal/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/16-allreduce_reveal/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/16-allreduce_reveal/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/17-broadcast/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/17-broadcast/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/17-broadcast/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/18-allgather/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/18-allgather/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/18-allgather/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/19-reduce_scatter/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/19-reduce_scatter/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/19-reduce_scatter/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/20-all_to_all/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/20-all_to_all/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/20-all_to_all/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/distributed/21-putting_it_together/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/distributed/21-putting_it_together/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/distributed/21-putting_it_together/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/execution/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/execution/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/execution/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/execution/00-compile/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/execution/00-compile/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/execution/00-compile/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/execution/01-run/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/execution/01-run/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/execution/01-run/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/language/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/language/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/language/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/language/00-types/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/language/00-types/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/language/00-types/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/language/01-functions/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/language/01-functions/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/language/01-functions/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/language/02-control-flow/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/language/02-control-flow/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/language/02-control-flow/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/language/03-memory/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/language/03-memory/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/language/03-memory/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/language/04-scopes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/language/04-scopes/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/language/04-scopes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/language/05-directives/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/language/05-directives/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/language/05-directives/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/language/06-syntax/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/language/06-syntax/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/language/06-syntax/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/ops/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/ops/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/ops/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/ops/00-dispatch/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/ops/00-dispatch/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/ops/00-dispatch/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/ops/01-catalog/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/ops/01-catalog/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/ops/01-catalog/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/performance/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/performance/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/performance/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/performance/00-swimlane/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/performance/00-swimlane/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/performance/00-swimlane/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/performance/01-task-granularity/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/performance/01-task-granularity/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/performance/01-task-granularity/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/performance/02-runtime-overhead/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/performance/02-runtime-overhead/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/performance/02-runtime-overhead/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/performance/03-dependencies/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/performance/03-dependencies/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/performance/03-dependencies/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/performance/04-incore/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/performance/04-incore/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/performance/04-incore/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/performance/05-memory/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/performance/05-memory/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/performance/05-memory/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/performance/06-host/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/performance/06-host/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/performance/06-host/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/precision/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/precision/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/precision/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/precision/00-workflow/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/precision/00-workflow/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/precision/00-workflow/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/precision/01-cases/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/precision/01-cases/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/precision/01-cases/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tasks/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tasks/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tasks/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tasks/00-model/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tasks/00-model/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tasks/00-model/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tasks/01-scopes/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tasks/01-scopes/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tasks/01-scopes/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tasks/02-submit/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tasks/02-submit/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tasks/02-submit/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tasks/03-tuning/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tasks/03-tuning/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tasks/03-tuning/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tools/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tools/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tools/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tools/00-debugging/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tools/00-debugging/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tools/00-debugging/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tools/01-torch-codegen/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tools/01-torch-codegen/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tools/01-torch-codegen/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tools/02-memory-map/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tools/02-memory-map/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tools/02-memory-map/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tools/03-ir-trace/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tools/03-ir-trace/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tools/03-ir-trace/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tools/04-runtime-dfx/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tools/04-runtime-dfx/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tools/04-runtime-dfx/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tools/05-replay/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tools/05-replay/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tools/05-replay/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tools/06-incore-trace/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tools/06-incore-trace/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tools/06-incore-trace/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tutorials/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tutorials/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tutorials/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tutorials/00-elementwise/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tutorials/00-elementwise/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tutorials/00-elementwise/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tutorials/01-reduction-softmax/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tutorials/01-reduction-softmax/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tutorials/01-reduction-softmax/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tutorials/02-matmul/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tutorials/02-matmul/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tutorials/02-matmul/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tutorials/03-mixed-kernel/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tutorials/03-mixed-kernel/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tutorials/03-mixed-kernel/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tutorials/04-task-graph/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tutorials/04-task-graph/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tutorials/04-task-graph/"/>
+    </url>
+    <url>
+        <loc>https://www.pypto.ai/pypto/zh/user/tutorials/05-scheduling-tuning/</loc>
+        <lastmod>2026-09-30</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://www.pypto.ai/pypto/zh/user/tutorials/05-scheduling-tuning/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://www.pypto.ai/pypto/user/tutorials/05-scheduling-tuning/"/>
+    </url>
+</urlset>

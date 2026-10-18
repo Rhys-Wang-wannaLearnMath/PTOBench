@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "authority": "recovered byte-exact upstream dfd3a876 integrated decode-layer closure",
+  "source_case_id": "models_0912.deepseek_v4_flash_dspark__decode_layer",
+  "case_id": "deepseek_v4_flash_dspark.decode_layer_csa_demo",
+  "repository_url": "https://github.com/hw-native-sys/pypto-lib.git",
+  "source_commit": "dfd3a87673dd08be57f1e4c92e7279a90dbcd2b9",
+  "source": {
+    "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/decode_layer.py",
+    "upstream_repository_path": "models/deepseek_v4_flash_dspark/decode_layer.py",
+    "sha256": "a94b534d9824adc499dffd6d519b5c563d1c49d539637b0344f3bb2f673edd18",
+    "frozen_path": "official/original.py",
+    "frozen_sha256": "a94b534d9824adc499dffd6d519b5c563d1c49d539637b0344f3bb2f673edd18"
+  },
+  "dependencies": [
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/config.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/config.py",
+      "sha256": "f2dd407448542652f2118ecf057477b4adf46adb757a2b8db37cf528090a201f",
+      "frozen_path": "official/original_config.py",
+      "frozen_sha256": "f2dd407448542652f2118ecf057477b4adf46adb757a2b8db37cf528090a201f"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/decode_compressor_ratio128.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/decode_compressor_ratio128.py",
+      "sha256": "6e150988233a9e46e0ffa90ef638478164f072e84748319884c7580382902ea3",
+      "frozen_path": "official/decode_compressor_ratio128.py",
+      "frozen_sha256": "6e150988233a9e46e0ffa90ef638478164f072e84748319884c7580382902ea3"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/decode_compressor_ratio4.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/decode_compressor_ratio4.py",
+      "sha256": "3f001f11319092176b765f29168cf8a55a52f6c3721bcd68c4b91d16f771b9db",
+      "frozen_path": "official/decode_compressor_ratio4.py",
+      "frozen_sha256": "3f001f11319092176b765f29168cf8a55a52f6c3721bcd68c4b91d16f771b9db"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/decode_csa.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/decode_csa.py",
+      "sha256": "eb6c20bdf0b74be7a388b369b85f0dc645a65cf08792c4c7a7b2055047f157e8",
+      "frozen_path": "official/decode_csa.py",
+      "frozen_sha256": "eb6c20bdf0b74be7a388b369b85f0dc645a65cf08792c4c7a7b2055047f157e8"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/decode_hca.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/decode_hca.py",
+      "sha256": "81d55ab88e3308a5579380720dfb330485a847e406c48fe3f051d7180df48cbe",
+      "frozen_path": "official/decode_hca.py",
+      "frozen_sha256": "81d55ab88e3308a5579380720dfb330485a847e406c48fe3f051d7180df48cbe"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/decode_indexer.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/decode_indexer.py",
+      "sha256": "2089569dfd30b72a3304bbd1bd23e25a20c855f4d326db170e228a192abfe7bc",
+      "frozen_path": "official/decode_indexer.py",
+      "frozen_sha256": "2089569dfd30b72a3304bbd1bd23e25a20c855f4d326db170e228a192abfe7bc"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/decode_indexer_compressor.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/decode_indexer_compressor.py",
+      "sha256": "dbf444947fd4f9a722fb7d13013d884cccacfd16eb476a2b72d76dc031536954",
+      "frozen_path": "official/decode_indexer_compressor.py",
+      "frozen_sha256": "dbf444947fd4f9a722fb7d13013d884cccacfd16eb476a2b72d76dc031536954"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/decode_o_proj.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/decode_o_proj.py",
+      "sha256": "ef7fe2917e6707e77a15d37da6bbc1b968545f58ba1498ec19cdbfa8f0a47f5b",
+      "frozen_path": "official/decode_o_proj.py",
+      "frozen_sha256": "ef7fe2917e6707e77a15d37da6bbc1b968545f58ba1498ec19cdbfa8f0a47f5b"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/decode_sparse_attn_csa.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/decode_sparse_attn_csa.py",
+      "sha256": "2263994e815fc28afb6c390f285bc264ba785aee1f35ab7c22b2a3afc3349e96",
+      "frozen_path": "official/decode_sparse_attn_csa.py",
+      "frozen_sha256": "2263994e815fc28afb6c390f285bc264ba785aee1f35ab7c22b2a3afc3349e96"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/decode_sparse_attn_hca.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/decode_sparse_attn_hca.py",
+      "sha256": "8bcc78ca5ddc226e788fc278de79eac8907e0fbd9b2f2e91659037605ef0bce0",
+      "frozen_path": "official/decode_sparse_attn_hca.py",
+      "frozen_sha256": "8bcc78ca5ddc226e788fc278de79eac8907e0fbd9b2f2e91659037605ef0bce0"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/decode_sparse_attn_swa.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/decode_sparse_attn_swa.py",
+      "sha256": "ca1888cb429714dc3d3ba33408d890983ad8914ef80d93f705a6eede01969668",
+      "frozen_path": "official/decode_sparse_attn_swa.py",
+      "frozen_sha256": "ca1888cb429714dc3d3ba33408d890983ad8914ef80d93f705a6eede01969668"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/decode_swa.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/decode_swa.py",
+      "sha256": "bb299ff5ad449aad8e91cfd62530c29cd976869ce4bdc5712255260f4571a58c",
+      "frozen_path": "official/decode_swa.py",
+      "frozen_sha256": "bb299ff5ad449aad8e91cfd62530c29cd976869ce4bdc5712255260f4571a58c"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/expert_routed.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/expert_routed.py",
+      "sha256": "548681967e303d5d89da2661398e6fa5274718f5486bef6344ad91011c320a5e",
+      "frozen_path": "official/expert_routed.py",
+      "frozen_sha256": "548681967e303d5d89da2661398e6fa5274718f5486bef6344ad91011c320a5e"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/expert_shared.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/expert_shared.py",
+      "sha256": "8a0fa1a382bb1ab657a4f94652aa53652b7508bf6370979d4020a2b848f515e3",
+      "frozen_path": "official/expert_shared.py",
+      "frozen_sha256": "8a0fa1a382bb1ab657a4f94652aa53652b7508bf6370979d4020a2b848f515e3"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/gate.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/gate.py",
+      "sha256": "03837f608463ac3b4ae2d91ef34c7485099e026b352b3693a01ba417fa66dabf",
+      "frozen_path": "official/gate.py",
+      "frozen_sha256": "03837f608463ac3b4ae2d91ef34c7485099e026b352b3693a01ba417fa66dabf"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/hc_post.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/hc_post.py",
+      "sha256": "765c6b64dd5c2dced5add48735dd2b3e58f95042b37ff74dc0cd213839f2f8dd",
+      "frozen_path": "official/hc_post.py",
+      "frozen_sha256": "765c6b64dd5c2dced5add48735dd2b3e58f95042b37ff74dc0cd213839f2f8dd"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/hc_pre.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/hc_pre.py",
+      "sha256": "125e9f6bb2e0a2475088b768e4be9f11e9c6393c8d50d8c5dfa6cbc4acbaa3e1",
+      "frozen_path": "official/hc_pre.py",
+      "frozen_sha256": "125e9f6bb2e0a2475088b768e4be9f11e9c6393c8d50d8c5dfa6cbc4acbaa3e1"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/moe.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/moe.py",
+      "sha256": "fcbb6791d01bf4649ff79ddd5f5ef71a482327a846e90876fcb8554674f0734d",
+      "frozen_path": "official/moe.py",
+      "frozen_sha256": "fcbb6791d01bf4649ff79ddd5f5ef71a482327a846e90876fcb8554674f0734d"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/qkv_proj_rope.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/qkv_proj_rope.py",
+      "sha256": "f3af47d3c91abdad0e95229adfbfe2364b6f34ef9d8174ee7093cea169e154e6",
+      "frozen_path": "official/qkv_proj_rope.py",
+      "frozen_sha256": "f3af47d3c91abdad0e95229adfbfe2364b6f34ef9d8174ee7093cea169e154e6"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/rmsnorm.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/rmsnorm.py",
+      "sha256": "fab8402d18470dcb0c441c6edbce58d822378989035e8e07bcc8aca0e8549b8d",
+      "frozen_path": "official/rmsnorm.py",
+      "frozen_sha256": "fab8402d18470dcb0c441c6edbce58d822378989035e8e07bcc8aca0e8549b8d"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/rope_interleave.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/rope_interleave.py",
+      "sha256": "50dd94b36f63cc3b2bcdaf0eff0b17bb54814216601f800126cfa72e1ff3acb1",
+      "frozen_path": "official/rope_interleave.py",
+      "frozen_sha256": "50dd94b36f63cc3b2bcdaf0eff0b17bb54814216601f800126cfa72e1ff3acb1"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/decode_layer/utils.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/utils.py",
+      "sha256": "f5d0ab71a2e0dfbf2a6d5b72188e4948024dc1811d60a1f30611495562fe8906",
+      "frozen_path": "official/utils.py",
+      "frozen_sha256": "f5d0ab71a2e0dfbf2a6d5b72188e4948024dc1811d60a1f30611495562fe8906"
+    }
+  ],
+  "selection_rationale": "Approved Stage 1 frozen integrated workload; current upstream changes owner-token/mapping/storage ABI. Preserve all official bytes and bind only this result preset in the sealed Fixture adapter."
+}

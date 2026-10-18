@@ -1,0 +1,311 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <meta name="search_title" content="">
+ </head>
+ <body>
+  <a name="ZH-CN_TOPIC_0000002531522198"></a><a name="ZH-CN_TOPIC_0000002531522198"></a>
+  <h1 class="topictitle1">基本架构</h1>
+  <div id="body0000002380477945">
+   <p id="ZH-CN_TOPIC_0000002531522198__p1733317315519">如下图所示，基于Ascend C开发的算子运行在AI Core上。Ascend C编程模型基于AI Core硬件架构的抽象进行介绍，了解硬件架构能够帮助开发者更好的理解编程模型；对于需要完成高性能编程的深度开发者，更需要了解硬件架构相关知识，算子实践参考中很多内容都以本章为基础进行介绍。</p>
+   <p id="ZH-CN_TOPIC_0000002531522198__p1676542385315"><span><img class="eddx" id="ZH-CN_TOPIC_0000002531522198__image20765152345316" src="figure/zh-cn_image_0000002531362402.png"></span></p>
+   <p id="ZH-CN_TOPIC_0000002531522198__p751574811308">AI Core负责执行矩阵、矢量计算密集的任务，其包括以下组成部分：</p>
+   <ul id="ZH-CN_TOPIC_0000002531522198__ul95819546308">
+    <li id="ZH-CN_TOPIC_0000002531522198__li1544645714302"><strong id="ZH-CN_TOPIC_0000002531522198__b3349519195219">计算单元</strong>：包括Cube（矩阵）计算单元、Vector（矢量）计算单元和Scalar（标量）计算单元。</li>
+    <li id="ZH-CN_TOPIC_0000002531522198__li824202263317"><strong id="ZH-CN_TOPIC_0000002531522198__b1314513213363">存储单元</strong>：包括L1 Buffer、L0A Buffer、L0B Buffer、L0C Buffer、Unified Buffer、BiasTable Buffer、Fixpipe Buffer等专为高效计算设计的存储单元。</li>
+    <li id="ZH-CN_TOPIC_0000002531522198__li2094517103116"><strong id="ZH-CN_TOPIC_0000002531522198__b5343173015343">搬运单元</strong>：包括MTE1、MTE2、MTE3和FixPipe，用于数据在不同存储单元之间的高效传输。</li>
+   </ul>
+   <p id="ZH-CN_TOPIC_0000002531522198__p124641640133">以<span id="ZH-CN_TOPIC_0000002531522198__ph10405114118177"><term id="ZH-CN_TOPIC_0000002531522198__zh-cn_topic_0000002562275259_term11962195213215">
+      Atlas A2 训练系列产品
+     </term>/<term id="ZH-CN_TOPIC_0000002531522198__zh-cn_topic_0000002562275259_term184716139811">
+      Atlas A2 推理系列产品
+     </term></span>为例，硬件架构图如下：</p>
+   <p id="ZH-CN_TOPIC_0000002531522198__p1036280151611"><span><img class="eddx" id="ZH-CN_TOPIC_0000002531522198__image1293102063710" src="figure/zh-cn_image_0000002562282331.png"></span></p>
+   <p id="ZH-CN_TOPIC_0000002531522198__p39311959171517">本章节首先介绍硬件架构相关的关键概念和术语，以及AI Core的工作模式，为理解后续内容奠定基础。随后以<span id="ZH-CN_TOPIC_0000002531522198__ph1796811151418"><term id="ZH-CN_TOPIC_0000002531522198__zh-cn_topic_0000002562275259_term11962195213215_1">
+      Atlas A2 训练系列产品
+     </term>/<term id="ZH-CN_TOPIC_0000002531522198__zh-cn_topic_0000002562275259_term184716139811_1">
+      Atlas A2 推理系列产品
+     </term></span>为例，提供AI Core基本架构的介绍：首先介绍计算单元、存储单元和搬运单元的基本功能与结构，然后通过典型的数据流和控制流示例，帮助开发者深入理解硬件架构的工作原理。针对不同产品型号对应的具体架构规格和细节说明需要参考后续<a href="atlas_ascendc_10_0009.html">架构规格</a>章节。</p>
+   <div class="section" id="ZH-CN_TOPIC_0000002531522198__section16011278116">
+    <h4 class="sectiontitle">关键概念和术语</h4>
+    <ul id="ZH-CN_TOPIC_0000002531522198__ul9862174371110">
+     <li id="ZH-CN_TOPIC_0000002531522198__li6862134361115">Core
+      <p id="ZH-CN_TOPIC_0000002531522198__p899924919113"><a name="ZH-CN_TOPIC_0000002531522198__li6862134361115"></a><a name="li6862134361115"></a>拥有独立Scalar计算单元的计算核。Scalar计算单元是核内的调度单元，承担了核内的指令发射等功能。</p></li>
+     <li id="ZH-CN_TOPIC_0000002531522198__li18621143161114">AI Core
+      <p id="ZH-CN_TOPIC_0000002531522198__p13179734141719"><a name="ZH-CN_TOPIC_0000002531522198__li18621143161114"></a><a name="li18621143161114"></a><span id="ZH-CN_TOPIC_0000002531522198__ph19321164217255">AI处理器</span>的计算核，负责执行矩阵、矢量计算密集的任务。</p></li>
+     <li id="ZH-CN_TOPIC_0000002531522198__li128623434111">Cube Core
+      <p id="ZH-CN_TOPIC_0000002531522198__p16875103101819"><a name="ZH-CN_TOPIC_0000002531522198__li128623434111"></a><a name="li128623434111"></a>矩阵计算核，专注于矩阵计算。由Scalar调度单元、矩阵计算单元、搬运单元等组成，不包括矢量计算单元。</p></li>
+     <li id="ZH-CN_TOPIC_0000002531522198__li6862114311118"><a name="ZH-CN_TOPIC_0000002531522198__li6862114311118"></a><a name="li6862114311118"></a>Vector Core
+      <p id="ZH-CN_TOPIC_0000002531522198__p74911512181"><a name="ZH-CN_TOPIC_0000002531522198__li6862114311118"></a><a name="li6862114311118"></a>矢量计算核，专注于矢量计算，由Scalar调度单元、矢量计算单元、搬运单元等组成，不包括矩阵计算单元。</p></li>
+     <li id="ZH-CN_TOPIC_0000002531522198__li9862144341111">AIC
+      <p id="ZH-CN_TOPIC_0000002531522198__p168872721814"><a name="ZH-CN_TOPIC_0000002531522198__li9862144341111"></a><a name="li9862144341111"></a>在AI Core<a href="#ZH-CN_TOPIC_0000002531522198__li188191010204418">分离模式</a>下，一组Cube Core和Vector Core组合中的Cube Core。</p></li>
+     <li id="ZH-CN_TOPIC_0000002531522198__li188621431115">AIV
+      <p id="ZH-CN_TOPIC_0000002531522198__p2307119151811"><a name="ZH-CN_TOPIC_0000002531522198__li188621431115"></a><a name="li188621431115"></a>在AI Core<a href="#ZH-CN_TOPIC_0000002531522198__li188191010204418">分离模式</a>下，一组Cube Core和Vector Core组合中的Vector Core。</p></li>
+    </ul>
+   </div>
+   <div class="section" id="ZH-CN_TOPIC_0000002531522198__section1574769433">
+    <a name="ZH-CN_TOPIC_0000002531522198__section1574769433"></a><a name="section1574769433"></a>
+    <h4 class="sectiontitle">AI Core的工作模式</h4>
+    <ul id="ZH-CN_TOPIC_0000002531522198__ul0819121018448">
+     <li id="ZH-CN_TOPIC_0000002531522198__li188191010204418"><a name="ZH-CN_TOPIC_0000002531522198__li188191010204418"></a><a name="li188191010204418"></a>分离模式
+      <p id="ZH-CN_TOPIC_0000002531522198__p2047624634316"><a name="ZH-CN_TOPIC_0000002531522198__li188191010204418"></a><a name="li188191010204418"></a>AI Core的一种工作模式，矩阵计算单元、矢量计算单元各自对应独立的Scalar调度单元，分离部署在Cube Core和Vector Core上。将Cube Core和Vector Core按照一定比例（1：N）进行组合，这样的组合视为一个AI Core，AI Core的核数以Cube Core为准。</p>
+      <div class="fignone" id="ZH-CN_TOPIC_0000002531522198__fig4925816477">
+       <span class="figcap"><b>图1 </b>分离模式示意图（N的取值以硬件平台信息获取接口获取的数值为准）</span>
+       <br><span><img class="eddx" id="ZH-CN_TOPIC_0000002531522198__image9993240175618" src="figure/zh-cn_image_0000002562282313.png"></span>
+      </div></li>
+     <li id="ZH-CN_TOPIC_0000002531522198__li1414517184416"><a name="ZH-CN_TOPIC_0000002531522198__li1414517184416"></a><a name="li1414517184416"></a>耦合模式
+      <p id="ZH-CN_TOPIC_0000002531522198__p19476746144311"><a name="ZH-CN_TOPIC_0000002531522198__li1414517184416"></a><a name="li1414517184416"></a>AI Core的一种工作模式，矩阵计算单元、矢量计算单元对应同一个Scalar调度单元，部署在一个AI Core上。</p>
+      <div class="fignone" id="ZH-CN_TOPIC_0000002531522198__fig583116255714">
+       <span class="figcap"><b>图2 </b>耦合模式示意图</span>
+       <br><span><img class="eddx" id="ZH-CN_TOPIC_0000002531522198__image18703148379" src="figure/zh-cn_image_0000002562442325.png"></span>
+      </div></li>
+    </ul>
+    <div class="note" id="ZH-CN_TOPIC_0000002531522198__note182611456194113">
+     <img src="public_sys-resources/note_3.0-zh-cn.png"><span class="notetitle"> </span>
+     <div class="notebody">
+      <div class="p" id="ZH-CN_TOPIC_0000002531522198__p1741213117425">
+       Ascend C编程中，不同产品的工作模式如下：
+       <ul id="ZH-CN_TOPIC_0000002531522198__ul64121513426">
+        <li id="ZH-CN_TOPIC_0000002531522198__li7412101114216"><span id="ZH-CN_TOPIC_0000002531522198__ph94123117429"><term id="ZH-CN_TOPIC_0000002531522198__zh-cn_topic_0000002562275259_term4363218112215">
+           Atlas 推理系列产品
+          </term></span>：耦合模式</li>
+        <li id="ZH-CN_TOPIC_0000002531522198__li5412171114216"><span id="ZH-CN_TOPIC_0000002531522198__ph9412151134210"><term id="ZH-CN_TOPIC_0000002531522198__zh-cn_topic_0000002562275259_term71949488213">
+           Atlas 训练系列产品
+          </term></span>：耦合模式</li>
+        <li id="ZH-CN_TOPIC_0000002531522198__li64120118427"><span id="ZH-CN_TOPIC_0000002531522198__ph541261194217"><term id="ZH-CN_TOPIC_0000002531522198__zh-cn_topic_0000002562275259_term11962195213215_2">
+           Atlas A2 训练系列产品
+          </term>/<term id="ZH-CN_TOPIC_0000002531522198__zh-cn_topic_0000002562275259_term184716139811_2">
+           Atlas A2 推理系列产品
+          </term></span>：分离模式</li>
+        <li id="ZH-CN_TOPIC_0000002531522198__li15412121134217"><span id="ZH-CN_TOPIC_0000002531522198__ph134121012428"><term id="ZH-CN_TOPIC_0000002531522198__zh-cn_topic_0000002562275259_term1253731311225">
+           Atlas A3 训练系列产品
+          </term>/<term id="ZH-CN_TOPIC_0000002531522198__zh-cn_topic_0000002562275259_term131434243115">
+           Atlas A3 推理系列产品
+          </term></span>：分离模式</li>
+        <li id="ZH-CN_TOPIC_0000002531522198__li4767154705220"><span id="ZH-CN_TOPIC_0000002531522198__ph126252025205">Atlas 350 加速卡</span>：分离模式</li>
+        <li id="ZH-CN_TOPIC_0000002531522198__li1041221184214"><span id="ZH-CN_TOPIC_0000002531522198__ph14122174211"><term id="ZH-CN_TOPIC_0000002531522198__zh-cn_topic_0000002562275259_term354143892110">
+           Atlas 200I/500 A2 推理产品
+          </term></span>：耦合模式</li>
+       </ul>
+      </div>
+      <p id="ZH-CN_TOPIC_0000002531522198__p570875544220">注意：针对<span id="ZH-CN_TOPIC_0000002531522198__ph626440174215"><term id="ZH-CN_TOPIC_0000002531522198__zh-cn_topic_0000002562275259_term354143892110_1">
+         Atlas 200I/500 A2 推理产品
+        </term></span>，硬件的工作模式既可以支持耦合模式，又可以支持分离模式。耦合模式下，开发者仅需关注AI Core数量，无需关注Vector Core和Cube Core数量；分离模式下，需要关注AI Core、Vector Core、Cube Core的数量。Ascend C编程场景下，仅支持耦合模式。</p>
+     </div>
+    </div>
+   </div>
+   <div class="section" id="ZH-CN_TOPIC_0000002531522198__section2853918419">
+    <h4 class="sectiontitle">计算单元</h4>
+    <p id="ZH-CN_TOPIC_0000002531522198__p58535521111">计算单元是AI Core中提供强大算力的核心单元，包括三种基础<strong id="ZH-CN_TOPIC_0000002531522198__b1974692710419">计算单元</strong>：Cube（矩阵）计算单元、Vector（矢量）计算单元和Scalar（标量）计算单元，完成AI Core中不同类型的数据计算。</p>
+    <ul id="ZH-CN_TOPIC_0000002531522198__ul102384014018">
+     <li id="ZH-CN_TOPIC_0000002531522198__li523816018401">Cube
+      <p id="ZH-CN_TOPIC_0000002531522198__p20779750144618"><a name="ZH-CN_TOPIC_0000002531522198__li523816018401"></a><a name="li523816018401"></a>Cube计算单元负责执行矩阵运算，以float16数据类型为例，Cube每次执行可完成两个float16类型的16x16矩阵的乘法操作。如下图所示，高亮部分为Cube计算单元及其访问的存储单元，其中L0A存储左矩阵，L0B存储右矩阵，L0C存储矩阵乘的结果和中间结果。</p>
+      <div class="fignone" id="ZH-CN_TOPIC_0000002531522198__fig643417174212">
+       <span class="figcap"><b>图3 </b>Cube计算单元数据访问</span>
+       <br><span><img class="eddx" id="ZH-CN_TOPIC_0000002531522198__image2434617322" src="figure/zh-cn_image_0000002531362408.png"></span>
+      </div></li>
+     <li id="ZH-CN_TOPIC_0000002531522198__li147591106418">Vector
+      <p id="ZH-CN_TOPIC_0000002531522198__p7293185211366"><a name="ZH-CN_TOPIC_0000002531522198__li147591106418"></a><a name="li147591106418"></a>Vector负责执行向量运算。向量计算单元执行向量指令，类似于传统的单指令多数据（Single Instruction Multiple Data，SIMD）指令，每个向量指令可以完成多个操作数的同一类型运算。向量计算单元可以快速完成两个float16类型的向量相加或者相乘。向量指令支持多次迭代执行，也支持对带有间隔的向量直接进行运算。</p>
+      <p id="ZH-CN_TOPIC_0000002531522198__p1797043633210">如下图所示，Vector所有计算的源数据以及目标数据都要求存储在Unified Buffer中，Vector指令的首地址和操作长度有对齐要求，通常要求32B对齐，具体对齐要求参考API的约束描述。</p>
+      <div class="fignone" id="ZH-CN_TOPIC_0000002531522198__fig172397519590">
+       <span class="figcap"><b>图4 </b>Vector计算单元数据访问</span>
+       <br><span><img class="eddx" id="ZH-CN_TOPIC_0000002531522198__image192391959593" src="figure/zh-cn_image_0000002562442331.png"></span>
+      </div></li>
+    </ul>
+    <ul id="ZH-CN_TOPIC_0000002531522198__ul810335083814">
+     <li id="ZH-CN_TOPIC_0000002531522198__li191045501385">Scalar
+      <p id="ZH-CN_TOPIC_0000002531522198__p1050611417710"><a name="ZH-CN_TOPIC_0000002531522198__li191045501385"></a><a name="li191045501385"></a>Scalar负责各类型的标量数据运算和程序的流程控制。功能上可以看做一个小CPU，完成整个程序的循环控制、分支判断、Cube/Vector等指令的地址和参数计算以及基本的算术运算，并且可以通过在事件同步模块中插入同步符的方式来控制AI Core中其他执行单元的流水。相对于Host CPU，AI Core中的Scalar计算能力较弱，重点用于发射指令，所以在实际应用场景中应尽量减少Scalar计算，比如性能调优时尽量减少if/else等分支判断及变量运算。</p>
+      <p id="ZH-CN_TOPIC_0000002531522198__p836813417248">如下图所示：Scalar执行标量运算指令时，执行标准的ALU(Arithmetic Logic Unit)语句，ALU需要的代码段和数据段（栈空间）都来自于GM，ICache(Instruction Cache)用于缓存代码段，缓存大小与硬件规格相关，比如为16K或32K，以2K为单位加载；DCache(Data Cache)用于缓存数据段，大小也与硬件规格相关，比如为16K，以Cache Line（64Byte）为单位加载。考虑到核内访问效率最高，应尽量保证代码段和数据段被缓存在ICache和DCache，避免核外访问； 同时根据数据加载单位不同，编程时可以考虑单次加载数据大小，来提升加载效率。例如在DCache加载数据时，当数据内存首地址与Cache Line（64Byte）对齐时，加载效率最高。</p>
+      <div class="fignone" id="ZH-CN_TOPIC_0000002531522198__fig9952125415559">
+       <span class="figcap"><b>图5 </b>Scalar对指令和数据的访问</span>
+       <br><span><img class="eddx" id="ZH-CN_TOPIC_0000002531522198__image39521354125512" src="figure/zh-cn_image_0000002531362404.png"></span>
+      </div>
+      <div class="note" id="ZH-CN_TOPIC_0000002531522198__note1816633710437">
+       <img src="public_sys-resources/note_3.0-zh-cn.png"><span class="notetitle"> </span>
+       <div class="notebody">
+        <p id="ZH-CN_TOPIC_0000002531522198__p4931133125315">硬件提供L2Cache用于缓存访问GM的数据（包括代码段、数据段），以此加快访问速度，提高访问效率。核外L2Cache以Cache Line为单位加载数据，根据硬件规格不同，Cache Line大小不同（128/256/512Byte等）。</p>
+       </div>
+      </div></li>
+    </ul>
+   </div>
+   <div class="section" id="ZH-CN_TOPIC_0000002531522198__section123639375417">
+    <a name="ZH-CN_TOPIC_0000002531522198__section123639375417"></a><a name="section123639375417"></a>
+    <h4 class="sectiontitle">存储单元和搬运单元</h4>
+    <p id="ZH-CN_TOPIC_0000002531522198__p3900151617318">AI处理器中的计算资源要想发挥强劲算力，必要条件是保证输入数据能够及时准确地出现在计算单元中，需要精心设计存储系统，保证计算单元所需的数据供应。</p>
+    <p id="ZH-CN_TOPIC_0000002531522198__zh-cn_topic_0228422248_p5635526319">如下图所示：AI Core中包含多级内部存储，AI Core需要把外部存储中的数据加载到内部存储中，才能完成相应的计算。AI Core的主要内部存储包括：L1 Buffer（L1缓冲区），L0 Buffer（L0缓冲区），Unified Buffer（统一缓冲区）等。为了配合AI Core中的数据传输和搬运，AI Core中还包含MTE（Memory Transfer Engine，数据传递引擎）搬运单元，在搬运过程中可执行随路数据格式/类型转换。</p>
+    <p id="ZH-CN_TOPIC_0000002531522198__p179251167215">内部存储单元和搬运单元的具体介绍请参考<a href="#ZH-CN_TOPIC_0000002531522198__table1692510612218">表1</a>和<a href="#ZH-CN_TOPIC_0000002531522198__table288493152012">表2</a>。</p>
+    <div class="fignone" id="ZH-CN_TOPIC_0000002531522198__fig2032418113610">
+     <span class="figcap"><b>图6 </b>存储单元</span>
+     <br><span><img class="eddx" id="ZH-CN_TOPIC_0000002531522198__image19324201164" src="figure/zh-cn_image_0000002531362400.png"></span>
+    </div>
+    <div class="tablenoborder">
+     <a name="ZH-CN_TOPIC_0000002531522198__table1692510612218"></a><a name="table1692510612218"></a>
+     <table cellpadding="4" cellspacing="0" summary="" id="ZH-CN_TOPIC_0000002531522198__table1692510612218" frame="border" border="1" rules="all">
+      <caption>
+       <b>表1 </b>存储单元介绍
+      </caption>
+      <thead align="left">
+       <tr id="ZH-CN_TOPIC_0000002531522198__row1692576132110">
+        <th align="left" class="cellrowborder" valign="top" width="30.11%" id="mcps1.3.11.6.2.3.1.1">
+         <p id="ZH-CN_TOPIC_0000002531522198__p189252069218">存储单元</p></th>
+        <th align="left" class="cellrowborder" valign="top" width="69.89%" id="mcps1.3.11.6.2.3.1.2">
+         <p id="ZH-CN_TOPIC_0000002531522198__p17925161215">描述</p></th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr id="ZH-CN_TOPIC_0000002531522198__row892518618215">
+        <td class="cellrowborder" valign="top" width="30.11%" headers="mcps1.3.11.6.2.3.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p1292586202112">L1 Buffer</p></td>
+        <td class="cellrowborder" valign="top" width="69.89%" headers="mcps1.3.11.6.2.3.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p1492517613219">L1缓冲区，通用内部存储，是AI Core内比较大的一块数据中转区，可暂存Cube计算单元需要反复使用的一些数据从而减少从总线读写的次数。</p></td>
+       </tr>
+       <tr id="ZH-CN_TOPIC_0000002531522198__row1925146182113">
+        <td class="cellrowborder" valign="top" width="30.11%" headers="mcps1.3.11.6.2.3.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p1192512632115">L0A Buffer / L0B Buffer</p></td>
+        <td class="cellrowborder" valign="top" width="69.89%" headers="mcps1.3.11.6.2.3.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p192611610219">Cube指令的输入。</p></td>
+       </tr>
+       <tr id="ZH-CN_TOPIC_0000002531522198__row1192610642119">
+        <td class="cellrowborder" valign="top" width="30.11%" headers="mcps1.3.11.6.2.3.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p109268610212">L0C Buffer</p></td>
+        <td class="cellrowborder" valign="top" width="69.89%" headers="mcps1.3.11.6.2.3.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p49269611212">Cube指令的输出，但进行累加计算的时候，也是输入的一部分。</p></td>
+       </tr>
+       <tr id="ZH-CN_TOPIC_0000002531522198__row9926467213">
+        <td class="cellrowborder" valign="top" width="30.11%" headers="mcps1.3.11.6.2.3.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p1692614642117">Unified Buffer</p></td>
+        <td class="cellrowborder" valign="top" width="69.89%" headers="mcps1.3.11.6.2.3.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p59267692111">统一缓冲区，向量和标量计算的输入和输出。</p></td>
+       </tr>
+       <tr id="ZH-CN_TOPIC_0000002531522198__row185871713151111">
+        <td class="cellrowborder" valign="top" width="30.11%" headers="mcps1.3.11.6.2.3.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p8186194819417">BT Buffer</p></td>
+        <td class="cellrowborder" valign="top" width="69.89%" headers="mcps1.3.11.6.2.3.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p7587111381113">BiasTable Buffer，存放矩阵计算中的Bias。</p></td>
+       </tr>
+       <tr id="ZH-CN_TOPIC_0000002531522198__row13135416151111">
+        <td class="cellrowborder" valign="top" width="30.11%" headers="mcps1.3.11.6.2.3.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p17491298118">FP Buffer</p></td>
+        <td class="cellrowborder" valign="top" width="69.89%" headers="mcps1.3.11.6.2.3.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p1213671651111">Fixpipe Buffer，存放量化参数、Relu参数等。</p></td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="tablenoborder">
+     <a name="ZH-CN_TOPIC_0000002531522198__table288493152012"></a><a name="table288493152012"></a>
+     <table cellpadding="4" cellspacing="0" summary="" id="ZH-CN_TOPIC_0000002531522198__table288493152012" frame="border" border="1" rules="all">
+      <caption>
+       <b>表2 </b>搬运单元介绍
+      </caption>
+      <thead align="left">
+       <tr id="ZH-CN_TOPIC_0000002531522198__row19884103142012">
+        <th align="left" class="cellrowborder" valign="top" width="30.049999999999997%" id="mcps1.3.11.7.2.3.1.1">
+         <p id="ZH-CN_TOPIC_0000002531522198__p288473114204">搬运单元</p></th>
+        <th align="left" class="cellrowborder" valign="top" width="69.95%" id="mcps1.3.11.7.2.3.1.2">
+         <p id="ZH-CN_TOPIC_0000002531522198__p8884531162011">描述</p></th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr id="ZH-CN_TOPIC_0000002531522198__row199091854122011">
+        <td class="cellrowborder" valign="top" width="30.049999999999997%" headers="mcps1.3.11.7.2.3.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p990975412200">MTE1</p></td>
+        <td class="cellrowborder" valign="top" width="69.95%" headers="mcps1.3.11.7.2.3.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p69911469917">负责如下通路的数据搬运：</p>
+         <ul id="ZH-CN_TOPIC_0000002531522198__ul15750125414917">
+          <li id="ZH-CN_TOPIC_0000002531522198__li2750654593">L1-&gt;L0A/L0B</li>
+          <li id="ZH-CN_TOPIC_0000002531522198__li137215581114">L1-&gt;BT Buffer</li>
+         </ul></td>
+       </tr>
+       <tr id="ZH-CN_TOPIC_0000002531522198__row83637216">
+        <td class="cellrowborder" valign="top" width="30.049999999999997%" headers="mcps1.3.11.7.2.3.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p16440784214">MTE2</p></td>
+        <td class="cellrowborder" valign="top" width="69.95%" headers="mcps1.3.11.7.2.3.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p12680536151314">负责如下通路的数据搬运：</p>
+         <ul id="ZH-CN_TOPIC_0000002531522198__ul1420163841318">
+          <li id="ZH-CN_TOPIC_0000002531522198__li5420133881318">GM-&gt;{L1, L0A/B}，在该通路下，基于分形大小搬运，搬运时满足Cache Line大小对齐，性能更优。</li>
+          <li id="ZH-CN_TOPIC_0000002531522198__li147031641141315">GM-&gt;UB，基于Cache Line大小搬运性能更优。</li>
+         </ul></td>
+       </tr>
+       <tr id="ZH-CN_TOPIC_0000002531522198__row153848520214">
+        <td class="cellrowborder" valign="top" width="30.049999999999997%" headers="mcps1.3.11.7.2.3.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p121221999218">MTE3</p></td>
+        <td class="cellrowborder" valign="top" width="69.95%" headers="mcps1.3.11.7.2.3.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p1683722417444">负责如下通路的数据搬运：</p>
+         <ul id="ZH-CN_TOPIC_0000002531522198__ul43441132124411">
+          <li id="ZH-CN_TOPIC_0000002531522198__li134403216445">UB -&gt; GM</li>
+         </ul></td>
+       </tr>
+       <tr id="ZH-CN_TOPIC_0000002531522198__row217791862110">
+        <td class="cellrowborder" valign="top" width="30.049999999999997%" headers="mcps1.3.11.7.2.3.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p61776186219">FixPipe</p></td>
+        <td class="cellrowborder" valign="top" width="69.95%" headers="mcps1.3.11.7.2.3.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531522198__p18986147134310">负责如下通路的数据搬运，搬运过程中可以完成随路数据格式/类型转换：</p>
+         <ul id="ZH-CN_TOPIC_0000002531522198__ul189261456194111">
+          <li id="ZH-CN_TOPIC_0000002531522198__li292617561416">L0C-&gt;{GM/L1}</li>
+          <li id="ZH-CN_TOPIC_0000002531522198__li67511510154213">L1-&gt;FP Buffer</li>
+         </ul></td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </div>
+   <div class="note" id="ZH-CN_TOPIC_0000002531522198__note17393251051">
+    <img src="public_sys-resources/note_3.0-zh-cn.png"><span class="notetitle"> </span>
+    <div class="notebody">
+     <ul id="ZH-CN_TOPIC_0000002531522198__ul136541416437">
+      <li id="ZH-CN_TOPIC_0000002531522198__li76548417439">不同类型的AI处理器，存储单元大小不同，开发者可通过<a href="/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_1034.html">GetCoreMemSize</a>接口获取。</li>
+      <li id="ZH-CN_TOPIC_0000002531522198__li42291439125314">所有通过搬运单元读写GM的数据都缺省被缓存在L2Cache，以此加快访问速度，提高访问效率。核外L2Cache以Cache Line为单位加载数据，根据硬件规格不同，Cache Line大小不同（128/256/512Byte等）。</li>
+     </ul>
+    </div>
+   </div>
+   <div class="section" id="ZH-CN_TOPIC_0000002531522198__section147001014511">
+    <h4 class="sectiontitle">典型的数据流</h4>
+    <ul id="ZH-CN_TOPIC_0000002531522198__ul1773211015915">
+     <li id="ZH-CN_TOPIC_0000002531522198__li473217102098">Vector计算典型的数据流如下：
+      <p id="ZH-CN_TOPIC_0000002531522198__p11683140109"><a name="ZH-CN_TOPIC_0000002531522198__li473217102098"></a><a name="li473217102098"></a>GM → UB → Vector → UB → GM</p>
+      <p id="ZH-CN_TOPIC_0000002531522198__p4216396"><span><img class="eddx" id="ZH-CN_TOPIC_0000002531522198__image0859163145815" src="figure/zh-cn_image_0000002531362410.png"></span></p></li>
+     <li id="ZH-CN_TOPIC_0000002531522198__li57321610390">Cube计算典型的数据流如下：
+      <ul id="ZH-CN_TOPIC_0000002531522198__ul515813331051">
+       <li id="ZH-CN_TOPIC_0000002531522198__li171587331450">GM →L1→L0A/L0B →Cube →L0C→FixPipe→GM</li>
+       <li id="ZH-CN_TOPIC_0000002531522198__li497864512113">GM →L1→L0A/L0B →Cube →L0C→FixPipe→L1</li>
+      </ul>
+      <p id="ZH-CN_TOPIC_0000002531522198__p327013408102"><span><img class="eddx" id="ZH-CN_TOPIC_0000002531522198__image4790144011016" src="figure/zh-cn_image_0000002531362406.png"></span></p></li>
+    </ul>
+   </div>
+   <div class="section" id="ZH-CN_TOPIC_0000002531522198__section1296816241258">
+    <h4 class="sectiontitle">典型的指令流</h4>
+    <p id="ZH-CN_TOPIC_0000002531522198__p127mcpsimp">多条指令从系统内存通过总线接口进入到ICache(Instruction Cache)中，后续的指令执行过程，根据指令的类型，有两种可能：</p>
+    <ul id="ZH-CN_TOPIC_0000002531522198__zh-cn_topic_0228422173_ul11724870415">
+     <li id="ZH-CN_TOPIC_0000002531522198__zh-cn_topic_0228422173_li11724571745">如果指令是Scalar指令，指令会被Scalar单元直接执行。</li>
+     <li id="ZH-CN_TOPIC_0000002531522198__zh-cn_topic_0228422173_li17324023942">其他指令会被Scalar单元调度到独立的分类序列（Vector指令序列、Cube指令序列、MTE1/MTE2/MTE3指令序列等），然后再被对应的执行单元执行。</li>
+    </ul>
+    <div class="fignone" id="ZH-CN_TOPIC_0000002531522198__fig1993349810">
+     <span class="figcap"><b>图7 </b>指令分类处理机制</span>
+     <br><span><img class="eddx" id="ZH-CN_TOPIC_0000002531522198__image1499394886" src="figure/zh-cn_image_0000002562442307.png"></span>
+    </div>
+    <div class="p" id="ZH-CN_TOPIC_0000002531522198__p888213391910">
+     同一个指令序列中的指令是按照进入指令序列的顺序执行的，不同指令序列之间可以并行执行，通过多个指令序列的并行执行可以提升整体执行效率。对于并行执行过程中可能出现的数据依赖，通过事件同步模块插入同步指令来控制流水线的同步，提供PipeBarrier、SetFlag/WaitFlag两种API，保证序列内部以及序列之间按照逻辑关系执行。
+     <ul id="ZH-CN_TOPIC_0000002531522198__ul63453923019">
+      <li id="ZH-CN_TOPIC_0000002531522198__li183457973013">PipeBarrier本身是一条指令，用于在序列内部约束执行顺序（虽然指令是顺序执行，但并不意味着后一条指令开始执行时前一条指令执行结束）。PipeBarrier指令可以保证前序指令中所有数据读写全部完成，后序指令才开始执行。</li>
+      <li id="ZH-CN_TOPIC_0000002531522198__li16345109113012">SetFlag/WaitFlag为两条指令，在SetFlag/WaitFlag的指令中，可以指定一对指令序列的关系，表示两个序列之间完成一组“锁”机制，其作用方式为：
+       <ul id="ZH-CN_TOPIC_0000002531522198__ul234511933010">
+        <li id="ZH-CN_TOPIC_0000002531522198__li234510903014">SetFlag：当前序指令的所有读写操作都完成之后，当前指令开始执行，并将硬件中的对应标志位设置为1。</li>
+        <li id="ZH-CN_TOPIC_0000002531522198__li53451495307">WaitFlag：当执行到该指令时，如果发现对应标志位为0，该序列的后续指令将一直被阻塞；如果发现对应标志位为1，则将对应标志位设置为0，同时后续指令开始执行。</li>
+       </ul></li>
+     </ul>
+    </div>
+    <p id="ZH-CN_TOPIC_0000002531522198__p450635172418">Ascend C提供<a href="/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_00013.html">同步控制API</a>，开发者可以使用这类API来自行完成同步控制。需要注意的是，通常情况下，开发者基于<a href="atlas_ascendc_10_0012.html">编程模型</a>中介绍的编程模型和范式进行编程时不需要关注同步，编程模型帮助开发者完成了同步控制；使用编程模型和范式是我们推荐的编程方式，自行同步控制可能会带来一定的编程复杂度。</p>
+    <p id="ZH-CN_TOPIC_0000002531522198__p327224582415">但是我们仍然希望开发者可以理解同步的基本原理，便于后续更好的理解设计并行计算程序；同时少数情况需要开发者手动插入同步，您可以通过<a href="/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0179.html#ZH-CN_TOPIC_0000002531541438__section14375133724414">什么时候需要开发者手动插入同步</a>来了解具体内容。</p>
+   </div>
+  </div>
+  <div>
+   <div class="familylinks">
+    <div class="parentlink">
+     <strong>父主题：</strong> <a href="atlas_ascendc_10_0007.html">硬件实现</a>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>

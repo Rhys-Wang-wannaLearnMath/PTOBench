@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "authority": "frozen source snapshot",
+  "upstream_repository": "https://github.com/hw-native-sys/pypto-lib.git",
+  "selected_upstream_commit": "7f15a1fa6bad2b7030eada571bfe23641d1bddd3",
+  "selected_upstream_path": "models/deepseek_v4_flash_dspark/decode_csa.py",
+  "source": {
+    "repository_path": "models/0912/deepseek_v4_flash_dspark/decode_csa.py",
+    "sha256": "b896abf032c0f8c25a34917059428fcd1d58cbd7f013ca424df34ef73459e20e",
+    "frozen_path": "official/original.py",
+    "frozen_sha256": "b896abf032c0f8c25a34917059428fcd1d58cbd7f013ca424df34ef73459e20e"
+  },
+  "dependencies": [
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/config.py",
+      "sha256": "e823df2d88d5f128b928e476f94ee46eb6f3fd1c2c21c506f9334f66c74f0bd9",
+      "frozen_path": "official/original_config.py",
+      "frozen_sha256": "e823df2d88d5f128b928e476f94ee46eb6f3fd1c2c21c506f9334f66c74f0bd9"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/decode_compressor_ratio4.py",
+      "sha256": "053b0296b623d33c43e6d9502706abf7f4f97ad4b3b52cfac9675ea7b753c7b7",
+      "frozen_path": "official/decode_compressor_ratio4.py",
+      "frozen_sha256": "053b0296b623d33c43e6d9502706abf7f4f97ad4b3b52cfac9675ea7b753c7b7"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/hc_post.py",
+      "sha256": "b5a57578e26b02f38c502de699ca1e9d8f86e3a8bbe43585c2f2ee9d727a48a5",
+      "frozen_path": "official/hc_post.py",
+      "frozen_sha256": "b5a57578e26b02f38c502de699ca1e9d8f86e3a8bbe43585c2f2ee9d727a48a5"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/hc_pre.py",
+      "sha256": "b5e347ed55eae5e7678c40bce3b9212c1b715419589a09b7edbcdf2a922755ee",
+      "frozen_path": "official/hc_pre.py",
+      "frozen_sha256": "b5e347ed55eae5e7678c40bce3b9212c1b715419589a09b7edbcdf2a922755ee",
+      "notes": "Separate HC-pre task-graph implementation preserved byte-exactly."
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/decode_indexer.py",
+      "sha256": "56bb878c2c66ceb76c0f95e13ccef7488bbdf3ca843aba9a3c8910d3504d9486",
+      "frozen_path": "official/decode_indexer.py",
+      "frozen_sha256": "56bb878c2c66ceb76c0f95e13ccef7488bbdf3ca843aba9a3c8910d3504d9486"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/decode_indexer_compressor.py",
+      "sha256": "91626888a004997fc0a5d3e6b794c70d1a37755eac6b66e090932188eb1d8d19",
+      "frozen_path": "official/decode_indexer_compressor.py",
+      "frozen_sha256": "91626888a004997fc0a5d3e6b794c70d1a37755eac6b66e090932188eb1d8d19"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/qkv_proj_rope.py",
+      "sha256": "cc6679d9766a8770f3f88d26da338bcaee26b25492d909507efc3d09f51f6921",
+      "frozen_path": "official/qkv_proj_rope.py",
+      "frozen_sha256": "cc6679d9766a8770f3f88d26da338bcaee26b25492d909507efc3d09f51f6921"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/rmsnorm.py",
+      "sha256": "776c53c970f22981e066733e7b857a71c7df42990201db5eb941f099b0e47ac0",
+      "frozen_path": "official/rmsnorm.py",
+      "frozen_sha256": "776c53c970f22981e066733e7b857a71c7df42990201db5eb941f099b0e47ac0"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/rope_interleave.py",
+      "sha256": "310fe1ce05261850d7a6bb67caee9b6dacca1eb913dadddcf14483efb5b331f7",
+      "frozen_path": "official/rope_interleave.py",
+      "frozen_sha256": "310fe1ce05261850d7a6bb67caee9b6dacca1eb913dadddcf14483efb5b331f7"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/decode_sparse_attn_csa.py",
+      "sha256": "e35aa61c1c5dbf37ba8e1792f1e5290ddb122fa1b835c1baf928a4363cd36e9c",
+      "frozen_path": "official/decode_sparse_attn_csa.py",
+      "frozen_sha256": "e35aa61c1c5dbf37ba8e1792f1e5290ddb122fa1b835c1baf928a4363cd36e9c"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/utils.py",
+      "sha256": "9b110b3d2de05e84b61d53cdcd23d658afcc02dbb769060e5cfb01b095a23cc1",
+      "frozen_path": "official/utils.py",
+      "frozen_sha256": "9b110b3d2de05e84b61d53cdcd23d658afcc02dbb769060e5cfb01b095a23cc1"
+    }
+  ],
+  "selection_rationale": "Preserve the frozen standalone DeepSeek-V4 Flash dspark ratio-4 CSA source and its complete reachable local module/config closure; bind the FLASH preset only through the public config alias used by the Fixture adapter.",
+  "case_id": "deepseek_v4_flash_dspark.decode_csa_flash"
+}

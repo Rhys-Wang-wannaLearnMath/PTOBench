@@ -1,0 +1,158 @@
+import json
+import math
+
+from pathlib import Path
+import torch
+from golden import TensorSpec, run
+import common
+
+workflow = common.load_module(common.BENCHMARK_ROOT / "evaluator/workflow.py", "workflow_deepseek_v4_combine_flash")
+
+def _values(fixture):
+    return {p.stem: torch.load(p, map_location="cpu", weights_only=True) for p in (fixture / "in").glob("*.pt")}
+
+def build_tensor_specs(fixture):
+    v = _values(fixture)
+    from config import (
+        B, D, S, T, N_LOCAL_EXPERTS, RECV_MAX,
+    )
+    return [TensorSpec("recv_y", [N_LOCAL_EXPERTS, RECV_MAX, D], torch.bfloat16, init_value=v["recv_y"]),
+            TensorSpec("recv_token", [N_LOCAL_EXPERTS, RECV_MAX], torch.int32, init_value=v["recv_token"]),
+            TensorSpec("recv_expert_count", [N_LOCAL_EXPERTS, 1], torch.int32, init_value=v["recv_expert_count"]),
+            TensorSpec("sh", [T, D], torch.bfloat16, init_value=v["sh"]),
+            TensorSpec("ffn_out", [B, S, D], torch.bfloat16)]
+
+def _run(**kwargs):
+    return run(rtol=1e-3, atol=1e-3, save_data=False, **kwargs)
+
+def _program(module, case): return getattr(module, case["entry"])
+def _finite_nonnegative(value, field):
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(f"comparator {field} must be a number")
+    number = float(value)
+    if not math.isfinite(number) or number < 0:
+        raise ValueError(f"comparator {field} must be finite and nonnegative")
+    return number
+
+
+def _standard_comparator(name, settings):
+    if not isinstance(settings, dict):
+        raise ValueError(f"comparator output {name!r} must be an object")
+    method = settings.get("method")
+
+    if method == "exact":
+        if set(settings) != {"method"}:
+            raise ValueError(f"exact comparator {name!r} accepts only method")
+
+        def compare(actual, expected, **_):
+            passed = torch.equal(actual, expected)
+            if passed:
+                return True, "torch.equal"
+            if actual.shape != expected.shape:
+                return False, (
+                    f"torch.equal: shape={tuple(actual.shape)}/{tuple(expected.shape)}"
+                )
+            mismatches = int((actual != expected).sum().item())
+            return False, f"torch.equal: mismatches={mismatches}/{actual.numel()}"
+
+        return compare
+
+    if method not in {"allclose", "ratio_allclose"}:
+        raise ValueError(f"unsupported comparator method for {name!r}: {method!r}")
+
+    required = {"method", "rtol", "atol"}
+    if method == "ratio_allclose":
+        required.add("max_error_ratio")
+    if set(settings) != required:
+        fields = ", ".join(sorted(required))
+        raise ValueError(f"{method} comparator {name!r} requires exactly {fields}")
+
+    rtol = _finite_nonnegative(settings["rtol"], f"{name}.rtol")
+    atol = _finite_nonnegative(settings["atol"], f"{name}.atol")
+    if method == "allclose":
+        def compare(actual, expected, **_):
+            passed = torch.allclose(actual, expected, rtol=rtol, atol=atol)
+            if passed:
+                return True, f"torch.allclose(rtol={rtol}, atol={atol})"
+            close = torch.isclose(actual, expected, rtol=rtol, atol=atol)
+            mismatches = int((~close).sum().item())
+            return False, (
+                f"torch.allclose(rtol={rtol}, atol={atol}): "
+                f"mismatches={mismatches}/{actual.numel()}"
+            )
+
+        return compare
+
+    max_error_ratio = _finite_nonnegative(
+        settings["max_error_ratio"], f"{name}.max_error_ratio"
+    )
+    if max_error_ratio > 1:
+        raise ValueError(f"comparator {name}.max_error_ratio must be at most 1")
+
+    def compare(actual, expected, **_):
+        if actual.shape != expected.shape:
+            return False, (
+                f"ratio_allclose: shape={tuple(actual.shape)}/{tuple(expected.shape)}"
+            )
+        if actual.numel() == 0:
+            return True, ""
+        actual_f = actual.cpu().to(torch.float32)
+        expected_f = expected.cpu().to(torch.float32)
+        if not bool(torch.isfinite(actual_f).all()) or not bool(
+            torch.isfinite(expected_f).all()
+        ):
+            return False, "ratio_allclose: non-finite value"
+        bad = (actual_f - expected_f).abs() > (atol + rtol * expected_f.abs())
+        error_count = int(bad.sum().item())
+        threshold = round(max_error_ratio * actual_f.numel())
+        passed = error_count <= threshold
+        return passed, (
+            ""
+            if passed
+            else f"ratio_allclose: mismatches={error_count}/{actual_f.numel()}, "
+            f"allowed={max_error_ratio}, rtol={rtol}, atol={atol}"
+        )
+
+    return compare
+
+
+def _compare(case_dir, case):
+    path = case_dir / case["comparator"]
+    policy = json.loads(path.read_text(encoding="utf-8"))
+    if (
+        not isinstance(policy, dict)
+        or set(policy) != {"schema_version", "outputs"}
+        or policy["schema_version"] != 1
+    ):
+        raise ValueError(
+            "comparator.json must contain only schema_version=1 and outputs"
+        )
+    outputs = policy["outputs"]
+    expected_names = case["correctness"]["outputs"]
+    if not isinstance(outputs, dict) or set(outputs) != set(expected_names):
+        actual_names = (
+            sorted(outputs) if isinstance(outputs, dict) else type(outputs).__name__
+        )
+        raise ValueError(
+            "comparator outputs must exactly match case correctness outputs: "
+            f"{actual_names} != {sorted(expected_names)}"
+        )
+    return {
+        name: _standard_comparator(name, outputs[name])
+        for name in expected_names
+    }
+
+
+def _oracle(oracle, values):
+    tensors = {k: v for k, v in values.items() if isinstance(v, torch.Tensor)}
+    for name, value in oracle.compute(tensors, {}).items(): values[name][:] = value
+def prepare_ref(case_dir, sealed, case, platform=None):
+    return workflow.prepare_ref(case_dir=case_dir, sealed=sealed, case=case, platform=platform,
+        build_specs=build_tensor_specs, load_ref=lambda: common.load_ref(case_dir, sealed, "combine_flash_ref"),
+        load_oracle=lambda: common.load_oracle(case_dir, sealed, "combine_flash_oracle"), make_program=_program,
+        make_compare=lambda: _compare(case_dir, case), run=_run, oracle_golden=_oracle)
+def evaluate_candidate(case_dir, sealed, case, candidate_workspace, platform=None, phase="all"):
+    return workflow.evaluate_candidate(case_dir=case_dir, sealed=sealed, case=case, candidate_workspace=candidate_workspace,
+        platform=platform, phase=phase, build_specs=build_tensor_specs,
+        load_candidate=lambda: common.load_candidate(case_dir, case, candidate_workspace, "combine_flash_candidate"),
+        make_program=_program, make_compare=lambda: _compare(case_dir, case), run=_run)

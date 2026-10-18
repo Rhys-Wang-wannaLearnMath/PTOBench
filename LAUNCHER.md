@@ -1,5 +1,12 @@
 # Experiment Launcher
 
+Select the independent participant with top-level `mode: basic` (also the default).
+This is independent of the backend. Basic exposes evaluate, fork, and all three
+profile operations. `mode: cannbot` runs the frozen upstream PyPTO performance
+workflow using Pi or Codex; see [CANNBot setup and records](modes/cannbot/README.md).
+Ours remains reserved and is rejected until implemented.
+See [mode organization](modes/README.md), the [participant protocol](modes/PROTOCOL.md), and [original Run records](RUN_RECORDS.md).
+
 Use an interpreter with PyPTO-Lib's Torch/PyPTO dependencies for Case metadata
 preflight, and install the local Launcher dependency in that same interpreter:
 
@@ -19,8 +26,9 @@ existing host authentication. Their executables must be available on PATH.
 Pi and OpenCode profiles use the pypto-lib provider launcher when that nested
 integration is present; an independent PTOBench checkout automatically uses
 the installed `pi` or `opencode` executable instead.
-The default fallback uses the tool's own configured model and records it as
-`unknown`. Named gateway profiles retain their provider/model arguments, so
+The default fallback uses the tool's own configured model. Codex's selected
+model/reasoning are pinned in argv; native sessions retain effective settings.
+Named gateway profiles retain their provider/model arguments, so
 the corresponding provider must be configured in the host tool. An existing
 custom wrapper is required as configured and is never silently discarded.
 The initial machine verification and backend readiness results are recorded in
@@ -28,6 +36,7 @@ The initial machine verification and backend readiness results are recorded in
 
 ```yaml
 case: deepseek_v4.rmsnorm_decode_demo
+mode: basic
 optimizer:
   id: codex
   backend: codex
@@ -36,11 +45,11 @@ output:
   runs_root: ../runs
   snapshots_root: ../snapshots
 budget:
-  max_hardware_actions: 20
+  max_hardware_actions: 20  # or "unlimited"
   finish_actions: 1
 ```
 
-Case and optimizer id/backend are required. Defaults are profile `default`,
+Case and optimizer id/backend are required; the method validates whether it supports that backend. Defaults are profile `default`,
 output `runs`/`snapshots`, and budget 20/1. Relative outputs resolve against the
 experiment YAML directory, even when launching from another cwd. Safe YAML
 mapping, duplicate keys, unknown fields, invalid IDs/budgets, missing profiles,
@@ -48,30 +57,42 @@ symlinks in managed paths, and output overlap are checked before creating a
 Session. Preflight verifies prepared Case assets, the configured Python/CANN/
 PTOAS installation and NPU health, installed backend/version/flags, and the
 absence of retired entries. It performs no Ref preparation or measurement.
+`max_hardware_actions: "unlimited"` leaves exploration open until the Agent
+exits or the Session is interrupted; status and action results report
+`remaining_hardware_actions: null`.
 
-Profiles live in `launcher/profiles/<backend>/<name>.yaml`. They contain string
-arrays `argv` and `version_argv`, optional `help_argv` and `model`, and a string
+Native profiles belong to the execution side, in `modes/_shared/profiles/<backend>/<name>.yaml`. Basic also reads existing custom profiles at the old `launcher/profiles/` location. They contain string
+arrays `argv` and `version_argv`, optional `help_argv`, `model`, and `reasoning`, and a string
 mapping `env`. `{prompt}` must occur as one separate argv element;
 `{workspace}`, `{session_root}` and `{repo_root}` are also available. Commands run directly
 with `shell=False`; shell strings are not interpreted. `env` accepts ordinary
 settings, including OpenCode's permission configuration, and rejects credential
 settings and overrides of managed PATH/Session variables. Keep credentials in
 the tool's existing host authentication. The default model is the tool's own
-model; provenance records `unknown` when the profile does not specify it.
+model; settings not exposed by the native tool remain unspecified in metadata.
+Basic prepares Codex/Pi profiles and native recording before capability checks; the generic Launcher does not implement backend-specific settings.
 
-The Launcher creates a fresh Session and `worker_000`, injects PATH and
-`PTOBENCH_SESSION_ROOT`, `PTOBENCH_SESSION_ID`, `PTOBENCH_CASE_ID`,
-`PTOBENCH_OPTIMIZER_ID`, `PTOBENCH_WORKSPACE`, and starts the Optimizer with that
-workspace as cwd in a separate process group. The prompt presents evaluate,
-profile runtime/pmu/compiler, and fork, plus source/context rules and the shared
-budget. The Agent can invoke `ptobench` immediately. Its first evaluation
-establishes a baseline.
+The Launcher validates the explicit method entrypoint and calls its `preflight`,
+then creates one fresh Session and `worker_000`. It passes public Case/Run context
+to the method's `prepare`, launches its `run` in an owned process group, and calls
+`collect` after exploration closes and owned processes stop. Case and budget
+checks remain in PTOBench. Backend readiness, prompt construction, model settings,
+agent configuration and native history collection belong to the method.
 
-Session records include protected `experiment.json`, `profile.json`,
-`prompt.txt`, `backend.json` (actual argv, version, profile hash and model),
-`optimizer_process.json`, and `launcher_result.json`. stdout/stderr are forwarded
-and retained separately, and combined in `process.log`. Tool text is diagnostic;
-official values come from the independently verified `final_result.json`.
+PATH and `PTOBENCH_SESSION_ROOT`, `PTOBENCH_SESSION_ID`, `PTOBENCH_CASE_ID`,
+`PTOBENCH_OPTIMIZER_ID`, `PTOBENCH_WORKSPACE`, and the compatible backend label
+are passed to the participant. Basic execs one native agent in that same group;
+its prompt presents evaluate/profile/fork and the shared budget. Baseline still
+comes from the certified Case cache without an initial measurement.
+
+Protected `method.json`, `method_request.json` and `method_collection.json`
+record the entrypoint, public request and raw archive associations. The evaluator
+records only the opaque method ID, with the same profile policy for all methods.
+Basic supplies the existing `profile.json`, `prompt.txt`, `mode.json`, `backend.json`,
+agent configuration and native history records. The generic Launcher archives
+these opaque records and attachments, without reading instructions or interpreting
+optimization stages. stdout/stderr are forwarded and retained separately, and
+combined in `process.log`. Official values come from `final_result.json`.
 
 The monitor reads Session state approximately every second. On budget exhaustion
 it waits for the last accepted action to finish and clear `active_action` before

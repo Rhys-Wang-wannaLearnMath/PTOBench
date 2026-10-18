@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_frozen_v0.1_workload",
+  "case_id": "deepseek_v4.prefill_swa_sparse_attn_demo",
+  "source_path": "benchmarks/pypto_lib_bench-v0.1/cases/deepseek_v4/prefill_swa_sparse_attn/official_golden/original.py",
+  "source_sha256": "4aa962907e83333c2fa79cdce221755b860798dc75e0056be8315af834dd56de",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "4aa962907e83333c2fa79cdce221755b860798dc75e0056be8315af834dd56de",
+  "selection_rationale": "Current upstream successors change the workload ABI and topology; preserve the coherent frozen standalone SWA attention, inverse RoPE, grouped output projection, and post-attention cache write.",
+  "historical_revision": "e40679365b52",
+  "selected_preset": "DEMO",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_batch08/config.py",
+      "source_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "import_name": "config"
+    }
+  ]
+}

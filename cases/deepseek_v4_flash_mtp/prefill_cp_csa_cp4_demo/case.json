@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp4_demo",
+  "description": "deepseek_v4_flash_mtp.prefill_cp_csa_cp4_demo: DeepSeek V4 Flash MTP DEMO full four-rank CSA prefill",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "prefill_cp_csa_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_moe_ep4_flash",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "compress_state",
+      "inner_compress_state",
+      "kv_cache",
+      "cmp_kv",
+      "idx_kv_cache",
+      "idx_kv_scale",
+      "x_out"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "compress_state",
+      "inner_compress_state",
+      "kv_cache",
+      "cmp_kv",
+      "idx_kv_cache",
+      "idx_kv_scale"
+    ],
+    "restore_before_each_launch": true
+  },
+  "runtime": {
+    "enable_dep_gen": false,
+    "rtol": 0.01,
+    "atol": 0.01,
+    "device_ids": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "ring_heap": [
+      0,
+      536870912,
+      0,
+      0
+    ]
+  }
+}

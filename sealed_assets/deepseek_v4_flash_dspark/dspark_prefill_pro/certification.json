@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4_flash_dspark.dspark_prefill_pro",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "0de40443c838e9d1eab1a037ca82193fc6ee7941ab640f525f447fa353c05c20"
+}

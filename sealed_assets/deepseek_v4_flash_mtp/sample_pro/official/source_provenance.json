@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_mtp.sample_pro",
+  "authority": "frozen inventoried source and exact upstream introduction dependency",
+  "upstream_repository": "https://github.com/hw-native-sys/pypto-lib.git",
+  "selected_upstream_commit": "61d7859a34fa29a9d121c0bfd342f527fe9eb06f",
+  "selected_upstream_path": "models/deepseek_v4_flash_mtp/sample.py",
+  "source": {
+    "repository_path": "models/0912/deepseek_v4_flash_mtp/sample.py",
+    "source_commit": "61d7859a34fa29a9d121c0bfd342f527fe9eb06f",
+    "sha256": "f541adb0b727174ed49263e14ab1c9e470059c63ffc39321d861f5ee409f32c1",
+    "frozen_path": "official/original.py",
+    "frozen_sha256": "f541adb0b727174ed49263e14ab1c9e470059c63ffc39321d861f5ee409f32c1"
+  },
+  "dependencies": [
+    {
+      "repository_path": "models/deepseek_v4_flash_mtp/config.py",
+      "source_commit": "61d7859a34fa29a9d121c0bfd342f527fe9eb06f",
+      "authority": "exact upstream Git object",
+      "sha256": "cc4e64fde9cf2d1624956ac100f7dd7410df8248d601dbf2f9c6f4245233720b",
+      "frozen_path": "official/original_config.py",
+      "frozen_sha256": "cc4e64fde9cf2d1624956ac100f7dd7410df8248d601dbf2f9c6f4245233720b",
+      "selection_rationale": "Real config dependency of archived sample.py; absent from archive directory, recovered from its exact introduction revision."
+    }
+  ],
+  "selection_rationale": "Preserve the inventoried historical three-stage sampling topology and coherent Fixture/golden logic. Later direct-logits greedy bypass and context changes are different workloads. Bind PRO only through this Case public configuration and the approved temporary Fixture alias."
+}

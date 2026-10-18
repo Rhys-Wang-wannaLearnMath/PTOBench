@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.prefill_indexer_flash",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "35bdfc1ed6297d30663e805a019523fb5a24e7ec7f5107c6843123414bdc8bf9"
+}

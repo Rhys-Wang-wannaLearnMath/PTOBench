@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_mtp.prefill_swa_pro",
+  "authority": "recovered byte-exact upstream historical closure",
+  "repository": "https://github.com/hw-native-sys/pypto-lib",
+  "commit": "f0d352ea2a40cefca8aa26873261d6e19e0eefec",
+  "selection_rationale": "Preserve packed single-card ND historical workload; current MTP changes CP composition, weight layouts and paging ABI. Authorized maintenance affects Ref extraction and sealed PRO import only; official bytes remain unchanged.",
+  "source": {
+    "source_path": "benchmarks/mig_data_models/manual_repairs_20261007/source_closures/mtp_prefill_swa/prefill_swa.py",
+    "upstream_path": "models/deepseek_v4_flash_mtp/prefill_swa.py",
+    "frozen_path": "official/original.py",
+    "source_sha256": "85a6dcf28b7c10a0b3c003001916444bd783a42fd3cc15dae24afceeba6d28aa",
+    "frozen_sha256": "85a6dcf28b7c10a0b3c003001916444bd783a42fd3cc15dae24afceeba6d28aa"
+  },
+  "dependencies": [
+    {
+      "source_path": "benchmarks/mig_data_models/manual_repairs_20261007/source_closures/mtp_prefill_swa/config.py",
+      "upstream_path": "models/deepseek_v4_flash_mtp/config.py",
+      "frozen_path": "official/original_config.py",
+      "source_sha256": "61b52e187ba1c2d95465e1c87bc8d125312ec349c92f7355a1061a2071995da4",
+      "frozen_sha256": "61b52e187ba1c2d95465e1c87bc8d125312ec349c92f7355a1061a2071995da4"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/manual_repairs_20261007/source_closures/mtp_prefill_swa/hc_post.py",
+      "upstream_path": "models/deepseek_v4_flash_mtp/hc_post.py",
+      "frozen_path": "official/hc_post.py",
+      "source_sha256": "b5a57578e26b02f38c502de699ca1e9d8f86e3a8bbe43585c2f2ee9d727a48a5",
+      "frozen_sha256": "b5a57578e26b02f38c502de699ca1e9d8f86e3a8bbe43585c2f2ee9d727a48a5"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/manual_repairs_20261007/source_closures/mtp_prefill_swa/hc_pre.py",
+      "upstream_path": "models/deepseek_v4_flash_mtp/hc_pre.py",
+      "frozen_path": "official/hc_pre.py",
+      "source_sha256": "39f365df3925fc555ce6f21262ac2fa528ca089b1d3264e18feaf46342c9feda",
+      "frozen_sha256": "39f365df3925fc555ce6f21262ac2fa528ca089b1d3264e18feaf46342c9feda"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/manual_repairs_20261007/source_closures/mtp_prefill_swa/prefill_sparse_attn.py",
+      "upstream_path": "models/deepseek_v4_flash_mtp/prefill_sparse_attn.py",
+      "frozen_path": "official/prefill_sparse_attn.py",
+      "source_sha256": "6c4c0ab9d5d23e4681a226d341a0430b86d3107dd2b0b73f0f535163496bb24a",
+      "frozen_sha256": "6c4c0ab9d5d23e4681a226d341a0430b86d3107dd2b0b73f0f535163496bb24a"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/manual_repairs_20261007/source_closures/mtp_prefill_swa/qkv_proj_rope.py",
+      "upstream_path": "models/deepseek_v4_flash_mtp/qkv_proj_rope.py",
+      "frozen_path": "official/qkv_proj_rope.py",
+      "source_sha256": "d97e8be9f7ff24157e9853c937e29608efb0ea914ab08fd4c989fee41789acda",
+      "frozen_sha256": "d97e8be9f7ff24157e9853c937e29608efb0ea914ab08fd4c989fee41789acda"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/manual_repairs_20261007/source_closures/mtp_prefill_swa/rmsnorm.py",
+      "upstream_path": "models/deepseek_v4_flash_mtp/rmsnorm.py",
+      "frozen_path": "official/rmsnorm.py",
+      "source_sha256": "776c53c970f22981e066733e7b857a71c7df42990201db5eb941f099b0e47ac0",
+      "frozen_sha256": "776c53c970f22981e066733e7b857a71c7df42990201db5eb941f099b0e47ac0"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/manual_repairs_20261007/source_closures/mtp_prefill_swa/utils.py",
+      "upstream_path": "models/deepseek_v4_flash_mtp/utils.py",
+      "frozen_path": "official/utils.py",
+      "source_sha256": "9b110b3d2de05e84b61d53cdcd23d658afcc02dbb769060e5cfb01b095a23cc1",
+      "frozen_sha256": "9b110b3d2de05e84b61d53cdcd23d658afcc02dbb769060e5cfb01b095a23cc1"
+    }
+  ]
+}

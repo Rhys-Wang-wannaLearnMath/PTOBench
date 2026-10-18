@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_inventoried_frozen_source",
+  "source_root": "/data1/home/ziruiwang/pypto-lib",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/prefill_qkv_proj_rope_v2.py",
+  "source_sha256": "97b0079558e2c81bf50abf1d52231faf50801279797ae0b3f5cba1101179529e",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "97b0079558e2c81bf50abf1d52231faf50801279797ae0b3f5cba1101179529e",
+  "source_case_id": "deepseek_v4.prefill_qkv_proj_rope_v2_prefill",
+  "result_case_id": "deepseek_v4.prefill_qkv_proj_rope_v2_prefill_flash",
+  "selected_config": "FLASH",
+  "selection": "Preserve the inventoried dynamic-token ND W8A8C16 source and frozen dependency; current successors change layout/quantization/topology. Source default FLASH is bound to FLASH by the public-derived Fixture alias; prefill B=1 S=128 seed=0.",
+  "fixture_authority": "original.py::build_tensor_specs(PREFILL_BATCH, PREFILL_SEQ)",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/config.py",
+      "source_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e"
+    }
+  ]
+}

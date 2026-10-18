@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_mtp.prefill_swa_flash",
+  "description": "DeepSeek-V4 Flash MTP historical FLASH packed prefill SWA: single-card, one 128-token invocation",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "prefill_attention_swa_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_models_manual_deepseek_v4_flash_mtp__prefill_swa_flash_idle6_libstdcxx",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "scalars": [
+    "num_tokens"
+  ],
+  "runtime": {
+    "rtol": 0.01,
+    "atol": 0.01
+  },
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "kv_cache",
+      "x_out"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "kv_cache"
+    ],
+    "restore_before_each_launch": true
+  }
+}

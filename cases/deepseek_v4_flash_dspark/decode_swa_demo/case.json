@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.decode_swa_demo",
+  "description": "Historical 0912 D-Spark DEMO ratio-0 SWA decode, B=64/S=2, one a2a3 card",
+  "workspace": "public/candidate_seed",
+  "module": "decode_swa.py",
+  "entry": "attention_swa_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "models_0912_decode_swa_demo_manual_idle6_libstdcxx_20261007",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "kv_cache",
+      "x_out"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "kv_cache"
+    ],
+    "restore_before_each_launch": true
+  }
+}

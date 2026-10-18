@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/qwen3_14b/qwen3_14b_prefill.py",
+  "source_sha256": "974b3ab58e7481b99a5ad940c434fb7973bba940638fc6a063a7f81b222997c2",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "974b3ab58e7481b99a5ad940c434fb7973bba940638fc6a063a7f81b222997c2",
+  "dependencies": [],
+  "selection": "The self-contained corpus source is the approved Qwen3-14B single-layer prefill workload with the default batch 16, max sequence 128, and mixed sequence-length Fixture contract; no separate configuration dependency or alternate named preset exists.",
+  "fixture_authority": "real TensorSpec builder and official golden_fn"
+}

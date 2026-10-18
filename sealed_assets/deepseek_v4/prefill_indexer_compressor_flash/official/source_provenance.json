@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/prefill_indexer_compressor.py",
+  "source_sha256": "0ab7dfbc70a5fc3cbd91559b112d027bf9df9a7297478e79973a8d938d322e0e",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "0ab7dfbc70a5fc3cbd91559b112d027bf9df9a7297478e79973a8d938d322e0e",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/config.py",
+      "source_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/rope_tables.py",
+      "source_sha256": "6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59",
+      "frozen_copy": "rope_tables.py",
+      "frozen_copy_sha256": "6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59"
+    }
+  ],
+  "selection": "FLASH preset contract instantiated from the complete frozen DeepSeek-V4 config.",
+  "fixture_authority": "real TensorSpec builder and official golden_prefill_indexer_compressor"
+}

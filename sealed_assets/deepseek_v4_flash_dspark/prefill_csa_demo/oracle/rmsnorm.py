@@ -1,0 +1,9 @@
+from config import CASE_CONFIG as M
+import torch
+from config import EPS
+
+def golden_rms_norm(x, norm_w):
+    x = x.float()
+    norm_w = norm_w.float()
+    inv = torch.rsqrt(x.square().mean(-1, keepdim=True) + EPS)
+    return (x * inv * norm_w).to(torch.bfloat16)

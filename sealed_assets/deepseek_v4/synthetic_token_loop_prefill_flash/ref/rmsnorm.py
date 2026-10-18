@@ -1,0 +1,32 @@
+import pypto.language as pl
+from config import CASE_CONFIG as M
+T_DYN = pl.dynamic('T_DYN')
+from config import D
+EPS = M.rms_norm_eps
+D_TILE = 128
+T_TILE = 8
+RMS_D_SPLIT = 4
+
+@pl.jit.inline
+def rms_norm(x: pl.Tensor[[T_DYN, D], pl.BF16], norm_w: pl.Tensor[[D], pl.BF16], x_normed: pl.Tensor[[T_DYN, D], pl.BF16]):
+    t_dim = pl.tensor.dim(x, 0)
+    with pl.spmd(t_dim // T_TILE * RMS_D_SPLIT, name_hint='rms_norm', allow_early_resolve=True) as rms_tid:
+        rms_blk = pl.tile.get_block_idx()
+        tg_idx = rms_blk // RMS_D_SPLIT
+        rms_dsplit = rms_blk - tg_idx * RMS_D_SPLIT
+        tg = tg_idx * T_TILE
+        x_sq_sum = pl.full([1, T_TILE], dtype=pl.FP32, value=0.0)
+        for rms_db in pl.pipeline(D // D_TILE, stage=2):
+            rms_d0 = rms_db * D_TILE
+            rms_x_chunk = pl.cast(x[tg:tg + T_TILE, rms_d0:rms_d0 + D_TILE], target_type=pl.FP32)
+            x_sq_sum = pl.add(x_sq_sum, pl.reshape(pl.row_sum(pl.mul(rms_x_chunk, rms_x_chunk)), [1, T_TILE]))
+        x_inv_rms = pl.rsqrt(pl.add(pl.mul(x_sq_sum, 1.0 / D), EPS), high_precision=True)
+        x_inv_rms_t = pl.reshape(x_inv_rms, [T_TILE, 1])
+        apply_dbs = D // D_TILE // RMS_D_SPLIT
+        for apply_db in pl.pipeline(apply_dbs, stage=2):
+            apply_d0 = (rms_dsplit * apply_dbs + apply_db) * D_TILE
+            apply_x_chunk = pl.cast(x[tg:tg + T_TILE, apply_d0:apply_d0 + D_TILE], target_type=pl.FP32)
+            norm_w_chunk = pl.cast(pl.reshape(norm_w[apply_d0:apply_d0 + D_TILE], [1, D_TILE]), pl.FP32)
+            x_normed_chunk = pl.col_expand_mul(pl.row_expand_mul(apply_x_chunk, x_inv_rms_t), norm_w_chunk)
+            x_normed[tg:tg + T_TILE, apply_d0:apply_d0 + D_TILE] = pl.cast(x_normed_chunk, target_type=pl.BF16, mode='rint')
+    return rms_tid

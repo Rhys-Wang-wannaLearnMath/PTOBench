@@ -7,7 +7,7 @@
   "entry": "prefill_compressor_ratio4_test",
   "config": "public/config.py",
   "comparator": "public/comparator.json",
-  "environment": "a2a3_single_card",
+  "environment": "a2a3_single_card_libstdcxx",
   "fixture_ids": [
     "fixture_000"
   ],
@@ -30,5 +30,8 @@
       "cmp_kv"
     ],
     "restore_before_each_launch": true
+  },
+  "runtime": {
+    "device_id": 7
   }
 }

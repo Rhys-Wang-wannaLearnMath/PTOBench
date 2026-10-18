@@ -18,8 +18,14 @@
     ]
   },
   "state": {
-    "behavior": "none",
-    "initial_state": [],
-    "restore_before_each_launch": false
+    "behavior": "mutating",
+    "initial_state": [
+      "k_cache",
+      "v_cache"
+    ],
+    "restore_before_each_launch": true
+  },
+  "runtime": {
+    "device_id": 6
   }
 }

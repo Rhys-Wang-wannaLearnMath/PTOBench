@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "authority": "frozen_v0.1_selected_source",
+  "repository": "https://github.com/hw-native-sys/pypto-lib.git",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/moe_ep.py",
+  "source_sha256": "7b40829beb7be64006574948da53db034f81df90b7233d43a0ee049ccfd9c625",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "7b40829beb7be64006574948da53db034f81df90b7233d43a0ee049ccfd9c625",
+  "selection": "Preserve historical moe_ep.py EP2 workload with the PRO preset binding; official source remains byte-exact.",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/config.py",
+      "source_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/hc_pre.py",
+      "source_sha256": "1b2425b738827a588d43279e70b9150dfcf5960e8dbb4efc942f184c5c00c3d2",
+      "frozen_copy": "hc_pre.py",
+      "frozen_copy_sha256": "1b2425b738827a588d43279e70b9150dfcf5960e8dbb4efc942f184c5c00c3d2"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/hc_post.py",
+      "source_sha256": "e312622beff4b6c72808d4574d688da563f192f3bad26fce73dea85f7be5d8f7",
+      "frozen_copy": "hc_post.py",
+      "frozen_copy_sha256": "e312622beff4b6c72808d4574d688da563f192f3bad26fce73dea85f7be5d8f7"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/gate.py",
+      "source_sha256": "c79165cc4cee2044c033527dafb562e44fdc4113f51ffc4d9208b763f67b3f50",
+      "frozen_copy": "gate.py",
+      "frozen_copy_sha256": "c79165cc4cee2044c033527dafb562e44fdc4113f51ffc4d9208b763f67b3f50"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/expert_shared.py",
+      "source_sha256": "b010d1914a90528373ebdba362ba5c37b07b01f6d7fc08bacde32123593a7a74",
+      "frozen_copy": "expert_shared.py",
+      "frozen_copy_sha256": "b010d1914a90528373ebdba362ba5c37b07b01f6d7fc08bacde32123593a7a74"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/expert_routed.py",
+      "source_sha256": "e6bc6458dd64cfb9e777be54e312b44de9300a440a9f0c24c672973e40c29271",
+      "frozen_copy": "expert_routed.py",
+      "frozen_copy_sha256": "e6bc6458dd64cfb9e777be54e312b44de9300a440a9f0c24c672973e40c29271"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/dispatch.py",
+      "source_sha256": "1662182766eb253a54b4e2c97deefd235173feaffd19ff9490c4ac3e75c205d2",
+      "frozen_copy": "dispatch.py",
+      "frozen_copy_sha256": "1662182766eb253a54b4e2c97deefd235173feaffd19ff9490c4ac3e75c205d2"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/combine.py",
+      "source_sha256": "992f7e1ad9523cfa59af534e07e14692b64da2ede33e51a32aeb71480abc786f",
+      "frozen_copy": "combine.py",
+      "frozen_copy_sha256": "992f7e1ad9523cfa59af534e07e14692b64da2ede33e51a32aeb71480abc786f"
+    }
+  ]
+}

@@ -43,6 +43,37 @@ def crash_creation(bench, repo, output):
 
 
 class SessionTest(SessionTestBase):
+    def test_preflight_rejects_missing_or_nondefault_baseline_tuning(self):
+        _, sealed, _ = common.case_paths(self.case_id)
+        baseline = common.read_json(sealed / 'ref_performance.json')
+        for tuning in (None, {'memory_planner': 'PTOAS', 'analyze_auto_scopes_for_deps': False},
+                       {'memory_planner': 'PYPTO', 'analyze_auto_scopes_for_deps': True}):
+            value = dict(baseline)
+            if tuning is None:
+                value.pop('compiler_tuning')
+            else:
+                value['compiler_tuning'] = tuning
+            write_json(sealed / 'ref_performance.json', value)
+            with self.subTest(tuning=tuning), self.assertRaisesRegex(
+                    session.SessionError, 'must explicitly record PYPTO'):
+                self.create()
+        write_json(sealed / 'ref_performance.json', baseline)
+        self.create()
+
+    def test_method_identity_does_not_load_a_solver_or_set_evaluator_policy(self):
+        # No such method directory exists. The evaluator accepts only its label,
+        # and no method instructions or native tool are needed to create/fork.
+        handle = session.create_session(self.case_id, 'external_tool', self.output,
+                                        mode='independent_participant')
+        record = session.read_session(handle.session_root)
+        self.assertEqual(record['mode'], {'id': 'independent_participant'})
+        self.assertEqual(record['profiling_modes'], ['runtime', 'pmu', 'compiler'])
+        fork_id = session.fork_workspace(handle.session_root, handle.initial_workspace)
+        fork = handle.session_root / 'workspaces' / fork_id
+        for location in (handle.initial_workspace, fork):
+            metadata = json.loads((location / '.benchmark_context/mode.json').read_text())
+            self.assertEqual(metadata, {'id': 'independent_participant'})
+
     def test_creation_independent_layout_schema_and_original_assets(self):
         self.make_case('test.other')
         with mock.patch.object(workspace, 'init_workspace', wraps=workspace.init_workspace) as init, \

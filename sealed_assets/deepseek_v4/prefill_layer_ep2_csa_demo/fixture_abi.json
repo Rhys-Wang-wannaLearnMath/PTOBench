@@ -1,0 +1,914 @@
+[
+  {
+    "name": "x_hc",
+    "scalar": false,
+    "shape": [
+      2,
+      384,
+      4,
+      4096
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "seq_lens",
+    "scalar": false,
+    "shape": [
+      2,
+      2
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "chunk_lens",
+    "scalar": false,
+    "shape": [
+      2,
+      2
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "chunk_offsets",
+    "scalar": false,
+    "shape": [
+      2,
+      2
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "chunk_tile_offsets",
+    "scalar": false,
+    "shape": [
+      2,
+      2
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "hc_attn_fn",
+    "scalar": false,
+    "shape": [
+      2,
+      24,
+      16384
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "hc_attn_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      3
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "hc_attn_base",
+    "scalar": false,
+    "shape": [
+      2,
+      24
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "attn_norm_w",
+    "scalar": false,
+    "shape": [
+      2,
+      4096
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "wq_a",
+    "scalar": false,
+    "shape": [
+      2,
+      4096,
+      1024
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "wq_b",
+    "scalar": false,
+    "shape": [
+      2,
+      1024,
+      32768
+    ],
+    "dtype": "int8",
+    "resident": "stacked"
+  },
+  {
+    "name": "wq_b_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      32768
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "wkv",
+    "scalar": false,
+    "shape": [
+      2,
+      4096,
+      512
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "gamma_cq",
+    "scalar": false,
+    "shape": [
+      2,
+      1024
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "gamma_ckv",
+    "scalar": false,
+    "shape": [
+      2,
+      512
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "freqs_cos",
+    "scalar": false,
+    "shape": [
+      2,
+      4096,
+      64
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "freqs_sin",
+    "scalar": false,
+    "shape": [
+      2,
+      4096,
+      64
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "hca_cmp_wkv",
+    "scalar": false,
+    "shape": [
+      2,
+      512,
+      4096
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "hca_cmp_wgate",
+    "scalar": false,
+    "shape": [
+      2,
+      512,
+      4096
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "hca_cmp_ape",
+    "scalar": false,
+    "shape": [
+      2,
+      128,
+      512
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "hca_cmp_norm_w",
+    "scalar": false,
+    "shape": [
+      2,
+      512
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "hca_cmp_kv_state",
+    "scalar": false,
+    "shape": [
+      2,
+      1024,
+      8,
+      512
+    ],
+    "dtype": "float32",
+    "resident": null
+  },
+  {
+    "name": "hca_cmp_score_state",
+    "scalar": false,
+    "shape": [
+      2,
+      1024,
+      8,
+      512
+    ],
+    "dtype": "float32",
+    "resident": null
+  },
+  {
+    "name": "hca_compress_state_block_table",
+    "scalar": false,
+    "shape": [
+      2,
+      1024
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "csa_cmp_wkv",
+    "scalar": false,
+    "shape": [
+      2,
+      1024,
+      4096
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "csa_cmp_wgate",
+    "scalar": false,
+    "shape": [
+      2,
+      1024,
+      4096
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "csa_cmp_ape",
+    "scalar": false,
+    "shape": [
+      2,
+      4,
+      1024
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "csa_cmp_norm_w",
+    "scalar": false,
+    "shape": [
+      2,
+      512
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "csa_cmp_kv_state",
+    "scalar": false,
+    "shape": [
+      2,
+      2048,
+      4,
+      1024
+    ],
+    "dtype": "float32",
+    "resident": null
+  },
+  {
+    "name": "csa_cmp_score_state",
+    "scalar": false,
+    "shape": [
+      2,
+      2048,
+      4,
+      1024
+    ],
+    "dtype": "float32",
+    "resident": null
+  },
+  {
+    "name": "csa_compress_state_block_table",
+    "scalar": false,
+    "shape": [
+      2,
+      2048
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "csa_hadamard_idx",
+    "scalar": false,
+    "shape": [
+      2,
+      128,
+      128
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "csa_idx_wq_b",
+    "scalar": false,
+    "shape": [
+      2,
+      1024,
+      8192
+    ],
+    "dtype": "int8",
+    "resident": "stacked"
+  },
+  {
+    "name": "csa_idx_wq_b_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      8192
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "csa_weights_proj",
+    "scalar": false,
+    "shape": [
+      2,
+      4096,
+      64
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "csa_inner_wkv",
+    "scalar": false,
+    "shape": [
+      2,
+      256,
+      4096
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "csa_inner_wgate",
+    "scalar": false,
+    "shape": [
+      2,
+      256,
+      4096
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "csa_inner_ape",
+    "scalar": false,
+    "shape": [
+      2,
+      4,
+      256
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "csa_inner_norm_w",
+    "scalar": false,
+    "shape": [
+      2,
+      128
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "csa_inner_kv_state",
+    "scalar": false,
+    "shape": [
+      2,
+      2048,
+      4,
+      256
+    ],
+    "dtype": "float32",
+    "resident": null
+  },
+  {
+    "name": "csa_inner_score_state",
+    "scalar": false,
+    "shape": [
+      2,
+      2048,
+      4,
+      256
+    ],
+    "dtype": "float32",
+    "resident": null
+  },
+  {
+    "name": "csa_inner_compress_state_block_table",
+    "scalar": false,
+    "shape": [
+      2,
+      2048
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "kv_cache",
+    "scalar": false,
+    "shape": [
+      2,
+      2,
+      128,
+      1,
+      512
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "ori_block_table",
+    "scalar": false,
+    "shape": [
+      2,
+      2
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "ori_slot_mapping",
+    "scalar": false,
+    "shape": [
+      2,
+      384
+    ],
+    "dtype": "int64",
+    "resident": null
+  },
+  {
+    "name": "cmp_kv",
+    "scalar": false,
+    "shape": [
+      2,
+      512,
+      128,
+      1,
+      512
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "cmp_block_table",
+    "scalar": false,
+    "shape": [
+      2,
+      64
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "cmp_sparse_indices",
+    "scalar": false,
+    "shape": [
+      2,
+      384,
+      640
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "cmp_sparse_lens",
+    "scalar": false,
+    "shape": [
+      2,
+      384
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "idx_kv_cache",
+    "scalar": false,
+    "shape": [
+      2,
+      1024,
+      128,
+      1,
+      128
+    ],
+    "dtype": "int8",
+    "resident": null
+  },
+  {
+    "name": "idx_kv_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      1024,
+      128,
+      1,
+      1
+    ],
+    "dtype": "float32",
+    "resident": null
+  },
+  {
+    "name": "idx_block_table",
+    "scalar": false,
+    "shape": [
+      2,
+      128
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "position_ids",
+    "scalar": false,
+    "shape": [
+      2,
+      384
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "hca_cmp_slot_mapping",
+    "scalar": false,
+    "shape": [
+      2,
+      384
+    ],
+    "dtype": "int64",
+    "resident": null
+  },
+  {
+    "name": "hca_state_slot_mapping",
+    "scalar": false,
+    "shape": [
+      2,
+      384
+    ],
+    "dtype": "int64",
+    "resident": null
+  },
+  {
+    "name": "csa_cmp_slot_mapping",
+    "scalar": false,
+    "shape": [
+      2,
+      384
+    ],
+    "dtype": "int64",
+    "resident": null
+  },
+  {
+    "name": "csa_idx_slot_mapping",
+    "scalar": false,
+    "shape": [
+      2,
+      384
+    ],
+    "dtype": "int64",
+    "resident": null
+  },
+  {
+    "name": "csa_state_slot_mapping",
+    "scalar": false,
+    "shape": [
+      2,
+      384
+    ],
+    "dtype": "int64",
+    "resident": null
+  },
+  {
+    "name": "csa_inner_state_slot_mapping",
+    "scalar": false,
+    "shape": [
+      2,
+      384
+    ],
+    "dtype": "int64",
+    "resident": null
+  },
+  {
+    "name": "attn_sink",
+    "scalar": false,
+    "shape": [
+      2,
+      64
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "wo_a",
+    "scalar": false,
+    "shape": [
+      2,
+      8,
+      1024,
+      4096
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "wo_b",
+    "scalar": false,
+    "shape": [
+      2,
+      4096,
+      8192
+    ],
+    "dtype": "int8",
+    "resident": "stacked"
+  },
+  {
+    "name": "wo_b_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      4096
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "hc_ffn_fn",
+    "scalar": false,
+    "shape": [
+      2,
+      24,
+      16384
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "hc_ffn_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      3
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "hc_ffn_base",
+    "scalar": false,
+    "shape": [
+      2,
+      24
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "norm_w",
+    "scalar": false,
+    "shape": [
+      2,
+      4096
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "gate_w",
+    "scalar": false,
+    "shape": [
+      2,
+      16,
+      4096
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "gate_bias",
+    "scalar": false,
+    "shape": [
+      2,
+      16
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "tid2eid",
+    "scalar": false,
+    "shape": [
+      2,
+      129280,
+      2
+    ],
+    "dtype": "int32",
+    "resident": "stacked"
+  },
+  {
+    "name": "input_ids",
+    "scalar": false,
+    "shape": [
+      2,
+      384
+    ],
+    "dtype": "int64",
+    "resident": null
+  },
+  {
+    "name": "routed_w1",
+    "scalar": false,
+    "shape": [
+      2,
+      8,
+      3072,
+      4096
+    ],
+    "dtype": "int8",
+    "resident": "stacked"
+  },
+  {
+    "name": "routed_w1_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      8,
+      3072
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "routed_w3",
+    "scalar": false,
+    "shape": [
+      2,
+      8,
+      3072,
+      4096
+    ],
+    "dtype": "int8",
+    "resident": "stacked"
+  },
+  {
+    "name": "routed_w3_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      8,
+      3072
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "routed_w2",
+    "scalar": false,
+    "shape": [
+      2,
+      8,
+      4096,
+      3072
+    ],
+    "dtype": "int8",
+    "resident": "stacked"
+  },
+  {
+    "name": "routed_w2_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      8,
+      4096
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "shared_w1",
+    "scalar": false,
+    "shape": [
+      2,
+      3072,
+      4096
+    ],
+    "dtype": "int8",
+    "resident": "stacked"
+  },
+  {
+    "name": "shared_w1_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      3072
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "shared_w3",
+    "scalar": false,
+    "shape": [
+      2,
+      3072,
+      4096
+    ],
+    "dtype": "int8",
+    "resident": "stacked"
+  },
+  {
+    "name": "shared_w3_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      3072
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "shared_w2",
+    "scalar": false,
+    "shape": [
+      2,
+      4096,
+      3072
+    ],
+    "dtype": "int8",
+    "resident": "stacked"
+  },
+  {
+    "name": "shared_w2_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      4096
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "x_next",
+    "scalar": false,
+    "shape": [
+      2,
+      384,
+      4,
+      4096
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "layer_id",
+    "scalar": true,
+    "shape": null,
+    "dtype": "int32",
+    "resident": null
+  }
+]

@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_flash",
+  "description": "DeepSeek V4 FLASH full CP8 CSA prefill",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "prefill_cp_csa_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_deepseek_v4_moe_ep8",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "compress_state",
+      "inner_compress_state",
+      "kv_cache",
+      "cmp_kv",
+      "idx_kv_cache",
+      "idx_kv_scale",
+      "x_out"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "compress_state",
+      "inner_compress_state",
+      "kv_cache",
+      "cmp_kv",
+      "idx_kv_cache",
+      "idx_kv_scale"
+    ],
+    "restore_before_each_launch": true
+  },
+  "runtime": {
+    "enable_dep_gen": false,
+    "rtol": 0.01,
+    "atol": 0.01,
+    "device_ids": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "ring_heap": [
+      0,
+      536870912,
+      536870912,
+      0
+    ]
+  }
+}

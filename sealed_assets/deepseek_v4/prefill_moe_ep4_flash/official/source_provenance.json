@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/pypto_lib_bench-v0.1/cases/deepseek_v4/prefill_moe_ep4/official_golden/original.py",
+  "source_sha256": "ab81bb6f34d6cb2f3a1fd00b386214bbd6902f1136ee2ec352ba7a2d10a90919",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "ab81bb6f34d6cb2f3a1fd00b386214bbd6902f1136ee2ec352ba7a2d10a90919",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/config.py",
+      "source_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/moe.py",
+      "source_sha256": "a04255581c7ad609076e88f63768d9756f4d48287a68ec521272b69f1fafcc0e",
+      "frozen_copy": "moe.py",
+      "frozen_copy_sha256": "a04255581c7ad609076e88f63768d9756f4d48287a68ec521272b69f1fafcc0e"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/hc_pre_v2.py",
+      "source_sha256": "d9bdd864f553761f499432fb3bcfe1db8881b2979461204cdfe5785be5bc5a5f",
+      "frozen_copy": "hc_pre_v2.py",
+      "frozen_copy_sha256": "d9bdd864f553761f499432fb3bcfe1db8881b2979461204cdfe5785be5bc5a5f"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/hc_post_v2.py",
+      "source_sha256": "f3a0265ba266eed1bd0c480cdd2d61b4b77ce612b4c44c0124d91131258d7f5c",
+      "frozen_copy": "hc_post_v2.py",
+      "frozen_copy_sha256": "f3a0265ba266eed1bd0c480cdd2d61b4b77ce612b4c44c0124d91131258d7f5c"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/gate.py",
+      "source_sha256": "c79165cc4cee2044c033527dafb562e44fdc4113f51ffc4d9208b763f67b3f50",
+      "frozen_copy": "gate.py",
+      "frozen_copy_sha256": "c79165cc4cee2044c033527dafb562e44fdc4113f51ffc4d9208b763f67b3f50"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/expert_shared.py",
+      "source_sha256": "b010d1914a90528373ebdba362ba5c37b07b01f6d7fc08bacde32123593a7a74",
+      "frozen_copy": "expert_shared.py",
+      "frozen_copy_sha256": "b010d1914a90528373ebdba362ba5c37b07b01f6d7fc08bacde32123593a7a74"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/expert_routed.py",
+      "source_sha256": "e6bc6458dd64cfb9e777be54e312b44de9300a440a9f0c24c672973e40c29271",
+      "frozen_copy": "expert_routed.py",
+      "frozen_copy_sha256": "e6bc6458dd64cfb9e777be54e312b44de9300a440a9f0c24c672973e40c29271"
+    }
+  ],
+  "selection": "Preserve the frozen EP4 prefill source; full official seed0 and original BF16 workload.",
+  "fixture_authority": "byte-exact official TensorSpec builder and official golden function"
+}

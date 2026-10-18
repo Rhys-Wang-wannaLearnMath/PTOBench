@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/qwen3_14b/qwen3_14b_decode_scope3.py",
+  "source_sha256": "233713f720e345bb8a40bc97e3aaf10435136f8171be43ddff55ec3c9b0c42f1",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "233713f720e345bb8a40bc97e3aaf10435136f8171be43ddff55ec3c9b0c42f1",
+  "dependencies": [],
+  "selection": "The self-contained corpus file is byte-identical to the approved frozen v0.1 Qwen3-14B decode Scope 3 source. It is preserved because current upstream removed this standalone workload and its successor changes the ABI, Fixture, and topology. The source has no separate configuration dependency or named preset.",
+  "fixture_authority": "real TensorSpec builder and official golden_fn"
+}

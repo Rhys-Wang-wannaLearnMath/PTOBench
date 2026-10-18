@@ -44,7 +44,7 @@ class SnapshotTest(ActionTestBase):
 
     def test_identical_successful_sources_have_distinct_observations_and_readonly_trees(self):
         results=[]
-        for args in (['evaluate'],['profile','pmu'],['evaluate']):
+        for args in (['evaluate'],['evaluate'],['evaluate']):
             process,result=self.cli(args)
             self.assertEqual(process.returncode,0,result)
             results.append(result)

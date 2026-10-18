@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_root": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target",
+  "source_path": "deepseek_v4/deepseek_v4_decode_compressor_ratio0.py",
+  "source_sha256": "bb80126299c7a7dde6b057e948a6e9c1e12439572115970c0d3117040d584ce4",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "bb80126299c7a7dde6b057e948a6e9c1e12439572115970c0d3117040d584ce4",
+  "fixture_authority": "real TensorSpec builder and official golden_fn",
+  "selection_rationale": "The frozen ratio-0 corpus source preserves the approved zero-output, non-mutating workload; the current ratio-4 successor has a different ABI and state contract.",
+  "dependencies": []
+}

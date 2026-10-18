@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.decode_indexer_flash",
+  "description": "DeepSeek-V4 Flash dspark decode indexer, FLASH preset, ratio-4 compressor, paged INT8 cache scores and offset paired Top-K",
+  "workspace": "public/candidate_seed",
+  "module": "decode_indexer.py",
+  "entry": "indexer_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "runtime": {
+    "platform": "a2a3",
+    "device_id": 0,
+    "rtol": 0.001,
+    "atol": 0.001
+  },
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "score",
+      "idx_kv_cache",
+      "idx_kv_scale",
+      "topk_idxs"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "inner_kv",
+      "inner_compress_state",
+      "idx_kv_cache",
+      "idx_kv_scale"
+    ],
+    "restore_before_each_launch": true
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "score": {
+      "method": "custom",
+      "name": "score_valid_region_ratio_allclose",
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 0.005,
+      "tail_sentinel": -3.4028234663852886e+38
+    },
+    "topk_idxs": {
+      "method": "custom",
+      "name": "topk_pair_compare",
+      "paired_output": "score",
+      "valid_prefix": 512,
+      "offset": 128,
+      "descending": true,
+      "tie_policy": "actual_score_monotonic"
+    },
+    "idx_kv_cache": {
+      "method": "ratio_allclose",
+      "rtol": 0,
+      "atol": 1,
+      "max_error_ratio": 0.01
+    },
+    "idx_kv_scale": {
+      "method": "ratio_allclose",
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 0.01
+    }
+  }
+}

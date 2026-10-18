@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.compressor_ratio128_demo",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "857e9aa48c482537d2ca9d2899b9dfda2848287c3eef21015bcff51f291e2379"
+}

@@ -1,0 +1,374 @@
+{
+  "generated_at": "2026-10-11",
+  "count": 20,
+  "strata": {
+    "Standalone": 10,
+    "Composite": 10
+  },
+  "selection_basis": "Top optimization-headroom ranks within each stratum, restricted to READY Cases; 10 Standalone and 10 Composite.",
+  "source": "CASE_SELECTION_40_20261011.json",
+  "selected": [
+    {
+      "case_id": "deepseek_v4.compressor_ratio4_demo",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4/compressor_ratio4_demo",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Standalone",
+      "reason": "The candidate defines one inline PyPTO computation, `compressor`, which performs projection, state pooling/shift, normalization, RoPE, rotation, and cache writes in one flow. `compressor_test` is only a thin entry wrapper that invokes `compressor` and returns its outputs; it does not orchestrate distinct computation components.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4/compressor_ratio4_demo/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4/compressor_ratio4_demo/public/candidate_seed/candidate.py",
+        "benchmarks/PTOBench/cases/deepseek_v4/compressor_ratio4_demo/public/config.py"
+      ],
+      "classification_source": "classification_workflow canonical result",
+      "selection_rank": 1,
+      "optimization_basis": "memory traffic/cache layout and projection or collective exchange are exposed, giving direct memory-planner and tiling/search space."
+    },
+    {
+      "case_id": "deepseek_v4.compressor_ratio4_flash",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4/compressor_ratio4_flash",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Standalone",
+      "reason": "candidate.py defines one @pl.jit entry, compressor_test, which delegates to a single inline compressor; projection, state scatter/pooling, normalization, RoPE, rotation, and cache writes are all stages of that one computation. config.py only supplies constants and does not add another orchestrated PyPTO component.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4/compressor_ratio4_flash/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4/compressor_ratio4_flash/public/candidate_seed/candidate.py",
+        "benchmarks/PTOBench/cases/deepseek_v4/compressor_ratio4_flash/public/config.py"
+      ],
+      "classification_source": "classification_workflow canonical result",
+      "selection_rank": 2,
+      "optimization_basis": "memory traffic/cache layout and projection or collective exchange are exposed, giving direct memory-planner and tiling/search space."
+    },
+    {
+      "case_id": "deepseek_v4.compressor_ratio4_pro",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4/compressor_ratio4_pro",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Standalone",
+      "reason": "The entry `compressor_test` in `public/candidate_seed/candidate.py` invokes a single `@pl.jit.inline` `compressor` computation once; its projection, state scatter/shift, pooling, normalization, RoPE, and cache writes are internal stages of that one computation, while `config.py` only supplies constants.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4/compressor_ratio4_pro/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4/compressor_ratio4_pro/public/candidate_seed/candidate.py",
+        "benchmarks/PTOBench/cases/deepseek_v4/compressor_ratio4_pro/public/config.py"
+      ],
+      "classification_source": "classification_workflow canonical result",
+      "selection_rank": 3,
+      "optimization_basis": "memory traffic/cache layout and projection or collective exchange are exposed, giving direct memory-planner and tiling/search space."
+    },
+    {
+      "case_id": "deepseek_v4.prefill_compressor_ratio4_demo",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4/prefill_compressor_ratio4_demo",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Standalone",
+      "reason": "case.json selects prefill_compressor_ratio4_test, whose local source wrapper calls only prefill_compressor_ratio4; the preserved implementation in prefill_layer_ep2_csa_demo/public/candidate_seed/prefill_compressor_ratio4.py performs projection, pooling, RMSNorm/RoPE, and cache/state writes within one inline PyPTO computation. The requested Case's candidate_seed directory is absent, so this classification relies on the available compressor source and cannot verify the missing candidate.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4/prefill_compressor_ratio4_demo/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4/prefill_layer_ep2_csa_demo/public/candidate_seed/prefill_compressor_ratio4.py"
+      ],
+      "classification_source": "classification_workflow canonical result",
+      "selection_rank": 4,
+      "optimization_basis": "memory traffic/cache layout and projection or collective exchange are exposed, giving direct memory-planner and tiling/search space."
+    },
+    {
+      "case_id": "deepseek_v4.prefill_compressor_ratio4_flash",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4/prefill_compressor_ratio4_flash",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Standalone",
+      "reason": "Unable to verify this label: benchmarks/PTOBench/cases/deepseek_v4/prefill_compressor_ratio4_flash/case.json targets candidate.py:prefill_compressor_ratio4_test, but its public/candidate_seed/ directory is absent. The available public/config.py defines configuration only, so the target computation structure cannot be inspected.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4/prefill_compressor_ratio4_flash/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4/prefill_compressor_ratio4_flash/public/config.py"
+      ],
+      "classification_source": "classification_workflow canonical result",
+      "selection_rank": 5,
+      "optimization_basis": "memory traffic/cache layout and projection or collective exchange are exposed, giving direct memory-planner and tiling/search space."
+    },
+    {
+      "case_id": "deepseek_v4.prefill_compressor_ratio4_pro",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4/prefill_compressor_ratio4_pro",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Standalone",
+      "reason": "The matching local v0.2 sealed_assets/deepseek_v4/prefill_compressor_ratio4_pro/ref/ref_npu.py defines one @pl.jit prefill_compressor_ratio4_test containing projection, pooling, RMSNorm/RoPE, and cache/state updates without calling distinct computation components. The canonical case.json names this entry, but its public/candidate_seed directory is absent, so this classification relies on the matching reference implementation.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4/prefill_compressor_ratio4_pro/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4/prefill_compressor_ratio4_pro/public/config.py"
+      ],
+      "classification_source": "classification_workflow canonical result",
+      "selection_rank": 6,
+      "optimization_basis": "memory traffic/cache layout and projection or collective exchange are exposed, giving direct memory-planner and tiling/search space."
+    },
+    {
+      "case_id": "deepseek_v4.prefill_qkv_proj_rope_v2_decode_demo",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4/prefill_qkv_proj_rope_v2_decode_demo",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Standalone",
+      "reason": "The entry invokes one fused qkv_proj_rope computation; projection, quantization and RoPE are internal stages, so it is Standalone.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4/prefill_qkv_proj_rope_v2_decode_demo/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4/prefill_qkv_proj_rope_v2_decode_demo/public/candidate_seed/candidate.py"
+      ],
+      "classification_source": "manual canonical review after read-only workflow quota failure",
+      "selection_rank": 7,
+      "optimization_basis": "memory traffic/cache layout and projection or collective exchange are exposed, giving direct memory-planner and tiling/search space."
+    },
+    {
+      "case_id": "deepseek_v4.prefill_qkv_proj_rope_v2_decode_flash",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4/prefill_qkv_proj_rope_v2_decode_flash",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Standalone",
+      "reason": "The entry invokes one fused qkv_proj_rope computation; projection, quantization and RoPE are internal stages, so it is Standalone.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4/prefill_qkv_proj_rope_v2_decode_flash/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4/prefill_qkv_proj_rope_v2_decode_flash/public/candidate_seed/candidate.py"
+      ],
+      "classification_source": "manual canonical review after read-only workflow quota failure",
+      "selection_rank": 8,
+      "optimization_basis": "memory traffic/cache layout and projection or collective exchange are exposed, giving direct memory-planner and tiling/search space."
+    },
+    {
+      "case_id": "deepseek_v4.prefill_qkv_proj_rope_v2_decode_pro",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4/prefill_qkv_proj_rope_v2_decode_pro",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Standalone",
+      "reason": "The entry invokes one fused qkv_proj_rope computation; projection, quantization and RoPE are internal stages, so it is Standalone.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4/prefill_qkv_proj_rope_v2_decode_pro/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4/prefill_qkv_proj_rope_v2_decode_pro/public/candidate_seed/candidate.py"
+      ],
+      "classification_source": "manual canonical review after read-only workflow quota failure",
+      "selection_rank": 9,
+      "optimization_basis": "memory traffic/cache layout and projection or collective exchange are exposed, giving direct memory-planner and tiling/search space."
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_zigzag_cp2_demo",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4_flash_mtp/prefill_cp_zigzag_cp2_demo",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Standalone",
+      "reason": "The host wrapper launches one CP zigzag tail-exchange computation repeatedly; the exchange is one self-contained component, so it is Standalone.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_mtp/prefill_cp_zigzag_cp2_demo/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_mtp/prefill_cp_zigzag_cp2_demo/public/candidate_seed/candidate.py"
+      ],
+      "classification_source": "manual canonical review after read-only workflow quota failure",
+      "selection_rank": 10,
+      "optimization_basis": "memory traffic/cache layout and projection or collective exchange are exposed, giving direct memory-planner and tiling/search space."
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_layer_csa_demo",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_layer_csa_demo",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Composite",
+      "reason": "In models/0912/deepseek_v4_flash_dspark/prefill_layer.py, l3_prefill_layer explicitly launches prefill_layer_attention across ranks, then launches prefill_layer_moe using the attention output attn_stage. These distinct computation stages select SWA/CSA/HCA attention and invoke the distributed prefill_moe implementation found in models/deepseek_v4_flash_dspark/moe.py, forming a larger layer execution flow.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_layer_csa_demo/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_layer_csa_demo/public/candidate_seed/prefill_layer.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_layer.py",
+        "models/deepseek_v4_flash_dspark/moe.py",
+        "models/deepseek_v4_flash_dspark/prefill_swa.py",
+        "models/deepseek_v4_flash_dspark/prefill_csa.py",
+        "models/deepseek_v4_flash_dspark/prefill_hca.py"
+      ],
+      "classification_source": "classification_workflow source result propagated to preset Case",
+      "selection_rank": 21,
+      "optimization_basis": "multi-stage attention/MoE/layer orchestration exposes fusion, dependency, buffering and distributed scheduling search space."
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_layer_csa_flash",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_layer_csa_flash",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Composite",
+      "reason": "In models/0912/deepseek_v4_flash_dspark/prefill_layer.py, l3_prefill_layer explicitly launches prefill_layer_attention across ranks, then launches prefill_layer_moe using the attention output attn_stage. These distinct computation stages select SWA/CSA/HCA attention and invoke the distributed prefill_moe implementation found in models/deepseek_v4_flash_dspark/moe.py, forming a larger layer execution flow.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_layer_csa_flash/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_layer_csa_flash/public/candidate_seed/prefill_layer.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_layer.py",
+        "models/deepseek_v4_flash_dspark/moe.py",
+        "models/deepseek_v4_flash_dspark/prefill_swa.py",
+        "models/deepseek_v4_flash_dspark/prefill_csa.py",
+        "models/deepseek_v4_flash_dspark/prefill_hca.py"
+      ],
+      "classification_source": "classification_workflow source result propagated to preset Case",
+      "selection_rank": 22,
+      "optimization_basis": "multi-stage attention/MoE/layer orchestration exposes fusion, dependency, buffering and distributed scheduling search space."
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_layer_hca_pro",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_layer_hca_pro",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Composite",
+      "reason": "In models/0912/deepseek_v4_flash_dspark/prefill_layer.py, l3_prefill_layer explicitly launches prefill_layer_attention across ranks, then launches prefill_layer_moe using the attention output attn_stage. These distinct computation stages select SWA/CSA/HCA attention and invoke the distributed prefill_moe implementation found in models/deepseek_v4_flash_dspark/moe.py, forming a larger layer execution flow.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_layer_hca_pro/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_layer_hca_pro/public/candidate_seed/prefill_layer.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_layer.py",
+        "models/deepseek_v4_flash_dspark/moe.py",
+        "models/deepseek_v4_flash_dspark/prefill_swa.py",
+        "models/deepseek_v4_flash_dspark/prefill_csa.py",
+        "models/deepseek_v4_flash_dspark/prefill_hca.py"
+      ],
+      "classification_source": "classification_workflow source result propagated to preset Case",
+      "selection_rank": 23,
+      "optimization_basis": "multi-stage attention/MoE/layer orchestration exposes fusion, dependency, buffering and distributed scheduling search space."
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_csa_flash",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_csa_flash",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Composite",
+      "reason": "models/0912/deepseek_v4_flash_dspark/prefill_csa.py defines prefill_attention_csa, which orchestrates distinct imported PyPTO components for HC preprocessing, RMSNorm, QKV/RoPE projection, compression, indexing, sparse attention, and HC postprocessing. Sibling prefill_compressor_ratio4.py and prefill_indexer.py produce compressed KV caches and top-k indices consumed by prefill_sparse_attn.py, establishing a larger computation flow through shared intermediates.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_csa_flash/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_csa_flash/public/candidate_seed/prefill_csa.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_csa.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_compressor_ratio4.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_indexer.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_indexer_compressor.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_sparse_attn.py",
+        "models/0912/deepseek_v4_flash_dspark/qkv_proj_rope.py",
+        "models/0912/deepseek_v4_flash_dspark/hc_pre.py",
+        "models/0912/deepseek_v4_flash_dspark/rmsnorm.py",
+        "models/0912/deepseek_v4_flash_dspark/hc_post.py"
+      ],
+      "classification_source": "classification_workflow source result propagated to preset Case",
+      "selection_rank": 24,
+      "optimization_basis": "multi-stage attention/MoE/layer orchestration exposes fusion, dependency, buffering and distributed scheduling search space."
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_csa_pro",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_csa_pro",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Composite",
+      "reason": "models/0912/deepseek_v4_flash_dspark/prefill_csa.py defines prefill_attention_csa, which orchestrates distinct imported PyPTO components for HC preprocessing, RMSNorm, QKV/RoPE projection, compression, indexing, sparse attention, and HC postprocessing. Sibling prefill_compressor_ratio4.py and prefill_indexer.py produce compressed KV caches and top-k indices consumed by prefill_sparse_attn.py, establishing a larger computation flow through shared intermediates.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_csa_pro/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_csa_pro/public/candidate_seed/prefill_csa.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_csa.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_compressor_ratio4.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_indexer.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_indexer_compressor.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_sparse_attn.py",
+        "models/0912/deepseek_v4_flash_dspark/qkv_proj_rope.py",
+        "models/0912/deepseek_v4_flash_dspark/hc_pre.py",
+        "models/0912/deepseek_v4_flash_dspark/rmsnorm.py",
+        "models/0912/deepseek_v4_flash_dspark/hc_post.py"
+      ],
+      "classification_source": "classification_workflow source result propagated to preset Case",
+      "selection_rank": 25,
+      "optimization_basis": "multi-stage attention/MoE/layer orchestration exposes fusion, dependency, buffering and distributed scheduling search space."
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_hca_flash",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_hca_flash",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Composite",
+      "reason": "The `prefill_attention_hca` PyPTO entry explicitly orchestrates distinct computation components in sequence: `hc_pre`, `rms_norm`, `qkv_proj_rope`, `prefill_compressor_ratio128`, `sparse_attn`, and `hc_post_prefill`, with cache and sparse-index construction between them. These are separate inline PyPTO helpers imported from sibling modules and combined into one larger prefill execution flow.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_hca_flash/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_hca_flash/public/candidate_seed/prefill_hca.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_hca.py",
+        "models/0912/deepseek_v4_flash_dspark/hc_pre.py",
+        "models/0912/deepseek_v4_flash_dspark/rmsnorm.py",
+        "models/0912/deepseek_v4_flash_dspark/qkv_proj_rope.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_compressor_ratio128.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_sparse_attn.py",
+        "models/0912/deepseek_v4_flash_dspark/hc_post.py"
+      ],
+      "classification_source": "classification_workflow source result propagated to preset Case",
+      "selection_rank": 26,
+      "optimization_basis": "multi-stage attention/MoE/layer orchestration exposes fusion, dependency, buffering and distributed scheduling search space."
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_hca_pro",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_hca_pro",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Composite",
+      "reason": "The `prefill_attention_hca` PyPTO entry explicitly orchestrates distinct computation components in sequence: `hc_pre`, `rms_norm`, `qkv_proj_rope`, `prefill_compressor_ratio128`, `sparse_attn`, and `hc_post_prefill`, with cache and sparse-index construction between them. These are separate inline PyPTO helpers imported from sibling modules and combined into one larger prefill execution flow.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_hca_pro/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/prefill_hca_pro/public/candidate_seed/prefill_hca.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_hca.py",
+        "models/0912/deepseek_v4_flash_dspark/hc_pre.py",
+        "models/0912/deepseek_v4_flash_dspark/rmsnorm.py",
+        "models/0912/deepseek_v4_flash_dspark/qkv_proj_rope.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_compressor_ratio128.py",
+        "models/0912/deepseek_v4_flash_dspark/prefill_sparse_attn.py",
+        "models/0912/deepseek_v4_flash_dspark/hc_post.py"
+      ],
+      "classification_source": "classification_workflow source result propagated to preset Case",
+      "selection_rank": 27,
+      "optimization_basis": "multi-stage attention/MoE/layer orchestration exposes fusion, dependency, buffering and distributed scheduling search space."
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_swa_flash",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/decode_swa_flash",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Composite",
+      "reason": "In models/0912/deepseek_v4_flash_dspark/decode_swa.py, attention_swa_test calls attention_swa, which orchestrates distinct PyPTO components from sibling hc_pre.py, rmsnorm.py, qkv_proj_rope.py, decode_sparse_attn_swa.py, and hc_post.py. It passes intermediate tensors through hyper-connection mixing, normalization, Q/KV projection with RoPE, KV-cache insertion, sparse attention with output projection, and residual post-mixing.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/decode_swa_flash/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/decode_swa_flash/public/candidate_seed/decode_swa.py",
+        "models/0912/deepseek_v4_flash_dspark/decode_swa.py",
+        "models/0912/deepseek_v4_flash_dspark/hc_pre.py",
+        "models/0912/deepseek_v4_flash_dspark/rmsnorm.py",
+        "models/0912/deepseek_v4_flash_dspark/qkv_proj_rope.py",
+        "models/0912/deepseek_v4_flash_dspark/decode_sparse_attn_swa.py",
+        "models/0912/deepseek_v4_flash_dspark/hc_post.py"
+      ],
+      "classification_source": "classification_workflow source result propagated to preset Case",
+      "selection_rank": 28,
+      "optimization_basis": "multi-stage attention/MoE/layer orchestration exposes fusion, dependency, buffering and distributed scheduling search space."
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_swa_pro",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/decode_swa_pro",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Composite",
+      "reason": "In models/0912/deepseek_v4_flash_dspark/decode_swa.py, attention_swa_test calls attention_swa, which orchestrates distinct PyPTO components from sibling hc_pre.py, rmsnorm.py, qkv_proj_rope.py, decode_sparse_attn_swa.py, and hc_post.py. It passes intermediate tensors through hyper-connection mixing, normalization, Q/KV projection with RoPE, KV-cache insertion, sparse attention with output projection, and residual post-mixing.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/decode_swa_pro/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4_flash_dspark/decode_swa_pro/public/candidate_seed/decode_swa.py",
+        "models/0912/deepseek_v4_flash_dspark/decode_swa.py",
+        "models/0912/deepseek_v4_flash_dspark/hc_pre.py",
+        "models/0912/deepseek_v4_flash_dspark/rmsnorm.py",
+        "models/0912/deepseek_v4_flash_dspark/qkv_proj_rope.py",
+        "models/0912/deepseek_v4_flash_dspark/decode_sparse_attn_swa.py",
+        "models/0912/deepseek_v4_flash_dspark/hc_post.py"
+      ],
+      "classification_source": "classification_workflow source result propagated to preset Case",
+      "selection_rank": 29,
+      "optimization_basis": "multi-stage attention/MoE/layer orchestration exposes fusion, dependency, buffering and distributed scheduling search space."
+    },
+    {
+      "case_id": "deepseek_v4.prefill_attention_csa_flash",
+      "case_dir": "benchmarks/PTOBench/cases/deepseek_v4/prefill_attention_csa_flash",
+      "status": "ready",
+      "stage": "READY",
+      "classification": "Composite",
+      "reason": "The attention entry sequences HC pre/post, normalization/QKV, compression, indexer and sparse-attention components through intermediate caches, so it is Composite.",
+      "source_refs": [
+        "benchmarks/PTOBench/cases/deepseek_v4/prefill_attention_csa_flash/case.json",
+        "benchmarks/PTOBench/cases/deepseek_v4/prefill_attention_csa_flash/public/candidate_seed/candidate.py"
+      ],
+      "classification_source": "manual canonical review after read-only workflow quota failure",
+      "selection_rank": 30,
+      "optimization_basis": "multi-stage attention/MoE/layer orchestration exposes fusion, dependency, buffering and distributed scheduling search space."
+    }
+  ]
+}

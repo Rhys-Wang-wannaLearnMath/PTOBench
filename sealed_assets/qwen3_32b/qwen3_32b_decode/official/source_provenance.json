@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/qwen3_32b/qwen3_32b_decode.py",
+  "source_sha256": "beda65545dc17c5fd56014c8a12c3de194c1670d663a684e151c216bdec7a8fd",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "beda65545dc17c5fd56014c8a12c3de194c1670d663a684e151c216bdec7a8fd",
+  "dependencies": [],
+  "selection": "The self-contained frozen corpus source is the approved qwen3_32b single-layer decode workload; no separate configuration dependency or alternate named preset exists.",
+  "fixture_authority": "real TensorSpec builder and official golden_fn"
+}

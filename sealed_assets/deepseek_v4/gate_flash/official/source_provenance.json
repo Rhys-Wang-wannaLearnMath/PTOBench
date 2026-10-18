@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_v0_1_case_copy",
+  "source_path": "benchmarks/pypto_lib_bench-v0.1/cases/deepseek_v4/gate/official_golden/original.py",
+  "source_sha256": "c79165cc4cee2044c033527dafb562e44fdc4113f51ffc4d9208b763f67b3f50",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "c79165cc4cee2044c033527dafb562e44fdc4113f51ffc4d9208b763f67b3f50",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/config.py",
+      "source_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e"
+    }
+  ],
+  "selection": "FLASH preset contract instantiated from the complete frozen DeepSeek-V4 config; frozen BF16/INT8 gate retained because current upstream successors changed the activation ABI.",
+  "fixture_authority": "byte-exact build_tensor_specs and official golden_gate_core"
+}

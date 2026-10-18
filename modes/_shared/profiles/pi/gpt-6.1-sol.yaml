@@ -1,0 +1,5 @@
+argv: ["{repo_root}/benchmarks/mig_workflow/agent_provider/launch.py", pi, --print, --provider, provider-default, --model, gpt-6.1-sol, "{prompt}"]
+version_argv: [pi, --version]
+help_argv: [pi, --help]
+env: {}
+model: provider-default/gpt-6.1-sol

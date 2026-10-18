@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "qwen3_14b.qwen3_14b_decode_scope2",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "367f2f5fd54723664a08fe25429f2c0b5f3a12c8e7e635e69e5f6581bd35f9c8"
+}

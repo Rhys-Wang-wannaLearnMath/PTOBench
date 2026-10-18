@@ -1,0 +1,58 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="search_title" content=""></head><body><a name="EN-US_TOPIC_0000002531362252"></a><a name="EN-US_TOPIC_0000002531362252"></a>
+
+<h1 class="topictitle1">Overview</h1>
+<div id="body0000001644105018"><p id="EN-US_TOPIC_0000002531362252__p139671235587">To debug an <span id="EN-US_TOPIC_0000002531362252__en-us_topic_0000001457309966_ph975583562710">Ascend C</span> operator, you need to first call the <span id="EN-US_TOPIC_0000002531362252__ph1687151762513">Ascend C</span> class library to compile the kernel source code of the <span id="EN-US_TOPIC_0000002531362252__ph1374317492249">Ascend C</span> operator, compile the kernel source code by using the GCC to generate common binary files on the CPU, and use the GDB debugging tool for debugging. In addition, you need to compile the kernel source code by using the BiSheng compiler to generate binary files on the NPU. You can use APIs such as <strong id="EN-US_TOPIC_0000002531362252__b61131542551">printf</strong>/<strong id="EN-US_TOPIC_0000002531362252__b29001441658">assert</strong> to print data, and use the simulation dotting or Profiling tool to collect board data for debugging.</p>
+<p id="EN-US_TOPIC_0000002531362252__p147141353172317"></p>
+<p id="EN-US_TOPIC_0000002531362252__p1088503982612"><span><img class="eddx" id="EN-US_TOPIC_0000002531362252__image588515394266" src="figure/en-us_image_0000002532839404.png"></span></p>
+<p id="EN-US_TOPIC_0000002531362252__p13791914610"></p>
+<p id="EN-US_TOPIC_0000002531362252__p18740922067">The following table lists the debugging and tuning methods and tools.</p>
+
+<div class="tablenoborder"><table cellpadding="4" cellspacing="0" summary="" id="EN-US_TOPIC_0000002531362252__table3879116815" frame="border" border="1" rules="all"><caption><b>Table 1 </b>Debugging and tuning methods and tools</caption><thead align="left"><tr id="EN-US_TOPIC_0000002531362252__row128713114816"><th align="left" class="cellrowborder" valign="top" width="10.41104110411041%" id="mcps1.3.6.2.4.1.1"><p id="EN-US_TOPIC_0000002531362252__p98701186">Category</p>
+</th>
+<th align="left" class="cellrowborder" valign="top" width="15.541554155415543%" id="mcps1.3.6.2.4.1.2"><p id="EN-US_TOPIC_0000002531362252__p16871313811">Subcategory</p>
+</th>
+<th align="left" class="cellrowborder" valign="top" width="74.04740474047404%" id="mcps1.3.6.2.4.1.3"><p id="EN-US_TOPIC_0000002531362252__p58718116817">Method</p>
+</th>
+</tr>
+</thead>
+<tbody><tr id="EN-US_TOPIC_0000002531362252__row138718119810"><td class="cellrowborder" rowspan="5" valign="top" width="10.41104110411041%" headers="mcps1.3.6.2.4.1.1 "><p id="EN-US_TOPIC_0000002531362252__p1287011382">Function debugging</p>
+</td>
+<td class="cellrowborder" valign="top" width="15.541554155415543%" headers="mcps1.3.6.2.4.1.2 "><p id="EN-US_TOPIC_0000002531362252__p13871711885">CPU twin debugging</p>
+</td>
+<td class="cellrowborder" valign="top" width="74.04740474047404%" headers="mcps1.3.6.2.4.1.3 "><p id="EN-US_TOPIC_0000002531362252__p23711516144012"><strong id="EN-US_TOPIC_0000002531362252__b811813562418">Twin debugging</strong>: The same operator code can be used to debug accuracy on the CPU and performance on the NPU. In the CPU domain, you can perform GDB debugging and use the <strong id="EN-US_TOPIC_0000002531362252__b40831451851946">printf</strong> command to print information.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531362252__row18871813811"><td class="cellrowborder" rowspan="4" valign="top" headers="mcps1.3.6.2.4.1.1 "><p id="EN-US_TOPIC_0000002531362252__p58791484">Board debugging on the NPU</p>
+</td>
+<td class="cellrowborder" valign="top" headers="mcps1.3.6.2.4.1.2 "><p id="EN-US_TOPIC_0000002531362252__p14289333164011"><strong id="EN-US_TOPIC_0000002531362252__b85549955951946">printf</strong>/<strong id="EN-US_TOPIC_0000002531362252__b44913190051946">assert</strong>: <strong id="EN-US_TOPIC_0000002531362252__b43545410351946">printf</strong> is used to print scalar and string information. <strong id="EN-US_TOPIC_0000002531362252__b52695495151946">assert</strong> is used to set checkpoints in the code. When a condition is not met, the program terminates immediately and reports an error.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531362252__row1187912816"><td class="cellrowborder" valign="top" headers="mcps1.3.6.2.4.1.1 "><p id="EN-US_TOPIC_0000002531362252__p13192834104014"><strong id="EN-US_TOPIC_0000002531362252__b17916121054718">DumpTensor</strong>: Use the <strong id="EN-US_TOPIC_0000002531362252__b17445112715917">DumpTensor</strong> API to print the data of a specified tensor. It is supported only in SIMD programming scenarios.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531362252__row158820118819"><td class="cellrowborder" valign="top" headers="mcps1.3.6.2.4.1.1 "><p id="EN-US_TOPIC_0000002531362252__p16881511783"><strong id="EN-US_TOPIC_0000002531362252__b68516174051946">Board debugging tool</strong>: Use the msDebug tool to debug the operator program running on the NPU. In a real hardware environment, test the input and output of the operator to verify whether the operator functions properly. The specific functions include setting breakpoints, printing variables and memory, performing single-step debugging, and interrupting execution. Currently, the SIMT programming scenario is not supported.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531362252__row488111481"><td class="cellrowborder" valign="top" headers="mcps1.3.6.2.4.1.1 "><p id="EN-US_TOPIC_0000002531362252__p1444213362401"><strong id="EN-US_TOPIC_0000002531362252__b31265768851946">Memory check tool</strong>: Use the msSanitizer tool to check the memory. It can detect and report memory access exceptions such as out-of-bounds and misalignment of the external storage (global memory) and internal storage (local memory) during operator running.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531362252__row788672010105"><td class="cellrowborder" valign="top" width="10.41104110411041%" headers="mcps1.3.6.2.4.1.1 "><p id="EN-US_TOPIC_0000002531362252__p2886162041013">Performance tuning</p>
+</td>
+<td class="cellrowborder" valign="top" width="15.541554155415543%" headers="mcps1.3.6.2.4.1.2 "><p id="EN-US_TOPIC_0000002531362252__p14886720191015">-</p>
+</td>
+<td class="cellrowborder" valign="top" width="74.04740474047404%" headers="mcps1.3.6.2.4.1.3 "><p id="EN-US_TOPIC_0000002531362252__p78861320181012"><strong id="EN-US_TOPIC_0000002531362252__b146353213493">msProf tool</strong>:</p>
+<p id="EN-US_TOPIC_0000002531362252__en-us_topic_0000001740005733_p1488261312578">The msProf performance analysis tool is used to collect and analyze key performance metrics of operators running on <span id="EN-US_TOPIC_0000002531362252__en-us_topic_0000001740005733_ph09541259133611">AI processor</span>s. You can efficiently locate software and hardware performance bottlenecks of operators based on the output performance data, thereby enhancing the overall efficiency of operator performance analysis.</p>
+<p id="EN-US_TOPIC_0000002531362252__en-us_topic_0000001740005733_p8060118">Performance data can currently be collected and automatically parsed based on various running modes (onboard or simulation) and file formats (executable files or operator binary <strong id="EN-US_TOPIC_0000002531362252__b154711328171319">.o</strong> files).</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<div class="familylinks">
+<div class="parentlink"><strong>Parent topic:</strong> <a href="atlas_ascendc_10_0071.html">Debugging and Tuning</a></div>
+</div>
+</div>
+
+</body></html>

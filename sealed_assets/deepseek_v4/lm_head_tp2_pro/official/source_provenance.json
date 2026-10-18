@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/lm_head.py",
+  "source_sha256": "755456d03e7ac21ce9c57b1acdbec8f989a3f0c3918b3352189020898a7c4817",
+  "frozen_copy": "original.py",
+    "frozen_copy_sha256": "755456d03e7ac21ce9c57b1acdbec8f989a3f0c3918b3352189020898a7c4817",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/config.py",
+      "source_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e"
+    }
+  ],
+  "selection": "PRO complete named preset contract instantiated by public configuration binding; the frozen corpus source preserves the authoritative two-rank LM-head workload.",
+  "fixture_authority": "byte-exact official TensorSpec builder and golden function"
+}

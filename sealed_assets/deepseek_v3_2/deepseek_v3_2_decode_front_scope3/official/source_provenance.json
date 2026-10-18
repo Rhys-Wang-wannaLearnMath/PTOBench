@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v3_2/deepseek_v3_2_decode_front_scope3.py",
+  "source_sha256": "a95fe152e20cace9f0664115d91931cfbe79e0e0e141c0aa4e443737e2624f4f",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "a95fe152e20cace9f0664115d91931cfbe79e0e0e141c0aa4e443737e2624f4f",
+  "dependencies": [],
+  "selection": "The self-contained corpus source is byte-identical to the approved frozen v0.1 Scope 3 workload. Current upstream removed the exact workload and its successor changes the ABI, initializer distributions, and topology, so the frozen source is the coherent official contract.",
+  "fixture_authority": "real TensorSpec builder and official golden_fn"
+}

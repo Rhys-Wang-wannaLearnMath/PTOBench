@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_mtp.prefill_cp_hca_cp4_demo",
+  "description": "DeepSeek V4 DEMO CP4 zero-history HCA prefill",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "prefill_cp_hca_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_moe_ep4_demo",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "compress_state",
+      "kv_cache",
+      "cmp_kv",
+      "x_out"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "compress_state",
+      "kv_cache",
+      "cmp_kv"
+    ],
+    "restore_before_each_launch": true
+  },
+  "runtime": {
+    "enable_dep_gen": false,
+    "rtol": 0.01,
+    "atol": 0.01,
+    "device_ids": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "ring_heap": [
+      0,
+      536870912,
+      0,
+      0
+    ]
+  }
+}

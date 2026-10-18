@@ -1,0 +1,15 @@
+from config import CASE_CONFIG as M
+
+TAIL_ROWS = 128
+
+HEAD_DIM = M.head_dim
+
+EPOCHS = 1
+
+ROW_TILE = 8
+
+CP_SIZE = 4
+
+NUM_SEGMENTS = 2 * CP_SIZE
+
+CP_TAIL_WINDOW_ROWS = NUM_SEGMENTS * TAIL_ROWS

@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <meta name="search_title" content="">
+ </head>
+ <body>
+  <a name="EN-US_TOPIC_0000002531522168"></a><a name="EN-US_TOPIC_0000002531522168"></a>
+  <h1 class="topictitle1">Board Debugging on the NPU</h1>
+  <div id="body0000001663882793">
+   <p id="EN-US_TOPIC_0000002531522168__p15382106123618">Board debugging methods in the NPU domain include board data printing, msSanitizer memory exception detection, and msDebug single-step debugging. Data printing can be performed using <strong id="EN-US_TOPIC_0000002531522168__b165611213213">printf</strong> or <strong id="EN-US_TOPIC_0000002531522168__b17161751622">DumpTensor</strong>. <strong id="EN-US_TOPIC_0000002531522168__b1161210149217">DumpTensor</strong> is a unique function of SIMD programming and is used to print data of a specified tensor.</p>
+   <div class="section" id="EN-US_TOPIC_0000002531522168__section166162435313">
+    <a name="EN-US_TOPIC_0000002531522168__section166162435313"></a><a name="section166162435313"></a>
+    <h4 class="sectiontitle">Using printf to Print Data</h4>
+    <p id="EN-US_TOPIC_0000002531522168__p4462524449"><strong id="EN-US_TOPIC_0000002531522168__b10456257123">printf</strong> is used to print scalar and character string information and is supported by both SIMT and SIMD programming.</p>
+    <p id="EN-US_TOPIC_0000002531522168__p1066132410537">The following is an example of printing data using <strong id="EN-US_TOPIC_0000002531522168__b121504431314">printf</strong>. For details about the usage and restrictions of the <strong id="EN-US_TOPIC_0000002531522168__b1715016431035">printf</strong> API, see <a href="/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_10426.html">printf</a>.</p>
+    <div class="codecoloring" codetype="Cpp" id="EN-US_TOPIC_0000002531522168__screen414217282461">
+     <div class="highlight">
+      <table class="highlighttable">
+       <tbody>
+        <tr>
+         <td class="linenos">
+          <div class="linenodiv">
+           <pre><span class="normal">1</span></pre>
+          </div></td>
+         <td class="code">
+          <div>
+           <pre><span></span><span class="n">printf</span><span class="p">(</span><span class="s">"fmt string %d"</span><span class="p">,</span><span class="w"> </span><span class="mh">0x123</span><span class="p">);</span>
+</pre>
+          </div></td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="note" id="EN-US_TOPIC_0000002531522168__note116611524115316">
+    <img src="public_sys-resources/note_3.0-en-us.png"><span class="notetitle"> </span>
+    <div class="notebody">
+     <p id="EN-US_TOPIC_0000002531522168__p866192412538">Printing using the <strong id="EN-US_TOPIC_0000002531522168__b23121566751414">printf</strong> API affect the actual runtime performance of the operator. Therefore, this function is usually used in the debugging phase. You can disable the printing function as required. For details, see <a href="/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_10426.html">printf</a>.</p>
+    </div>
+   </div>
+   <div class="section" id="EN-US_TOPIC_0000002531522168__section16452184823718">
+    <h4 class="sectiontitle">Debugging SIMD Programming with DumpTensor Printing</h4>
+    <p id="EN-US_TOPIC_0000002531522168__p1242919264451"><strong id="EN-US_TOPIC_0000002531522168__b5192115718618">DumpTensor</strong> is a unique printing function in SIMD programming scenarios. It is used to print the data of a specified tensor on the NPU.</p>
+    <p id="EN-US_TOPIC_0000002531522168__p15429126184515"><strong id="EN-US_TOPIC_0000002531522168__b15563174813713">The specific usage is as follows:</strong></p>
+    <p id="EN-US_TOPIC_0000002531522168__p1442912654518">Call the <strong id="EN-US_TOPIC_0000002531522168__b15530913989">DumpTensor</strong> API to print required log information at the target position in the operator kernel implementation code.</p>
+    <div class="p" id="EN-US_TOPIC_0000002531522168__p209354712713">
+     In the following example, <strong id="EN-US_TOPIC_0000002531522168__b1417721141512">srcLocal</strong> indicates the tensor to be printed, <strong id="EN-US_TOPIC_0000002531522168__b81752112151">5</strong> indicates the additional custom information, such as the current code line number, and <strong id="EN-US_TOPIC_0000002531522168__b51772151510">dataLen</strong> indicates the number of elements. For details about the usage and restrictions of the <strong id="EN-US_TOPIC_0000002531522168__b157854942751414">DumpTensor</strong> API, see <a href="/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0192.html">DumpTensor</a>.
+     <div class="codecoloring" codetype="Cpp" id="EN-US_TOPIC_0000002531522168__screen1429142664516">
+      <div class="highlight">
+       <table class="highlighttable">
+        <tbody>
+         <tr>
+          <td class="linenos">
+           <div class="linenodiv">
+            <pre><span class="normal">1</span></pre>
+           </div></td>
+          <td class="code">
+           <div>
+            <pre><span></span><span class="n">DumpTensor</span><span class="p">(</span><span class="n">srcLocal</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="n">dataLen</span><span class="p">);</span>
+</pre>
+           </div></td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </div>
+    </div>
+    <p id="EN-US_TOPIC_0000002531522168__p1642922684510">During dump, the corresponding <strong id="EN-US_TOPIC_0000002531522168__b18530624131611">DumpHead</strong> (32 bytes) is added before the dump information of each block core to record the core ID and resource usage. <strong id="EN-US_TOPIC_0000002531522168__b453192431612">DumpTensorHead</strong> (32 bytes) is also added before the tensor data to be dumped each time to record tensor information. An example of the printing result is as follows:</p>
+    <div class="codecoloring" codetype="ColdFusion" id="EN-US_TOPIC_0000002531522168__screen54291426194517">
+     <div class="highlight">
+      <table class="highlighttable">
+       <tbody>
+        <tr>
+         <td class="linenos">
+          <div class="linenodiv">
+           <pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span></pre>
+          </div></td>
+         <td class="code">
+          <div>
+           <pre><span></span><span class="nv">DumpTensor</span><span class="p">:</span> <span class="nv">desc</span><span class="o">=</span><span class="m">5</span><span class="p">,</span> <span class="nv">addr</span><span class="o">=</span><span class="m">0</span><span class="p">,</span> <span class="nv">data_type</span><span class="o">=</span><span class="nv">float16</span><span class="p">,</span> <span class="nv">position</span><span class="o">=</span><span class="nv">UB</span><span class="p">,</span> <span class="nv">dump_size</span><span class="o">=</span><span class="m">32</span>
+<span class="p">[</span><span class="m">19</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">4</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">38</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">50</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">39</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">67</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">84</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">98</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">21</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">36</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">18</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">46</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">10</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">92</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">26</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">38</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">39</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">9</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">82</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">37</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">35</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">65</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">97</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">59</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">89</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">63</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">70</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">57</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">35</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">3</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">16</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span>
+<span class="m">42</span><span class="p">.</span><span class="m">000000</span><span class="p">]</span>
+<span class="nv">DumpTensor</span><span class="p">:</span> <span class="nv">desc</span><span class="o">=</span><span class="m">5</span><span class="p">,</span> <span class="nv">addr</span><span class="o">=</span><span class="m">100</span><span class="p">,</span> <span class="nv">data_type</span><span class="o">=</span><span class="nv">float16</span><span class="p">,</span> <span class="nv">position</span><span class="o">=</span><span class="nv">UB</span><span class="p">,</span> <span class="nv">dump_size</span><span class="o">=</span><span class="m">32</span>
+<span class="p">[</span><span class="m">6</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">34</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">52</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">38</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">73</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">38</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">35</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">14</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">67</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">62</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">30</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">49</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">86</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">37</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">84</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">18</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">38</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">18</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">44</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">21</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">86</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">99</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">13</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">79</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">84</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">9</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">48</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">74</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">52</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">99</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">80</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span>
+<span class="m">53</span><span class="p">.</span><span class="m">000000</span><span class="p">]</span>
+<span class="p">...</span>
+<span class="nv">DumpTensor</span><span class="p">:</span> <span class="nv">desc</span><span class="o">=</span><span class="m">5</span><span class="p">,</span> <span class="nv">addr</span><span class="o">=</span><span class="m">0</span><span class="p">,</span> <span class="nv">data_type</span><span class="o">=</span><span class="nv">float16</span><span class="p">,</span> <span class="nv">position</span><span class="o">=</span><span class="nv">UB</span><span class="p">,</span> <span class="nv">dump_size</span><span class="o">=</span><span class="m">32</span>
+<span class="p">[</span><span class="m">35</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">41</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">41</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">22</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">84</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">49</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">60</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">0</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">90</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">14</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">67</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">80</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">16</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">46</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">16</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">83</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">6</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">70</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">97</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">28</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">97</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">62</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">80</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">22</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">53</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">37</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">23</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">58</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">65</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">28</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">4</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span>
+<span class="m">29</span><span class="p">.</span><span class="m">000000</span><span class="p">]</span>
+</pre>
+          </div></td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="note" id="EN-US_TOPIC_0000002531522168__note1223152015296">
+     <img src="public_sys-resources/note_3.0-en-us.png"><span class="notetitle"> </span>
+     <div class="notebody">
+      <p id="EN-US_TOPIC_0000002531522168__p0231820132915">The print function of the <strong id="EN-US_TOPIC_0000002531522168__b213183266051414">DumpTensor</strong> API impacts operator runtime performance, so it is generally used for debugging. You can disable the printing function as required. For details, see <a href="/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0192.html">DumpTensor</a>.</p>
+     </div>
+    </div>
+   </div>
+   <div class="section" id="EN-US_TOPIC_0000002531522168__section931475414217">
+    <h4 class="sectiontitle">Using msSanitizer to Detect Exceptions</h4>
+    <p id="EN-US_TOPIC_0000002531522168__p12540183914352">msSanitizer is an exception detection tool based on <span id="EN-US_TOPIC_0000002531522168__en-us_topic_0000001740005733_ph09541259133611">AI processor</span>. It provides memory check, contention check, uninitialization check, and synchronization check in single-operator development scenarios.</p>
+    <ul id="EN-US_TOPIC_0000002531522168__ul13995103913514">
+     <li id="EN-US_TOPIC_0000002531522168__en-us_topic_0000002562432083_li1075334783611">Memory check: During operator development, the tool can locate memory problems such as illegal read/write, multi-core corruption, non-aligned access, memory leak, and illegal release. In addition, the tool can detect the memory of the CANN software stack, helping users locate the module with memory exception in the software stack.</li>
+     <li id="EN-US_TOPIC_0000002531522168__en-us_topic_0000002562432083_en-us_topic_0000001691887174_li181845117917">Contention check: The tool helps users locate data contention problems that may be caused by contention risks, including intra-core contention and inter-core contention. Intra-core contention includes inter-pipeline contention and intra-pipeline contention.</li>
+     <li id="EN-US_TOPIC_0000002531522168__en-us_topic_0000002562432083_li7471185472914">Uninitialization check: The tool helps users locate dirty data read problems that may be caused by uninitialized memory.
+      <div class="note" id="EN-US_TOPIC_0000002531522168__en-us_topic_0000002562432083_note66224258179">
+       <img src="public_sys-resources/note_3.0-en-us.png"><span class="notetitle"> </span>
+       <div class="notebody">
+        <p id="EN-US_TOPIC_0000002531522168__en-us_topic_0000002562432083_p1513163994318">The msSanitizer tool does not support the detection of multi-thread operators and level-2 pointer operators.</p>
+       </div>
+      </div></li>
+    </ul>
+    <p id="EN-US_TOPIC_0000002531522168__p1831415543210">For details, see <span id="EN-US_TOPIC_0000002531522168__ph16314254826"><a href="https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/devaids/optool/docs/en/quick_start/mskpp_quick_start.md" target="_blank" rel="noopener noreferrer">Operator Development Tools</a></span>.</p>
+    <p id="EN-US_TOPIC_0000002531522168__p1938104417444"><strong id="EN-US_TOPIC_0000002531522168__b47490903551414">This function is supported only in the following scenarios:</strong></p>
+    <ul id="EN-US_TOPIC_0000002531522168__ul159381244114420">
+     <li id="EN-US_TOPIC_0000002531522168__li393834418443">Call operators through the method in <a href="atlas_ascendc_10_0056.html">Kernel Launch Based on a Sample Project</a>.</li>
+    </ul>
+    <ul id="EN-US_TOPIC_0000002531522168__ul1893854484418">
+     <li id="EN-US_TOPIC_0000002531522168__li129382044194417">Calling operators through <a href="atlas_ascendc_10_0070.html">single-operator APIs</a>.</li>
+     <li id="EN-US_TOPIC_0000002531522168__li4938244154417">Calling a single-operator API (<strong id="EN-US_TOPIC_0000002531522168__b182360689751414">aclnn<em id="EN-US_TOPIC_0000002531522168__i134097532151414">xxx</em></strong>) indirectly: single-operator calling in the PyTorch framework.</li>
+    </ul>
+   </div>
+   <div class="section" id="EN-US_TOPIC_0000002531522168__section2072113416285">
+    <h4 class="sectiontitle">Using msDebug for Operator Debugging</h4>
+    <p id="EN-US_TOPIC_0000002531522168__p57216414288">msDebug is an operator debugging tool designed for Ascend devices. It is used to debug operator programs running on the NPU, providing debugging methods for operator developers. Currently, it supports only program debugging in the SIMD programming scenario. msDebug can debug all Ascend operators, including Ascend C operators (Vector, Cube, and fused operators). The specific functions include breakpoint setting, variable and memory printing, single-step debugging, running interruption, core switching, program status check, debugging information display, and core dump file parsing. You can select the functions as needed. For details, see <span id="EN-US_TOPIC_0000002531522168__ph19721746286"><a href="https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/devaids/optool/docs/en/quick_start/mskpp_quick_start.md" target="_blank" rel="noopener noreferrer">Operator Development Tools</a></span>.</p>
+    <ul id="EN-US_TOPIC_0000002531522168__ul963275075614">
+     <li id="EN-US_TOPIC_0000002531522168__li1363219509563">Call operators through the method in <a href="atlas_ascendc_10_0056.html">Kernel Launch Based on a Sample Project</a>.</li>
+    </ul>
+    <ul id="EN-US_TOPIC_0000002531522168__ul17632145025610">
+     <li id="EN-US_TOPIC_0000002531522168__li1763255014564">Calling operators through <a href="atlas_ascendc_10_0070.html">single-operator APIs</a>.</li>
+     <li id="EN-US_TOPIC_0000002531522168__li2632850125610">Calling a single-operator API (<strong id="EN-US_TOPIC_0000002531522168__b111401364351414">aclnn<em id="EN-US_TOPIC_0000002531522168__i126578163351414">xxx</em></strong>) indirectly: single-operator calling in the PyTorch framework.</li>
+    </ul>
+   </div>
+  </div>
+  <div>
+   <div class="familylinks">
+    <div class="parentlink">
+     <strong>Parent topic:</strong> <a href="atlas_ascendc_10_00058.html">Function Debugging</a>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>

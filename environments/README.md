@@ -1,9 +1,29 @@
 # Benchmark Environments
 
+当前本机版本、安装来源、工具链路径和已知兼容性问题见
+[当前软件栈与运行环境](../ENVIRONMENT.md)。
+[2026-10-05 版本快照](inventory/20261005.json) 是环境盘点记录，不是 Case runtime profile。
+
 Each profile names the Python interpreter, target platform, CANN setup script,
 PTOAS toolchain, and runtime options used by a Case. The evaluator loads the
 profile before importing the Case evaluator, so `bench` commands use the same
 environment regardless of the caller's current shell.
+
+For NPU profiles, the common environment loader also prepends the existing
+`{miniforge_root}/lib` when it contains `libstdc++.so.6`. PTOAS v0.60 requires
+`GLIBCXX_3.4.29`; the host system library alone is insufficient. This applies to
+Ref preparation, Agent evaluation and every profiling mode, without upgrading
+any package. The loader runs `ptoas --version` before entering the evaluator,
+so a compiler loading failure is reported before Ref certification is changed.
+Standalone hosts must configure the compatible installed runtime through
+`PTOBENCH_MINIFORGE_ROOT` or their profile's library path.
+
+Case evaluator entry points keep their public config/helper imports scoped for
+the whole invocation, including delayed imports during input construction.
+Same-named modules are restored on exit so one Case cannot reuse another
+Case's configuration. Agent Session creation requires a ready certification
+and a baseline explicitly recording `PYPTO` with
+`analyze_auto_scopes_for_deps=false`; pending refreshes are unavailable to Agents.
 
 The paths in the checked-in profiles use `{repo_root}`, `{benchmark_root}`,
 `{ptoas_root}`, `{cann_root}`, and `{miniforge_root}` placeholders. Nested use

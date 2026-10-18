@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "name": "raw_wiki",
+  "source": "pto_wiki/raw_wiki",
+  "source_manifest_sha256": "db16ed6f201ac0d13b0c5cf7ff0267573910fd5efe636ec5e56308bff5f20bc3",
+  "content_sha256": "4987e0fe20ad85a7921e56316b685b2f0e0ad5536cd1d903a572eab6f6881b75",
+  "version": {
+    "edition": "original",
+    "captured_on": "2026-10-05",
+    "pypto_revision": "747e1e4ba99f13dea1a609d893ac7512e85a5897"
+  }
+}

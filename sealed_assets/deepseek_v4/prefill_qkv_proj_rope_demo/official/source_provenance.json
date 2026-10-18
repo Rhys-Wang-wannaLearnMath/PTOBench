@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "authority": "selected_historical_upstream_revision_byte_exact_copy",
+  "source_path": "models/deepseek/v4/prefill_qkv_proj_rope.py",
+  "source_revision": "15dd9c12515b6a9ab41ca93100dd3cec17acb1c8",
+  "source_sha256": "d369ba153e00e428372cdb91592da98af1f6aa354275245674662fc75e83a325",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "d369ba153e00e428372cdb91592da98af1f6aa354275245674662fc75e83a325",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/config.py",
+      "source_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e"
+    }
+  ],
+  "selection": "Preserve the fixed-shape historical prefill QKV/RoPE workload; its current successor changes ABI and position inputs.",
+  "fixture_authority": "byte-exact build_tensor_specs and golden_prefill_qkv_proj_rope"
+}

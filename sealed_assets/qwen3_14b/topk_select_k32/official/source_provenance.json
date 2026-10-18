@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_frozen_v0.1_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/qwen3_14b/topk_select.py",
+  "source_sha256": "478a0bca8835d5785616b8b9deb3612f29aec7291f6bac088716b183e87d01f9",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "478a0bca8835d5785616b8b9deb3612f29aec7291f6bac088716b183e87d01f9",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/qwen3_14b/config.py",
+      "source_sha256": "e5edac9c37be04da152168c953ead43d7399e8fd5d2e886fe2e8050d1383ff11",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "e5edac9c37be04da152168c953ead43d7399e8fd5d2e886fe2e8050d1383ff11"
+    },
+    {
+      "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/qwen3_14b/constants.py",
+      "source_sha256": "00db5be8040420fd5045e4b15969606c0e19b08e435d8cec076b7c7dfd6a942a",
+      "frozen_copy": "constants.py",
+      "frozen_copy_sha256": "00db5be8040420fd5045e4b15969606c0e19b08e435d8cec076b7c7dfd6a942a"
+    }
+  ],
+  "upstream": {
+    "repository": "https://github.com/hw-native-sys/pypto-lib",
+    "commit": "0999dbaf492b57327fd8e4902a94a570d274762f",
+    "path": "models/qwen3/14b/topk_select.py"
+  },
+  "selection": "Preserve the coherent frozen v0.1 top-32 workload and its complete official config closure; current upstream changed the implementation topology.",
+  "fixture_authority": "byte-exact official TensorSpec builder and golden function"
+}

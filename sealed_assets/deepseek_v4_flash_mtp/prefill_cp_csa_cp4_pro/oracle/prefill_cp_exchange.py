@@ -1,0 +1,3 @@
+from prefill_compressor_ratio4 import COMPRESS_STATE_DIM as MAIN_STATE_DIM
+
+from prefill_indexer_compressor import COMPRESS_STATE_DIM as INNER_STATE_DIM

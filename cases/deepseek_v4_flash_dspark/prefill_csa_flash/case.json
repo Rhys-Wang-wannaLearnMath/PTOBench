@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.prefill_csa_flash",
+  "description": "DeepSeek-V4 Flash dspark prefill CSA, FLASH preset, packed 128-token attention",
+  "workspace": "public/candidate_seed",
+  "module": "prefill_csa.py",
+  "entry": "prefill_attention_csa_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "deepseek_v4_flash_dspark__prefill_csa_flash_manual_idle_20261007_libstdcxx",
+  "runtime": {
+    "rtol": 0.01,
+    "atol": 0.01,
+    "enable_dep_gen": true,
+    "device_id": 6
+  },
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "scalars": [
+    "num_tokens"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "x_out",
+      "kv_cache"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "compress_state",
+      "inner_compress_state",
+      "kv_cache",
+      "idx_kv_cache",
+      "idx_kv_scale"
+    ],
+    "restore_before_each_launch": true
+  }
+}

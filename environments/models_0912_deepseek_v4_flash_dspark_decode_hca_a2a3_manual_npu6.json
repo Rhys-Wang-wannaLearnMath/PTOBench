@@ -1,0 +1,21 @@
+{
+  "name": "models_0912_deepseek_v4_flash_dspark_decode_hca_a2a3_manual_npu6",
+  "platform": "a2a3",
+  "device": 6,
+  "benchmark": {
+    "warmup": 5,
+    "rounds": 10
+  },
+  "python": ".venv-official/bin/python",
+  "setup_scripts": [
+    "{cann_root}/set_env.sh"
+  ],
+  "prepend_env": {
+    "PATH": "{ptoas_root}/bin"
+  },
+  "env": {
+    "PYTHONPATH": "{repo_root}",
+    "PTOAS_ROOT": "{ptoas_root}",
+    "DSV4_HC_PRE_IMPL": "separate"
+  }
+}

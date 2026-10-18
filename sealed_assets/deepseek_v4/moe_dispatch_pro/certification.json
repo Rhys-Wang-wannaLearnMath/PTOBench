@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.moe_dispatch_pro",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "62332c56b61cc1c5d672612adebb89207a0bb329e5901631f04f44a11823ad5e"
+}

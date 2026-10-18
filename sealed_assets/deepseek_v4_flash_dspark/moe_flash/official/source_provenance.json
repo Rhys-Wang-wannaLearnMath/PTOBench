@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "authority": "frozen source snapshot",
+  "upstream_repository": "https://github.com/hw-native-sys/pypto-lib.git",
+  "selected_upstream_commit": "7f15a1fa6bad2b7030eada571bfe23641d1bddd3",
+  "selected_upstream_path": "models/deepseek_v4_flash_dspark/moe.py",
+  "source": {
+    "repository_path": "models/0912/deepseek_v4_flash_dspark/moe.py",
+    "sha256": "d5b2af7aeaacca037bc3e5ee064860f377b29d841a592ce5dbe66d67973801b6",
+    "frozen_path": "official/original.py",
+    "frozen_sha256": "d5b2af7aeaacca037bc3e5ee064860f377b29d841a592ce5dbe66d67973801b6"
+  },
+  "dependencies": [
+    {"repository_path": "models/0912/deepseek_v4_flash_dspark/config.py", "sha256": "e823df2d88d5f128b928e476f94ee46eb6f3fd1c2c21c506f9334f66c74f0bd9", "frozen_path": "official/original_config.py", "frozen_sha256": "e823df2d88d5f128b928e476f94ee46eb6f3fd1c2c21c506f9334f66c74f0bd9"},
+    {"repository_path": "models/0912/deepseek_v4_flash_dspark/hc_pre.py", "sha256": "b5e347ed55eae5e7678c40bce3b9212c1b715419589a09b7edbcdf2a922755ee", "frozen_path": "official/hc_pre.py", "frozen_sha256": "b5e347ed55eae5e7678c40bce3b9212c1b715419589a09b7edbcdf2a922755ee"},
+    {"repository_path": "models/0912/deepseek_v4_flash_dspark/hc_post.py", "sha256": "b5a57578e26b02f38c502de699ca1e9d8f86e3a8bbe43585c2f2ee9d727a48a5", "frozen_path": "official/hc_post.py", "frozen_sha256": "b5a57578e26b02f38c502de699ca1e9d8f86e3a8bbe43585c2f2ee9d727a48a5"},
+    {"repository_path": "models/0912/deepseek_v4_flash_dspark/gate.py", "sha256": "ff1a23f2f2863cb750ddf25512d9cd913b423771f7745d0cd90c605a72ccc13a", "frozen_path": "official/gate.py", "frozen_sha256": "ff1a23f2f2863cb750ddf25512d9cd913b423771f7745d0cd90c605a72ccc13a"},
+    {"repository_path": "models/0912/deepseek_v4_flash_dspark/expert_shared.py", "sha256": "23dfc1bd5f2f01f73261f88feb90fbbb41e94830e495ee5fa8e6295a7ae6e391", "frozen_path": "official/expert_shared.py", "frozen_sha256": "23dfc1bd5f2f01f73261f88feb90fbbb41e94830e495ee5fa8e6295a7ae6e391"},
+    {"repository_path": "models/0912/deepseek_v4_flash_dspark/expert_routed.py", "sha256": "cbf2c384f9a62f2b64f5a277af0a25890f017a701ce097c82bc56d5e887680ce", "frozen_path": "official/expert_routed.py", "frozen_sha256": "cbf2c384f9a62f2b64f5a277af0a25890f017a701ce097c82bc56d5e887680ce"},
+    {"repository_path": "models/0912/deepseek_v4_flash_dspark/utils.py", "sha256": "9b110b3d2de05e84b61d53cdcd23d658afcc02dbb769060e5cfb01b095a23cc1", "frozen_path": "official/utils.py", "frozen_sha256": "9b110b3d2de05e84b61d53cdcd23d658afcc02dbb769060e5cfb01b095a23cc1"}
+  ],
+  "selection_rationale": "Preserve the frozen EP2 FLASH distributed MoE workload and bind the selected preset only through the public Fixture config alias.",
+  "case_id": "deepseek_v4_flash_dspark.moe_flash"
+}

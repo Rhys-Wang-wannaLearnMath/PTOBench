@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 import os
+import subprocess
 import sys
 
 from action_test_support import ActionTestBase, SOURCE_BENCHMARK
@@ -9,6 +10,38 @@ import session
 
 
 class AgentCliTest(ActionTestBase):
+    def test_legacy_session_cannot_restore_the_unrepaired_environment(self):
+        marker = self.bench / 'evaluator/runtime_policy.py'
+        content = marker.read_bytes()
+        marker.unlink()
+        try:
+            old = self.create()
+        finally:
+            marker.write_bytes(content)
+        environment = {**self.env, 'PTOBENCH_SESSION_ROOT': str(old.session_root)}
+        process, result = self.cli(['evaluate'], cwd=old.initial_workspace, env=environment)
+        self.assertEqual(process.returncode, 5, result)
+        self.assertIn('fresh Session', result['message'])
+        self.assertEqual(marker.read_bytes(), content)
+        self.assertEqual(self.calls(), [])
+
+    def test_help_without_session_exposes_profiles_without_reserving_budget(self):
+        environment = dict(self.env)
+        environment.pop('PTOBENCH_SESSION_ROOT')
+        for args in (['--help'], ['profile', '--help']):
+            with self.subTest(args=args):
+                process = subprocess.run([self.python, str(self.bench / 'ptobench'), *args],
+                                         env=environment, stdout=subprocess.PIPE,
+                                         stderr=subprocess.PIPE, timeout=10)
+                self.assertEqual(process.returncode, 0, process.stderr.decode())
+                self.assertIn('profile', process.stdout.decode())
+                if args[0] == 'profile':
+                    for mode in ('runtime', 'pmu', 'compiler'):
+                        self.assertIn(mode, process.stdout.decode())
+        self.assertEqual(self.events(), [])
+        self.assertEqual(self.calls(), [])
+        self.assertEqual(session.read_session(self.handle.session_root)['usage']['hardware_actions'], 0)
+
     def test_five_operations_default_workspace_fixed_modes_and_null_profiles(self):
         for args, phase, internal in ((['evaluate'],'all','clean'), (['profile','runtime'],'correctness','runtime'),
                                     (['profile','pmu'],'correctness','hardware'), (['profile','compiler'],'correctness','compile')):
@@ -18,10 +51,19 @@ class AgentCliTest(ActionTestBase):
                 self.assertEqual(result['status'], 'PASS', result)
                 call=self.calls()[-1]
                 self.assertEqual((call['phase'],call['profile_mode']), (phase,internal))
+                self.assertEqual(call['measurement_mode'], 'exploration' if args[0]=='evaluate' else 'formal')
                 self.assertEqual(call['case'],self.case_id)
                 self.assertNotEqual(call['candidate'],str(self.handle.initial_workspace))
                 self.assertEqual(result['latency_us'], 10.0 if internal=='clean' else None)
-                self.assertTrue((self.snapshot(result)/'source/helper.py').is_file())
+                self.assertEqual(call['skip_correctness'], args[0] == 'profile')
+                if internal == 'clean':
+                    self.assertEqual(result['correctness'], 'PASS')
+                else:
+                    self.assertNotIn('correctness', result)
+                if internal == 'clean':
+                    self.assertTrue((self.snapshot(result)/'source/helper.py').is_file())
+                else:
+                    self.assertIsNone(result['snapshot_id'])
                 authority=self.events()[-1]['result']
                 self.assertIsNone(authority['bootstrap_marker'])
                 self.assertIsNone(authority['inherited_profile'])
@@ -35,6 +77,7 @@ class AgentCliTest(ActionTestBase):
     def test_rejects_old_parser_modes_parameters_and_commands_without_execution(self):
         requests = [['profile','hardware'],['profile','compile'],['evaluate','--phase','all'],
                     ['evaluate','--candidate','.'],['evaluate','--result','result.json'],['evaluate','--workspace','.'],
+                    ['evaluate','--measurement-mode','formal'],['evaluate','--warmup','1'],['evaluate','--rounds','1'],
                     ['fork','--out','x'],['fork','--name','x'],['init','test.case'],['status'],['prepare-ref','test.case'],['finalize']]
         for args in requests:
             with self.subTest(args=args):

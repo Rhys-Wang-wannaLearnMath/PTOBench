@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.prefill_indexer_demo",
+  "authority": "selected byte-exact historical upstream workload",
+  "upstream_repository": "https://github.com/hw-native-sys/pypto-lib.git",
+  "upstream_commit": "7f15a1fa6bad2b7030eada571bfe23641d1bddd3",
+  "source": {
+    "repository_path": "models/0912/deepseek_v4_flash_dspark/prefill_indexer.py",
+    "sha256": "beb5c811b2446f94253f6de3d08e2593a1230d7f149c224d27fa1540e2a4f1ff",
+    "frozen_path": "official/original.py",
+    "frozen_sha256": "beb5c811b2446f94253f6de3d08e2593a1230d7f149c224d27fa1540e2a4f1ff"
+  },
+  "dependencies": [
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/config.py",
+      "sha256": "e823df2d88d5f128b928e476f94ee46eb6f3fd1c2c21c506f9334f66c74f0bd9",
+      "frozen_path": "official/original_config.py",
+      "frozen_sha256": "e823df2d88d5f128b928e476f94ee46eb6f3fd1c2c21c506f9334f66c74f0bd9"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/prefill_indexer_compressor.py",
+      "sha256": "47ff0131be5cd9a01c421428090ddb0035cbf10f5d7f769ed60e993038b65585",
+      "frozen_path": "official/prefill_indexer_compressor.py",
+      "frozen_sha256": "47ff0131be5cd9a01c421428090ddb0035cbf10f5d7f769ed60e993038b65585"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/utils.py",
+      "sha256": "9b110b3d2de05e84b61d53cdcd23d658afcc02dbb769060e5cfb01b095a23cc1",
+      "frozen_path": "official/utils.py",
+      "frozen_sha256": "9b110b3d2de05e84b61d53cdcd23d658afcc02dbb769060e5cfb01b095a23cc1"
+    }
+  ],
+  "selection_rationale": "Preserve fixed B1 S128 score-cap-256 workload and bind DEMO preset through CASE_CONFIG and Fixture alias."
+}

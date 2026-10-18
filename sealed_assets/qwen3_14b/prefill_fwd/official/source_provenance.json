@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "authority": "selected_official_upstream",
+  "repository": "https://github.com/hw-native-sys/pypto-lib.git",
+  "revision": "67834290256ec1b487ca3287d9bf593b42a58787",
+  "source_path": "models/qwen3/14b/prefill_fwd.py",
+  "frozen_copy": "original.py",
+  "source_sha256": "5d26dce0b77140f9d37abf2bf251394ab609853754c01243cd7596655c46b93d",
+  "frozen_copy_sha256": "5d26dce0b77140f9d37abf2bf251394ab609853754c01243cd7596655c46b93d",
+  "dependencies": [
+    {
+      "source_path": "models/qwen3/14b/config.py",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "632fbf7638f8f699e34434a55c26a41f2bfc35c022bcaeec83bca9dc78c93201",
+      "source_sha256": "632fbf7638f8f699e34434a55c26a41f2bfc35c022bcaeec83bca9dc78c93201"
+    },
+    {
+      "source_path": "models/qwen3/14b/rms_lm_head.py",
+      "frozen_copy": "rms_lm_head.py",
+      "frozen_copy_sha256": "765b2a0d27e137590208d8b230931239cf0cf59e6a08bbadaaf33b23a8fc35b0",
+      "source_sha256": "765b2a0d27e137590208d8b230931239cf0cf59e6a08bbadaaf33b23a8fc35b0"
+    }
+  ],
+  "selection_rationale": "Preserve the selected 67834290256ec1b487ca3287d9bf593b42a58787 packed-BF16-hidden-state prefill workload, instantiated with the historical default CLI batch=16, max_seq=128 and num_layers=2. The current successor introduces token IDs and an embedding table, BSND cache indexing and changed scheduling, so it cannot replace this fixed ABI, Fixture and golden by interface-only adaptation. Both dependencies come from the same coherent selected revision."
+}

@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/qwen3_14b/greedy_sample.py",
+  "source_sha256": "814fa6cee788c13236482619d1c890aeedd8add153595d9ff11a31241a553e06",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "814fa6cee788c13236482619d1c890aeedd8add153595d9ff11a31241a553e06",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/qwen3_14b_legacy_leaf/config.py",
+      "source_sha256": "2901fb5a4449060bce81fae76b0f7a05b48df0bc3254d5017fc4679f7c635991",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "2901fb5a4449060bce81fae76b0f7a05b48df0bc3254d5017fc4679f7c635991"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/qwen3_14b_legacy_leaf/constants.py",
+      "source_sha256": "00db5be8040420fd5045e4b15969606c0e19b08e435d8cec076b7c7dfd6a942a",
+      "frozen_copy": "constants.py",
+      "frozen_copy_sha256": "00db5be8040420fd5045e4b15969606c0e19b08e435d8cec076b7c7dfd6a942a"
+    }
+  ],
+  "selection": "The unsplit QWEN3_14B contract uses the corpus greedy-sampling source and its complete frozen legacy config closure.",
+  "fixture_authority": "byte-exact official TensorSpec builder and golden function"
+}

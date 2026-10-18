@@ -31,9 +31,9 @@ PROFILE_MODES = {
     },
 }
 
-# Only these modes are shown to and accepted from newly initialized Agent
-# workspaces. Set this to () when an experiment exposes no profiling.
-ENABLED_PROFILE_MODES = ("runtime", "hardware", "compile")
+# The current profile table is the single source of truth.  Deriving the
+# enabled tuple prevents an older mode list from surviving beside it.
+ENABLED_PROFILE_MODES = tuple(PROFILE_MODES)
 PUBLIC_TO_INTERNAL = {"runtime": "runtime", "pmu": "hardware", "compiler": "compile"}
 
 

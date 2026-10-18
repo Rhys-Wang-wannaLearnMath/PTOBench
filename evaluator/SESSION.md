@@ -27,15 +27,18 @@ session.close_exploration(handle.session_root, "optimizer_exit")
 `optimizer` also accepts a backend string, using that string as its ID and
 `default` as its profile. `output=None` uses benchmark `runs/` and `snapshots/`;
 `budget=None` uses 20 exploration actions and one finish action. The exploration
-limit must be a positive integer; the finish limit must be exactly one. Booleans
-are rejected as integers. Output roots cannot contain one another, or overlap
+limit may be a positive integer or the explicit string `unlimited`; the latter
+leaves exploration open until the Optimizer exits or the Session is interrupted.
+The finish limit must be exactly one. Booleans are rejected as integers. Output
+roots cannot contain one another, or overlap
 Case, sealed, environment, evaluator, launcher, golden or control directories.
 All input directory components reject links, including a link preceding `..`.
 
 Creation requires ready certification and Ref cache, matching comparator SHA-256,
 the exact `fixture_000` manifest, complete input files (including scalar and
 initial state tensors), declared Ref outputs, the Seed entry and dependencies,
-Ref/Oracle/evaluator sources, and a finite positive Ref median. The existing
+Ref/Oracle/evaluator sources, a finite positive Ref median, and explicit baseline
+`compiler_tuning` of `PYPTO` with `analyze_auto_scopes_for_deps=false`. The existing
 official Fixture builder is called to describe spec names; neither tensor
 creation nor Candidate/Ref/Oracle/kernel execution is called. Prepared tensors
 must be regular nonempty files. This checks preparation and recorded

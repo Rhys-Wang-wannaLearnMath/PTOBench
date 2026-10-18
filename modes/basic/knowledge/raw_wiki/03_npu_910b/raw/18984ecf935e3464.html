@@ -1,0 +1,35 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="search_title" content=""></head><body><a name="EN-US_TOPIC_0000002531522186"></a><a name="EN-US_TOPIC_0000002531522186"></a>
+
+<h1 class="topictitle1">How to Use the Header File on Which Tiling Depends</h1>
+<div id="body0000002522860379"><p id="EN-US_TOPIC_0000002531522186__en-us_topic_0000002267401474_p188291848141213">The Scalar Unit of the AI processor has limited execution capability. Therefore, to reduce scalar computations on the operator kernel, some computations are executed on the host. In this case, you need to compile the <a href="atlas_ascendc_10_0064.html">tiling code on the host</a>. Note that the dependent header file needs to be imported when the tiling API of the high-level APIs is called or the tiling structure parameter of the high-level APIs is used in the program. In different tiling implementation modes, the details are as follows:</p>
+<ul id="EN-US_TOPIC_0000002531522186__ul14141588465"><li id="EN-US_TOPIC_0000002531522186__li17414145817461"><a href="atlas_ascendc_10_00024.html">Using the standard C++ syntax to define the tiling structure</a><div class="p" id="EN-US_TOPIC_0000002531522186__p13597143614474">In this mode, the following dependent header file needs to be imported. The tiling structures of all high-level APIs are defined in the <strong id="EN-US_TOPIC_0000002531522186__b13251346545116">AscendC::tiling</strong> namespace. Therefore, you need to use <strong id="EN-US_TOPIC_0000002531522186__b830681245116">AscendC::tiling</strong> to access the tiling structure of a specific API.<div class="codecoloring" codetype="Cpp" id="EN-US_TOPIC_0000002531522186__screen288304844620"><div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;kernel_tiling/kernel_tiling.h&quot;</span>
+
+<span class="c1">// ...</span>
+<span class="n">AscendC</span><span class="o">::</span><span class="n">tiling</span><span class="o">::</span><span class="n">TCubeTiling</span><span class="w"> </span><span class="n">cubeTilingData</span><span class="p">;</span>
+</pre></div></td></tr></table></div>
+</div>
+</div>
+</li><li id="EN-US_TOPIC_0000002531522186__li3862184916473"><a href="atlas_ascendc_10_00023.html">Using the TILING_DATA_DEF macro to define the tiling structure</a><div class="p" id="EN-US_TOPIC_0000002531522186__p223311363313">In this mode, the following dependent header file needs to be imported. The tiling structures and tiling functions of all high-level APIs are defined in the <strong id="EN-US_TOPIC_0000002531522186__b12907105265116">optiling</strong> namespace.<div class="codecoloring" codetype="Cpp" id="EN-US_TOPIC_0000002531522186__en-us_topic_0000002267401474_screen113641954149"><div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;tiling/tiling_api.h&quot;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">optiling</span><span class="w"> </span><span class="p">{</span>
+<span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div></td></tr></table></div>
+</div>
+</div>
+</li></ul>
+</div>
+<div>
+<div class="familylinks">
+<div class="parentlink"><strong>Parent topic:</strong> <a href="atlas_ascendc_10_10046.html">Quick Reference Guide to Common Operations</a></div>
+</div>
+</div>
+
+</body></html>

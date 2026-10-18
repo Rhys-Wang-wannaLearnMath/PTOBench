@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "closure": "oracle",
+  "files": [
+    {
+      "path": "ref_cpu.py",
+      "sha256": "7f33e10a3dfe962f140dd2d5d005d1f037c4aed706eaacfdd2a01add8f5ed26e",
+      "reason": "independent CPU RMSNorm oracle for x_normed"
+    }
+  ],
+  "excluded": [
+    "Ref/Candidate implementation, Fixture generation, evaluator, RunConfig, profiling harnesses, standalone CLI, and generated output are excluded by the Oracle boundary."
+  ]
+}

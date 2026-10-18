@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "kv_cache": {
+      "method": "custom",
+      "name": "mapped_pool_ratio_allclose",
+      "mapping_name": "swa_slot_mapping",
+      "mapping_shape": [128],
+      "block_size": 128,
+      "leading_rank_axis": false,
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 0.005
+    },
+    "x_out": {
+      "method": "custom",
+      "name": "ratio_reldiff",
+      "diff_thd": 0.003,
+      "pct_thd": 0.008,
+      "max_diff_hd": 1.0,
+      "small_value_floor_numerator": 0.00006103515625,
+      "denominator_epsilon": 1e-9
+    }
+  }
+}

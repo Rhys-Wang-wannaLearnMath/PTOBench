@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.lm_head_tp2_demo",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "e0149d3c87a4f8f6ce11d7b3f3d5cc912ef16ff4373f475411f559985bc2a771"
+}

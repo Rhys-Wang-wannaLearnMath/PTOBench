@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/qwen3_14b/qwen3_14b_decode_scope2.py",
+  "source_sha256": "b39a034dc94f235c13966638a00ddbba7ca0f075a3fb467c5e0c3ab8bf1b380a",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "b39a034dc94f235c13966638a00ddbba7ca0f075a3fb467c5e0c3ab8bf1b380a",
+  "dependencies": [],
+  "selection": "The self-contained corpus source is the approved frozen Qwen3-14B decode Scope 2 workload; current successors change the ABI and state contract, and this source has no separate configuration dependency or named preset.",
+  "fixture_authority": "real TensorSpec builder and official golden_fn"
+}

@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "authority": "frozen source snapshot",
+  "upstream_repository": "https://github.com/hw-native-sys/pypto-lib.git",
+  "selected_upstream_commit": "7f15a1fa6bad2b7030eada571bfe23641d1bddd3",
+  "selected_upstream_path": "models/deepseek_v4_flash_dspark/decode_swa.py",
+  "source": {
+    "repository_path": "models/0912/deepseek_v4_flash_dspark/decode_swa.py",
+    "sha256": "ccab795a3f021d0e2a65052b71aeae7709f768ed28ce0131a88c5136463288e9",
+    "frozen_path": "official/original.py",
+    "frozen_sha256": "ccab795a3f021d0e2a65052b71aeae7709f768ed28ce0131a88c5136463288e9"
+  },
+  "dependencies": [
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/config.py",
+      "sha256": "e823df2d88d5f128b928e476f94ee46eb6f3fd1c2c21c506f9334f66c74f0bd9",
+      "frozen_path": "official/original_config.py",
+      "frozen_sha256": "e823df2d88d5f128b928e476f94ee46eb6f3fd1c2c21c506f9334f66c74f0bd9"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/hc_pre.py",
+      "sha256": "b5e347ed55eae5e7678c40bce3b9212c1b715419589a09b7edbcdf2a922755ee",
+      "frozen_path": "official/hc_pre.py",
+      "frozen_sha256": "b5e347ed55eae5e7678c40bce3b9212c1b715419589a09b7edbcdf2a922755ee"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/hc_post.py",
+      "sha256": "b5a57578e26b02f38c502de699ca1e9d8f86e3a8bbe43585c2f2ee9d727a48a5",
+      "frozen_path": "official/hc_post.py",
+      "frozen_sha256": "b5a57578e26b02f38c502de699ca1e9d8f86e3a8bbe43585c2f2ee9d727a48a5"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/qkv_proj_rope.py",
+      "sha256": "cc6679d9766a8770f3f88d26da338bcaee26b25492d909507efc3d09f51f6921",
+      "frozen_path": "official/qkv_proj_rope.py",
+      "frozen_sha256": "cc6679d9766a8770f3f88d26da338bcaee26b25492d909507efc3d09f51f6921"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/rmsnorm.py",
+      "sha256": "776c53c970f22981e066733e7b857a71c7df42990201db5eb941f099b0e47ac0",
+      "frozen_path": "official/rmsnorm.py",
+      "frozen_sha256": "776c53c970f22981e066733e7b857a71c7df42990201db5eb941f099b0e47ac0"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/decode_sparse_attn_swa.py",
+      "sha256": "518f402c7ab1195e81756a4b2c7e6b7535d6ed2e6abf54298b7c1cca2147d2ac",
+      "frozen_path": "official/decode_sparse_attn_swa.py",
+      "frozen_sha256": "518f402c7ab1195e81756a4b2c7e6b7535d6ed2e6abf54298b7c1cca2147d2ac"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/utils.py",
+      "sha256": "9b110b3d2de05e84b61d53cdcd23d658afcc02dbb769060e5cfb01b095a23cc1",
+      "frozen_path": "official/utils.py",
+      "frozen_sha256": "9b110b3d2de05e84b61d53cdcd23d658afcc02dbb769060e5cfb01b095a23cc1"
+    }
+  ],
+  "case_id": "deepseek_v4_flash_dspark.decode_swa_demo",
+  "selection_rationale": "Preserve the complete byte-exact historical SWA closure; bind only DEMO through public CASE_CONFIG and the approved sealed Fixture context. Official files retain their original bytes.",
+  "source_root": "/data1/home/ziruiwang/pypto-lib",
+  "source_version": "7f15a1fa6bad2b7030eada571bfe23641d1bddd3"
+}

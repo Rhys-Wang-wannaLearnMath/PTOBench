@@ -24,6 +24,14 @@ Sessions captured before the cutover are rejected before fixed-asset recovery,
 so their old protection backups cannot reinstall the retired entry/parser or
 overwrite the new infrastructure. Keep their historical evidence and create a
 fresh Session; their context is not rewritten.
+Sessions captured before the diagnostic-only Agent profile policy also remain
+readable as historical evidence, but cannot execute or restore their former
+Evaluator backups. Create a fresh Session for subsequent operations.
+Sessions captured before the shared C++ runtime and delayed Case-import repair
+also require a fresh Session. Their old protection snapshots cannot reinstall
+the previous environment loader. The Launcher checks compiler loading before
+starting an Agent; every Evaluator invocation repeats that small check in its
+selected environment before importing the Case.
 
 | Operation | Internal Evaluator phase/mode | Exploration cost |
 | --- | --- | ---: |
@@ -34,10 +42,22 @@ fresh Session; their context is not rewritten.
 | fork | source copy and fresh context | 0 |
 
 The public names pmu/compiler map to existing hardware/compile behavior and
-artifact directories. Profiling still dispatches correctness once. It adds no
-warmup or performance execution. A PASS profile without a finite positive
-`median_effective_us` records `latency_us=null`, `metric_name=null`, `unit=null`.
+artifact directories. Agent profiling runs the Candidate without comparing its
+outputs with the cached Ref. The internal `correctness` phase name is retained
+for the one-shot execution path; it does not mean output validation was performed.
+Profiles add no warmup or performance execution, omit the `correctness` field,
+and report `latency_us=null`, `metric_name=null`, `unit=null`.
+They retain runtime/compile errors, integrity checks, diagnostics and action costs.
+Only evaluate and the final fresh clean establish Agent Candidate correctness.
+Maintenance Sessions used for migration qualification retain their existing
+profile correctness checks and result/Snapshot policy.
 A successful evaluate requires finite positive latency and speedup.
+
+Exploration evaluate uses two warmup launches and three measured launches;
+latency is the median of the measured samples. Independent final verification
+uses the Case's formal settings (currently five warmups and ten measurements).
+Both paths retain raw measured samples and requested/actual measurement counts.
+These settings are fixed by Bench and are not public CLI flags.
 
 Before execution, the global lock serializes asset recovery, request validation,
 stable Candidate/helper copying and budget reservation. The Evaluator runs from
@@ -70,9 +90,11 @@ witness in the active action. Restoration cannot turn that observation into a
 PASS. The editable original Candidate is retained. Accepted failures and
 interruptions consume their reservation; rejected requests do not.
 
-A valid observation requires zero Evaluator exit, PASS verdict, fixture_000
-correctness PASS and integrity PASS. It saves a protected authority result,
-then a unique readonly Snapshot of the same frozen source. Snapshot metadata
+A valid observation requires zero Evaluator exit, PASS verdict and integrity PASS.
+Evaluate additionally requires fixture_000 correctness PASS and saves a unique
+readonly Snapshot of the same frozen source. An Agent profile saves protected
+authority and diagnostics without a `correctness` field, but creates no selectable
+Snapshot and cannot supply final-selection metrics. Snapshot metadata
 records Session/Case/Optimizer, source workspace, event sequence/hash and metric
 provenance. Outputs, context and caches are excluded. The completed event only
 references a Snapshot after source/metadata verification and protection

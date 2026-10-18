@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "q": {
+      "atol": 0.0001,
+      "rtol": 0.0078125,
+      "max_error_ratio": 0.005,
+      "method": "ratio_allclose"
+    },
+    "kv": {
+      "atol": 0.0001,
+      "rtol": 0.0078125,
+      "max_error_ratio": 0.005,
+      "method": "ratio_allclose"
+    },
+    "qr": {
+      "atol": 1.0,
+      "rtol": 0.0,
+      "max_error_ratio": 0.0,
+      "method": "ratio_allclose"
+    },
+    "qr_scale": {
+      "atol": 2.5e-05,
+      "rtol": 0.005,
+      "max_error_ratio": 0.005,
+      "method": "ratio_allclose"
+    }
+  }
+}

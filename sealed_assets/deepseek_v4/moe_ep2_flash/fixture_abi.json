@@ -1,0 +1,255 @@
+[
+  {
+    "name": "x_hc",
+    "scalar": false,
+    "shape": [
+      2,
+      8,
+      4,
+      4096
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "hc_ffn_fn",
+    "scalar": false,
+    "shape": [
+      2,
+      24,
+      16384
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "hc_ffn_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      3
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "hc_ffn_base",
+    "scalar": false,
+    "shape": [
+      2,
+      24
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "norm_w",
+    "scalar": false,
+    "shape": [
+      2,
+      4096
+    ],
+    "dtype": "bfloat16",
+    "resident": "stacked"
+  },
+  {
+    "name": "gate_w",
+    "scalar": false,
+    "shape": [
+      2,
+      64,
+      4096
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "gate_bias",
+    "scalar": false,
+    "shape": [
+      2,
+      64
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "tid2eid",
+    "scalar": false,
+    "shape": [
+      2,
+      129280,
+      6
+    ],
+    "dtype": "int32",
+    "resident": "stacked"
+  },
+  {
+    "name": "input_ids",
+    "scalar": false,
+    "shape": [
+      2,
+      8
+    ],
+    "dtype": "int64",
+    "resident": null
+  },
+  {
+    "name": "routed_w1",
+    "scalar": false,
+    "shape": [
+      2,
+      32,
+      2048,
+      4096
+    ],
+    "dtype": "int8",
+    "resident": "stacked"
+  },
+  {
+    "name": "routed_w1_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      32,
+      2048
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "routed_w3",
+    "scalar": false,
+    "shape": [
+      2,
+      32,
+      2048,
+      4096
+    ],
+    "dtype": "int8",
+    "resident": "stacked"
+  },
+  {
+    "name": "routed_w3_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      32,
+      2048
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "routed_w2",
+    "scalar": false,
+    "shape": [
+      2,
+      32,
+      4096,
+      2048
+    ],
+    "dtype": "int8",
+    "resident": "stacked"
+  },
+  {
+    "name": "routed_w2_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      32,
+      4096
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "shared_w1",
+    "scalar": false,
+    "shape": [
+      2,
+      2048,
+      4096
+    ],
+    "dtype": "int8",
+    "resident": "stacked"
+  },
+  {
+    "name": "shared_w1_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      2048
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "shared_w3",
+    "scalar": false,
+    "shape": [
+      2,
+      2048,
+      4096
+    ],
+    "dtype": "int8",
+    "resident": "stacked"
+  },
+  {
+    "name": "shared_w3_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      2048
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "shared_w2",
+    "scalar": false,
+    "shape": [
+      2,
+      4096,
+      2048
+    ],
+    "dtype": "int8",
+    "resident": "stacked"
+  },
+  {
+    "name": "shared_w2_scale",
+    "scalar": false,
+    "shape": [
+      2,
+      4096
+    ],
+    "dtype": "float32",
+    "resident": "stacked"
+  },
+  {
+    "name": "x_next",
+    "scalar": false,
+    "shape": [
+      2,
+      8,
+      4,
+      4096
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "layer_id",
+    "scalar": true,
+    "shape": null,
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "num_tokens",
+    "scalar": true,
+    "shape": null,
+    "dtype": "int32",
+    "resident": null
+  }
+]

@@ -1,5 +1,0 @@
-argv: ["{repo_root}/benchmarks/mig_workflow/agent_provider/launch.py", pi, --print, --provider, profile-gateway, --model, glm-5.3-flash, "{prompt}"]
-version_argv: [pi, --version]
-help_argv: [pi, --help]
-env: {}
-model: profile-gateway/glm-5.3-flash

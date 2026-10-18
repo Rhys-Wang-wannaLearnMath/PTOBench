@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "qwen3_14b.prefill_fwd",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "fbbe88c0b91920019d088617371e55d1eaaee9ea8eda809b25680956f712aec1"
+}

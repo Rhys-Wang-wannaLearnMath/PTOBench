@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.prefill_layer_ep8_swa_flash",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "bc0390692a45e83ff80cbb0c6e38843def08f498ded05f817e31638befde7e17"
+}

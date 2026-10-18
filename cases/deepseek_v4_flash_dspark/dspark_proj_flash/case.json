@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.dspark_proj_flash",
+  "description": "DeepSeek-V4 DSpark standalone main-hidden projection and RMSNorm, FLASH preset, decode Fixture",
+  "workspace": "public/candidate_seed",
+  "module": "dspark_proj.py",
+  "entry": "dspark_proj_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "runtime": {},
+  "correctness": {"mode": "single_step", "outputs": ["main_x"]},
+  "state": {"behavior": "none", "initial_state": [], "restore_before_each_launch": false}
+}

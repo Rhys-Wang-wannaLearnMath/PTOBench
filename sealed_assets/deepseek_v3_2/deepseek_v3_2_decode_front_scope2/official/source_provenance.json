@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v3_2/deepseek_v3_2_decode_front_scope2.py",
+  "source_sha256": "14d5656378796dd1493d9897f5d3d6ec1dcb93ef1d832d6a14aa462e714c9d10",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "14d5656378796dd1493d9897f5d3d6ec1dcb93ef1d832d6a14aa462e714c9d10",
+  "dependencies": [],
+  "selection": "Self-contained official source; no separate configuration dependency exists.",
+  "fixture_authority": "real TensorSpec builder and official golden_fn"
+}

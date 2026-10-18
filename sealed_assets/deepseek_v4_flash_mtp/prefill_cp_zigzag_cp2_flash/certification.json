@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4_flash_mtp.prefill_cp_zigzag_cp2_flash",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "5020cf9e1b07b45000ccd023999dea67943a7d4614a7292472ac36ec77af7174"
+}

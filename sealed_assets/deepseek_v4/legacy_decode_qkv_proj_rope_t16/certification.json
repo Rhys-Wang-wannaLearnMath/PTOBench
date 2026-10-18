@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.legacy_decode_qkv_proj_rope_t16",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "eacb438e55369311997c2175ff5b416def469d1c329952d839a3d856292b758f"
+}

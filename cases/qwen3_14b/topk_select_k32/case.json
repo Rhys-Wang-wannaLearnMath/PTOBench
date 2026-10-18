@@ -8,14 +8,22 @@
   "config": "public/config.py",
   "comparator": "public/comparator.json",
   "environment": "a2a3_single_card",
-  "fixture_ids": ["fixture_000"],
+  "fixture_ids": [
+    "fixture_000"
+  ],
   "correctness": {
     "mode": "single_step",
-    "outputs": ["topk_values", "topk_indices"]
+    "outputs": [
+      "topk_values",
+      "topk_indices"
+    ]
   },
   "state": {
     "behavior": "none",
     "initial_state": [],
     "restore_before_each_launch": false
+  },
+  "runtime": {
+    "device_id": 6
   }
 }

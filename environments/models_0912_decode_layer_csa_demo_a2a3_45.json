@@ -1,0 +1,27 @@
+{
+  "name": "models_0912_decode_layer_csa_demo_a2a3_45",
+  "platform": "a2a3",
+  "device": 4,
+  "python": "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+  "setup_scripts": [
+    "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh"
+  ],
+  "prepend_env": {
+    "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin",
+    "LD_LIBRARY_PATH": "/data1/home/ziruiwang/miniforge3/lib"
+  },
+  "env": {
+    "PYTHONPATH": "/data1/home/ziruiwang/pypto-lib",
+    "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60"
+  },
+  "runtime": {
+    "device_ids": [
+      4,
+      5
+    ]
+  },
+  "benchmark": {
+    "warmup": 5,
+    "rounds": 10
+  }
+}

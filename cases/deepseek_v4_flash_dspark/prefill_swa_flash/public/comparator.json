@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "x_out": {
+      "method": "custom",
+      "name": "valid_ratio_reldiff",
+      "diff_thd": 0.003,
+      "pct_thd": 0.005,
+      "max_diff_hd": 1,
+      "valid_prefix": "num_tokens",
+      "zero_tail": true
+    },
+    "kv_cache": {
+      "method": "ratio_allclose",
+      "rtol": 0.01,
+      "atol": 0.0001,
+      "max_error_ratio": 0.005
+    }
+  }
+}

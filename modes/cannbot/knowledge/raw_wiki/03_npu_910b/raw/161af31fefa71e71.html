@@ -1,0 +1,237 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <meta name="search_title" content="">
+ </head>
+ <body>
+  <a name="EN-US_TOPIC_0000002531362258"></a><a name="EN-US_TOPIC_0000002531362258"></a>
+  <h1 class="topictitle1">NPU Architecture Version 220x</h1>
+  <div id="body0000002380477949">
+   <p id="EN-US_TOPIC_0000002531362258__p37545579517">This section describes the hardware architecture and functions of the <strong id="EN-US_TOPIC_0000002531362258__b636514614206">__NPU_ARCH__</strong> version 220x. 220 indicates the IP core ID, and x indicates the configuration version of the same IP core. The corresponding product models are as follows:</p>
+   <ul id="EN-US_TOPIC_0000002531362258__ul723415519312">
+    <li id="EN-US_TOPIC_0000002531362258__li17391143711246"><span id="EN-US_TOPIC_0000002531362258__ph16239174011416"><term id="EN-US_TOPIC_0000002531362258__en-us_topic_0000002562275259_term1253731311225">
+       Atlas A3 training product
+      </term>/<term id="EN-US_TOPIC_0000002531362258__en-us_topic_0000002562275259_term131434243115">
+       Atlas A3 inference product
+      </term></span></li>
+    <li id="EN-US_TOPIC_0000002531362258__li519213411807"><span id="EN-US_TOPIC_0000002531362258__ph1292674871116"><term id="EN-US_TOPIC_0000002531362258__en-us_topic_0000002562275259_term11962195213215">
+       Atlas A2 training product
+      </term>/<term id="EN-US_TOPIC_0000002531362258__en-us_topic_0000002562275259_term898114865714">
+       Atlas A2 inference product
+      </term></span></li>
+   </ul>
+   <div class="section" id="EN-US_TOPIC_0000002531362258__section2189135013710">
+    <h4 class="sectiontitle">Hardware Architecture</h4>
+    <p id="EN-US_TOPIC_0000002531362258__p17937143475">As shown in the following figure, the AI Core in this architecture consists of two independent cores: AIC and AIV, which are used for cube computation and vector computation, respectively. Each core has its own Scalar Unit and can independently load its own code segments. Data is transferred between the AIV and AIC through the global memory.</p>
+    <p id="EN-US_TOPIC_0000002531362258__p86731656143918"></p>
+    <p id="EN-US_TOPIC_0000002531362258__p5632585117"><span><img class="imgResize" id="EN-US_TOPIC_0000002531362258__image547363011483" src="figure/en-us_image_0000002531362420.png" title="Click to enlarge"></span></p>
+   </div>
+   <div class="section" id="EN-US_TOPIC_0000002531362258__section8490181519513">
+    <h4 class="sectiontitle">Compute Units</h4>
+    <p id="EN-US_TOPIC_0000002531362258__p9332323115"><strong id="EN-US_TOPIC_0000002531362258__b8482127181119">Separated deployment of the Cube Unit and Vector Unit</strong></p>
+    <p id="EN-US_TOPIC_0000002531362258__p1187711016229">In this architecture, the Cube Unit and Vector Unit are deployed on the AIC and AIV cores, respectively. Each core has its own Scalar Unit and can independently load its own code segments.</p>
+    <p id="EN-US_TOPIC_0000002531362258__p125657368118"><strong id="EN-US_TOPIC_0000002531362258__b438645222118">Vector Unit</strong></p>
+    <ul id="EN-US_TOPIC_0000002531362258__ul105688367113">
+     <li id="EN-US_TOPIC_0000002531362258__li15568536171117">The data of the Vector Unit comes from the Unified Buffer and must be 32-byte aligned.</li>
+    </ul>
+    <p id="EN-US_TOPIC_0000002531362258__p614615011227"><strong id="EN-US_TOPIC_0000002531362258__b1543567152217">Cube Unit</strong></p>
+    <ul id="EN-US_TOPIC_0000002531362258__ul181521903222">
+     <li id="EN-US_TOPIC_0000002531362258__li10112192794415">The Cube Unit can access the L0A Buffer, L0B Buffer, and L0C Buffer. The L0A Buffer stores the left cube, the L0B Buffer stores the right cube, and the L0C Buffer stores the cube multiplication result and intermediate result.</li>
+    </ul>
+   </div>
+   <div class="section" id="EN-US_TOPIC_0000002531362258__section6500173264510">
+    <h4 class="sectiontitle">Storage Units</h4>
+    <p id="EN-US_TOPIC_0000002531362258__p0961184951413"><strong id="EN-US_TOPIC_0000002531362258__b7317086475435">Obtaining the memory size of a storage unit</strong></p>
+    <p id="EN-US_TOPIC_0000002531362258__p137313581426">You can query the memory size of each storage unit by calling the <a href="/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_1025.html">platform information acquisition</a> API.</p>
+    <p id="EN-US_TOPIC_0000002531362258__p557913211619"><strong id="EN-US_TOPIC_0000002531362258__b2040112424551">Minimum access granularities (alignment requirements) of each storage unit</strong></p>
+    <div class="tablenoborder">
+     <table cellpadding="4" cellspacing="0" summary="" id="EN-US_TOPIC_0000002531362258__table12348145512210" frame="border" border="1" rules="all">
+      <thead align="left">
+       <tr id="EN-US_TOPIC_0000002531362258__row3348175522218">
+        <th align="left" class="cellrowborder" valign="top" width="7.5200000000000005%" id="mcps1.3.5.5.1.4.1.1">
+         <p id="EN-US_TOPIC_0000002531362258__p1680716381143">Core</p></th>
+        <th align="left" class="cellrowborder" valign="top" width="46.22%" id="mcps1.3.5.5.1.4.1.2">
+         <p id="EN-US_TOPIC_0000002531362258__p5348145515229">Storage Unit</p></th>
+        <th align="left" class="cellrowborder" valign="top" width="46.26%" id="mcps1.3.5.5.1.4.1.3">
+         <p id="EN-US_TOPIC_0000002531362258__p16348125520221">Alignment Requirement</p></th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr id="EN-US_TOPIC_0000002531362258__row11348135516221">
+        <td class="cellrowborder" valign="top" width="7.5200000000000005%" headers="mcps1.3.5.5.1.4.1.1 ">
+         <p id="EN-US_TOPIC_0000002531362258__p48071138245">AIV</p></td>
+        <td class="cellrowborder" valign="top" width="46.22%" headers="mcps1.3.5.5.1.4.1.2 ">
+         <p id="EN-US_TOPIC_0000002531362258__p63481755122216"><span id="EN-US_TOPIC_0000002531362258__ph15348135502220">Unified Buffer</span></p></td>
+        <td class="cellrowborder" valign="top" width="46.26%" headers="mcps1.3.5.5.1.4.1.3 ">
+         <p id="EN-US_TOPIC_0000002531362258__p1634825512226">32-byte aligned.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531362258__row1534865520225">
+        <td class="cellrowborder" rowspan="6" valign="top" width="7.5200000000000005%" headers="mcps1.3.5.5.1.4.1.1 ">
+         <p id="EN-US_TOPIC_0000002531362258__p567812161851">AIC</p></td>
+        <td class="cellrowborder" valign="top" width="46.22%" headers="mcps1.3.5.5.1.4.1.2 ">
+         <p id="EN-US_TOPIC_0000002531362258__p7349175582217"><span id="EN-US_TOPIC_0000002531362258__ph1234918559222">L1 Buffer</span></p></td>
+        <td class="cellrowborder" valign="top" width="46.26%" headers="mcps1.3.5.5.1.4.1.3 ">
+         <p id="EN-US_TOPIC_0000002531362258__p2034975519227">32-byte aligned.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531362258__row14349855162220">
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.1 ">
+         <p id="EN-US_TOPIC_0000002531362258__p2349175522213"><span id="EN-US_TOPIC_0000002531362258__ph12349175572211">L0A Buffer</span></p></td>
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.2 ">
+         <p id="EN-US_TOPIC_0000002531362258__p12349105510223">512-byte aligned.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531362258__row83498556224">
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.1 ">
+         <p id="EN-US_TOPIC_0000002531362258__p143491455162210"><span id="EN-US_TOPIC_0000002531362258__ph5349135515225">L0B Buffer</span></p></td>
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.2 ">
+         <p id="EN-US_TOPIC_0000002531362258__p234945516225">512-byte aligned.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531362258__row13491655162217">
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.1 ">
+         <p id="EN-US_TOPIC_0000002531362258__p43494555226"><span id="EN-US_TOPIC_0000002531362258__ph17349155514229">L0C Buffer</span></p></td>
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.2 ">
+         <p id="EN-US_TOPIC_0000002531362258__p14349125512220">64-byte aligned.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531362258__row15518316118">
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.1 ">
+         <p id="EN-US_TOPIC_0000002531362258__p13625119517">BiasTable Buffer</p></td>
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.2 ">
+         <p id="EN-US_TOPIC_0000002531362258__p1462519119">64-byte aligned.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531362258__row16156956113">
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.1 ">
+         <p id="EN-US_TOPIC_0000002531362258__p126251896119">Fixpipe Buffer</p></td>
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.2 ">
+         <p id="EN-US_TOPIC_0000002531362258__p2229125511616">64-byte aligned.</p></td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <p id="EN-US_TOPIC_0000002531362258__p11659195111419"><strong id="EN-US_TOPIC_0000002531362258__b2873173585520">Recommended data layout formats for each storage unit</strong></p>
+    <ul id="EN-US_TOPIC_0000002531362258__ul359653311157">
+     <li id="EN-US_TOPIC_0000002531362258__li55961433181516">The following fractal formats are recommended for the L0A Buffer, L0B Buffer, and L0C Buffer: 
+      <ul id="EN-US_TOPIC_0000002531362258__ul13596163341517">
+       <li id="EN-US_TOPIC_0000002531362258__li859723371517">L0A Buffer: FRACTAL_ZZ</li>
+       <li id="EN-US_TOPIC_0000002531362258__li6597533101514">L0B Buffer: FRACTAL_ZN</li>
+       <li id="EN-US_TOPIC_0000002531362258__li188941186169">L0C Buffer: FRACTAL_NZ</li>
+      </ul>
+      <p id="EN-US_TOPIC_0000002531362258__p1215942141617">These formats are optimized for compute-intensive tasks such as cube multiplication, significantly improving the compute efficiency.</p></li>
+     <li id="EN-US_TOPIC_0000002531362258__li4597123313158">The <strong id="EN-US_TOPIC_0000002531362258__b774192646566">FRACTAL_NZ</strong> format is recommended for the L1 Buffer. When the L1 Buffer uses the NZ format, the format conversion overhead is reduced when data is moved to the L0A/L0B Buffer (which needs to be converted to the ZZ and ZN formats, respectively).</li>
+     <li id="EN-US_TOPIC_0000002531362258__li15219497416">The Unified Buffer has no requirements for the data format.</li>
+    </ul>
+    <p id="EN-US_TOPIC_0000002531362258__p8380123012413"><strong id="EN-US_TOPIC_0000002531362258__b18383220515641">Resolving access conflicts of storage units to improve read/write performance</strong></p>
+    <p id="EN-US_TOPIC_0000002531362258__p99008191443">When multiple operations attempt to access the same bank or bank group of the <span id="EN-US_TOPIC_0000002531362258__ph6254728475651">Unified Buffer</span> at the same time, bank conflicts may occur, including the read-write conflict, write-write conflict, and read-read conflict. As a result, the accesses queue and the performance deteriorates. The read/write performance can be improved by optimizing bank allocation. For details, see <a href="atlas_ascendc_best_practices_10_0025.html">Avoiding Bank Conflicts in the Unified Buffer</a>.</p>
+   </div>
+   <div class="section" id="EN-US_TOPIC_0000002531362258__section1073952984611">
+    <h4 class="sectiontitle">DMA Units</h4>
+    <p id="EN-US_TOPIC_0000002531362258__p5480181613105"><strong id="EN-US_TOPIC_0000002531362258__b21184334385722">Alignment requirements during movement</strong></p>
+    <p id="EN-US_TOPIC_0000002531362258__p17726164211811">The size of the data to be moved is subject to certain requirements because the moved data is used for computation. The size of the data moved to the <span id="EN-US_TOPIC_0000002531362258__ph20483480245811">Unified Buffer</span> must be aligned based on the data block size. The data moved to other storage units must be aligned based on the <a href="atlas_ascendc_10_0099.html">fractal requirements</a>. For example, when data is moved from the <span id="EN-US_TOPIC_0000002531362258__ph1872995085594">L1 Buffer</span> to the <span id="EN-US_TOPIC_0000002531362258__ph972912521594">L0A Buffer</span>, the data format needs to be converted from NZ to ZZ. The size of the data to be moved must be aligned based on the fractal size. If the remaining size of the L1 Buffer is less than one fractal, an exception will occur during hardware execution.</p>
+    <p id="EN-US_TOPIC_0000002531362258__p1252212711917"><strong id="EN-US_TOPIC_0000002531362258__b101573132511">Inter-device data movement (HCCS physical link)</strong></p>
+    <p id="EN-US_TOPIC_0000002531362258__p16239153515911">In the development of inter-device communication operators, the DataCopy APIs support inter-device data movement. On the <span id="EN-US_TOPIC_0000002531362258__ph165367271496"><term id="EN-US_TOPIC_0000002531362258__en-us_topic_0000002562275259_term11962195213215_1">
+       Atlas A2 training product
+      </term>/<term id="EN-US_TOPIC_0000002531362258__en-us_topic_0000002562275259_term898114865714_1">
+       Atlas A2 inference product
+      </term></span>, only HCCS physical links are supported. During development, pay attention to the physical links involved in inter-device communication. You can run the <strong id="EN-US_TOPIC_0000002531362258__b441951962511">npu-smi info -t topo</strong> command to query the HCCS physical links.</p>
+    <p id="EN-US_TOPIC_0000002531362258__p14322114320913"><strong id="EN-US_TOPIC_0000002531362258__b13211443917">FixPipe hardware acceleration</strong></p>
+    <p id="EN-US_TOPIC_0000002531362258__p9457174518105">FixPipe is an acceleration module that hardens typical operations on the NPU. It is located inside the AIC and works with the Cube Unit to complete on-the-fly computation. Its main functions are as follows:</p>
+    <ul id="EN-US_TOPIC_0000002531362258__ul17783183113313">
+     <li id="EN-US_TOPIC_0000002531362258__li378393163310">Quantization and dequantization, including S322FP16, S322S32, S322S4, S322S8, S322S16, FP322FP16, FP322BF16, FP322S8, FP322S4, and FP322FP32.</li>
+     <li id="EN-US_TOPIC_0000002531362258__li14240552113318">ReLU functions, including typical activation functions such as ReLU, PReLU, and Leaky ReLU.</li>
+     <li id="EN-US_TOPIC_0000002531362258__li153283559333">Data format conversion, including: 
+      <ul id="EN-US_TOPIC_0000002531362258__ul1253815271295">
+       <li id="EN-US_TOPIC_0000002531362258__li165381272091">Fractal size conversion through Channel Merge and Channel Split, ensuring that the fractal output to the L1 Buffer/GM meets the requirements.</li>
+       <li id="EN-US_TOPIC_0000002531362258__li55383271918">NZ2ND data format conversion.</li>
+      </ul></li>
+    </ul>
+    <p id="EN-US_TOPIC_0000002531362258__p2538182711915"><span><img class="imgResize" id="EN-US_TOPIC_0000002531362258__image1553862717916" src="figure/en-us_image_0000002562282333.png" title="Click to enlarge"></span></p>
+    <p id="EN-US_TOPIC_0000002531362258__p97501425744"></p>
+    <p id="EN-US_TOPIC_0000002531362258__p157711910468">In the preceding figure, Channel Merge supports the S8, U8, S4, and U4 data types, while Channel Split supports the FP32 data type.</p>
+    <ul id="EN-US_TOPIC_0000002531362258__ul9679722161">
+     <li id="EN-US_TOPIC_0000002531362258__li19679172219610">Channel Merge (S8 and U8 data types) 
+      <p id="EN-US_TOPIC_0000002531362258__p115384272916"><a name="EN-US_TOPIC_0000002531362258__li19679172219610"></a><a name="li19679172219610"></a>For the target data type converted to S8 or U8, the fractal cube is converted from 16×16 to 16×32 through hardware. If the number of output channels (<em id="EN-US_TOPIC_0000002531362258__i4376161412304">N</em>) is an even multiple of 16, every two adjacent 16×16 fractal cubes in the <em id="EN-US_TOPIC_0000002531362258__i53762014143010">N</em> direction are merged into one 16×32 fractal cube. If the value of <em id="EN-US_TOPIC_0000002531362258__i668232583111">N</em> is an odd multiple of 16, channels [1, <em id="EN-US_TOPIC_0000002531362258__i12261331113119">N</em>–16] are merged; the final 16 channels are not merged.</p>
+      <p id="EN-US_TOPIC_0000002531362258__p165389271498">As shown below, the target data type is S8, <em id="EN-US_TOPIC_0000002531362258__i16761214123119">M</em> is 32, and <em id="EN-US_TOPIC_0000002531362258__i177611114113120">N</em> is 48. First, the 16×16 fractal cubes in the first two columns are merged into one 16×32 cube, and then the remaining 16×16 fractal cubes are directly moved to the L1 Buffer.</p>
+      <p id="EN-US_TOPIC_0000002531362258__p65383272098"><span><img class="eddx" id="EN-US_TOPIC_0000002531362258__image16538127397" src="figure/en-us_image_0000002531522356.png"></span></p></li>
+     <li id="EN-US_TOPIC_0000002531362258__li1124612214438">Channel Merge (S4 and U4 data types) 
+      <p id="EN-US_TOPIC_0000002531362258__p1653810274916"><a name="EN-US_TOPIC_0000002531362258__li1124612214438"></a><a name="li1124612214438"></a>For the target data type converted to S4 or U4, the fractal cube is converted from 16×16 to 16×32 through hardware. If the number of output channels (<em id="EN-US_TOPIC_0000002531362258__i1738193233219">N</em>) is a multiple of 64, every four adjacent 16×16 fractal cubes in the <em id="EN-US_TOPIC_0000002531362258__i173813233217">N</em> direction are merged into a single 16×64 fractal cube.</p>
+      <p id="EN-US_TOPIC_0000002531362258__p5538427895">For example, the target data type is S4, <em id="EN-US_TOPIC_0000002531362258__i178275615328">M</em> is 32, and <em id="EN-US_TOPIC_0000002531362258__i148275613213">N</em> is 64. First, the 16×16 fractal cubes in the first row are merged into a 16×64 cube, and then the 16×16 fractal cubes in the second row are also merged.</p>
+      <p id="EN-US_TOPIC_0000002531362258__p13538227996">In this case, <em id="EN-US_TOPIC_0000002531362258__i161442544951650">N</em> must be a multiple of 64.</p>
+      <p id="EN-US_TOPIC_0000002531362258__p1753819277917"><span><img class="eddx" id="EN-US_TOPIC_0000002531362258__image12538427097" src="figure/en-us_image_0000002562442323.png"></span></p></li>
+     <li id="EN-US_TOPIC_0000002531362258__li197803913610">FP32 Channel Split: 
+      <p id="EN-US_TOPIC_0000002531362258__p16538527091"><a name="EN-US_TOPIC_0000002531362258__li197803913610"></a><a name="li197803913610"></a>For the target type FP32, the fractal cube can be converted from 16×16 to 16×8 through hardware. If Channel Split is enabled, each 16×16 fractal cube is split into two 16×8 fractal cubes.</p>
+      <p id="EN-US_TOPIC_0000002531362258__p155389278917">As shown in the following figure, the target data type is FP32, <em id="EN-US_TOPIC_0000002531362258__i131804572851650">M</em> is 64, and <em id="EN-US_TOPIC_0000002531362258__i171851232851650">N</em> is 32. The cube is split into sixteen 16×8 fractals.</p>
+      <p id="EN-US_TOPIC_0000002531362258__p65385275911"><span><img class="imgResize" id="EN-US_TOPIC_0000002531362258__image13538152718912" src="figure/en-us_image_0000002562282323.png" title="Click to enlarge"></span></p></li>
+    </ul>
+   </div>
+   <div class="section" id="EN-US_TOPIC_0000002531362258__section41753664816">
+    <h4 class="sectiontitle">Synchronization Control</h4>
+    <ul id="EN-US_TOPIC_0000002531362258__ul102881408385">
+     <li id="EN-US_TOPIC_0000002531362258__li1528817019381">Intra-core synchronization 
+      <p id="EN-US_TOPIC_0000002531362258__p133214519339"><a name="EN-US_TOPIC_0000002531362258__li1528817019381"></a><a name="li1528817019381"></a>The execution units (such as the MTE2 and Vector Unit) within the AI Core operate asynchronously and in parallel. As a result, data dependencies may arise when reading data from or writing data to the local memory (such as the Unified Buffer). To ensure data consistency and computational accuracy, synchronization control is required to coordinate the timing of operations.</p>
+      <p id="EN-US_TOPIC_0000002531362258__p688810015359">For example, in the process where the MTE2 moves data from the GM to the UB for Abs computation by the Vector Unit and then moves the data back to the GM, the following synchronization conditions must be met:</p>
+      <ol id="EN-US_TOPIC_0000002531362258__ol7706133011367">
+       <li id="EN-US_TOPIC_0000002531362258__li970643043613">Data movement and computation sequence 
+        <ul id="EN-US_TOPIC_0000002531362258__ul10369250369">
+         <li id="EN-US_TOPIC_0000002531362258__li1136985143612">Start Abs computation by the Vector Unit after data is moved from the GM to the UB (to avoid data loss caused by incomplete movement during computation).</li>
+         <li id="EN-US_TOPIC_0000002531362258__li1336918533620">After the vector computation is complete, move data from the UB to the GM (to ensure that the result data is ready).</li>
+        </ul></li>
+       <li id="EN-US_TOPIC_0000002531362258__li61511336143617">Synchronization rules for cyclic data movement and computation scenarios 
+        <ul id="EN-US_TOPIC_0000002531362258__ul742511421365">
+         <li id="EN-US_TOPIC_0000002531362258__li16425184273612">Start new data movement after the previous computation is complete. Do not trigger new data movement when the previous computation is not complete (to prevent the old data in the UB from being overwritten).</li>
+         <li id="EN-US_TOPIC_0000002531362258__li19425442193617">Start new computation after the previous data is moved out. Do not trigger a new computation task when the previous data is not completely moved out from the UB (to avoid overwriting conflicts in the target memory area).</li>
+        </ul></li>
+      </ol>
+      <p id="EN-US_TOPIC_0000002531362258__p2032141121020">The synchronization control process is shown in the following figure.</p>
+      <p id="EN-US_TOPIC_0000002531362258__p232131118105"><span><img class="imgResize" id="EN-US_TOPIC_0000002531362258__image588652016510" src="figure/en-us_image_0000002531522348.png" title="Click to enlarge"></span></p>
+      <p id="EN-US_TOPIC_0000002531362258__p13321151151012">In the preceding figure, ID1, ID2, ID3, ID4, ID5, and ID6 represent event IDs. Each event ID corresponds to the movement status of a piece of stored data, ensuring the correctness and consistency of data operations.</p>
+      <div class="p" id="EN-US_TOPIC_0000002531362258__p17321181181012">
+       Note the following: 
+       <ul id="EN-US_TOPIC_0000002531362258__ul1832171161010">
+        <li id="EN-US_TOPIC_0000002531362258__li123215116105">You are advised to obtain the event ID through the <a href="/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0114.html">AllocEventID</a> or <a href="/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0116.html">FetchEventID</a> API to ensure its validity.</li>
+        <li id="EN-US_TOPIC_0000002531362258__li13321101111017">The number of event IDs is limited. After using an event ID, call <strong id="EN-US_TOPIC_0000002531362258__b140802384951747">ReleaseEventID</strong> immediately to release the event ID, preventing event ID exhaustion and ensuring normal system operating.</li>
+        <li id="EN-US_TOPIC_0000002531362258__li10321511101016"><strong id="EN-US_TOPIC_0000002531362258__b12418253775180">SetFlag</strong> and <strong id="EN-US_TOPIC_0000002531362258__b6107942795180">WaitFlag</strong> must be used in pairs, and their parameters must be completely the same (including the template parameters and event ID). If they do not match, the computation of the current core may be abnormal, or the execution of the operator on the next core may be affected, causing a timeout. 
+         <p id="EN-US_TOPIC_0000002531362258__p23211411171016">For example, <strong id="EN-US_TOPIC_0000002531362258__b206835705851825">SetFlag&lt;HardEvent::S_MTE3&gt;(1)</strong> and <strong id="EN-US_TOPIC_0000002531362258__b128282174551825">SetFlag&lt;HardEvent::MTE3_MTE1&gt;(1)</strong> set different event IDs because their template parameters are different. They set the same event ID only when their template parameters and event IDs are the same.</p></li>
+        <li id="EN-US_TOPIC_0000002531362258__li9321181119105">Do not set the same event ID consecutively. Otherwise, the event status may be disordered or not correctly processed.</li>
+        <li id="EN-US_TOPIC_0000002531362258__li82521537131010">You are advised not to manually insert TEventIDs. Do not manually insert TEventIDs 6 and 7 because they may be reserved by the system or used for special purposes.</li>
+       </ul>
+      </div></li>
+    </ul>
+    <ul id="EN-US_TOPIC_0000002531362258__ul1152119143813">
+     <li id="EN-US_TOPIC_0000002531362258__li15211893385">Inter-core synchronization 
+      <p id="EN-US_TOPIC_0000002531362258__p171591342162613"><a name="EN-US_TOPIC_0000002531362258__li15211893385"></a><a name="li15211893385"></a>When different cores operate the same global memory, data dependency issues such as read-after-write, write-after-read, and write-after-write may occur. To avoid such issues, inter-core synchronization control is required.</p>
+      <p id="EN-US_TOPIC_0000002531362258__p1674218763313">The inter-core synchronization control has the following modes, as shown in the following figure.</p>
+      <ul id="EN-US_TOPIC_0000002531362258__ul141016593335">
+       <li id="EN-US_TOPIC_0000002531362258__li11101145913317">Mode 0: synchronization control between AI Cores. In the AIC scenario, all AIC cores are synchronized. The subsequent instructions of <strong id="EN-US_TOPIC_0000002531362258__b16550326373">CrossCoreWaitFlag</strong> are executed only when all AIC cores execute <strong id="EN-US_TOPIC_0000002531362258__b135501126479">CrossCoreSetFlag</strong>. In the AIV scenario, all AIV cores are synchronized. The subsequent instructions of <strong id="EN-US_TOPIC_0000002531362258__b1955052616719">CrossCoreWaitFlag</strong> are executed only when all AIV cores execute <strong id="EN-US_TOPIC_0000002531362258__b5550926274">CrossCoreSetFlag</strong>.</li>
+       <li id="EN-US_TOPIC_0000002531362258__li9101155917337">Mode 1: synchronization control between AIV cores in the AI Core. The subsequent instructions of <strong id="EN-US_TOPIC_0000002531362258__b93516024351650">CrossCoreWaitFlag</strong> are executed only when both AIV cores run <strong id="EN-US_TOPIC_0000002531362258__b159248261651650">CrossCoreSetFlag</strong>.</li>
+       <li id="EN-US_TOPIC_0000002531362258__li1110105914331">Mode 2: synchronization control between AIC and AIV cores in the AI Core. The subsequent instructions of <strong id="EN-US_TOPIC_0000002531362258__b129286382919">CrossCoreWaitFlag</strong> on the two AIV cores are executed only after <strong id="EN-US_TOPIC_0000002531362258__b1392816381598">CrossCoreSetFlag</strong> is executed on the AIC core, and vice versa.</li>
+      </ul>
+      <p id="EN-US_TOPIC_0000002531362258__p2030114311401"><span><img class="imgResize" id="EN-US_TOPIC_0000002531362258__image3101165953311" src="figure/en-us_image_0000002531362416.png" title="Click to enlarge"></span></p>
+      <p id="EN-US_TOPIC_0000002531362258__p22981745720">For example, after the AIC core moves the L0C computation result to the GM, the AIV core needs to move the GM data to the UB. In this case, you can use the <strong id="EN-US_TOPIC_0000002531362258__b101078814103">CrossCoreSetFlag</strong> and <strong id="EN-US_TOPIC_0000002531362258__b1310738131011">CrossCoreWaitFlag</strong> commands to ensure that the data is successfully moved from the L0C to the GM and then from the GM to the UB. The following figure shows the process.</p>
+      <p id="EN-US_TOPIC_0000002531362258__p12616171618535"><span><img class="imgResize" id="EN-US_TOPIC_0000002531362258__image14615111618533" src="figure/en-us_image_0000002562282319.png" title="Click to enlarge"></span></p>
+      <p id="EN-US_TOPIC_0000002531362258__p33611047175617">The <a href="/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0273.html">CrossCoreSetFlag</a> and <a href="/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0274.html">CrossCoreWaitFlag</a> APIs are used together. The flag ID (<strong id="EN-US_TOPIC_0000002531362258__b28071440121120">flagId</strong>, that is, ID1 in the above figure) for inter-core synchronization needs to be passed in. Each ID corresponds to a counter whose initial value is <strong id="EN-US_TOPIC_0000002531362258__b68081640171113">0</strong>. After <strong id="EN-US_TOPIC_0000002531362258__b5773231407">CrossCoreSetFlag</strong> is executed, the value of the counter corresponding to the ID is incremented by 1. If the counter value is <strong id="EN-US_TOPIC_0000002531362258__b13771823174014">0</strong>, <strong id="EN-US_TOPIC_0000002531362258__b117732318401">CrossCoreWaitFlag</strong> is not executed. If the counter value is greater than 0, the counter decreases by 1 and subsequent instructions start to be executed. The value of <strong id="EN-US_TOPIC_0000002531362258__b452957751650">flagId</strong> ranges from 0 to 10.</p>
+      <p id="EN-US_TOPIC_0000002531362258__p077045765910">Note the following:</p>
+      <ul id="EN-US_TOPIC_0000002531362258__ul12255254725">
+       <li id="EN-US_TOPIC_0000002531362258__li494214561027"><strong id="EN-US_TOPIC_0000002531362258__b1094175614220">Used in pairs</strong>
+        <p id="EN-US_TOPIC_0000002531362258__p1147817583210"><strong id="EN-US_TOPIC_0000002531362258__b12066158051650">CrossCoreSetFlag</strong> and <strong id="EN-US_TOPIC_0000002531362258__b73250288951650">CrossCoreWaitFlag</strong> must be used in pairs. Otherwise, the operator may time out.</p></li>
+       <li id="EN-US_TOPIC_0000002531362258__li1768086538"><strong id="EN-US_TOPIC_0000002531362258__b96801061931">Data consistency</strong>
+        <p id="EN-US_TOPIC_0000002531362258__p154514812317">The template parameters and <strong id="EN-US_TOPIC_0000002531362258__b12249313161411">flagId</strong> of <strong id="EN-US_TOPIC_0000002531362258__b92501413151419">CrossCoreSetFlag</strong> must be the same as those of <strong id="EN-US_TOPIC_0000002531362258__b7250151301414">CrossCoreWaitFlag</strong>. Otherwise, they are considered as different flag IDs. For example, <strong id="EN-US_TOPIC_0000002531362258__b105857209351650">CrossCoreSetFlag&lt;0x0, PIPE_MTE3&gt;(0x8)</strong> and <strong id="EN-US_TOPIC_0000002531362258__b21343180851650">CrossCoreSetFlag&lt;0x2, PIPE_FIX&gt;(0x8)</strong> set different flag IDs.</p></li>
+       <li id="EN-US_TOPIC_0000002531362258__li811215501831"><strong id="EN-US_TOPIC_0000002531362258__b101121050232">Avoiding consecutive settings</strong>
+        <p id="EN-US_TOPIC_0000002531362258__p43885119316">Setting the same flag ID consecutively is not allowed, preventing the counter status from being disordered.</p></li>
+       <li id="EN-US_TOPIC_0000002531362258__li145222123411"><strong id="EN-US_TOPIC_0000002531362258__b1252211121741">Use conflict with high-level APIs</strong>
+        <p id="EN-US_TOPIC_0000002531362258__p27094241045">This API is used to control inter-core synchronization in the internal implementation of the Matmul high-level APIs. Therefore, you are advised not to use this API and the Matmul high-level APIs at the same time. Otherwise, flag IDs may conflict.</p></li>
+       <li id="EN-US_TOPIC_0000002531362258__li729353518415"><strong id="EN-US_TOPIC_0000002531362258__b1329318351645">Counter restrictions</strong>
+        <p id="EN-US_TOPIC_0000002531362258__p412153611417">The counter of the same flag ID can be set for a maximum of 15 times.</p></li>
+       <li id="EN-US_TOPIC_0000002531362258__li8811645844"><strong id="EN-US_TOPIC_0000002531362258__b118117454412">Default pipeline type</strong>
+        <p id="EN-US_TOPIC_0000002531362258__p19748845745">The instruction pipeline type does not need to be explicitly set for <strong id="EN-US_TOPIC_0000002531362258__b121951215112016">CrossCoreWaitFlag</strong>. <strong id="EN-US_TOPIC_0000002531362258__b51951915152018">PIPE_S</strong> is used by default.</p></li>
+      </ul></li>
+    </ul>
+   </div>
+  </div>
+  <div>
+   <div class="familylinks">
+    <div class="parentlink">
+     <strong>Parent topic:</strong> <a href="atlas_ascendc_10_0009.html">Architecture Specifications</a>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>

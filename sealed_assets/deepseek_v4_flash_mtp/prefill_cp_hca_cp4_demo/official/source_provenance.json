@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "authority": "selected_upstream",
+  "repository": "https://github.com/hw-native-sys/pypto-lib",
+  "revision": "15c9f1e15d625da2232e428e74ec5ef337495ae4",
+  "source_path": "models/deepseek_v4_flash_mtp/prefill_cp_hca.py",
+  "source_sha256": "1c4da3e4d16d9f2f216e7b9d122d869c86e1d68991a29af291d81a7256eb593e",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "1c4da3e4d16d9f2f216e7b9d122d869c86e1d68991a29af291d81a7256eb593e",
+  "dependencies": [
+    {
+      "source_path": "models/deepseek_v4_flash_mtp/config.py",
+      "source_sha256": "61b52e187ba1c2d95465e1c87bc8d125312ec349c92f7355a1061a2071995da4",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "61b52e187ba1c2d95465e1c87bc8d125312ec349c92f7355a1061a2071995da4"
+    },
+    {
+      "source_path": "models/deepseek_v4_flash_mtp/hc_post.py",
+      "source_sha256": "b5a57578e26b02f38c502de699ca1e9d8f86e3a8bbe43585c2f2ee9d727a48a5",
+      "frozen_copy": "hc_post.py",
+      "frozen_copy_sha256": "b5a57578e26b02f38c502de699ca1e9d8f86e3a8bbe43585c2f2ee9d727a48a5"
+    },
+    {
+      "source_path": "models/deepseek_v4_flash_mtp/hc_pre.py",
+      "source_sha256": "39f365df3925fc555ce6f21262ac2fa528ca089b1d3264e18feaf46342c9feda",
+      "frozen_copy": "hc_pre.py",
+      "frozen_copy_sha256": "39f365df3925fc555ce6f21262ac2fa528ca089b1d3264e18feaf46342c9feda"
+    },
+    {
+      "source_path": "models/deepseek_v4_flash_mtp/prefill_compressor_ratio128.py",
+      "source_sha256": "4ffad2c9e93ce0d709386977167f48702eb06207f23129eb571a33513d403af8",
+      "frozen_copy": "prefill_compressor_ratio128.py",
+      "frozen_copy_sha256": "4ffad2c9e93ce0d709386977167f48702eb06207f23129eb571a33513d403af8"
+    },
+    {
+      "source_path": "models/deepseek_v4_flash_mtp/prefill_compressor_ratio4.py",
+      "source_sha256": "23c21e653411efb240cebd2669681f4d8930514bb203a8e35fa4f1b5ea120ed6",
+      "frozen_copy": "prefill_compressor_ratio4.py",
+      "frozen_copy_sha256": "23c21e653411efb240cebd2669681f4d8930514bb203a8e35fa4f1b5ea120ed6"
+    },
+    {
+      "source_path": "models/deepseek_v4_flash_mtp/prefill_cp_exchange.py",
+      "source_sha256": "aebc34d8b765ddb23e1d11ea02a5069f76f4647bed6f80f89bea7ac457358cc8",
+      "frozen_copy": "prefill_cp_exchange.py",
+      "frozen_copy_sha256": "aebc34d8b765ddb23e1d11ea02a5069f76f4647bed6f80f89bea7ac457358cc8"
+    },
+    {
+      "source_path": "models/deepseek_v4_flash_mtp/prefill_cp_zigzag.py",
+      "source_sha256": "b0665597af0dd888eecdc87b25877ce029f6970ce9ddac030acf38276cde3248",
+      "frozen_copy": "prefill_cp_zigzag.py",
+      "frozen_copy_sha256": "b0665597af0dd888eecdc87b25877ce029f6970ce9ddac030acf38276cde3248"
+    },
+    {
+      "source_path": "models/deepseek_v4_flash_mtp/prefill_indexer_compressor.py",
+      "source_sha256": "f2666965e6989e2f3c20aa839bfa1213dbba8c00f6b8764c94952f0ebc05f221",
+      "frozen_copy": "prefill_indexer_compressor.py",
+      "frozen_copy_sha256": "f2666965e6989e2f3c20aa839bfa1213dbba8c00f6b8764c94952f0ebc05f221"
+    },
+    {
+      "source_path": "models/deepseek_v4_flash_mtp/prefill_sparse_attn.py",
+      "source_sha256": "26b0329b0214f2fab4363661e80a7c12771b499d16a42b964f02b1f4be93949e",
+      "frozen_copy": "prefill_sparse_attn.py",
+      "frozen_copy_sha256": "26b0329b0214f2fab4363661e80a7c12771b499d16a42b964f02b1f4be93949e"
+    },
+    {
+      "source_path": "models/deepseek_v4_flash_mtp/qkv_proj_rope.py",
+      "source_sha256": "fe73c2d238642ab9f8561646c8a4e2e8234c8e20ce6da218e8ce034609a00150",
+      "frozen_copy": "qkv_proj_rope.py",
+      "frozen_copy_sha256": "fe73c2d238642ab9f8561646c8a4e2e8234c8e20ce6da218e8ce034609a00150"
+    },
+    {
+      "source_path": "models/deepseek_v4_flash_mtp/rmsnorm.py",
+      "source_sha256": "776c53c970f22981e066733e7b857a71c7df42990201db5eb941f099b0e47ac0",
+      "frozen_copy": "rmsnorm.py",
+      "frozen_copy_sha256": "776c53c970f22981e066733e7b857a71c7df42990201db5eb941f099b0e47ac0"
+    },
+    {
+      "source_path": "models/deepseek_v4_flash_mtp/rope_tables.py",
+      "source_sha256": "6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59",
+      "frozen_copy": "rope_tables.py",
+      "frozen_copy_sha256": "6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59"
+    }
+  ],
+  "selection": "Frozen v0.1 CP4 HCA source; DEMO fixed public binding.",
+  "source_note": "hc_pre.py restored byte-for-byte to the declared selected upstream revision15c9f1e. The prior inherited v0.1 copy differed only by17 valid_shapes spellings; prior bytes/provenance are archived under manual_repairs_20261004/workflow_source_copy_preflight/contract_owner_restoration_applied_20261007. API adaptations remain in the Ref/Fixture interface, not preserved official source.",
+  "fixture_authority": "byte-exact official build_tensor_specs with a public-config-derived historical FLASH alias",
+  "source_case_id": "deepseek_v4_flash_mtp.prefill_cp_hca_cp4",
+  "v01_wrapper": "benchmarks/pypto_lib_bench-v0.1/cases/deepseek_v4_flash_mtp/prefill_cp_hca_cp4/ref/ref_npu.py"
+}

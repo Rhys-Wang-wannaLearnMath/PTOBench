@@ -29,6 +29,7 @@ import profile_modes
 import workspace
 
 PUBLIC_MODES = {"runtime": "runtime", "pmu": "hardware", "compiler": "compile"}
+UNLIMITED_HARDWARE_ACTIONS = "unlimited"
 ERROR_CODES = {"action_failed", "invalid_workspace", "invalid_request", "budget_exceeded",
                "session_closed", "integrity_failed", "infrastructure_error", "interrupted"}
 _LOCKS = threading.local()
@@ -49,6 +50,11 @@ class SessionHandle:
 
 
 SessionRecord = dict
+
+
+def context_options(record):
+    """Inherit the frozen evaluator policy and opaque method metadata."""
+    return {'enabled_profiles': list(record['profiling_modes']), 'mode': record.get('mode')}
 
 
 def _now():
@@ -152,10 +158,13 @@ def _budget(value):
     if value is not None and not isinstance(value, dict):
         raise SessionError("budget must be an object")
     value = {"max_hardware_actions": 20, "finish_actions": 1, **(value or {})}
+    maximum = value["max_hardware_actions"]
+    valid_maximum = (maximum == UNLIMITED_HARDWARE_ACTIONS or
+                     (type(maximum) is int and maximum > 0))
     if (set(value) != {"max_hardware_actions", "finish_actions"}
-            or type(value["max_hardware_actions"]) is not int or value["max_hardware_actions"] <= 0
+            or not valid_maximum
             or type(value["finish_actions"]) is not int or value["finish_actions"] != 1):
-        raise SessionError("budget requires positive integer exploration actions and exactly one finish action")
+        raise SessionError("budget requires a positive integer or 'unlimited' exploration actions and exactly one finish action")
     return value
 
 
@@ -182,10 +191,10 @@ def preflight_case(case_id):
     _id(case_id, "Case ID")
     if len(case_id.split(".")) != 2:
         raise SessionError("Case ID must be family.name")
-    family, name = case_id.split(".")
-    case_dir = _path(common.BENCHMARK_ROOT / "cases" / family / name, code="invalid_request")
-    sealed = _path(common.sealed_root() / family / name, code="invalid_request")
     try:
+        case_dir, sealed, case = common.case_paths(case_id)
+        case_dir = _path(case_dir, code="invalid_request")
+        sealed = _path(sealed, code="invalid_request")
         case = _read(case_dir / "case.json")
         if type(case.get("schema_version")) is not int or case.get("schema_version") != 1 or case.get("case_id") != case_id:
             raise SessionError("Case identity/schema mismatch")
@@ -244,6 +253,11 @@ def preflight_case(case_id):
                 or performance.get("status") != "ready" or type(median) not in (int, float)
                 or not math.isfinite(median) or median <= 0):
             raise SessionError("Ref baseline must be finite and positive")
+        if performance.get("compiler_tuning") != common.TUNING_DEFAULTS:
+            raise SessionError(
+                "Ref baseline must explicitly record PYPTO + false; "
+                "run maintenance prepare_ref.py before opening an Agent Session"
+            )
         env_name = _id(case["environment"], "environment")
         environment = _read(common.BENCHMARK_ROOT / "environments" / f"{env_name}.json")
         if environment.get("name") != env_name or not isinstance(environment.get("platform"), str):
@@ -269,7 +283,7 @@ def _fixed_roots(case_dir, sealed, case):
         for name in sorted(os.listdir(fd)):
             if name.endswith(".py"):
                 declarations[f"family_{len(declarations)}"] = integrity.ProtectionRoot(sealed.parent / name, "fixed")
-    for name in ("launcher", "ptobench", "pto-launcher"):
+    for name in ("launcher", "modes", "ptobench", "pto-launcher"):
         path = root / name
         with file_tree.open_directory(root) as fd:
             try:
@@ -288,7 +302,7 @@ def _output(output):
     bench = file_tree.absolute_path(common.BENCHMARK_ROOT)
     runs = _path(output.get("runs_root", bench / "runs"), missing=True, code="invalid_request")
     snapshots = _path(output.get("snapshots_root", bench / "snapshots"), missing=True, code="invalid_request")
-    forbidden = [bench / p for p in ("cases", "environments", "evaluator", "launcher", ".ptobench")]
+    forbidden = [bench / p for p in ("cases", "environments", "evaluator", "launcher", "modes", ".ptobench")]
     forbidden.append(file_tree.absolute_path(common.sealed_root()))
     forbidden.append(file_tree.absolute_path(common.REPO_ROOT / "golden"))
     if any(a.is_relative_to(b) or b.is_relative_to(a) for a in (runs, snapshots) for b in forbidden):
@@ -298,8 +312,12 @@ def _output(output):
     return runs, snapshots
 
 
-def create_session(case_id, optimizer, output=None, budget=None) -> SessionHandle:
+def create_session(case_id, optimizer, output=None, budget=None, *, mode=None) -> SessionHandle:
     budget = _budget(budget)
+    # The evaluator records an opaque participant identity; it never loads its code,
+    # instructions or permissions. All methods use the same evaluator policy.
+    method = {'id': _id(mode, 'Method ID')} if mode is not None else None
+    public_profiles = list(profile_modes.public_enabled_modes())
     if isinstance(optimizer, str):
         optimizer = {"backend": optimizer, "profile": "default"}
     if not isinstance(optimizer, dict) or set(optimizer) - {"id", "backend", "profile", "command", "tool_version"}:
@@ -335,7 +353,7 @@ def create_session(case_id, optimizer, output=None, budget=None) -> SessionHandl
                                      for name, filename in (("session", "session.json"), ("events", "events.jsonl"), ("final_result", "final_result.json"))})
                 manifest = integrity.capture_protection(root / "protection", declarations)
             initial = root / "workspaces/worker_000"
-            workspace.init_workspace(case_dir, sealed, case, initial)
+            workspace.init_workspace(case_dir, sealed, case, initial, enabled_profiles=public_profiles, mode=method)
             with _session_lock(root):
                 integrity.register_roots(root / "protection", {"context_worker_000": integrity.ProtectionRoot(initial / ".benchmark_context", "context", readonly=True)})
                 record = {
@@ -348,7 +366,7 @@ def create_session(case_id, optimizer, output=None, budget=None) -> SessionHandl
                     "benchmark_root": str(file_tree.absolute_path(common.BENCHMARK_ROOT)),
                     "case_dir": str(case_dir), "sealed_dir": str(sealed), "optimizer": optimizer,
                     "created_at": _now(), "completed_at": None, "environment": environment,
-                    "profiling_modes": [public for public, internal in PUBLIC_MODES.items() if internal in profile_modes.enabled_modes()],
+                    "mode": method, "profiling_modes": public_profiles,
                     "command": optimizer.get("command"), "tool_version": optimizer.get("tool_version"),
                     "bench_python": sys.version.split()[0], "asset_hashes": {
                         name: hashlib.sha256(_bytes(info["entries"])).hexdigest()
@@ -391,8 +409,7 @@ def _validate_record(root, record):
         if (record["session_root"] != str(root) or record["benchmark_root"] != str(file_tree.absolute_path(common.BENCHMARK_ROOT))
                 or root != Path(record["runs_root"]) / record["optimizer_id"] / record["case_id"] / record["session_id"]):
             raise ValueError("frozen location")
-        expected_case = common.BENCHMARK_ROOT / "cases" / Path(*record["case_id"].split("."))
-        expected_sealed = common.sealed_root() / Path(*record["case_id"].split("."))
+        expected_case, expected_sealed, _ = common.case_paths(record["case_id"])
         if record["case_dir"] != str(expected_case) or record["sealed_dir"] != str(expected_sealed):
             raise ValueError("Case identity")
         if not Path(record["snapshots_root"]).is_absolute() or Path(record["snapshots_root"]).parts[-3:] != (record["optimizer_id"], record["case_id"], record["session_id"]):
@@ -403,12 +420,14 @@ def _validate_record(root, record):
         if set(record["usage"]) != {"hardware_actions", "finish_actions"}:
             raise ValueError("usage")
         for name, maximum in (("hardware_actions", record["budget"]["max_hardware_actions"]), ("finish_actions", 1)):
-            if type(record["usage"][name]) is not int or not 0 <= record["usage"][name] <= maximum:
+            used = record["usage"][name]
+            if type(used) is not int or used < 0 or (maximum != UNLIMITED_HARDWARE_ACTIONS and used > maximum):
                 raise ValueError("usage limits")
         used = record["usage"]["hardware_actions"]
-        if record["status"] == "running" and used == record["budget"]["max_hardware_actions"]:
+        maximum = record["budget"]["max_hardware_actions"]
+        if record["status"] == "running" and maximum != UNLIMITED_HARDWARE_ACTIONS and used == maximum:
             raise ValueError("exhausted status missing")
-        if record["status"] == "exhausted" and used != record["budget"]["max_hardware_actions"]:
+        if record["status"] == "exhausted" and (maximum == UNLIMITED_HARDWARE_ACTIONS or used != maximum):
             raise ValueError("premature exhaustion")
         if record["status"] in {"failed", "completed"} and not record["exploration_closed"]:
             raise ValueError("terminal exploration")
@@ -429,6 +448,11 @@ def _validate_record(root, record):
         if (not isinstance(record["profiling_modes"], list) or len(set(record["profiling_modes"])) != len(record["profiling_modes"])
                 or not set(record["profiling_modes"]) <= PUBLIC_MODES.keys()):
             raise ValueError("public modes")
+        method = record.get('mode')
+        if method is not None:
+            if not isinstance(method, dict):
+                raise ValueError('method identity')
+            _id(method.get('id'), 'Method ID')
         active = record["active_action"]
         if active is not None:
             if (not isinstance(active, dict) or type(active["event_seq"]) is not int
@@ -507,7 +531,7 @@ def _load_locked(root, repair=True):
         elif name.startswith("family_"):
             valid = path.parent == Path(record["sealed_dir"]).parent and path.suffix == ".py"
         elif name.startswith("public_"):
-            valid = name[7:] in {"ptobench", "pto-launcher", "launcher"} and path == common.BENCHMARK_ROOT / name[7:]
+            valid = name[7:] in {"ptobench", "pto-launcher", "launcher", "modes"} and path == common.BENCHMARK_ROOT / name[7:]
         else:
             valid = False
         if not valid:
@@ -606,10 +630,26 @@ def resolve_workspace(session_root, value):
         return name, target, record["case_id"]
 
 
+def require_current_evaluator(manifest):
+    # Older Sessions remain readable as historical evidence, but their fixed
+    # backups must not reinstall the former Agent profile validation policy.
+    policy = manifest['roots'].get('evaluator', {}).get('entries', {}).get('profile_execution.py', {})
+    if ((common.BENCHMARK_ROOT / 'evaluator/profile_execution.py').is_file()
+            and policy.get('sha256') != '7fe254fb7c2cb0c870f67f4dc6f2dc9f8511f044a8b242899a29c442310ea298'):
+        raise integrity.InfrastructureError('Session captured the older profiling policy; create a fresh Session')
+    runtime_policy = manifest['roots'].get('evaluator', {}).get('entries', {}).get('runtime_policy.py', {})
+    if ((common.BENCHMARK_ROOT / 'evaluator/runtime_policy.py').is_file()
+            and runtime_policy.get('sha256') != 'd51b22891fa306bb21f07ff5e31ef0c438871e5278716c7b49b51449c37cbb23'):
+        raise integrity.InfrastructureError(
+            'Session captured the older runtime environment policy; create a fresh Session'
+        )
+
+
 def repair_assets(session_root):
     _require_execution()
     with _session_lock(session_root) as root:
         _load_locked(root)
+        require_current_evaluator(_read(root / 'protection/manifest.json'))
     try:
         return integrity.check_and_restore(root / "protection", {"fixed", "context"})
     except integrity.InfrastructureError:
@@ -683,7 +723,7 @@ def fork_workspace_locked(session_root, parent_workspace):
         case_dir, sealed = Path(record["case_dir"]), Path(record["sealed_dir"])
         case = _read(case_dir / "case.json")
         workspace.write_context(case_dir, sealed, case, temporary,
-                                parent_workspace=parent, workspace_path=target)
+                                parent_workspace=parent, workspace_path=target, **context_options(record))
         with file_tree.open_directory(target.parent) as fd:
             os.rename(temporary.name, target.name, src_dir_fd=fd, dst_dir_fd=fd)
             os.fsync(fd)
@@ -802,7 +842,8 @@ def reserve_action(session_root, event_seq, kind, *, workspace_path=None,
             raise SessionError("event sequence is stale")
         counter = "finish_actions" if kind == "finish" else "hardware_actions"
         record["usage"][counter] += 1
-        if record["usage"]["hardware_actions"] == record["budget"]["max_hardware_actions"]:
+        if (record["budget"]["max_hardware_actions"] != UNLIMITED_HARDWARE_ACTIONS
+                and record["usage"]["hardware_actions"] == record["budget"]["max_hardware_actions"]):
             record["status"] = "exhausted"
         record["next_event_seq"] += 1
         record["active_action"] = {
@@ -847,7 +888,7 @@ def set_action_process(session_root, event_seq, pid):
 def complete_action(session_root, event_seq, *, exit_code, error_code=None,
                     integrity_passed=False, result=None, repaired_paths=None,
                     snapshot_id=None, action_started=True, observation=None,
-                    final_result=None, record_updates=None):
+                    final_result=None, record_updates=None, artifact_index=None):
     """Atomically save the event and clear active_action, even when exhausted.
 
     Result validation and Snapshot creation are S3/S4 responsibilities. The
@@ -870,6 +911,8 @@ def complete_action(session_root, event_seq, *, exit_code, error_code=None,
             raise SessionError("active action sequence mismatch")
         event = {
             "seq": event_seq, "time": _now(), "action": active["kind"], "mode": active["mode"],
+            "started_at": active['started_at'], "process": active['process'],
+            "artifact_index": artifact_index,
             "workspace": active["workspace"], "content_sha256": active["content_sha256"],
             "exit_code": exit_code, "error_code": error_code, "hardware_action": True,
             "action_started": action_started, "integrity_passed": integrity_passed,

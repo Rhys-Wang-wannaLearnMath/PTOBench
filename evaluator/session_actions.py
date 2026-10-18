@@ -21,6 +21,7 @@ import integrity
 import session
 import snapshots
 import workspace
+import action_records
 
 EXIT_CODES = {None: 0, 'action_failed': 1, 'invalid_workspace': 2, 'invalid_request': 2,
               'budget_exceeded': 3, 'session_closed': 3, 'integrity_failed': 4,
@@ -40,9 +41,13 @@ class ActionResult:
     remaining_hardware_actions: int | None = None
     message: str | None = None
     integrity_passed: bool | None = None
+    _omit_correctness: bool = False
 
     def to_dict(self):
-        return asdict(self)
+        value = asdict(self)
+        if value.pop("_omit_correctness"):
+            value.pop("correctness")
+        return value
 
 
 class ActionInterrupted(RuntimeError):
@@ -60,13 +65,17 @@ def _error_result(error, seq=None, path=None, remaining=None):
 
 
 def _remaining(record):
-    return record['budget']['max_hardware_actions'] - record['usage']['hardware_actions']
+    maximum = record['budget']['max_hardware_actions']
+    if maximum == session.UNLIMITED_HARDWARE_ACTIONS:
+        return None
+    return maximum - record['usage']['hardware_actions']
 
 
 def _repair_for_action(root):
     session._require_execution()
     session.read_session(root)  # Record repair stays under the short lock.
     manifest = session._read(Path(root) / 'protection/manifest.json')
+    session.require_current_evaluator(manifest)
     groups = {info['group'] for info in manifest['roots'].values()} - {'records'}
     try:
         return integrity.check_and_restore(Path(root) / 'protection', groups)
@@ -221,7 +230,8 @@ def recover_global_action():
     session.close_exploration(root, 'interrupted')
     session.complete_action(root, active['event_seq'], exit_code=130, error_code='interrupted',
                             integrity_passed=intact, repaired_paths=repaired,
-                            action_started=marker.get('process') is not None)
+                            action_started=marker.get('process') is not None,
+                            artifact_index=action_records.archive(root, active['event_seq'], action_dir))
     _clear_marker()
 
 
@@ -250,6 +260,7 @@ def _run_process(argv, environment, action_dir, root, seq, signal_state):
     selector = selectors.DefaultSelector()
     process = None
     identity = None
+    process_started_at = session._now()
     log_files = []
     outputs = []
     marker = {'schema_version': 1, 'session_root': str(root), 'event_seq': seq,
@@ -367,6 +378,13 @@ def _run_process(argv, environment, action_dir, root, seq, signal_state):
                 os.set_blocking(fd, blocking)
         for log in log_files:
             log.close()
+        file_tree.atomic_bytes(action_dir / 'process_execution.json', session._bytes({
+            'schema_version': 1, 'started_at': process_started_at, 'ended_at': session._now(),
+            'process': identity, 'spawned': process is not None,
+            'exit_code': process.returncode if process is not None else None,
+            'received_signal': signal_state.get('received'),
+            'cleanup_error': str(cleanup_error) if cleanup_error else None,
+        }))
         if cleanup_error is not None:
             raise cleanup_error
 
@@ -469,14 +487,25 @@ def validate_result(path, record, frozen, kind, internal_mode, exit_code):
     passed = value['verdict'] == 'PASS' and run['passed'] and exit_code == 0
     if not passed:
         raise session.SessionError('Evaluator/correctness failed', 'action_failed')
+    diagnostic_only = kind == 'profile' and record['optimizer']['backend'] != 'maintenance'
     latency = run.get('median_effective_us')
     if kind == 'evaluate' and (not _positive(latency) or not _positive(run.get('speedup'))):
         raise session.SessionError('clean result requires finite positive latency and speedup', 'action_failed')
-    latency = float(latency) if _positive(latency) else None
+    if kind == 'evaluate':
+        samples = run.get('samples_effective_us')
+        raw_samples = run.get('raw_samples_effective_us')
+        config = run.get('measurement_config')
+        if (not isinstance(samples, list) or not samples or not all(_positive(sample) for sample in samples)
+                or not isinstance(raw_samples, list) or not raw_samples
+                or not isinstance(config, dict) or config.get('unit') != 'us' or config.get('metric') != 'effective'):
+            raise session.SessionError('clean result must retain original timing samples and settings', 'action_failed')
+    latency = float(latency) if not diagnostic_only and _positive(latency) else None
     observation = {'kind': kind, 'mode': None if kind == 'evaluate' else next(k for k, v in session.PUBLIC_MODES.items() if v == internal_mode),
-                   'correctness': 'PASS', 'latency_us': latency,
+                   'latency_us': latency,
                    'metric_name': 'median_effective_us' if latency is not None else None,
                    'unit': 'us' if latency is not None else None}
+    if not diagnostic_only:
+        observation['correctness'] = 'PASS'
     return value, observation
 
 
@@ -575,7 +604,7 @@ def _run_action(session_root, workspace_path, kind, mode):
                 manifest = workspace.copy_candidate_tree(original, frozen)
                 case = session._read(Path(record['case_dir']) / 'case.json')
                 workspace.write_context(Path(record['case_dir']), Path(record['sealed_dir']), case, frozen,
-                                        parent_workspace=original)
+                                        parent_workspace=original, **session.context_options(record))
                 integrity.register_roots(root / 'protection', {
                     f'action_context_{seq}': integrity.ProtectionRoot(frozen / '.benchmark_context', 'action_context', readonly=True),
                     f'action_source_{seq}': integrity.ProtectionRoot(action_dir / 'source_manifest.json', 'records'),
@@ -598,6 +627,10 @@ def _run_action(session_root, workspace_path, kind, mode):
                     '--case', record['case_id'], '--candidate', str(frozen), '--phase',
                     'all' if kind == 'evaluate' else 'correctness', '--profile-mode', internal_mode,
                     '--result', str(action_dir / 'result.json')]
+            if kind == 'evaluate':
+                argv.extend(['--measurement-mode', 'exploration'])
+            elif record['optimizer']['backend'] != 'maintenance':
+                argv.append('--skip-correctness')
             environment = os.environ.copy()
             environment.pop('PYPTO_BENCH_ENV', None)
             environment.pop('PYPTO_BENCH_PROFILE', None)
@@ -645,10 +678,17 @@ def _run_action(session_root, workspace_path, kind, mode):
             # Publication is an atomic completion decision. Defer signals until
             # all authority, Snapshot and event commits finish consistently.
             signal_state['active'] = False
-            if error_code is None:
+            try:
+                with file_tree.open_file(action_dir / 'result.json') as fd, os.fdopen(os.dup(fd), 'rb') as stream:
+                    original_result = stream.read()
+            except FileNotFoundError:
+                original_result = None
+            if original_result is not None:
                 with session._session_lock(root):
                     session._load_locked(root)
-                    integrity.commit_records(root / 'protection', {f'action_result_{seq}': session._bytes(raw)})
+                    integrity.commit_records(root / 'protection', {f'action_result_{seq}': original_result})
+            artifact_index = action_records.archive(root, seq, action_dir)
+            if error_code is None and observation.get('correctness') == 'PASS':
                 snapshot_id = snapshots.create_snapshot(root, frozen, {
                     'seq': seq, 'workspace': str(original), 'content_sha256': manifest['content_sha256'],
                     'exit_code': evaluator_exit, 'correctness': 'PASS', 'integrity_passed': intact,
@@ -656,13 +696,14 @@ def _run_action(session_root, workspace_path, kind, mode):
                 })
             session.complete_action(root, seq, exit_code=evaluator_exit, error_code=error_code,
                     integrity_passed=intact, result=raw, repaired_paths=repaired, snapshot_id=snapshot_id,
-                    action_started=started, observation=observation)
+                    action_started=started, observation=observation, artifact_index=artifact_index)
             _clear_marker()
             current = session.read_session(root)
             result = ActionResult('PASS' if error_code is None else 'FAIL', error_code, EXIT_CODES[error_code], seq,
-                                  str(original), observation['correctness'] if observation else None,
+                                  str(original), observation.get('correctness') if observation else None,
                                   observation['latency_us'] if observation else None, snapshot_id,
                                   _remaining(current), message)
+            result._omit_correctness = kind == 'profile' and record['optimizer']['backend'] != 'maintenance'
             result.integrity_passed = intact
             if error_code == 'infrastructure_error':
                 session.fail_session(root, 'action_infrastructure_failure')

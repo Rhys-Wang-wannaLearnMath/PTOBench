@@ -12,6 +12,7 @@ from typing import Any, Callable, Iterable
 import torch
 
 import common
+import execution_record
 
 
 def fixture_ids(sealed: Path, case: dict[str, Any]) -> list[str]:
@@ -42,7 +43,8 @@ def prepare_ref(
     oracle = load_oracle()
     warmup, rounds = common.benchmark_sizes(case)
     performance = {"schema_version": 1, "status": "ready", "warmup": warmup,
-                   "iterations": rounds, "fixtures": {}}
+                   "iterations": rounds, "compiler_tuning": dict(common.TUNING_DEFAULTS),
+                   "fixtures": {}}
     reset_inputs = case.get("state", {}).get("behavior", "none") != "none"
 
     for fixture_id in fixture_ids(sealed, case):
@@ -70,6 +72,7 @@ def prepare_ref(
         for name, value in outputs.items():
             torch.save(value, output_dir / f"{name}.pt")
         performance["fixtures"][fixture_id] = {
+            "raw_samples_effective_us": common.raw_bench_samples(result),
             "samples_effective_us": samples,
             "median_effective_us": statistics.median(samples),
             "mean_effective_us": statistics.fmean(samples),
@@ -112,7 +115,8 @@ def evaluate_candidate(
         )
     baseline = common.read_json(sealed / "ref_performance.json")
     compare = make_compare()
-    updates, runtime = common.environment(case, platform)
+    tuning = common.read_tuning(candidate_workspace)
+    updates, runtime = common.environment(case, platform, tuning=tuning)
     program = make_program(load_candidate(), case)
     benchmark = phase in {"all", "performance"}
     reset_inputs = case.get("state", {}).get("behavior", "none") != "none"
@@ -122,7 +126,7 @@ def evaluate_candidate(
         fixture = sealed / "fixtures" / fixture_id
         specs = build_specs(fixture)
         warmup, rounds = common.benchmark_sizes(case)
-        with common.environment_scope(
+        with execution_record.observe_runtime(runtime), common.environment_scope(
             updates, benchmark=benchmark, reset_inputs=reset_inputs,
             warmup=warmup, rounds=rounds,
         ):
@@ -141,6 +145,16 @@ def evaluate_candidate(
             "fixture_id": fixture_id,
             "passed": result.passed,
             "error": result.error or "",
+            "raw_samples_effective_us": common.raw_bench_samples(result),
+            "measurement_config": {
+                "metric": "effective", "unit": "us", "benchmark_enabled": benchmark,
+                "memory_planner": tuning["memory_planner"],
+                "analyze_auto_scopes_for_deps": tuning["analyze_auto_scopes_for_deps"],
+                "requested_warmup": warmup, "requested_rounds": rounds,
+                "actual_warmup": getattr(result.bench, 'warmup', None),
+                "actual_rounds": getattr(result.bench, 'rounds', None),
+                "reset_inputs": reset_inputs,
+            },
             "samples_effective_us": samples,
             "median_effective_us": median,
             "mean_effective_us": mean,

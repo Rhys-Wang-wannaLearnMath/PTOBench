@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_root": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target",
+  "source_path": "deepseek_v4/deepseek_v4_decode_compressor_ratio128.py",
+  "source_sha256": "56617ef43dac9e0951983f9e456c7a8d92043abbdeabcdc2d34566c90f3aac94",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "56617ef43dac9e0951983f9e456c7a8d92043abbdeabcdc2d34566c90f3aac94",
+  "fixture_authority": "real TensorSpec builder and official golden_fn",
+  "selection_rationale": "The frozen corpus target preserves the approved InOut state ABI for the self-contained legacy ratio-128 decode compressor; the similarly named model copy changes both states to Out.",
+  "dependencies": []
+}

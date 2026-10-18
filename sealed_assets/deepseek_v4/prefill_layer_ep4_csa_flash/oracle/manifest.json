@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "closure": "oracle",
+  "files": [
+    {
+      "path": "ref_cpu.py",
+      "sha256": "31df8b719891900c3e1219b36d189b404843d42d2d446c870899600098e555f3",
+      "reason": "independent packed CPU oracle entry"
+    },
+    {
+      "path": "prefill_attention_csa.py",
+      "sha256": "f429b07c17b85e29ab588ded8946aa5afcf88f2362913b9797c74a424b22f71d",
+      "reason": "CSA CPU golden dependency"
+    },
+    {
+      "path": "prefill_compressor_ratio4.py",
+      "sha256": "b4692f8bab0b976dfbb9bbd952a50d5bb04bf8734678e17772b19d71d8becccf",
+      "reason": "CSA compressor golden dependency"
+    },
+    {
+      "path": "prefill_hc_post.py",
+      "sha256": "018a29dfec502f55c521189a4c37dffb01faa3729a036af365fecbb201ac27c0",
+      "reason": "CSA HC post golden dependency"
+    },
+    {
+      "path": "prefill_hc_pre.py",
+      "sha256": "78af9a83c79973bd6676428afc8b74c4ff92729c37d1ec16de029b3b59340d64",
+      "reason": "CSA HC pre golden dependency"
+    },
+    {
+      "path": "prefill_indexer.py",
+      "sha256": "99404b34b5c8fc3fe5ff7289af60f465707c84585116e13d4eb7aded757598a8",
+      "reason": "CSA indexer golden dependency"
+    },
+    {
+      "path": "prefill_indexer_compressor.py",
+      "sha256": "e04b1fc366cc241191d1bfa1886ab1a00715d4c4dd49f029d3cea27eeec8086a",
+      "reason": "CSA indexer compressor golden dependency"
+    },
+    {
+      "path": "prefill_qkv_proj_rope_v2.py",
+      "sha256": "6f1e0cb333e22236c7ec3b5d1d59a1a8a1570e7f376182fbe89b71140c26d49d",
+      "reason": "QKV/RoPE CPU golden dependency"
+    },
+    {
+      "path": "prefill_sparse_attn_v2.py",
+      "sha256": "3daec7adb386a9b733f17036c3d4656840fed31180c306a717bdcddd4507c961",
+      "reason": "sparse attention CPU golden dependency"
+    },
+    {
+      "path": "rmsnorm.py",
+      "sha256": "66c0d587937e5d455fd8096135cb64773916da535c756d397a6753aa6b5a6f13",
+      "reason": "RMSNorm CPU golden dependency"
+    }
+  ],
+  "excluded": [
+    "Ref/Candidate implementation, Fixture generation, evaluator, RunConfig, profiling harnesses, standalone CLI, and generated output are excluded by the Oracle boundary."
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "authority": "frozen source snapshot",
+  "source_case_id": "models_0912.deepseek_v4_flash_dspark__prefill_swa",
+  "case_id": "deepseek_v4_flash_dspark.prefill_swa_demo",
+  "repository_url": "https://github.com/hw-native-sys/pypto-lib.git",
+  "source_commit": "7f15a1fa6bad2b7030eada571bfe23641d1bddd3",
+  "source": {
+    "repository_path": "models/0912/deepseek_v4_flash_dspark/prefill_swa.py",
+    "sha256": "41ba5ed9a8c0535b86ec24f715f91ee4c494471b4fd311c273642b25d6096bd9",
+    "frozen_path": "official/original.py",
+    "frozen_sha256": "41ba5ed9a8c0535b86ec24f715f91ee4c494471b4fd311c273642b25d6096bd9"
+  },
+  "dependencies": [
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/config.py",
+      "sha256": "e823df2d88d5f128b928e476f94ee46eb6f3fd1c2c21c506f9334f66c74f0bd9",
+      "frozen_path": "official/original_config.py",
+      "frozen_sha256": "e823df2d88d5f128b928e476f94ee46eb6f3fd1c2c21c506f9334f66c74f0bd9"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/hc_post.py",
+      "sha256": "b5a57578e26b02f38c502de699ca1e9d8f86e3a8bbe43585c2f2ee9d727a48a5",
+      "frozen_path": "official/hc_post.py",
+      "frozen_sha256": "b5a57578e26b02f38c502de699ca1e9d8f86e3a8bbe43585c2f2ee9d727a48a5"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/hc_pre.py",
+      "sha256": "b5e347ed55eae5e7678c40bce3b9212c1b715419589a09b7edbcdf2a922755ee",
+      "frozen_path": "official/hc_pre.py",
+      "frozen_sha256": "b5e347ed55eae5e7678c40bce3b9212c1b715419589a09b7edbcdf2a922755ee"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/qkv_proj_rope.py",
+      "sha256": "cc6679d9766a8770f3f88d26da338bcaee26b25492d909507efc3d09f51f6921",
+      "frozen_path": "official/qkv_proj_rope.py",
+      "frozen_sha256": "cc6679d9766a8770f3f88d26da338bcaee26b25492d909507efc3d09f51f6921"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/rmsnorm.py",
+      "sha256": "776c53c970f22981e066733e7b857a71c7df42990201db5eb941f099b0e47ac0",
+      "frozen_path": "official/rmsnorm.py",
+      "frozen_sha256": "776c53c970f22981e066733e7b857a71c7df42990201db5eb941f099b0e47ac0"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/prefill_sparse_attn.py",
+      "sha256": "6c4c0ab9d5d23e4681a226d341a0430b86d3107dd2b0b73f0f535163496bb24a",
+      "frozen_path": "official/prefill_sparse_attn.py",
+      "frozen_sha256": "6c4c0ab9d5d23e4681a226d341a0430b86d3107dd2b0b73f0f535163496bb24a"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/utils.py",
+      "sha256": "9b110b3d2de05e84b61d53cdcd23d658afcc02dbb769060e5cfb01b095a23cc1",
+      "frozen_path": "official/utils.py",
+      "frozen_sha256": "9b110b3d2de05e84b61d53cdcd23d658afcc02dbb769060e5cfb01b095a23cc1"
+    }
+  ],
+  "selection_rationale": "Preserve coherent single-card B1/S128 packed SWA source, builder, golden and all real local dependencies; latest upstream changes ABI/topology. Bind only DEMO through canonical public config in the Fixture adapter; never edit official source."
+}

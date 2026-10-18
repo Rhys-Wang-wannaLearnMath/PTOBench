@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "compress_state": {
+      "method": "allclose",
+      "rtol": 0.01,
+      "atol": 0.01
+    },
+    "inner_compress_state": {
+      "method": "allclose",
+      "rtol": 0.01,
+      "atol": 0.01
+    },
+    "kv_cache": {
+      "method": "ratio_allclose",
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 0.005
+    },
+    "cmp_kv": {
+      "method": "allclose",
+      "rtol": 0.01,
+      "atol": 0.01
+    },
+    "idx_kv_cache": {
+      "method": "ratio_allclose",
+      "rtol": 0,
+      "atol": 1,
+      "max_error_ratio": 0.01
+    },
+    "idx_kv_scale": {
+      "method": "ratio_allclose",
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 0.01
+    },
+    "x_out": {
+      "method": "custom",
+      "implementation": "ratio_reldiff",
+      "diff_thd": 0.005,
+      "pct_thd": 0.005,
+      "max_diff_hd": 1,
+      "denominator_floor_numerator": 6.103515625e-05,
+      "denominator_epsilon": 1e-09
+    }
+  }
+}

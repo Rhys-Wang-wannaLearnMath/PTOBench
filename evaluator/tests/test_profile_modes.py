@@ -15,6 +15,16 @@ SPEC.loader.exec_module(profile_modes)
 
 
 class ProfilePhaseTest(unittest.TestCase):
+    def test_only_current_modes_are_enabled(self):
+        self.assertEqual(
+            profile_modes.ENABLED_PROFILE_MODES,
+            ("runtime", "hardware", "compile"),
+        )
+        self.assertEqual(
+            profile_modes.PUBLIC_TO_INTERNAL,
+            {"runtime": "runtime", "pmu": "hardware", "compiler": "compile"},
+        )
+
     def test_hardware_defaults_to_one_shot_correctness(self):
         self.assertEqual(profile_modes.phase("hardware"), "correctness")
 

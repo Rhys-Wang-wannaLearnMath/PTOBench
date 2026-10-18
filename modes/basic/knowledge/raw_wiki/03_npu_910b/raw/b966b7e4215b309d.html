@@ -1,0 +1,179 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="search_title" content=""></head><body><a name="ZH-CN_TOPIC_0000002531522238"></a><a name="ZH-CN_TOPIC_0000002531522238"></a>
+
+<h1 class="topictitle1">NPU架构版本220x</h1>
+<div id="body0000002477825678"><p id="ZH-CN_TOPIC_0000002531522238__p8060118">本节介绍硬件约束以及解决方案建议。对应的产品型号为：</p>
+<ul id="ZH-CN_TOPIC_0000002531522238__ul723415519312"><li id="ZH-CN_TOPIC_0000002531522238__li17391143711246"><span id="ZH-CN_TOPIC_0000002531522238__ph16239174011416"><term id="ZH-CN_TOPIC_0000002531522238__zh-cn_topic_0000002562275259_term1253731311225">Atlas A3 训练系列产品</term>/<term id="ZH-CN_TOPIC_0000002531522238__zh-cn_topic_0000002562275259_term131434243115">Atlas A3 推理系列产品</term></span></li><li id="ZH-CN_TOPIC_0000002531522238__li519213411807"><span id="ZH-CN_TOPIC_0000002531522238__ph1292674871116"><term id="ZH-CN_TOPIC_0000002531522238__zh-cn_topic_0000002562275259_term11962195213215">Atlas A2 训练系列产品</term>/<term id="ZH-CN_TOPIC_0000002531522238__zh-cn_topic_0000002562275259_term184716139811">Atlas A2 推理系列产品</term></span></li></ul>
+
+<div class="tablenoborder"><table cellpadding="4" cellspacing="0" summary="" id="ZH-CN_TOPIC_0000002531522238__table5984016192019" frame="border" border="1" rules="all"><caption><b>表1 </b>硬件约束以及解决方案建议</caption><thead align="left"><tr id="ZH-CN_TOPIC_0000002531522238__row49841016132015"><th align="left" class="cellrowborder" valign="top" width="13.608639136086392%" id="mcps1.3.3.2.4.1.1"><p id="ZH-CN_TOPIC_0000002531522238__p1498411692018">分类</p>
+</th>
+<th align="left" class="cellrowborder" valign="top" width="33.406659334066596%" id="mcps1.3.3.2.4.1.2"><p id="ZH-CN_TOPIC_0000002531522238__p16984816162019">硬件约束描述</p>
+</th>
+<th align="left" class="cellrowborder" valign="top" width="52.98470152984702%" id="mcps1.3.3.2.4.1.3"><p id="ZH-CN_TOPIC_0000002531522238__p681910154818">解决方案建议</p>
+</th>
+</tr>
+</thead>
+<tbody><tr id="ZH-CN_TOPIC_0000002531522238__row1098410169204"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p73939428116">内存访问（L0 Buffer/L1 Buffer/UB等）</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p339313421116">各存储单元的最小访问粒度/地址对齐要求：</p>
+<p id="ZH-CN_TOPIC_0000002531522238__p14393742910">Unified Buffer：32Byte对齐。</p>
+<p id="ZH-CN_TOPIC_0000002531522238__p1339384218119">L1 Buffer：32Byte对齐。</p>
+<p id="ZH-CN_TOPIC_0000002531522238__p03939425116">L0A Buffer/L0B Buffer：512Byte对齐。</p>
+<p id="ZH-CN_TOPIC_0000002531522238__p139316421914">L0C Buffer：64Byte对齐。</p>
+<p id="ZH-CN_TOPIC_0000002531522238__p1739319428114">BiasTable Buffer：64Byte对齐。</p>
+<p id="ZH-CN_TOPIC_0000002531522238__p13932421316">Fixpipe Buffer：128Byte对齐。</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><ul id="ZH-CN_TOPIC_0000002531522238__ul9477161417"><li id="ZH-CN_TOPIC_0000002531522238__li194715165415">进行数据搬运时，需要感知对齐约束。</li><li id="ZH-CN_TOPIC_0000002531522238__li247121614410">针对UB，遇到一些非对齐的场景，可以使用非对齐搬运的接口或者通过一些技巧（比如搬入时包含冗余数据，搬出时去除冗余数据）来解决。详情见<a href="atlas_ascendc_10_0034.html">非对齐场景</a>。</li></ul>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row698415161206"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p153938429117">内存访问（UB）</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p1393442615">UB bank访问冲突（Vector计算访问/搬运访问）。</p>
+<p id="ZH-CN_TOPIC_0000002531522238__p73934420118"></p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p123932421311">需要按照芯片要求，在软件实现时错开处理的地址，从而解决bank冲突。具体解决方案可参考<a href="atlas_ascendc_best_practices_10_0025.html">避免Unified Buffer的bank冲突</a>章节。</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row798416160209"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p5393154210115">内存访问（GM）</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p11393174214120">多核并行同地址访问GM，会被硬件串行化。</p>
+<p id="ZH-CN_TOPIC_0000002531522238__p14393442116"></p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p9393104218116">对相同地址的访问，会被硬件串行化，性能为排队时间，大约下降10%-20%；</p>
+<p id="ZH-CN_TOPIC_0000002531522238__p539311424118">多核访问通过错峰访问（调整数据访问顺序和修改切分策略等），使得第一次加载数据到L2 Cache，后续访问性能反而提升。具体解决方案可参考<a href="atlas_ascendc_best_practices_10_00013.html">避免同地址访问</a>章节。</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row189843164202"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p1339364210115">内存访问（GM）</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p153934427114">单次搬运数据长度16KB以上时，可发挥带宽的最佳性能。</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p1839334215112">根据实测经验，单次搬运数据长度16KB以上时，通常能较好地发挥出带宽的最佳性能。因此对于单次搬运，应考虑尽可能的搬运较大的数据块（不同芯片不一样）。</p>
+<p id="ZH-CN_TOPIC_0000002531522238__p14280187181119">具体解决方案可参考<a href="atlas_ascendc_best_practices_10_0013.html">尽量一次搬运较大的数据块</a>章节。</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row10984111617206"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p1139394216112">内存访问（GM--&gt;L1）</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p139313427112">DataCopy中源操作数相邻连续数据块的间隔（前面一个数据块的尾与后面数据块的头的间隔）不要超出65535，单位为DataBlock（32字节）。</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p6393842612">前面一个数据块的尾与后面数据块的头的间隔超出65535时，需要拆分成多条指令来实现。</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row28355376396"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p1839313422120">内存访问（GM）</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p439317429119">数据搬运会被拆成128B/256B/512B不同长度进行搬运，非对齐会向上取整。</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p133931242413">Tiling尽量让搬运的内轴128B、256B、512B对齐。</p>
+<p id="ZH-CN_TOPIC_0000002531522238__p4131102271514">具体解决方案可参考<a href="atlas_ascendc_best_practices_10_0014.html">GM地址尽量512B对齐</a>章节。</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row7725134123913"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p1639310422014">Cube</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p339311421712">MTE1和MMAD指令队列的深度为32。</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p113937420111">对应指令队列容易满，会阻塞其他指令下发，引起流水断流。</p>
+<p id="ZH-CN_TOPIC_0000002531522238__p18393742614">Load2D从L1 Buffer搬运到L0 Buffer，需要发射32条指令，Load3D只需要一条指令，建议使用Load3D来实现。</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row10203343193114"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p1139319422115">ICache</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p139319421513">ICache硬件规格限制32KB。</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p23931842016">拆分Tiling_key或使用模板函数来减少代码段。详情见<a href="atlas_ascendc_10_00025.html">Tiling模板编程</a>。</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row194173017534"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p1839310421316">ICache</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p1139313428113">多核并行同地址访问ICache，会被硬件串行化。</p>
+<p id="ZH-CN_TOPIC_0000002531522238__p8393542217"></p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p639415421613">小Shape场景尽量减少启动核数，减少多核同地址访问问题。</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row724416349531"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p4394342218">DCache</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p11394134215110">DCache硬件规格限制32KB</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p939416422113">无</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row6730204410538"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p153942421414">Scalar</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p73942421015">标量写GM时，数据会被缓存在Dcache。硬件不保证DCache和GM一致性，需要用户保证。</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p1139411421118">使用DataCacheCleanAndInvalid来保证一致性。</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row56187293595"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p113943421110">Cube</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p439413421616">L0C Buffer容量128KB。</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p439454212111">无</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row16184293594"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p939494215115">Cube</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p12394194219112">BiasTable Buffer为1KB。</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p1639410425117">无</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row1361852935918"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p339410421114">Cube</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p14651181022320">Cube计算场景float算力为half算力的1/4。</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p73946421415">无</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row196181129135911"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p193948425111">Cube</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p163941542119">Cube输出随路量化场景，不支持int32_t到bfloat16_t类型量化。</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><ul id="ZH-CN_TOPIC_0000002531522238__ul7869116221"><li id="ZH-CN_TOPIC_0000002531522238__li78651115224">AIV上存在int32_t-&gt;float、float&gt;bfloat16_t的转换。</li><li id="ZH-CN_TOPIC_0000002531522238__li198661132217">AIC支持float-&gt;bfloat16_t的随路量化。</li></ul>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row661982915597"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p0394442216">Vector</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p339412428113">Reduce接口half比float性能差。</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p173946428117">half写回UB时存在非32Byte对齐，导致性能劣化，建议把half转float计算，此场景建议使用float数据类型。</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row461911299592"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p14394142119">Vector</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p93942421517">Exp/Ln接口处理同样数量的half/float的耗时是一样的</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p1139412421411">内部对float做了优化，故两者性能相当，开发者可以根据实际情况选择合适的精度类型。</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row13619162955918"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p039544211115">流水同步（核内）</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p439594219111">set/wait同步不匹配，状态会残留，影响后续算子。</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p10395542819">通过孪生调试/mssanitizer工具，提前识别此类问题。</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row96190298591"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p1395242514">流水同步（核间）</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p12395184212116">CrossCoreSetFlag计数器存在限制，超出15次需要做一次反向同步，否则会出现卡死。</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p11395342314">通过孪生调试/mssanitizer工具，超出场景提前报错。</p>
+</td>
+</tr>
+<tr id="ZH-CN_TOPIC_0000002531522238__row13620172910597"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="ZH-CN_TOPIC_0000002531522238__p139512427119">API通用约束</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="ZH-CN_TOPIC_0000002531522238__p1396164216116">使用Ascend C API时，源操作数和目的操作数的地址重叠通用约束</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="ZH-CN_TOPIC_0000002531522238__p143966421117">使用基础API的Tensor高维切分计算接口时，为了节省地址空间，开发者可以定义一个Tensor，供源操作数与目的操作数同时使用（即地址重叠）。使用时需要注意以下约束：</p>
+<ul id="ZH-CN_TOPIC_0000002531522238__ul24282818269"><li id="ZH-CN_TOPIC_0000002531522238__li7428286263">单次迭代内：源操作数与目的操作数必须100%完全重叠，不支持部分重叠。</li><li id="ZH-CN_TOPIC_0000002531522238__li642628192617">多次迭代间：不支持前序迭代的目的操作数与后序迭代的源操作数重叠。例如，第N次迭代的目的操作数是第N+1次的源操作数。在这种情况下，第N次迭代可能会改写覆盖源操作数的数值，导致无法得到预期结果。特别地，对于部分双目计算类的API（Add、Sub、Mul、Max、Min、AddRelu、SubRelu），当数据类型为half、int32_t、float时，支持前序迭代的目的操作数与后序迭代的源操作数重叠：仅针对目的操作数和第二个源操作数重叠的情况，且src1RepStride或者dstRepStride必须为0。</li></ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<div class="familylinks">
+<div class="parentlink"><strong>父主题：</strong> <a href="atlas_ascendc_10_00061.html">硬件约束</a></div>
+</div>
+</div>
+
+</body></html>

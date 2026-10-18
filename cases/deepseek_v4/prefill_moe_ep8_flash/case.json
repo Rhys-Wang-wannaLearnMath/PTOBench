@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.prefill_moe_ep8_flash",
+  "description": "DeepSeek-V4 distributed EP8 MoE prefill, FLASH preset",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "l3_moe",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_deepseek_v4_moe_ep8",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "x_next"
+    ]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  },
+  "runtime": {
+    "enable_dep_gen": false,
+    "ring_heap": [
+      0,
+      0,
+      536870912,
+      0
+    ]
+  }
+}

@@ -17,7 +17,8 @@ from typing import Iterator
 import common
 
 
-CACHE_NAMES = frozenset({"__pycache__"})
+# Local credentials must never enter integrity backups or archived source trees.
+CACHE_NAMES = frozenset({"__pycache__", ".env"})
 CACHE_SUFFIXES = frozenset({".pyc", ".pyo"})
 DIRECTORY_FLAGS = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
 FILE_FLAGS = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC

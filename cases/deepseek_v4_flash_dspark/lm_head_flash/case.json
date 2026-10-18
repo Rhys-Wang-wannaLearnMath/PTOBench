@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.lm_head_flash",
+  "description": "DeepSeek-V4 Flash DSpark LM-head projection and greedy sampling, FLASH preset, TP2/DP2",
+  "workspace": "public/candidate_seed",
+  "module": "lm_head.py",
+  "entry": "l3_lm_head",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "deepseek_v4_flash_dspark__lm_head_flash_manual_idle_20261007_libstdcxx",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "logits",
+      "sampled_ids"
+    ]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  },
+  "runtime": {
+    "rtol": 0.001,
+    "atol": 0.001,
+    "device_ids": [
+      4,
+      5
+    ],
+    "device_id": 4
+  }
+}

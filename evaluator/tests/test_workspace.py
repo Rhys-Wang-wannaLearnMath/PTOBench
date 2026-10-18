@@ -18,6 +18,25 @@ import integrity
 
 
 class WorkspaceDocumentationTest(unittest.TestCase):
+    def test_public_guide_covers_visible_files_commands_and_feedback_only(self):
+        guide = workspace._readme({'case_id': 'test.case', 'module': 'candidate.py', 'entry': 'entry'},
+                                  workspace.profile_modes.public_enabled_modes(), mode={'id': 'basic'})
+        for filename in ('case.json', 'config.py', 'comparator.json', 'reference.json',
+                         'environment.json', 'workspace.json', 'mode.json', 'profiling_modes.json',
+                         'starting_point/', 'latest_result.json', 'latest_session_result.json',
+                         'tuning.json'):
+            self.assertIn(filename, guide)
+        for command in ('evaluate', 'profile runtime', 'profile pmu', 'profile compiler', 'fork'):
+            self.assertIn('ptobench ' + command, guide)
+        for path in ('clean/', 'runtime/', 'hardware/', 'compile/'):
+            self.assertIn('.benchmark_outputs/' + path, guide)
+        for field in ('status', 'error_code', 'message', 'latency_us', 'remaining_hardware_actions'):
+            self.assertIn(field, guide)
+        for private_detail in ('warmup', 'measured launches', 'final verification', 'Snapshot',
+                               'finish budget', 'protection/', 'staging/', 'raw_wiki'):
+            self.assertNotIn(private_detail, guide)
+        self.assertFalse(any('\u4e00' <= character <= '\u9fff' for character in guide))
+
     def test_disabled_profiling_is_absent_from_context_and_readme(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -54,6 +73,10 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             self.assertEqual(
                 (context / "starting_point" / "candidate.py").read_text(encoding="utf-8"),
                 "def entry():\n    pass\n",
+            )
+            self.assertEqual(
+                common.read_json(destination / "tuning.json"),
+                {"memory_planner": "PYPTO", "analyze_auto_scopes_for_deps": False},
             )
 
     def test_init_rejects_nonempty_destination(self):

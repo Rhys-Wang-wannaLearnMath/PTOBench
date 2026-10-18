@@ -1,0 +1,341 @@
+# Copyright (c) PyPTO Contributors.
+# This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+# CANN Open Software License Agreement Version 2.0 (the "License").
+# Please refer to the License for details. You may not use this file except in compliance with the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+# See LICENSE in the root of the software repository for the full text of the License.
+# -----------------------------------------------------------------------------------------------------------
+"""DeepSeek-V4 single-token decode attn_norm fused + Q/KV LoRA + RoPE: produces (q, kv, qr) for the
+attention body, with attn_norm fused at the front to save one GM round-trip."""
+
+
+import pypto.language as pl
+
+from config import CASE_CONFIG as M, DECODE_BATCH, DECODE_SEQ, INT8_SCALE_MAX, INT8_AMAX_EPS
+
+
+# model config
+B = DECODE_BATCH
+S = DECODE_SEQ
+T = B * S
+D = M.hidden_size
+H = M.num_attention_heads
+HEAD_DIM = M.head_dim
+ROPE_DIM = M.qk_rope_head_dim
+ROPE_HALF = ROPE_DIM // 2
+NOPE_DIM = M.nope_head_dim
+Q_LORA = M.q_lora_rank
+EPS = M.rms_norm_eps
+
+# tiling
+ROPE_TILE = 64
+ROPE_PAIR_TILE = 32
+HEAD_TILE = 64
+Q_PROJ_OUT_TILE = 128
+Q_PROJ_TILE = 128
+QPROJ_MM_N_TILE = 128
+Q_LORA_TILE = 32
+D_TILE = 128
+KV_TILE = 32
+QUANT_TILE = 32
+T_TILE = 8
+MM_T_TILE = 16          # cube matmul rows must be 16-aligned on current ptoas
+T_PAD = ((T + MM_T_TILE - 1) // MM_T_TILE) * MM_T_TILE
+QPROJ_T_TILE = MM_T_TILE
+KV_RMS_T_TILE = 8
+Q_ROPE_T_TILE = 8
+KV_ROPE_T_TILE = 8
+
+
+@pl.jit.inline
+def attn_norm(
+    x: pl.Tensor[[B, S, D], pl.BF16],
+    norm_w: pl.Tensor[[D], pl.FP32],
+    x_normed: pl.Tensor[[B, S, D], pl.BF16],
+):
+    x_flat = pl.reshape(x, [T, D])
+    x_normed_flat = pl.reshape(x_normed, [T, D])
+
+    for tg_idx in pl.spmd(T // T_TILE, name_hint="attn_norm"):
+        tg = tg_idx * T_TILE
+        x_sq_sum = pl.full([1, T_TILE], dtype=pl.FP32, value=0.0)
+        for rms_db in pl.pipeline(D // D_TILE, stage=2):
+            rms_d0 = rms_db * D_TILE
+            rms_x_chunk = pl.cast(x_flat[tg : tg + T_TILE, rms_d0 : rms_d0 + D_TILE], target_type=pl.FP32)
+            x_sq_sum = pl.add(x_sq_sum, pl.reshape(pl.row_sum(pl.mul(rms_x_chunk, rms_x_chunk)), [1, T_TILE]))
+        x_inv_rms = pl.recip(pl.sqrt(pl.add(pl.mul(x_sq_sum, 1.0 / D), EPS)))
+        x_inv_rms_t = pl.reshape(x_inv_rms, [T_TILE, 1])
+        for apply_db in pl.pipeline(D // D_TILE, stage=2):
+            apply_d0 = apply_db * D_TILE
+            apply_x_chunk = pl.cast(x_flat[tg : tg + T_TILE, apply_d0 : apply_d0 + D_TILE], target_type=pl.FP32)
+            norm_w_chunk = pl.reshape(norm_w[apply_d0 : apply_d0 + D_TILE], [1, D_TILE])
+            x_normed_chunk = pl.col_expand_mul(pl.row_expand_mul(apply_x_chunk, x_inv_rms_t), norm_w_chunk)
+            x_normed_flat[tg : tg + T_TILE, apply_d0 : apply_d0 + D_TILE] = pl.cast(
+                x_normed_chunk, target_type=pl.BF16, mode="rint"
+            )
+
+    x_normed = pl.reshape(x_normed_flat, [B, S, D])
+    return x_normed
+
+
+@pl.jit.inline
+def qkv_proj_rope(
+    x: pl.Tensor[[B, S, D], pl.BF16],
+    wq_a: pl.Tensor[[D, Q_LORA], pl.BF16],
+    wq_b: pl.Tensor[[Q_LORA, H * HEAD_DIM], pl.INT8],
+    wq_b_scale: pl.Tensor[[H * HEAD_DIM], pl.FP32],
+    wkv: pl.Tensor[[D, HEAD_DIM], pl.BF16],
+    rope_cos: pl.Tensor[[T, ROPE_DIM], pl.BF16],
+    rope_sin: pl.Tensor[[T, ROPE_DIM], pl.BF16],
+    gamma_cq: pl.Tensor[[Q_LORA], pl.BF16],
+    gamma_ckv: pl.Tensor[[HEAD_DIM], pl.BF16],
+    q: pl.Tensor[[T, H, HEAD_DIM], pl.BF16],
+    kv: pl.Tensor[[T, HEAD_DIM], pl.BF16],
+    qr: pl.Tensor[[T, Q_LORA], pl.INT8],
+    qr_scale: pl.Tensor[[T, 1], pl.FP32],
+):
+    token_x_bf16 = pl.reshape(x, [T, D])
+
+    qr_fp32 = pl.create_tensor([T_PAD, Q_LORA], dtype=pl.FP32)
+    for qbg_idx in pl.spmd((Q_LORA // Q_LORA_TILE) // 2, name_hint="qr_proj_matmul"):
+        qbg = qbg_idx * 2
+        for q_inner in pl.pipeline(2, stage=2):
+            q_a_col0 = (qbg + q_inner) * Q_LORA_TILE
+            q_acc = pl.create_tensor([MM_T_TILE, Q_LORA_TILE], dtype=pl.FP32)
+            for db in pl.pipeline(0, D // D_TILE, stage=2):
+                qr_d0 = db * D_TILE
+                q_x_chunk_bf16 = pl.slice(token_x_bf16, [MM_T_TILE, D_TILE], [0, qr_d0], valid_shape=[T, D_TILE])
+                w_chunk = wq_a[qr_d0 : qr_d0 + D_TILE, q_a_col0 : q_a_col0 + Q_LORA_TILE]
+                if qr_d0 == 0:
+                    q_acc = pl.matmul(q_x_chunk_bf16, w_chunk, out_dtype=pl.FP32)
+                else:
+                    q_acc = pl.matmul_acc(q_acc, q_x_chunk_bf16, w_chunk)
+            qr_fp32[0:T_PAD, q_a_col0 : q_a_col0 + Q_LORA_TILE] = q_acc
+
+    # Keep padded INT8/scale copies for cube q-proj. Loading a [T=8] GM tensor
+    # directly into a 16-row mat tile is not numerically stable on current ptoas;
+    # storing the real rows into a 16-row internal tensor preserves the real data
+    # layout while leaving padded rows unused downstream.
+    qr_mm = pl.create_tensor([T_PAD, Q_LORA], dtype=pl.INT8)
+    qr_scale_mm = pl.create_tensor([T_PAD, 1], dtype=pl.FP32)
+
+    # Two passes per block: pass 1 computes amax; pass 2 recomputes norm and quantizes.
+    for tg_idx in pl.spmd(T // T_TILE, name_hint="qr_rms_norm_quant"):
+        tg = tg_idx * T_TILE
+        qr_sq_sum = pl.full([1, T_TILE], dtype=pl.FP32, value=0.0)
+        qr_tile_amax = pl.full([1, T_TILE], dtype=pl.FP32, value=INT8_AMAX_EPS)
+        for qr_rms_qb in pl.pipeline(Q_LORA // Q_LORA_TILE, stage=2):
+            qr_rms_col0 = qr_rms_qb * Q_LORA_TILE
+            qr_rms_chunk = qr_fp32[tg : tg + T_TILE, qr_rms_col0 : qr_rms_col0 + Q_LORA_TILE]
+            qr_sq_sum = pl.add(qr_sq_sum, pl.reshape(pl.row_sum(pl.mul(qr_rms_chunk, qr_rms_chunk)), [1, T_TILE]))
+        qr_inv_rms = pl.recip(pl.sqrt(pl.add(pl.mul(qr_sq_sum, 1.0 / Q_LORA), EPS)))
+        qr_inv_rms_t = pl.reshape(qr_inv_rms, [T_TILE, 1])
+
+        for qb in pl.pipeline(Q_LORA // Q_LORA_TILE, stage=2):
+            qr_norm_col0 = qb * Q_LORA_TILE
+            qr_norm_chunk = qr_fp32[tg : tg + T_TILE, qr_norm_col0 : qr_norm_col0 + Q_LORA_TILE]
+            gamma_chunk = pl.reshape(
+                pl.cast(gamma_cq[qr_norm_col0 : qr_norm_col0 + Q_LORA_TILE], target_type=pl.FP32),
+                [1, Q_LORA_TILE],
+            )
+            qr_normed = pl.col_expand_mul(pl.row_expand_mul(qr_norm_chunk, qr_inv_rms_t), gamma_chunk)
+            qr_normed_bf16 = pl.cast(qr_normed, target_type=pl.BF16, mode="rint")
+            qr_norm_amax_f32 = pl.cast(qr_normed_bf16, target_type=pl.FP32)
+            qr_norm_amax_abs = pl.maximum(qr_norm_amax_f32, pl.neg(qr_norm_amax_f32))
+            qr_tile_amax = pl.maximum(qr_tile_amax, pl.reshape(pl.row_max(qr_norm_amax_abs), [1, T_TILE]))
+
+        qr_scale_quant_row = pl.div(pl.full([1, T_TILE], dtype=pl.FP32, value=INT8_SCALE_MAX), qr_tile_amax)
+        qr_scale_quant_t = pl.reshape(qr_scale_quant_row, [T_TILE, 1])
+        qr_tile_scale_dq = pl.reshape(pl.recip(qr_scale_quant_row), [T_TILE, 1])
+        qr_scale[tg : tg + T_TILE, :] = qr_tile_scale_dq
+        qr_scale_mm[tg : tg + T_TILE, :] = qr_tile_scale_dq
+
+        for qa in pl.pipeline(0, Q_LORA, QUANT_TILE, stage=2):
+            qr_chunk = qr_fp32[tg : tg + T_TILE, qa : qa + QUANT_TILE]
+            gamma_q_chunk = pl.reshape(
+                pl.cast(gamma_cq[qa : qa + QUANT_TILE], target_type=pl.FP32),
+                [1, QUANT_TILE],
+            )
+            qr_q_normed = pl.col_expand_mul(pl.row_expand_mul(qr_chunk, qr_inv_rms_t), gamma_q_chunk)
+            qr_q_normed_bf16 = pl.cast(qr_q_normed, target_type=pl.BF16, mode="rint")
+            qr_q_f32 = pl.cast(qr_q_normed_bf16, target_type=pl.FP32)
+            qr_q_scaled = pl.row_expand_mul(qr_q_f32, qr_scale_quant_t)
+            qr_q_i32 = pl.cast(qr_q_scaled, target_type=pl.INT32, mode="rint")
+            qr_q_half = pl.cast(qr_q_i32, target_type=pl.FP16, mode="round")
+            qr_q_i8 = pl.cast(qr_q_half, target_type=pl.INT8, mode="trunc")
+            qr[tg : tg + T_TILE, qa : qa + QUANT_TILE] = qr_q_i8
+            qr_mm[tg : tg + T_TILE, qa : qa + QUANT_TILE] = qr_q_i8
+
+    q_proj_i32 = pl.create_tensor([T_PAD, H * HEAD_DIM], dtype=pl.INT32)
+    for hbg in pl.spmd(((H * HEAD_DIM) // QPROJ_MM_N_TILE) // 2, name_hint="qproj_matmul"):
+        for h_inner in pl.range(2):
+            h0 = (hbg * 2 + h_inner) * QPROJ_MM_N_TILE
+            col_acc = pl.create_tensor([MM_T_TILE, QPROJ_MM_N_TILE], dtype=pl.FP32)
+            for qb in pl.pipeline(0, Q_LORA // Q_PROJ_TILE, stage=2):
+                qr_proj_col0 = qb * Q_PROJ_TILE
+                qr_i8_chunk = pl.cast(
+                    qr_mm[0:MM_T_TILE, qr_proj_col0 : qr_proj_col0 + Q_PROJ_TILE],
+                    target_type=pl.FP16,
+                )
+                wq_chunk = pl.cast(
+                    wq_b[qr_proj_col0 : qr_proj_col0 + Q_PROJ_TILE, h0 : h0 + QPROJ_MM_N_TILE],
+                    target_type=pl.FP16,
+                )
+                if qr_proj_col0 == 0:
+                    col_acc = pl.matmul(qr_i8_chunk, wq_chunk, out_dtype=pl.FP32)
+                else:
+                    col_acc = pl.matmul_acc(col_acc, qr_i8_chunk, wq_chunk)
+            q_proj_i32[0:MM_T_TILE, h0 : h0 + QPROJ_MM_N_TILE] = pl.cast(col_acc, target_type=pl.INT32, mode="rint")
+
+    q_proj_fp32 = pl.create_tensor([T_PAD, H * HEAD_DIM], dtype=pl.FP32)
+    for hbg in pl.spmd(((H * HEAD_DIM) // Q_PROJ_OUT_TILE) // 16, name_hint="qproj_dequant"):
+        for h_inner in pl.range(16):
+            h0 = (hbg * 16 + h_inner) * Q_PROJ_OUT_TILE
+            w_scale = pl.reshape(wq_b_scale[h0 : h0 + Q_PROJ_OUT_TILE], [1, Q_PROJ_OUT_TILE])
+            for tc in pl.pipeline(0, T, QPROJ_T_TILE, stage=2):
+                col_acc_t = q_proj_i32[tc : tc + QPROJ_T_TILE, h0 : h0 + Q_PROJ_OUT_TILE]
+                col_fp32 = pl.cast(col_acc_t, target_type=pl.FP32, mode="none")
+                qr_scale_dq_t = qr_scale_mm[tc : tc + QPROJ_T_TILE, :]
+                col_dequant = pl.col_expand_mul(pl.row_expand_mul(col_fp32, qr_scale_dq_t), w_scale)
+                q_proj_fp32[tc : tc + QPROJ_T_TILE, h0 : h0 + Q_PROJ_OUT_TILE] = col_dequant
+
+    # Fuse per-head RMSNorm and RoPE in one task so the normalization factor
+    # stays local to the rotation at the larger PRO head count.
+    q_flat = pl.reshape(q, [T, H * HEAD_DIM])
+    for hg_idx in pl.spmd(H // 2, name_hint="q_head_rms_nope_rope"):
+        hg = hg_idx * 2
+        for h_inner in pl.range(2):
+            h = hg + h_inner
+            h0 = h * HEAD_DIM
+            q_head_sq_sum = pl.full([1, T], dtype=pl.FP32, value=0.0)
+            for db in pl.pipeline(HEAD_DIM // HEAD_TILE, stage=2):
+                d0 = h0 + db * HEAD_TILE
+                q_head_chunk = q_proj_fp32[0:T, d0 : d0 + HEAD_TILE]
+                q_head_sq_sum = pl.add(q_head_sq_sum, pl.reshape(pl.row_sum(pl.mul(q_head_chunk, q_head_chunk)), [1, T]))
+            q_head_inv_rms = pl.recip(pl.sqrt(pl.add(pl.mul(q_head_sq_sum, 1.0 / HEAD_DIM), EPS)))
+            q_head_inv_rms_t = pl.reshape(q_head_inv_rms, [T, 1])
+
+            for nb in pl.pipeline(NOPE_DIM // HEAD_TILE, stage=2):
+                n0 = nb * HEAD_TILE
+                q_nope_chunk = q_proj_fp32[0:T, h0 + n0 : h0 + n0 + HEAD_TILE]
+                q_normed = pl.row_expand_mul(q_nope_chunk, q_head_inv_rms_t)
+                q_flat[:, h0 + n0 : h0 + n0 + HEAD_TILE] = pl.cast(q_normed, target_type=pl.BF16, mode="rint")
+
+            q_rope_chunk = q_proj_fp32[0:T, h0 + NOPE_DIM : h0 + NOPE_DIM + ROPE_DIM]
+            q_rope_norm = pl.row_expand_mul(q_rope_chunk, q_head_inv_rms_t)
+            q_rope_even = pl.gather(q_rope_norm, mask_pattern=pl.tile.MaskPattern.P0101)
+            q_rope_odd = pl.gather(q_rope_norm, mask_pattern=pl.tile.MaskPattern.P1010)
+            q_rope_cos = pl.cast(rope_cos[:, :ROPE_HALF], target_type=pl.FP32)
+            q_rope_sin = pl.cast(rope_sin[:, :ROPE_HALF], target_type=pl.FP32)
+            q_rot_even = pl.sub(pl.mul(q_rope_even, q_rope_cos), pl.mul(q_rope_odd, q_rope_sin))
+            q_rot_odd = pl.add(pl.mul(q_rope_even, q_rope_sin), pl.mul(q_rope_odd, q_rope_cos))
+            q_rope_buf = pl.full([T, ROPE_DIM], dtype=pl.FP32, value=0.0)
+            q_rope_buf = pl.tensor.scatter(q_rot_even, mask_pattern=pl.tile.MaskPattern.P0101, dst=q_rope_buf)
+            q_rope_buf = pl.tensor.scatter(q_rot_odd, mask_pattern=pl.tile.MaskPattern.P1010, dst=q_rope_buf)
+            q_flat[:, h0 + NOPE_DIM : h0 + HEAD_DIM] = pl.cast(q_rope_buf, target_type=pl.BF16, mode="rint")
+    q = pl.reshape(q_flat, [T, H, HEAD_DIM])
+
+    kv_fp32 = pl.create_tensor([T_PAD, HEAD_DIM], dtype=pl.FP32)
+    for kbg in pl.spmd((HEAD_DIM // KV_TILE) // 2, name_hint="kv_proj_matmul"):
+        for k_inner in pl.pipeline(2, stage=2):
+            kv_acc = pl.create_tensor([MM_T_TILE, KV_TILE], dtype=pl.FP32)
+            kv_col0 = (kbg * 2 + k_inner) * KV_TILE
+            for db in pl.pipeline(0, D // D_TILE, stage=2):
+                d0 = db * D_TILE
+                kv_x_chunk_bf16 = pl.slice(token_x_bf16, [MM_T_TILE, D_TILE], [0, d0], valid_shape=[T, D_TILE])
+                wkv_chunk = wkv[d0 : d0 + D_TILE, kv_col0 : kv_col0 + KV_TILE]
+                if d0 == 0:
+                    kv_acc = pl.matmul(kv_x_chunk_bf16, wkv_chunk, out_dtype=pl.FP32)
+                else:
+                    kv_acc = pl.matmul_acc(kv_acc, kv_x_chunk_bf16, wkv_chunk)
+            kv_fp32[0:T_PAD, kv_col0 : kv_col0 + KV_TILE] = kv_acc
+
+    kv_inv_rms_tensor = pl.create_tensor([1, T], dtype=pl.FP32)
+    for tg_idx in pl.spmd(T // KV_RMS_T_TILE, name_hint="kv_rms_norm"):
+        tg = tg_idx * KV_RMS_T_TILE
+        kv_sq_sum = pl.full([1, KV_RMS_T_TILE], dtype=pl.FP32, value=0.0)
+        for kb in pl.pipeline(HEAD_DIM // KV_TILE, stage=2):
+            kv_sq_col0 = kb * KV_TILE
+            kv_chunk = kv_fp32[tg : tg + KV_RMS_T_TILE, kv_sq_col0 : kv_sq_col0 + KV_TILE]
+            kv_sq_sum = pl.add(kv_sq_sum, pl.reshape(pl.row_sum(pl.mul(kv_chunk, kv_chunk)), [1, KV_RMS_T_TILE]))
+        kv_inv_rms = pl.recip(pl.sqrt(pl.add(pl.mul(kv_sq_sum, 1.0 / HEAD_DIM), EPS)))
+        kv_inv_rms_t = pl.reshape(kv_inv_rms, [KV_RMS_T_TILE, 1])
+        kv_inv_rms_tensor[0:1, tg : tg + KV_RMS_T_TILE] = kv_inv_rms
+
+        for nb in pl.pipeline(NOPE_DIM // KV_TILE, stage=2):
+            n0 = nb * KV_TILE
+            kv_chunk = kv_fp32[tg : tg + KV_RMS_T_TILE, n0 : n0 + KV_TILE]
+            gamma_kv_chunk = pl.reshape(
+                pl.cast(gamma_ckv[n0 : n0 + KV_TILE], target_type=pl.FP32),
+                [1, KV_TILE],
+            )
+            kv_normed = pl.col_expand_mul(pl.row_expand_mul(kv_chunk, kv_inv_rms_t), gamma_kv_chunk)
+            kv[tg : tg + KV_RMS_T_TILE, n0 : n0 + KV_TILE] = pl.cast(kv_normed, target_type=pl.BF16, mode="rint")
+
+    # Fused KV RoPE: rmsnorm-scaled rope slice, gather-rotate-scatter, write back.
+    # Inner T-chunk keeps Vec UB under the 192 KB cap at T=128.
+    with pl.at(level=pl.Level.CORE_GROUP, name_hint="kv_rope_fused"):
+        gamma_rope = pl.reshape(
+            pl.cast(gamma_ckv[NOPE_DIM : NOPE_DIM + ROPE_DIM], target_type=pl.FP32),
+            [1, ROPE_DIM],
+        )
+        for tg_idx in pl.range(T // KV_ROPE_T_TILE):
+            tg = tg_idx * KV_ROPE_T_TILE
+            kv_rope_inv_rms_chunk = pl.reshape(
+                kv_inv_rms_tensor[0:1, tg : tg + KV_ROPE_T_TILE], [KV_ROPE_T_TILE, 1]
+            )
+            kv_rope_chunk = kv_fp32[tg : tg + KV_ROPE_T_TILE, NOPE_DIM : NOPE_DIM + ROPE_DIM]
+            kv_rope_norm_chunk = pl.col_expand_mul(pl.row_expand_mul(kv_rope_chunk, kv_rope_inv_rms_chunk), gamma_rope)
+            kv_rope_even = pl.tensor.gather(kv_rope_norm_chunk, mask_pattern=pl.tile.MaskPattern.P0101)
+            kv_rope_odd = pl.tensor.gather(kv_rope_norm_chunk, mask_pattern=pl.tile.MaskPattern.P1010)
+            kv_rope_cos_chunk = pl.cast(rope_cos[tg : tg + KV_ROPE_T_TILE, :ROPE_HALF], target_type=pl.FP32)
+            kv_rope_sin_chunk = pl.cast(rope_sin[tg : tg + KV_ROPE_T_TILE, :ROPE_HALF], target_type=pl.FP32)
+            kv_rot_even = pl.sub(pl.mul(kv_rope_even, kv_rope_cos_chunk), pl.mul(kv_rope_odd, kv_rope_sin_chunk))
+            kv_rot_odd = pl.add(pl.mul(kv_rope_even, kv_rope_sin_chunk), pl.mul(kv_rope_odd, kv_rope_cos_chunk))
+            kv_rope_buf = pl.full([KV_ROPE_T_TILE, ROPE_DIM], dtype=pl.FP32, value=0.0)
+            # Mask-form scatter: inverse of the P0101/P1010 gathers above.
+            kv_rope_buf = pl.tensor.scatter(kv_rot_even, mask_pattern=pl.tile.MaskPattern.P0101, dst=kv_rope_buf)
+            kv_rope_buf = pl.tensor.scatter(kv_rot_odd, mask_pattern=pl.tile.MaskPattern.P1010, dst=kv_rope_buf)
+            kv[tg : tg + KV_ROPE_T_TILE, NOPE_DIM : NOPE_DIM + ROPE_DIM] = pl.cast(
+                kv_rope_buf, target_type=pl.BF16, mode="rint"
+            )
+
+    return q
+
+
+@pl.jit
+def qkv_proj_rope_test(
+    x: pl.Tensor[[B, S, D], pl.BF16],
+    norm_w: pl.Tensor[[D], pl.FP32],
+    wq_a: pl.Tensor[[D, Q_LORA], pl.BF16],
+    wq_b: pl.Tensor[[Q_LORA, H * HEAD_DIM], pl.INT8],
+    wq_b_scale: pl.Tensor[[H * HEAD_DIM], pl.FP32],
+    wkv: pl.Tensor[[D, HEAD_DIM], pl.BF16],
+    rope_cos: pl.Tensor[[T, ROPE_DIM], pl.BF16],
+    rope_sin: pl.Tensor[[T, ROPE_DIM], pl.BF16],
+    gamma_cq: pl.Tensor[[Q_LORA], pl.BF16],
+    gamma_ckv: pl.Tensor[[HEAD_DIM], pl.BF16],
+    q: pl.Out[pl.Tensor[[T, H, HEAD_DIM], pl.BF16]],
+    kv: pl.Out[pl.Tensor[[T, HEAD_DIM], pl.BF16]],
+    qr: pl.Out[pl.Tensor[[T, Q_LORA], pl.INT8]],
+    qr_scale: pl.Out[pl.Tensor[[T, 1], pl.FP32]],
+):
+    x_normed = pl.create_tensor([B, S, D], dtype=pl.BF16)
+    x_normed = attn_norm(x, norm_w, x_normed)
+    q = qkv_proj_rope(
+        x_normed,
+        wq_a,
+        wq_b,
+        wq_b_scale,
+        wkv,
+        rope_cos,
+        rope_sin,
+        gamma_cq,
+        gamma_ckv,
+        q,
+        kv,
+        qr,
+        qr_scale,
+    )
+    return q

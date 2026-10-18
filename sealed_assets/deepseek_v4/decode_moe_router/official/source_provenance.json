@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_frozen_v0.1_copy",
+  "source_path": "benchmarks/pypto_lib_bench-v0.1/cases/deepseek_v4/decode_moe_router/official_golden/original.py",
+  "source_sha256": "7fae29d95e19c7ee564ed0a0db3e7a55e1dba34d41042308d00a45a78c4db5ae",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "7fae29d95e19c7ee564ed0a0db3e7a55e1dba34d41042308d00a45a78c4db5ae",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/deepseek_v4_decode_hc_pre.py",
+      "source_sha256": "c3916f95c3f08a91ab13e70c39ba61dea3f3a7626f4d9c09fc195d8e51299ff7",
+      "frozen_copy": "deepseek_v4_decode_hc_pre.py",
+      "frozen_copy_sha256": "c3916f95c3f08a91ab13e70c39ba61dea3f3a7626f4d9c09fc195d8e51299ff7"
+    }
+  ],
+  "selection": "Frozen v0.1 single-card DEMO decode router selected by Stage 1; the later upstream MoE rewrite changes ABI, dtype, topology, and output meaning.",
+  "fixture_authority": "byte-exact official TensorSpec builder and golden function"
+}

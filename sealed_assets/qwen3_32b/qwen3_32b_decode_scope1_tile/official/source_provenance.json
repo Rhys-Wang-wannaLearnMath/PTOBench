@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/datasets/models_optimization_corpus_20260605/sources_target",
+  "source_path": "qwen3_32b/qwen3_32b_decode_scope1_tile.py",
+  "source_sha256": "239ab127e1963e154b7d5b4bc5445b6ccfee169c2786f99f85e6f6d61c26ca79",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "239ab127e1963e154b7d5b4bc5445b6ccfee169c2786f99f85e6f6d61c26ca79",
+  "selection_rationale": "Preserve the analyzed frozen tile workload because the current upstream default branch has no exact tile path and related scope1 changes workload identity.",
+  "fixture_authority": "real TensorSpec builder and official golden_fn",
+  "dependencies": []
+}

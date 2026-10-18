@@ -151,13 +151,15 @@ CASE_CONFIG = PRO
 
 
 # Fixed deployment and operator values for this Case.
-B = 8
-S = 1
+DECODE_BATCH = 8
+DECODE_SEQ = 1
+B = DECODE_BATCH
+S = DECODE_SEQ
 T = B * S
 D = CASE_CONFIG.hidden_size
-TOPK = 6
+TOPK = CASE_CONFIG.num_experts_per_tok
 EP_WORLD_SIZE = 8
-N_ROUTED_EXPERTS = 384
+N_ROUTED_EXPERTS = CASE_CONFIG.n_routed_experts
 N_LOCAL_EXPERTS = N_ROUTED_EXPERTS // EP_WORLD_SIZE
 RECV_MAX = EP_WORLD_SIZE * T
 

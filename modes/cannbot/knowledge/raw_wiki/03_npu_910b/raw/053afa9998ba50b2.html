@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <meta name="search_title" content="">
+ </head>
+ <body>
+  <a name="ZH-CN_TOPIC_0000002531522168"></a><a name="ZH-CN_TOPIC_0000002531522168"></a>
+  <h1 class="topictitle1">NPU域上板调试</h1>
+  <div id="body0000001663882793">
+   <p id="ZH-CN_TOPIC_0000002531522168__p15382106123618">NPU域上板调试手段主要包含上板数据打印、msSanitizer内存异常检测和msDebug单步调试等功能，数据打印包括printf、DumpTensor两种方式，其中，DumpTensor是SIMD编程独有功能，用于打印指定Tensor的数据。</p>
+   <div class="section" id="ZH-CN_TOPIC_0000002531522168__section166162435313">
+    <a name="ZH-CN_TOPIC_0000002531522168__section166162435313"></a><a name="section166162435313"></a>
+    <h4 class="sectiontitle">通过printf打印数据</h4>
+    <p id="ZH-CN_TOPIC_0000002531522168__p4462524449">printf主要用于打印标量和字符串信息，SIMT编程及SIMD编程均支持。</p>
+    <p id="ZH-CN_TOPIC_0000002531522168__p1066132410537">printf示例如下，printf接口的使用说明和具体约束请参考<a href="/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_10426.html">printf</a>。</p>
+    <div class="codecoloring" codetype="Cpp" id="ZH-CN_TOPIC_0000002531522168__screen414217282461">
+     <div class="highlight">
+      <table class="highlighttable">
+       <tbody>
+        <tr>
+         <td class="linenos">
+          <div class="linenodiv">
+           <pre><span class="normal">1</span></pre>
+          </div></td>
+         <td class="code">
+          <div>
+           <pre><span></span><span class="n">printf</span><span class="p">(</span><span class="s">"fmt string %d"</span><span class="p">,</span><span class="w"> </span><span class="mh">0x123</span><span class="p">);</span>
+</pre>
+          </div></td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="note" id="ZH-CN_TOPIC_0000002531522168__note116611524115316">
+    <img src="public_sys-resources/note_3.0-zh-cn.png"><span class="notetitle"> </span>
+    <div class="notebody">
+     <p id="ZH-CN_TOPIC_0000002531522168__p866192412538">printf接口打印功能会对算子实际运行的性能带来一定影响，通常在调测阶段使用。开发者可以按需关闭打印功能。具体方法请参考<a href="/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_10426.html">printf</a>。</p>
+    </div>
+   </div>
+   <div class="section" id="ZH-CN_TOPIC_0000002531522168__section16452184823718">
+    <h4 class="sectiontitle">SIMD编程通过DumpTensor打印进行调试</h4>
+    <p id="ZH-CN_TOPIC_0000002531522168__p1242919264451">DumpTensor是SIMD编程场景独有的打印功能，用于NPU域上板打印指定Tensor的数据。</p>
+    <p id="ZH-CN_TOPIC_0000002531522168__p15429126184515"><strong id="ZH-CN_TOPIC_0000002531522168__b842972617454">具体的使用方法如下：</strong></p>
+    <p id="ZH-CN_TOPIC_0000002531522168__p1442912654518">在算子kernel侧实现代码中需要输出日志信息的地方调用DumpTensor接口打印相关内容。</p>
+    <div class="p" id="ZH-CN_TOPIC_0000002531522168__p209354712713">
+     如下所示，srcLocal表示待打印的Tensor；5表示用户的自定义附加信息，比如当前的代码行号；dataLen表示元素个数。DumpTensor接口的使用说明和具体约束请参考<a href="/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0192.html">DumpTensor</a>。
+     <div class="codecoloring" codetype="Cpp" id="ZH-CN_TOPIC_0000002531522168__screen1429142664516">
+      <div class="highlight">
+       <table class="highlighttable">
+        <tbody>
+         <tr>
+          <td class="linenos">
+           <div class="linenodiv">
+            <pre><span class="normal">1</span></pre>
+           </div></td>
+          <td class="code">
+           <div>
+            <pre><span></span><span class="n">DumpTensor</span><span class="p">(</span><span class="n">srcLocal</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="n">dataLen</span><span class="p">);</span>
+</pre>
+           </div></td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </div>
+    </div>
+    <p id="ZH-CN_TOPIC_0000002531522168__p1642922684510">Dump时，每个block核的dump信息前会增加对应信息头DumpHead（32字节大小），用于记录核号和资源使用信息；每次Dump的Tensor数据前也会添加信息头DumpTensorHead（32字节大小），用于记录Tensor的相关信息。打印结果的样例如下：</p>
+    <div class="codecoloring" codetype="ColdFusion" id="ZH-CN_TOPIC_0000002531522168__screen54291426194517">
+     <div class="highlight">
+      <table class="highlighttable">
+       <tbody>
+        <tr>
+         <td class="linenos">
+          <div class="linenodiv">
+           <pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span></pre>
+          </div></td>
+         <td class="code">
+          <div>
+           <pre><span></span><span class="nv">DumpTensor</span><span class="p">:</span> <span class="nv">desc</span><span class="o">=</span><span class="m">5</span><span class="p">,</span> <span class="nv">addr</span><span class="o">=</span><span class="m">0</span><span class="p">,</span> <span class="nv">data_type</span><span class="o">=</span><span class="nv">float16</span><span class="p">,</span> <span class="nv">position</span><span class="o">=</span><span class="nv">UB</span><span class="p">,</span> <span class="nv">dump_size</span><span class="o">=</span><span class="m">32</span>
+<span class="p">[</span><span class="m">19</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">4</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">38</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">50</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">39</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">67</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">84</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">98</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">21</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">36</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">18</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">46</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">10</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">92</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">26</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">38</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">39</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">9</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">82</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">37</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">35</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">65</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">97</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">59</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">89</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">63</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">70</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">57</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">35</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">3</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">16</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span>
+<span class="m">42</span><span class="p">.</span><span class="m">000000</span><span class="p">]</span>
+<span class="nv">DumpTensor</span><span class="p">:</span> <span class="nv">desc</span><span class="o">=</span><span class="m">5</span><span class="p">,</span> <span class="nv">addr</span><span class="o">=</span><span class="m">100</span><span class="p">,</span> <span class="nv">data_type</span><span class="o">=</span><span class="nv">float16</span><span class="p">,</span> <span class="nv">position</span><span class="o">=</span><span class="nv">UB</span><span class="p">,</span> <span class="nv">dump_size</span><span class="o">=</span><span class="m">32</span>
+<span class="p">[</span><span class="m">6</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">34</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">52</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">38</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">73</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">38</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">35</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">14</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">67</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">62</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">30</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">49</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">86</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">37</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">84</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">18</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">38</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">18</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">44</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">21</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">86</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">99</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">13</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">79</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">84</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">9</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">48</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">74</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">52</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">99</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">80</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span>
+<span class="m">53</span><span class="p">.</span><span class="m">000000</span><span class="p">]</span>
+<span class="p">...</span>
+<span class="nv">DumpTensor</span><span class="p">:</span> <span class="nv">desc</span><span class="o">=</span><span class="m">5</span><span class="p">,</span> <span class="nv">addr</span><span class="o">=</span><span class="m">0</span><span class="p">,</span> <span class="nv">data_type</span><span class="o">=</span><span class="nv">float16</span><span class="p">,</span> <span class="nv">position</span><span class="o">=</span><span class="nv">UB</span><span class="p">,</span> <span class="nv">dump_size</span><span class="o">=</span><span class="m">32</span>
+<span class="p">[</span><span class="m">35</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">41</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">41</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">22</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">84</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">49</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">60</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">0</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">90</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">14</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">67</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">80</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">16</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">46</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">16</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">83</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">6</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">70</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">97</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">28</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">97</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">62</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">80</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">22</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">53</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">37</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">23</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">58</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">65</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">28</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span> <span class="m">4</span><span class="p">.</span><span class="m">000000</span><span class="p">,</span>
+<span class="m">29</span><span class="p">.</span><span class="m">000000</span><span class="p">]</span>
+</pre>
+          </div></td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="note" id="ZH-CN_TOPIC_0000002531522168__note1223152015296">
+     <img src="public_sys-resources/note_3.0-zh-cn.png"><span class="notetitle"> </span>
+     <div class="notebody">
+      <p id="ZH-CN_TOPIC_0000002531522168__p0231820132915">DumpTensor接口打印功能会对算子实际运行的性能带来一定影响，通常在调测阶段使用。开发者可以按需关闭打印功能。具体方法请参考<a href="/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0192.html">DumpTensor</a>。</p>
+     </div>
+    </div>
+   </div>
+   <div class="section" id="ZH-CN_TOPIC_0000002531522168__section931475414217">
+    <h4 class="sectiontitle">使用msSanitizer工具进行异常检测</h4>
+    <p id="ZH-CN_TOPIC_0000002531522168__p12540183914352">msSanitizer工具是基于<span id="ZH-CN_TOPIC_0000002531522168__zh-cn_topic_0000001740005733_ph09541259133611">AI处理器</span>的异常检测工具，包含了单算子开发场景下的内存检测、竞争检测、未初始化检测和同步检测四个子功能。</p>
+    <ul id="ZH-CN_TOPIC_0000002531522168__ul13995103913514">
+     <li id="ZH-CN_TOPIC_0000002531522168__zh-cn_topic_0000002562432083_li1075334783611">内存检测：工具可以在用户开发算子的过程中，协助定位非法读写、多核踩踏、非对齐访问、内存泄漏以及非法释放等内存问题。同时工具也支持对CANN软件栈的内存检测，帮助用户定界软件栈内存异常发生的模块。</li>
+     <li id="ZH-CN_TOPIC_0000002531522168__zh-cn_topic_0000002562432083_zh-cn_topic_0000001691887174_li181845117917">竞争检测：工具可以协助用户定位由于竞争风险可能导致的数据竞争问题，包含核内竞争和核间竞争问题。其中，核内竞争包含流水间竞争和流水内竞争。</li>
+     <li id="ZH-CN_TOPIC_0000002531522168__zh-cn_topic_0000002562432083_li7471185472914">未初始化检测：工具可以协助用户定位由于内存未初始化可能导致的脏数据读取问题。</li>
+     <li id="ZH-CN_TOPIC_0000002531522168__zh-cn_topic_0000002562432083_li86623357145">同步检测：工具可以协助用户定位由于前序算子中的未配对同步指令导致的后续算子同步失败的问题。</li>
+    </ul>
+    <p id="ZH-CN_TOPIC_0000002531522168__p1831415543210">具体使用方法请参考<span id="ZH-CN_TOPIC_0000002531522168__ph16314254826">《<a href="https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/devaids/optool/docs/zh/quick_start/mskpp_quick_start.md" target="_blank" rel="noopener noreferrer">算子开发工具</a>》</span>。</p>
+    <p id="ZH-CN_TOPIC_0000002531522168__p1938104417444"><strong id="ZH-CN_TOPIC_0000002531522168__b14938444104420">该功能仅在如下场景支持</strong><strong id="ZH-CN_TOPIC_0000002531522168__b15938184414445">：</strong></p>
+    <ul id="ZH-CN_TOPIC_0000002531522168__ul159381244114420">
+     <li id="ZH-CN_TOPIC_0000002531522168__li393834418443">通过<a href="atlas_ascendc_10_0056.html">基于样例工程完成Kernel直调</a>方式调用算子。</li>
+    </ul>
+    <ul id="ZH-CN_TOPIC_0000002531522168__ul1893854484418">
+     <li id="ZH-CN_TOPIC_0000002531522168__li129382044194417">通过<a href="atlas_ascendc_10_0070.html">单算子API调用</a>方式调用算子。</li>
+     <li id="ZH-CN_TOPIC_0000002531522168__li4938244154417">间接调用单算子API(aclnnxxx)接口：Pytorch框架单算子直调的场景。</li>
+    </ul>
+   </div>
+   <div class="section" id="ZH-CN_TOPIC_0000002531522168__section2072113416285">
+    <h4 class="sectiontitle">使用msDebug工具进行算子调试</h4>
+    <p id="ZH-CN_TOPIC_0000002531522168__p57216414288">msDebug是一款面向昇腾设备的算子调试工具，用于调试NPU侧运行的算子程序，为算子开发人员提供调试手段，当前只支持SIMD编程场景的程序调试，暂不支持SIMT编程场景的程序调试。msDebug工具支持调试所有的昇腾算子，包含Ascend C算子（Vector、Cube以及融合算子）程序。具体功能包括断点设置、打印变量和内存、单步调试、中断运行、核切换、检查程序状态、调试信息展示、解析Core dump文件，用户可根据实际情况进行选择。具体使用方法请参考<span id="ZH-CN_TOPIC_0000002531522168__ph19721746286">《<a href="https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/devaids/optool/docs/zh/quick_start/mskpp_quick_start.md" target="_blank" rel="noopener noreferrer">算子开发工具</a>》</span>。</p>
+    <ul id="ZH-CN_TOPIC_0000002531522168__ul963275075614">
+     <li id="ZH-CN_TOPIC_0000002531522168__li1363219509563">通过<a href="atlas_ascendc_10_0056.html">基于样例工程完成Kernel直调</a>方式调用算子。</li>
+    </ul>
+    <ul id="ZH-CN_TOPIC_0000002531522168__ul17632145025610">
+     <li id="ZH-CN_TOPIC_0000002531522168__li1763255014564">通过<a href="atlas_ascendc_10_0070.html">单算子API调用</a>方式调用算子。</li>
+     <li id="ZH-CN_TOPIC_0000002531522168__li2632850125610">间接调用单算子API(aclnnxxx)接口：Pytorch框架单算子直调的场景。</li>
+    </ul>
+   </div>
+  </div>
+  <div>
+   <div class="familylinks">
+    <div class="parentlink">
+     <strong>父主题：</strong> <a href="atlas_ascendc_10_00058.html">功能调试</a>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>

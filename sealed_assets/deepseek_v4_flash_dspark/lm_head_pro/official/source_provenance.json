@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.lm_head_pro",
+  "authority": "inventoried byte-exact upstream source snapshot",
+  "upstream_repository": "https://github.com/hw-native-sys/pypto-lib",
+  "selected_upstream_commit": "7f15a1fa6bad2b7030eada571bfe23641d1bddd3",
+  "selected_upstream_path": "models/deepseek_v4_flash_dspark/lm_head.py",
+  "source": {
+    "repository_path": "models/0912/deepseek_v4_flash_dspark/lm_head.py",
+    "upstream_path": "models/deepseek_v4_flash_dspark/lm_head.py",
+    "sha256": "73d4f18d2bbde5bc9e895f08801a4f255859c098fbd1cb59e4ae28a8cdb591cf",
+    "frozen_path": "official/original.py",
+    "frozen_sha256": "73d4f18d2bbde5bc9e895f08801a4f255859c098fbd1cb59e4ae28a8cdb591cf"
+  },
+  "dependencies": [
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/config.py",
+      "upstream_path": "models/deepseek_v4_flash_dspark/config.py",
+      "sha256": "e823df2d88d5f128b928e476f94ee46eb6f3fd1c2c21c506f9334f66c74f0bd9",
+      "frozen_path": "official/original_config.py",
+      "frozen_sha256": "e823df2d88d5f128b928e476f94ee46eb6f3fd1c2c21c506f9334f66c74f0bd9"
+    }
+  ],
+  "selection_rationale": "Preserve the complete #907 ND BF16 projection and greedy sampler workload; current upstream changes weight layout, row ownership, topology and mask ABI. Bind only PRO through the public-derived historical Fixture alias, without editing preserved source."
+}

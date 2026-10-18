@@ -558,7 +558,6 @@ A  models/qwen3/14b/turboquant_kv.py
 ?? models/deepseek/v4/sparse_attn__20260521__3a7145155d98.py
 ?? models/deepseek/v4/sparse_attn_draft.py
 ?? models/deepseek_v32_exp/
-?? models/deepseek_v4_1_flash/
 ?? models/deepseek_v4_flash_dspark/
 ?? models/deepseek_v4_flash_mtp/
 ?? models/deepseek_v4_pro/

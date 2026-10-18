@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "qwen3_14b.greedy_sample",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "f4c00caf8e7f3665e82844705f8c601dbca4ebfd43107bf0cdd048e8850b20fa"
+}

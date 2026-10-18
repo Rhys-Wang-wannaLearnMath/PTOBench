@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <meta name="search_title" content="">
+ </head>
+ <body>
+  <a name="EN-US_TOPIC_0000002531541438"></a><a name="EN-US_TOPIC_0000002531541438"></a>
+  <h1 class="topictitle1">Introduction to Synchronization Control</h1>
+  <div id="body0000001911280732">
+   <p id="EN-US_TOPIC_0000002531541438__p12520996361">You can use the synchronization control API to implement synchronization control. Generally, there is no need to consider synchronization when programming is based on the programming model and paradigms described in <a href="/document/detail/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0012.html">Programming Model</a>. The programming model implements synchronization control. Using programming model and paradigms is recommended. Manual synchronization control may increase programming complexity, which is not recommended. The difference between the <a href="atlasascendc_api_07_0178.html">TQueSync</a> APIs and the synchronization control APIs provided in <a href="atlasascendc_api_07_0270.html">SetFlag/WaitFlag(ISASI)</a> is that the APIs in <a href="atlasascendc_api_07_0270.html">SetFlag/WaitFlag(ISASI)</a> are of the ISASI type, which cannot guarantee compatibility across hardware versions, while the <strong id="EN-US_TOPIC_0000002531541438__b3557162131113">TQueSync</strong> APIs can.</p>
+   <div class="section" id="EN-US_TOPIC_0000002531541438__section186621716446">
+    <h4 class="sectiontitle">Overview</h4>
+    <p id="EN-US_TOPIC_0000002531541438__p19114175154412">Before getting to know synchronization control, you need to be familiar with the content in <a href="#EN-US_TOPIC_0000002531541438__fig758422819442">Figure 1</a>.</p>
+    <p id="EN-US_TOPIC_0000002531541438__en-us_topic_0000001588832845_p6265124193211">Asynchronous parallel computing process of the <span id="EN-US_TOPIC_0000002531541438__en-us_topic_0000001588832845_ph81558571841">AI Core</span>: The Scalar Unit reads the instruction sequence and issues the vector computation, matrix computation, and data transfer instructions to the instruction queues of other units. The Vector Unit, Cube Unit, and DMA units asynchronously execute the received instructions in parallel. See the instruction streams shown in blue arrows in <a href="#EN-US_TOPIC_0000002531541438__fig758422819442">Figure 1</a>.</p>
+    <p id="EN-US_TOPIC_0000002531541438__en-us_topic_0000001588832845_p6681183731714">Different instructions may depend on each other. To ensure that instructions in different instruction queues are executed based on the correct logic, the Scalar Unit also issues synchronization instructions to other units. For details about the synchronization process between units, see the synchronization signal streams shown in green arrows in <a href="#EN-US_TOPIC_0000002531541438__fig758422819442">Figure 1</a>.</p>
+    <p id="EN-US_TOPIC_0000002531541438__en-us_topic_0000001588832845_p21987540583">The internal data processing of the <span id="EN-US_TOPIC_0000002531541438__en-us_topic_0000001588832845_ph16608174735819">AI Core</span> is as follows: The DMA copy-in unit moves data to the local memory. The Vector/Cube Units complete data computation and write the computation result back to the local memory. And then, the DMA copy-out unit moves the processed data back to the global memory. See the red data flows in <a href="#EN-US_TOPIC_0000002531541438__fig758422819442">Figure 1</a>.</p>
+    <div class="fignone" id="EN-US_TOPIC_0000002531541438__fig758422819442">
+     <a name="EN-US_TOPIC_0000002531541438__fig758422819442"></a><a name="fig758422819442"></a><span class="figcap"><b>Figure 1 </b>Abstraction of the AI Core's internal parallel computation architecture</span>
+     <br><span><img class="imgResize" id="EN-US_TOPIC_0000002531541438__image1666215764419" src="figure/en-us_image_0000002531383150.png" title="Click to enlarge"></span>
+    </div>
+    <p id="EN-US_TOPIC_0000002531541438__p34241220438">As shown in the preceding figure, the execution units in the AI Core are asynchronously parallel. There might be a dependent relationship when the local memory is read or written, requiring synchronization control.</p>
+    <p id="EN-US_TOPIC_0000002531541438__p554514394235">The following figure shows a common vector computation data stream:</p>
+    <ol id="EN-US_TOPIC_0000002531541438__ol3694181472419">
+     <li id="EN-US_TOPIC_0000002531541438__li18694014102418">The DMA execution unit transfers data from the global memory to the local memory.</li>
+     <li id="EN-US_TOPIC_0000002531541438__li1792210245245">Computation is performed.</li>
+     <li id="EN-US_TOPIC_0000002531541438__li63271116142413">The DMA execution unit transfers the computation result from the local memory to the global memory.</li>
+    </ol>
+    <p id="EN-US_TOPIC_0000002531541438__p111641610206"><span><img class="eddx" id="EN-US_TOPIC_0000002531541438__image174371530113017" src="figure/en-us_image_0000002562463039.png"></span></p>
+    <p id="EN-US_TOPIC_0000002531541438__p15440933162210">The four execution units Scalar, Vector, DMA (VECIN), and DMA (VECOUT) are executed in parallel. If the same local memory is accessed, a synchronization mechanism is required to control the access timing. That is, data needs to be moved to the local memory for computation and then moved out after computation.</p>
+    <p id="EN-US_TOPIC_0000002531541438__p538097131916"><span><img class="imgResize" id="EN-US_TOPIC_0000002531541438__image3526398204" src="figure/en-us_image_0000002531543090.png" title="Click to enlarge"></span></p>
+   </div>
+   <div class="section" id="EN-US_TOPIC_0000002531541438__section1272612276459">
+    <a name="EN-US_TOPIC_0000002531541438__section1272612276459"></a><a name="section1272612276459"></a>
+    <h4 class="sectiontitle">Pipelines</h4>
+    <p id="EN-US_TOPIC_0000002531541438__p7479258113313">The following describes the parallel instruction pipelines in the AI Core.</p>
+    <div class="note" id="EN-US_TOPIC_0000002531541438__note13515182133418">
+     <img src="public_sys-resources/note_3.0-en-us.png"><span class="notetitle"> </span>
+     <div class="notebody">
+      <p id="EN-US_TOPIC_0000002531541438__p951512210344">The specific pipelines contained in each hardware pipeline type vary according to the hardware architecture. For details, see <a href="/document/detail/en/CANNCommunityEdition/900/programug/Ascendcopdevg/atlas_ascendc_10_0007.html">Hardware Implementation</a>.</p>
+     </div>
+    </div>
+    <div class="tablenoborder">
+     <a name="EN-US_TOPIC_0000002531541438__table122172503915"></a><a name="table122172503915"></a>
+     <table cellpadding="4" cellspacing="0" summary="" id="EN-US_TOPIC_0000002531541438__table122172503915" frame="border" border="1" rules="all">
+      <caption>
+       <b>Table 1 </b>Description of instruction pipelines
+      </caption>
+      <thead align="left">
+       <tr id="EN-US_TOPIC_0000002531541438__row82178506918">
+        <th align="left" class="cellrowborder" valign="top" width="23.03%" id="mcps1.3.3.4.2.3.1.1">
+         <p id="EN-US_TOPIC_0000002531541438__p1821725011911">Type</p></th>
+        <th align="left" class="cellrowborder" valign="top" width="76.97%" id="mcps1.3.3.4.2.3.1.2">
+         <p id="EN-US_TOPIC_0000002531541438__p8217145014917">Meaning</p></th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr id="EN-US_TOPIC_0000002531541438__row621713504920">
+        <td class="cellrowborder" valign="top" width="23.03%" headers="mcps1.3.3.4.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531541438__p202175501295">PIPE_S</p></td>
+        <td class="cellrowborder" valign="top" width="76.97%" headers="mcps1.3.3.4.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531541438__p5217650394">Scalar computation pipeline, which is used when <strong id="EN-US_TOPIC_0000002531541438__b16709625191417">Tensor GetValue</strong> is used.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531541438__row721710502092">
+        <td class="cellrowborder" valign="top" width="23.03%" headers="mcps1.3.3.4.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531541438__p82170501916">PIPE_V</p></td>
+        <td class="cellrowborder" valign="top" width="76.97%" headers="mcps1.3.3.4.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531541438__p1921716505917">Vector computation pipeline and data transfer pipeline from <strong id="EN-US_TOPIC_0000002531541438__b88531315112919">L0C Buffer</strong> to <strong id="EN-US_TOPIC_0000002531541438__b16853315192914">UB</strong> in some hardware architectures.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531541438__row1883183712359">
+        <td class="cellrowborder" valign="top" width="23.03%" headers="mcps1.3.3.4.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531541438__p138319375357">PIPE_M</p></td>
+        <td class="cellrowborder" valign="top" width="76.97%" headers="mcps1.3.3.4.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531541438__p7832377352">Matrix computation pipeline.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531541438__row148311377357">
+        <td class="cellrowborder" valign="top" width="23.03%" headers="mcps1.3.3.4.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531541438__p1583537163515">PIPE_MTE1</p></td>
+        <td class="cellrowborder" valign="top" width="76.97%" headers="mcps1.3.3.4.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531541438__p168333753515">Data transfer pipeline from <strong id="EN-US_TOPIC_0000002531541438__b732824652914">L1 Buffer</strong> to <strong id="EN-US_TOPIC_0000002531541438__b8328104616299">L0A Buffer</strong> and from <strong id="EN-US_TOPIC_0000002531541438__b1832804610296">L1 Buffer</strong> to <strong id="EN-US_TOPIC_0000002531541438__b1532874613296">L0B Buffer</strong>.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531541438__row1721716501098">
+        <td class="cellrowborder" valign="top" width="23.03%" headers="mcps1.3.3.4.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531541438__p112181650399">PIPE_MTE2</p></td>
+        <td class="cellrowborder" valign="top" width="76.97%" headers="mcps1.3.3.4.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531541438__p1821811501298">Data transfer pipeline from <strong id="EN-US_TOPIC_0000002531541438__b207502535295">GM</strong> to <strong id="EN-US_TOPIC_0000002531541438__b4750153182911">L1 Buffer</strong>, from <strong id="EN-US_TOPIC_0000002531541438__b107501353122914">GM</strong> to <strong id="EN-US_TOPIC_0000002531541438__b12750135322910">UB</strong>, and more.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531541438__row112183501492">
+        <td class="cellrowborder" valign="top" width="23.03%" headers="mcps1.3.3.4.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531541438__p921865017916">PIPE_MTE3</p></td>
+        <td class="cellrowborder" valign="top" width="76.97%" headers="mcps1.3.3.4.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531541438__p1221865012914">Data transfer pipeline from <strong id="EN-US_TOPIC_0000002531541438__b1216011249307">UB</strong> to <strong id="EN-US_TOPIC_0000002531541438__b11160122418304">GM</strong> and more.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531541438__row142181150993">
+        <td class="cellrowborder" valign="top" width="23.03%" headers="mcps1.3.3.4.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531541438__p132180506918">PIPE_FIX</p></td>
+        <td class="cellrowborder" valign="top" width="76.97%" headers="mcps1.3.3.4.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531541438__p11218050091">Data transfer pipeline from <strong id="EN-US_TOPIC_0000002531541438__b1613612397308">L0C Buffer</strong> to <strong id="EN-US_TOPIC_0000002531541438__b8136163983013">GM</strong>, from <strong id="EN-US_TOPIC_0000002531541438__b131365394303">L0C Buffer</strong> to <strong id="EN-US_TOPIC_0000002531541438__b161378396303">L1</strong>, and more.</p></td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </div>
+   <div class="section" id="EN-US_TOPIC_0000002531541438__section2167161594419">
+    <h4 class="sectiontitle">Synchronization Control Classification</h4>
+    <p id="EN-US_TOPIC_0000002531541438__p141121529203514">There are two types of parallel pipelines for synchronization control:</p>
+    <ul id="EN-US_TOPIC_0000002531541438__ul92213277449">
+     <li id="EN-US_TOPIC_0000002531541438__li99652027173619">Multi-pipeline synchronization: <strong id="EN-US_TOPIC_0000002531541438__b1237392512159">SetFlag</strong>/<strong id="EN-US_TOPIC_0000002531541438__b1737482511158">WaitFlag</strong> of the <a href="atlasascendc_api_07_0178.html">TQueSync</a> APIs or the APIs in <a href="atlasascendc_api_07_0270.html">SetFlag/WaitFlag(ISASI)</a> are called to control the synchronization between different pipelines. 
+      <ul id="EN-US_TOPIC_0000002531541438__en-us_topic_0228422173_ul39731312172014">
+       <li id="EN-US_TOPIC_0000002531541438__en-us_topic_0228422173_li1260771371618"><strong id="EN-US_TOPIC_0000002531541438__b979862111717">SetFlag</strong>: The current instruction starts to be executed after all read and write operations of the current instruction are completed and the corresponding flag bit in hardware is set to <strong id="EN-US_TOPIC_0000002531541438__b879842151715">1</strong>.</li>
+       <li id="EN-US_TOPIC_0000002531541438__en-us_topic_0228422173_li997331222019"><strong id="EN-US_TOPIC_0000002531541438__b93806111711">WaitFlag</strong>: When this instruction is executed, if the corresponding flag bit is <strong id="EN-US_TOPIC_0000002531541438__b238367175">0</strong>, the subsequent instructions in the queue are blocked; if the corresponding flag bit is <strong id="EN-US_TOPIC_0000002531541438__b13818614176">1</strong>, the subsequent instructions are executed after this bit is changed to <strong id="EN-US_TOPIC_0000002531541438__b83816631718">0</strong>.</li>
+      </ul></li>
+     <li id="EN-US_TOPIC_0000002531541438__li722182720441">Single-pipeline synchronization: <a href="atlasascendc_api_07_0271.html">PipeBarrier(ISASI)</a> is called to implement synchronization control in a single pipeline to restrict the execution sequence. This ensures that instructions after the barrier cannot issue until all instructions before the barrier are committed.</li>
+    </ul>
+   </div>
+   <div class="section" id="EN-US_TOPIC_0000002531541438__section14375133724414">
+    <a name="EN-US_TOPIC_0000002531541438__section14375133724414"></a><a name="section14375133724414"></a>
+    <h4 class="sectiontitle">Requirements on Enabling Manual Synchronization Control</h4>
+    <ul id="EN-US_TOPIC_0000002531541438__ul32402011155618">
+     <li id="EN-US_TOPIC_0000002531541438__li15442626165617">Vector Unit 
+      <ul id="EN-US_TOPIC_0000002531541438__ul3356102919565">
+       <li id="EN-US_TOPIC_0000002531541438__li13240711165618">Single-pipeline synchronization: For <strong id="EN-US_TOPIC_0000002531541438__b1593161993312">PIPE_V</strong>, synchronization is automatically inserted by the compiler. If the movement addresses of <strong id="EN-US_TOPIC_0000002531541438__b093119143311">PIPE_MTE2</strong>/<strong id="EN-US_TOPIC_0000002531541438__b139341983312">PIPE_MTE3</strong> overlap, you need to insert synchronization. For details, see <a href="atlasascendc_api_07_0103.html#EN-US_TOPIC_0000002562301699__li71531626153617">precautions</a>.</li>
+       <li id="EN-US_TOPIC_0000002531541438__li15751720205618">Multi-pipeline synchronization: The multi-pipeline synchronization between <strong id="EN-US_TOPIC_0000002531541438__b18854777181">PIPE_V</strong>, <strong id="EN-US_TOPIC_0000002531541438__b18541272189">PIPE_MTE2</strong>, <strong id="EN-US_TOPIC_0000002531541438__b1885417781812">PIPE_MTE3</strong>, and <strong id="EN-US_TOPIC_0000002531541438__b885411718188">PIPE_S</strong> is bidirectional. As shown in the following figure, the yellow arrows indicate that synchronization is automatically inserted by the compiler, and the remaining synchronization is completed by the Ascend C framework. Exception: When an atomic operation API (such as <a href="atlasascendc_api_07_00259.html">AtomicAdd</a>) involving scalar computation is used, if the scalar computation unit and the <strong id="EN-US_TOPIC_0000002531541438__b61907268363">MTE2</strong>/<strong id="EN-US_TOPIC_0000002531541438__b1119072616365">MTE3</strong> have data dependencies when reading and writing the global memory, you need to insert synchronization based on the actual situation. For details, see the API description. 
+        <p id="EN-US_TOPIC_0000002531541438__p16904125612409"><span><img class="eddx" id="EN-US_TOPIC_0000002531541438__image945545515014" src="figure/en-us_image_0000002562303075.png"></span></p></li>
+      </ul></li>
+     <li id="EN-US_TOPIC_0000002531541438__li96346196437">Cube Unit 
+      <p id="EN-US_TOPIC_0000002531541438__p568092755113"><a name="EN-US_TOPIC_0000002531541438__li96346196437"></a><a name="li96346196437"></a>All pipeline synchronization on the Cube is completed by the Ascend C framework. You do not need to manually insert synchronization.</p>
+      <div class="note" id="EN-US_TOPIC_0000002531541438__note848212810363">
+       <img src="public_sys-resources/note_3.0-en-us.png"><span class="notetitle"> </span>
+       <div class="notebody">
+        <p id="EN-US_TOPIC_0000002531541438__p12606258154412">The synchronization inserted automatically by the compiler strongly depends on local tensors. In some scenarios, you need to manually complete the synchronization. For details about the restrictions, see <span id="EN-US_TOPIC_0000002531541438__ph205971901963"><a href="https://www.hiascend.com/document/detail/en/CANNCommunityEdition/900/compiler/BishengCompiler/atlas_bisheng_10_0001.html" target="_blank" rel="noopener noreferrer">BiSheng Compiler</a></span>.</p>
+       </div>
+      </div></li>
+    </ul>
+   </div>
+  </div>
+  <div>
+   <div class="familylinks">
+    <div class="parentlink">
+     <strong>Parent topic:</strong> <a href="atlasascendc_api_07_00013.html">Intra-Core Synchronization</a>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>

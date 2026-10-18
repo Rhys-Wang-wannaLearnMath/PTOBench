@@ -7,16 +7,33 @@
   "entry": "compressor_test",
   "config": "public/config.py",
   "comparator": "public/comparator.json",
-  "environment": "a2a3_single_card",
-  "fixture_ids": ["fixture_000"],
-  "scalars": ["start_pos", "rotate"],
+  "environment": "a2a3_single_card_libstdcxx",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "scalars": [
+    "start_pos",
+    "rotate"
+  ],
   "correctness": {
     "mode": "single_step",
-    "outputs": ["kv", "kv_state", "score_state", "kv_cache"]
+    "outputs": [
+      "kv",
+      "kv_state",
+      "score_state",
+      "kv_cache"
+    ]
   },
   "state": {
     "behavior": "mutating",
-    "initial_state": ["kv_state", "score_state", "kv_cache"],
+    "initial_state": [
+      "kv_state",
+      "score_state",
+      "kv_cache"
+    ],
     "restore_before_each_launch": true
+  },
+  "runtime": {
+    "device_id": 4
   }
 }

@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "qwen3_14b.topk_select_k32",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "e2216900808046bc2b1cd5497614e00cee8b489f9271c57b84af4ec8450ff3cd"
+}

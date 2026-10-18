@@ -38,6 +38,11 @@ sys.exit(0 if result.status=='completed' else 1)
 
 
 class FinalizeTest(ActionTestBase):
+    def create(self, budget=2, optimizer='maintenance', case_id=None, output=None):
+        # Maintenance qualification retains correctness-checked profiles and
+        # their historical Snapshot/final-selection behavior.
+        return super().create(budget, optimizer, case_id, output)
+
     def observe(self, mode=None, median=10.0, **control):
         self.configure(median=median, **control)
         process, result = self.cli(['profile', mode] if mode else ['evaluate'])
@@ -127,6 +132,7 @@ class FinalizeTest(ActionTestBase):
         self.assertEqual((stale/'helper.py').read_text(),'VALUE = 1\n')
         self.assertEqual((self.handle.initial_workspace/'helper.py').read_text(),'VALUE = 900\n')
         self.assertEqual(self.calls()[-1]['phase'],'all'); self.assertEqual(self.calls()[-1]['profile_mode'],'clean')
+        self.assertEqual(self.calls()[-1]['measurement_mode'],'formal')
         self.assertEqual(self.calls()[-1]['candidate'],str(stale))
         self.assertIsNone(self.events()[-1]['snapshot_id'])
         self.assertEqual(len(list(self.handle.snapshots_root.iterdir())),2)

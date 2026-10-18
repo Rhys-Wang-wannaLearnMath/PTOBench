@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/deepseek_v4_decode_compressor_ratio4.py",
+  "source_sha256": "13e1e131fc9f7207249bf02f9c30fdd0bd3fef52a42b31acb0d01e9befd04390",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "13e1e131fc9f7207249bf02f9c30fdd0bd3fef52a42b31acb0d01e9befd04390",
+  "dependencies": [],
+  "selection": "Frozen self-contained legacy decode ratio-4 overlap workload; the current successor changes the ABI, state layout, and output semantics.",
+  "fixture_authority": "real TensorSpec builder and official golden_fn"
+}

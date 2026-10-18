@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.prefill_hca_pro",
+  "description": "DeepSeek-V4 DSpark packed prefill HCA, PRO preset, ratio-128, B1 S128",
+  "workspace": "public/candidate_seed",
+  "module": "prefill_hca.py",
+  "entry": "prefill_attention_hca_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "deepseek_v4_flash_dspark__prefill_hca_pro_manual_idle_20261007_libstdcxx",
+  "runtime": {
+    "rtol": 0.01,
+    "atol": 0.01,
+    "device_id": 6,
+    "ring_heap": 2147483648
+  },
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "scalars": [
+    "num_tokens"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "x_out",
+      "kv_cache"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "compress_state",
+      "kv_cache",
+      "cmp_kv"
+    ],
+    "restore_before_each_launch": true
+  }
+}

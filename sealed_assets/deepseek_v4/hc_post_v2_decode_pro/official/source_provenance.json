@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/hc_post_v2.py",
+  "source_sha256": "43266edbf56d8dc84899de3b7a428ea3b08f4113b51ed5438d2a392170356c78",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "43266edbf56d8dc84899de3b7a428ea3b08f4113b51ed5438d2a392170356c78",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/config.py",
+      "source_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e"
+    }
+  ],
+  "selection": "Selected the frozen token-major BF16 HC post-v2 decode workload because the current successor changes residual/output dtype and adds active-token prefill semantics; instantiated with the complete PRO preset from the frozen v0.1 config dependency.",
+  "fixture_authority": "byte-exact build_tensor_specs and golden_hc_post from original.py"
+}

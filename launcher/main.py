@@ -3,7 +3,7 @@ import argparse
 import sys
 import session
 from agent_cli import _emit_result
-from launcher.adapters import BackendUnavailable
+from launcher.methods import MethodError
 from launcher.config import ConfigError
 from launcher.runner import run, status
 
@@ -32,7 +32,7 @@ def main(argv=None):
     except Exception as error:
         error_code = getattr(error, 'error_code', 'infrastructure_error')
         # Avoid reflecting untrusted YAML or host authentication output.
-        message = (str(error) if isinstance(error, (ConfigError, BackendUnavailable))
+        message = (str(error) if isinstance(error, (ConfigError, MethodError))
                    else 'Launcher request failed; check configuration and backend readiness')
         result = {'status': 'failed', 'error_code': error_code, 'message': message}
         code = 2 if error_code == 'invalid_request' else 5

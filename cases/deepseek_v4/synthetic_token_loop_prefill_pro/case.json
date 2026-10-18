@@ -49,7 +49,6 @@
       1073741824,
       2147483648,
       0
-    ],
-    "analyze_auto_scopes_for_deps": true
+    ]
   }
 }

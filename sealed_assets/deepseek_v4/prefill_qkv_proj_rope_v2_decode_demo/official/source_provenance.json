@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "authority": "frozen_v0.1_selected_workload",
+  "source_root": "/data1/home/ziruiwang/pypto-lib",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/prefill_qkv_proj_rope_v2.py",
+  "source_sha256": "97b0079558e2c81bf50abf1d52231faf50801279797ae0b3f5cba1101179529e",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "97b0079558e2c81bf50abf1d52231faf50801279797ae0b3f5cba1101179529e",
+  "source_case_id": "deepseek_v4.prefill_qkv_proj_rope_v2_decode",
+  "case_id": "deepseek_v4.prefill_qkv_proj_rope_v2_decode_demo",
+  "selected_preset": "DEMO",
+  "selection": "Stage 1 selected the frozen token-major dynamic QKV-v2 decode workload. Current upstream removed the standalone file; packed/NZ successors change the workload. Bind this preset only in public config and the Fixture alias; preserve both official files byte-exact.",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/config.py",
+      "source_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e"
+    }
+  ]
+}

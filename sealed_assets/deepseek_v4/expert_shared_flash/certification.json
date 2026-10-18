@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.expert_shared_flash",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "0de9175f4440c5a226bc43ca99ae41f9cd6879fc02bcf059939ad96a0948a001"
+}

@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "hca_compress_state": {
+      "method": "ratio_allclose",
+      "rtol": 0.001,
+      "atol": 0.001,
+      "max_error_ratio": 0.005
+    },
+    "csa_compress_state": {
+      "method": "exact"
+    },
+    "csa_inner_compress_state": {
+      "method": "exact"
+    },
+    "kv_cache": {
+      "method": "ratio_allclose",
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 0.005
+    },
+    "hca_cmp_kv": {
+      "method": "ratio_allclose",
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 0.005
+    },
+    "csa_cmp_kv": {
+      "method": "exact"
+    },
+    "idx_kv_cache": {
+      "method": "exact"
+    },
+    "idx_kv_scale": {
+      "method": "exact"
+    },
+    "attn_stage": {
+      "method": "custom",
+      "name": "ratio_reldiff",
+      "diff_thd": 0.005,
+      "pct_thd": 0.005,
+      "max_diff_hd": 1,
+      "relative_floor_numerator": 6.103515625e-05,
+      "denominator_epsilon": 1e-09
+    },
+    "x_mixed": {
+      "method": "custom",
+      "name": "ratio_reldiff",
+      "diff_thd": 0.01,
+      "pct_thd": 0.05,
+      "max_diff_hd": null,
+      "relative_floor_numerator": 6.103515625e-05,
+      "denominator_epsilon": 1e-09
+    },
+    "post_ffn": {
+      "method": "custom",
+      "name": "ratio_reldiff",
+      "diff_thd": 0.01,
+      "pct_thd": 0.05,
+      "max_diff_hd": null,
+      "relative_floor_numerator": 6.103515625e-05,
+      "denominator_epsilon": 1e-09
+    },
+    "comb_ffn": {
+      "method": "custom",
+      "name": "ratio_reldiff",
+      "diff_thd": 0.01,
+      "pct_thd": 0.05,
+      "max_diff_hd": null,
+      "relative_floor_numerator": 6.103515625e-05,
+      "denominator_epsilon": 1e-09
+    },
+    "ffn_out": {
+      "method": "custom",
+      "name": "ratio_reldiff",
+      "diff_thd": 0.01,
+      "pct_thd": 0.05,
+      "max_diff_hd": null,
+      "relative_floor_numerator": 6.103515625e-05,
+      "denominator_epsilon": 1e-09
+    },
+    "x_next": {
+      "method": "custom",
+      "name": "ratio_reldiff",
+      "diff_thd": 0.01,
+      "pct_thd": 0.05,
+      "max_diff_hd": null,
+      "relative_floor_numerator": 6.103515625e-05,
+      "denominator_epsilon": 1e-09
+    }
+  }
+}

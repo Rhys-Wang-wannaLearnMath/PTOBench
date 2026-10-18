@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_v0.1_selected_source_and_dependencies",
+  "source_path": "benchmarks/pypto_lib_bench-v0.1/cases/deepseek_v4/deepseek_v4_decode_swa/official_golden/original.py",
+  "source_sha256": "1eb3bd17b46870a10adf2d0147d1b00cca92399ed9a6c2b5c8298905551f682e",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "1eb3bd17b46870a10adf2d0147d1b00cca92399ed9a6c2b5c8298905551f682e",
+  "selection": "Frozen legacy compress_ratio==0 SWA decode source; current successors change ABI, dtype, state, quantization, and Fixture semantics.",
+  "fixture_authority": "byte-exact official TensorSpec builder and golden function",
+  "dependencies": [
+    {"source_path":"benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_batch07/deepseek_v4_decode_hc_pre.py","source_sha256":"c3916f95c3f08a91ab13e70c39ba61dea3f3a7626f4d9c09fc195d8e51299ff7","antecedent_path":"benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/deepseek_v4_decode_hc_pre.py","antecedent_sha256":"f3013bf057d19c462028b2b356732293edc3e17badd06a8eeb8c38326173326c","frozen_copy":"deepseek_v4_decode_hc_pre.py","frozen_copy_sha256":"c3916f95c3f08a91ab13e70c39ba61dea3f3a7626f4d9c09fc195d8e51299ff7","repair_note":"Selected Batch 07 padded reduction tile compatibility dependency instead of its corpus antecedent; only row_max/row_sum temporary tile shapes differ, and Torch golden semantics are unchanged."},
+    {"source_path":"benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/deepseek_v4_decode_hc_post.py","source_sha256":"7d0acc24e4383a086913a5cd01db83f487addf7a364d529cc58416d2c625f494","frozen_copy":"deepseek_v4_decode_hc_post.py","frozen_copy_sha256":"7d0acc24e4383a086913a5cd01db83f487addf7a364d529cc58416d2c625f494"},
+    {"source_path":"benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/deepseek_v4_decode_qkv_proj_rope.py","source_sha256":"2ba386bb54f25ea3632bb761b67b26996afc969652c7eda177e6a881786a2978","frozen_copy":"deepseek_v4_decode_qkv_proj_rope.py","frozen_copy_sha256":"2ba386bb54f25ea3632bb761b67b26996afc969652c7eda177e6a881786a2978"},
+    {"source_path":"benchmarks/datasets/models_optimization_corpus_20260605/sources/models/deepseek/v4/deepseek_v4_decode_sparse_attn.py","source_sha256":"95ceed49a21641d12be25bae008633388e5880f82fed0761c973e057bd6d9775","frozen_copy":"deepseek_v4_decode_sparse_attn.py","frozen_copy_sha256":"95ceed49a21641d12be25bae008633388e5880f82fed0761c973e057bd6d9775"}
+  ]
+}

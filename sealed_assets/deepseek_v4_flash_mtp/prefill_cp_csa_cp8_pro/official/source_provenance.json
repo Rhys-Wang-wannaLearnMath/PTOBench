@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_frozen_v01_source_and_dependency_bundle",
+  "source_case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp8",
+  "source_path": "benchmarks/pypto_lib_bench-v0.1/cases/deepseek_v4_flash_mtp/prefill_cp_csa_cp8/official_golden/original.py",
+  "source_sha256": "9d4c2696a4313323b1cd95684e7e32dae68a320be54910678eca5b8c2b9191aa",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "9d4c2696a4313323b1cd95684e7e32dae68a320be54910678eca5b8c2b9191aa",
+  "upstream_repository": "https://github.com/hw-native-sys/pypto-lib.git",
+  "source_revision": "15c9f1e15d625da2232e428e74ec5ef337495ae4",
+  "selection_rationale": "Preserve the frozen v0.1 CP8 workload and its curated dependency bundle. Current successor changes metadata, cache ownership and ABI. Entry revision is upstream provenance; frozen dependency SHA values are authoritative and do not claim Git-blob equality for curated legacy API spellings. PRO is bound only through the public preset and approved Fixture-local unused syncall guard adaptation.",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_flash_mtp_batch12/hc_post.py",
+      "source_sha256": "b5a57578e26b02f38c502de699ca1e9d8f86e3a8bbe43585c2f2ee9d727a48a5",
+      "frozen_copy": "hc_post.py",
+      "frozen_copy_sha256": "b5a57578e26b02f38c502de699ca1e9d8f86e3a8bbe43585c2f2ee9d727a48a5"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_flash_mtp_batch12/hc_pre.py",
+      "source_sha256": "c0dfbe49dc3e7ec71bd94a75b62efbfebf84ef23c9808981bbe629afcf2f652a",
+      "frozen_copy": "hc_pre.py",
+      "frozen_copy_sha256": "c0dfbe49dc3e7ec71bd94a75b62efbfebf84ef23c9808981bbe629afcf2f652a"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_flash_mtp_batch12/config.py",
+      "source_sha256": "61b52e187ba1c2d95465e1c87bc8d125312ec349c92f7355a1061a2071995da4",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "61b52e187ba1c2d95465e1c87bc8d125312ec349c92f7355a1061a2071995da4"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_flash_mtp_batch12/prefill_compressor_ratio128.py",
+      "source_sha256": "4ffad2c9e93ce0d709386977167f48702eb06207f23129eb571a33513d403af8",
+      "frozen_copy": "prefill_compressor_ratio128.py",
+      "frozen_copy_sha256": "4ffad2c9e93ce0d709386977167f48702eb06207f23129eb571a33513d403af8"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_flash_mtp_batch12/prefill_compressor_ratio4.py",
+      "source_sha256": "23c21e653411efb240cebd2669681f4d8930514bb203a8e35fa4f1b5ea120ed6",
+      "frozen_copy": "prefill_compressor_ratio4.py",
+      "frozen_copy_sha256": "23c21e653411efb240cebd2669681f4d8930514bb203a8e35fa4f1b5ea120ed6"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_flash_mtp_batch12/prefill_cp_exchange.py",
+      "source_sha256": "aebc34d8b765ddb23e1d11ea02a5069f76f4647bed6f80f89bea7ac457358cc8",
+      "frozen_copy": "prefill_cp_exchange.py",
+      "frozen_copy_sha256": "aebc34d8b765ddb23e1d11ea02a5069f76f4647bed6f80f89bea7ac457358cc8"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_flash_mtp_batch12/prefill_cp_zigzag.py",
+      "source_sha256": "b0665597af0dd888eecdc87b25877ce029f6970ce9ddac030acf38276cde3248",
+      "frozen_copy": "prefill_cp_zigzag.py",
+      "frozen_copy_sha256": "b0665597af0dd888eecdc87b25877ce029f6970ce9ddac030acf38276cde3248"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_flash_mtp_batch12/prefill_indexer.py",
+      "source_sha256": "4bacb9ed462bfcaa7f9342e0d5ae38f0bd7a2741fc490e3225903a9958a30209",
+      "frozen_copy": "prefill_indexer.py",
+      "frozen_copy_sha256": "4bacb9ed462bfcaa7f9342e0d5ae38f0bd7a2741fc490e3225903a9958a30209"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_flash_mtp_batch12/prefill_indexer_compressor.py",
+      "source_sha256": "f2666965e6989e2f3c20aa839bfa1213dbba8c00f6b8764c94952f0ebc05f221",
+      "frozen_copy": "prefill_indexer_compressor.py",
+      "frozen_copy_sha256": "f2666965e6989e2f3c20aa839bfa1213dbba8c00f6b8764c94952f0ebc05f221"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_flash_mtp_batch12/prefill_sparse_attn.py",
+      "source_sha256": "26b0329b0214f2fab4363661e80a7c12771b499d16a42b964f02b1f4be93949e",
+      "frozen_copy": "prefill_sparse_attn.py",
+      "frozen_copy_sha256": "26b0329b0214f2fab4363661e80a7c12771b499d16a42b964f02b1f4be93949e"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_flash_mtp_batch12/qkv_proj_rope.py",
+      "source_sha256": "fe73c2d238642ab9f8561646c8a4e2e8234c8e20ce6da218e8ce034609a00150",
+      "frozen_copy": "qkv_proj_rope.py",
+      "frozen_copy_sha256": "fe73c2d238642ab9f8561646c8a4e2e8234c8e20ce6da218e8ce034609a00150"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_flash_mtp_batch12/rmsnorm.py",
+      "source_sha256": "776c53c970f22981e066733e7b857a71c7df42990201db5eb941f099b0e47ac0",
+      "frozen_copy": "rmsnorm.py",
+      "frozen_copy_sha256": "776c53c970f22981e066733e7b857a71c7df42990201db5eb941f099b0e47ac0"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_flash_mtp_batch12/rope_tables.py",
+      "source_sha256": "6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59",
+      "frozen_copy": "rope_tables.py",
+      "frozen_copy_sha256": "6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.prefill_indexer_compressor_demo",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "f2c36e78b3b140e2f9d20228080000ea1cc5742d0e1f2f4ff312d909babd1273"
+}

@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.prefill_layer_ep2_csa_demo",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "1f5f8a8fbbe76f6369e55c64905c7fefe66cd349f30df972a121ca23d829082d"
+}

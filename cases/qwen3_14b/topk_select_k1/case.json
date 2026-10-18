@@ -18,5 +18,5 @@
     "initial_state": [],
     "restore_before_each_launch": false
   },
-  "runtime": {}
+  "runtime": {"device_id": 7}
 }

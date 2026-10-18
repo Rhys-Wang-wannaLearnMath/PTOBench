@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_frozen_corpus_target",
+  "source_path": "benchmarks/pypto_lib_bench-v0.1/cases/deepseek_v4/decode_o_proj/official_golden/original.py",
+  "authority_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/deepseek_v4_decode_o_proj.py",
+  "source_sha256": "94355023b72c2a65db49ff019a5641635c8d18dc24c882467cce927e9ef38489",
+  "authority_sha256": "94355023b72c2a65db49ff019a5641635c8d18dc24c882467cce927e9ef38489",
+  "frozen_copy": "official/original.py",
+  "frozen_copy_sha256": "94355023b72c2a65db49ff019a5641635c8d18dc24c882467cce927e9ef38489",
+  "dependencies": [],
+  "selection": "Complete self-contained DeepSeek-V4 grouped decode output projection workload selected by Stage 1.",
+  "fixture_authority": "real TensorSpec builder build_tensor_specs"
+}

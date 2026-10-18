@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "fixture_seeds": {
+    "fixture_000": 42
+  }
+}

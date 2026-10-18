@@ -1,0 +1,311 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <meta name="search_title" content="">
+ </head>
+ <body>
+  <a name="EN-US_TOPIC_0000002531522198"></a><a name="EN-US_TOPIC_0000002531522198"></a>
+  <h1 class="topictitle1">Basic Architecture</h1>
+  <div id="body0000002380477945">
+   <p id="EN-US_TOPIC_0000002531522198__p1733317315519">As shown in the following figure, operators developed using Ascend C run on the AI Core. The Ascend C programming model is introduced based on the abstraction of the AI Core hardware architecture. Understanding the hardware architecture helps you better understand the programming model. For experienced developers who need to complete high-performance programming, it is even more important to learn about the hardware architecture. Many contents in the operator practice reference are introduced based on this chapter.</p>
+   <p id="EN-US_TOPIC_0000002531522198__p1676542385315"><span><img class="eddx" id="EN-US_TOPIC_0000002531522198__image20765152345316" src="figure/en-us_image_0000002531362402.png"></span></p>
+   <p id="EN-US_TOPIC_0000002531522198__p751574811308">The AI Core is responsible for executing cube and vector computation–intensive tasks. It consists of the following components:</p>
+   <ul id="EN-US_TOPIC_0000002531522198__ul95819546308">
+    <li id="EN-US_TOPIC_0000002531522198__li1544645714302"><strong id="EN-US_TOPIC_0000002531522198__b3349519195219">Compute units</strong>: include the Cube Unit, Vector Unit, and Scalar Unit.</li>
+    <li id="EN-US_TOPIC_0000002531522198__li824202263317"><strong id="EN-US_TOPIC_0000002531522198__b1355141214164">Storage units</strong>: include the L1 Buffer, L0A Buffer, L0B Buffer, L0C Buffer, Unified Buffer, BiasTable Buffer, and FixPipe Buffer, which are designed for efficient computation.</li>
+    <li id="EN-US_TOPIC_0000002531522198__li2094517103116"><strong id="EN-US_TOPIC_0000002531522198__b5343173015343">Movement units</strong>: include the MTE1, MTE2, MTE3, and FixPipe, which are used for efficient data transmission between different storage units.</li>
+   </ul>
+   <p id="EN-US_TOPIC_0000002531522198__p124641640133">Take <span id="EN-US_TOPIC_0000002531522198__ph10405114118177"><term id="EN-US_TOPIC_0000002531522198__en-us_topic_0000002562275259_term11962195213215">
+      Atlas A2 training product
+     </term>/<term id="EN-US_TOPIC_0000002531522198__en-us_topic_0000002562275259_term898114865714">
+      Atlas A2 inference product
+     </term></span> as an example. The following figure shows its hardware architecture.</p>
+   <p id="EN-US_TOPIC_0000002531522198__p1036280151611"><span><img class="eddx" id="EN-US_TOPIC_0000002531522198__image1293102063710" src="figure/en-us_image_0000002562282331.png"></span></p>
+   <p id="EN-US_TOPIC_0000002531522198__p39311959171517">This section first introduces the key concepts and terms related to the hardware architecture and the working mode of the AI Core, laying a foundation for understanding the subsequent content. Then, using <span id="EN-US_TOPIC_0000002531522198__ph1796811151418"><term id="EN-US_TOPIC_0000002531522198__en-us_topic_0000002562275259_term11962195213215_1">
+      Atlas A2 training product
+     </term>/<term id="EN-US_TOPIC_0000002531522198__en-us_topic_0000002562275259_term898114865714_1">
+      Atlas A2 inference product
+     </term></span> as an example, this section provides an introduction to the basic architecture of the AI Core. It first describes the basic functions and structures of the compute units, storage units, and movement units, and then uses typical data flow and control flow examples to help you gain a deeper understanding of the working principles of the hardware architecture. For details about the specific architecture specifications of different product models, see <a href="atlas_ascendc_10_0009.html">Architecture Specifications</a>.</p>
+   <div class="section" id="EN-US_TOPIC_0000002531522198__section16011278116">
+    <h4 class="sectiontitle">Key Concepts and Terms</h4>
+    <ul id="EN-US_TOPIC_0000002531522198__ul9862174371110">
+     <li id="EN-US_TOPIC_0000002531522198__li6862134361115">Core
+      <p id="EN-US_TOPIC_0000002531522198__p899924919113"><a name="EN-US_TOPIC_0000002531522198__li6862134361115"></a><a name="li6862134361115"></a>Compute core with an independent Scalar Unit. The Scalar Unit is a scheduling unit within a core and is responsible for functions such as instruction transmission within the core.</p></li>
+     <li id="EN-US_TOPIC_0000002531522198__li18621143161114">AI Core
+      <p id="EN-US_TOPIC_0000002531522198__p13179734141719"><a name="EN-US_TOPIC_0000002531522198__li18621143161114"></a><a name="li18621143161114"></a>A compute core of an <span id="EN-US_TOPIC_0000002531522198__ph19321164217255">AI processor</span>, which executes tasks with intensive cube and vector compute.</p></li>
+     <li id="EN-US_TOPIC_0000002531522198__li128623434111">Cube Core
+      <p id="EN-US_TOPIC_0000002531522198__p16875103101819"><a name="EN-US_TOPIC_0000002531522198__li128623434111"></a><a name="li128623434111"></a>A core dedicated for cube computation. It consists of the Scalar Unit, Cube Unit, and DMA Unit, but does not include the Vector Unit.</p></li>
+     <li id="EN-US_TOPIC_0000002531522198__li6862114311118"><a name="EN-US_TOPIC_0000002531522198__li6862114311118"></a><a name="li6862114311118"></a>Vector Core
+      <p id="EN-US_TOPIC_0000002531522198__p74911512181"><a name="EN-US_TOPIC_0000002531522198__li6862114311118"></a><a name="li6862114311118"></a>A core dedicated for vector computation. It consists of the Scalar Unit, Vector Unit, and DMA Unit, but does not include the Cube Unit.</p></li>
+     <li id="EN-US_TOPIC_0000002531522198__li9862144341111">AIC
+      <p id="EN-US_TOPIC_0000002531522198__p168872721814"><a name="EN-US_TOPIC_0000002531522198__li9862144341111"></a><a name="li9862144341111"></a>A Cube Core in a group of Cube Cores and Vector Cores in <a href="#EN-US_TOPIC_0000002531522198__li188191010204418">separated mode</a> of AI Core.</p></li>
+     <li id="EN-US_TOPIC_0000002531522198__li188621431115">AIV
+      <p id="EN-US_TOPIC_0000002531522198__p2307119151811"><a name="EN-US_TOPIC_0000002531522198__li188621431115"></a><a name="li188621431115"></a>A Vector Core in a group of Cube Cores and Vector Cores in <a href="#EN-US_TOPIC_0000002531522198__li188191010204418">separated mode</a> of AI Core.</p></li>
+    </ul>
+   </div>
+   <div class="section" id="EN-US_TOPIC_0000002531522198__section1574769433">
+    <a name="EN-US_TOPIC_0000002531522198__section1574769433"></a><a name="section1574769433"></a>
+    <h4 class="sectiontitle">AI Core Working Modes</h4>
+    <ul id="EN-US_TOPIC_0000002531522198__ul0819121018448">
+     <li id="EN-US_TOPIC_0000002531522198__li188191010204418"><a name="EN-US_TOPIC_0000002531522198__li188191010204418"></a><a name="li188191010204418"></a>Separated mode
+      <p id="EN-US_TOPIC_0000002531522198__p2047624634316"><a name="EN-US_TOPIC_0000002531522198__li188191010204418"></a><a name="li188191010204418"></a>A working mode of AI Core. The Cube Unit and Vector Unit each have their own Scalar Unit, and they are deployed on the Cube Core and Vector Core, respectively. By combining Cube Cores and Vector Cores in a certain ratio (1:<em id="EN-US_TOPIC_0000002531522198__i152164019239">N</em>), such a combination is considered as an AI Core. The number of AI Cores is determined by the number of Cube Cores.</p>
+      <div class="fignone" id="EN-US_TOPIC_0000002531522198__fig4925816477">
+       <span class="figcap"><b>Figure 1 </b>Separated mode diagram (<em id="EN-US_TOPIC_0000002531522198__i139350342151140">N</em> is subject to the value obtained by the hardware platform information acquisition API.)</span>
+       <br><span><img class="eddx" id="EN-US_TOPIC_0000002531522198__image9993240175618" src="figure/en-us_image_0000002562282313.png"></span>
+      </div></li>
+     <li id="EN-US_TOPIC_0000002531522198__li1414517184416"><a name="EN-US_TOPIC_0000002531522198__li1414517184416"></a><a name="li1414517184416"></a>Coupled mode
+      <p id="EN-US_TOPIC_0000002531522198__p19476746144311"><a name="EN-US_TOPIC_0000002531522198__li1414517184416"></a><a name="li1414517184416"></a>A working mode of AI Core. The Cube Unit and Vector Unit share the same Scalar Unit, which is deployed on an AI Core.</p>
+      <div class="fignone" id="EN-US_TOPIC_0000002531522198__fig583116255714">
+       <span class="figcap"><b>Figure 2 </b>Coupled mode diagram</span>
+       <br><span><img class="eddx" id="EN-US_TOPIC_0000002531522198__image18703148379" src="figure/en-us_image_0000002562442325.png"></span>
+      </div></li>
+    </ul>
+    <div class="note" id="EN-US_TOPIC_0000002531522198__note182611456194113">
+     <img src="public_sys-resources/note_3.0-en-us.png"><span class="notetitle"> </span>
+     <div class="notebody">
+      <div class="p" id="EN-US_TOPIC_0000002531522198__p1741213117425">
+       In Ascend C programming, the working modes of different products are as follows:
+       <ul id="EN-US_TOPIC_0000002531522198__ul64121513426">
+        <li id="EN-US_TOPIC_0000002531522198__li7412101114216"><span id="EN-US_TOPIC_0000002531522198__ph94123117429"><term id="EN-US_TOPIC_0000002531522198__en-us_topic_0000002562275259_term4363218112215">
+           Atlas inference product
+          </term></span>: coupled mode</li>
+        <li id="EN-US_TOPIC_0000002531522198__li5412171114216"><span id="EN-US_TOPIC_0000002531522198__ph9412151134210"><term id="EN-US_TOPIC_0000002531522198__en-us_topic_0000002562275259_term71949488213">
+           Atlas training product
+          </term></span>: coupled mode</li>
+        <li id="EN-US_TOPIC_0000002531522198__li64120118427"><span id="EN-US_TOPIC_0000002531522198__ph541261194217"><term id="EN-US_TOPIC_0000002531522198__en-us_topic_0000002562275259_term11962195213215_2">
+           Atlas A2 training product
+          </term>/<term id="EN-US_TOPIC_0000002531522198__en-us_topic_0000002562275259_term898114865714_2">
+           Atlas A2 inference product
+          </term></span>: separated mode</li>
+        <li id="EN-US_TOPIC_0000002531522198__li15412121134217"><span id="EN-US_TOPIC_0000002531522198__ph134121012428"><term id="EN-US_TOPIC_0000002531522198__en-us_topic_0000002562275259_term1253731311225">
+           Atlas A3 training product
+          </term>/<term id="EN-US_TOPIC_0000002531522198__en-us_topic_0000002562275259_term131434243115">
+           Atlas A3 inference product
+          </term></span>: separated mode</li>
+        <li id="EN-US_TOPIC_0000002531522198__li4767154705220"><span id="EN-US_TOPIC_0000002531522198__ph126252025205">Atlas 350 Accelerator Card</span>: separated mode</li>
+        <li id="EN-US_TOPIC_0000002531522198__li1041221184214"><span id="EN-US_TOPIC_0000002531522198__ph14122174211"><term id="EN-US_TOPIC_0000002531522198__en-us_topic_0000002562275259_term354143892110">
+           Atlas 200I/500 A2 inference product
+          </term></span>: coupled mode</li>
+       </ul>
+      </div>
+      <p id="EN-US_TOPIC_0000002531522198__p570875544220">Note: For the <span id="EN-US_TOPIC_0000002531522198__ph626440174215"><term id="EN-US_TOPIC_0000002531522198__en-us_topic_0000002562275259_term354143892110_1">
+         Atlas 200I/500 A2 inference product
+        </term></span>, the hardware working mode can be either coupled mode or separated mode. In coupled mode, you only need to concern about the number of AI Cores, and do not need to concern about the number of Vector Cores and Cube Cores. In separated mode, you need to concern about the number of AI Cores, Vector Cores, and Cube Cores. In Ascend C programming scenarios, only the coupled mode is supported.</p>
+     </div>
+    </div>
+   </div>
+   <div class="section" id="EN-US_TOPIC_0000002531522198__section2853918419">
+    <h4 class="sectiontitle">Compute Units</h4>
+    <p id="EN-US_TOPIC_0000002531522198__p58535521111">The compute units are the core of powerful compute capabilities of the AI Core, including the Cube Unit, Vector Unit, and Scalar Unit. These three units process different types of data in the AI Core.</p>
+    <ul id="EN-US_TOPIC_0000002531522198__ul102384014018">
+     <li id="EN-US_TOPIC_0000002531522198__li523816018401">Cube
+      <p id="EN-US_TOPIC_0000002531522198__p20779750144618"><a name="EN-US_TOPIC_0000002531522198__li523816018401"></a><a name="li523816018401"></a>The Cube Unit performs cube operations. Take the float16 data type as an example. The Cube Unit can multiply two 16×16 cubes of the float16 data type in each execution. As shown in the following figure, the highlighted boxes show the Cube Unit and its accessed storage units. L0A stores the left cube, L0B stores the right cube, and L0C stores the cube multiplication result and intermediate result.</p>
+      <div class="fignone" id="EN-US_TOPIC_0000002531522198__fig643417174212">
+       <span class="figcap"><b>Figure 3 </b>Data access of the Cube Unit</span>
+       <br><span><img class="eddx" id="EN-US_TOPIC_0000002531522198__image2434617322" src="figure/en-us_image_0000002531362408.png"></span>
+      </div></li>
+     <li id="EN-US_TOPIC_0000002531522198__li147591106418">Vector
+      <p id="EN-US_TOPIC_0000002531522198__p7293185211366"><a name="EN-US_TOPIC_0000002531522198__li147591106418"></a><a name="li147591106418"></a>The Vector Unit performs vector computation. It executes vector instructions, which are similar to conventional single instruction multiple data (SIMD) instructions. Each vector instruction can complete the same type of operation for a plurality of operands. The Vector Unit can quickly add or multiply two float16 vectors. Vector instructions support multiple repeats and direct computation of vectors with intervals.</p>
+      <p id="EN-US_TOPIC_0000002531522198__p1797043633210">As shown in the following figure, all the computed source data and target data of the vector must be stored in the Unified Buffer. The start address and operation length of vector instructions must be 32-byte aligned. For details, see the API constraints.</p>
+      <div class="fignone" id="EN-US_TOPIC_0000002531522198__fig172397519590">
+       <span class="figcap"><b>Figure 4 </b>Data access of the Vector Unit</span>
+       <br><span><img class="eddx" id="EN-US_TOPIC_0000002531522198__image192391959593" src="figure/en-us_image_0000002562442331.png"></span>
+      </div></li>
+    </ul>
+    <ul id="EN-US_TOPIC_0000002531522198__ul810335083814">
+     <li id="EN-US_TOPIC_0000002531522198__li191045501385">Scalar
+      <p id="EN-US_TOPIC_0000002531522198__p1050611417710"><a name="EN-US_TOPIC_0000002531522198__li191045501385"></a><a name="li191045501385"></a>The Scalar Unit performs scalar computation and controls the program flow. It can be regarded as a mini CPU, which implements loop control, branch judgment, address and parameter computations of Cube and Vector instructions, and basic arithmetic operations for a program. In addition, the pipeline of other execution units in the AI Core can be controlled by inserting a synchronization code into the event synchronization module. Compared with the host CPU, the scalar computation capability on the AI Core is relatively weak, and scalars are mainly used to send instructions. Therefore, scalar computations should be minimized in actual application scenarios, for example, minimizing the branch judgment such as the <strong id="EN-US_TOPIC_0000002531522198__b194471833203610">if/else</strong> statement and variable computation during performance optimization.</p>
+      <p id="EN-US_TOPIC_0000002531522198__p836813417248">As shown in the following figure, the Scalar Unit executes standard arithmetic logic unit (ALU) statements when executing scalar operation instructions. The code segment and data segment (stack space) required by ALU come from the GM. The instruction cache (iCache) is used to cache code segments, and the cache size is related to hardware specifications. If the size is 16 KB or 32 KB, the code segment is loaded in the unit of 2 KB. The data cache (dCache) is used to cache data segments, and the cache size is related to hardware specifications. If the size is 16 KB, the data segment is loaded in the unit of cache lines (64 bytes). Considering that access inside the core is most efficient, ensure that code segments and data segments are cached in the iCache and dCache to avoid access outside the core. In addition, based on the data loading unit, you can adjust the size of data to be loaded at a time during programming to improve the loading efficiency. For example, when data is loaded to the dCache and the start address of the data memory is aligned with the cache lines (64 bytes), the loading efficiency is the highest.</p>
+      <div class="fignone" id="EN-US_TOPIC_0000002531522198__fig9952125415559">
+       <span class="figcap"><b>Figure 5 </b>Instruction and data access of the Scalar Unit</span>
+       <br><span><img class="eddx" id="EN-US_TOPIC_0000002531522198__image39521354125512" src="figure/en-us_image_0000002531362404.png"></span>
+      </div>
+      <div class="note" id="EN-US_TOPIC_0000002531522198__note1816633710437">
+       <img src="public_sys-resources/note_3.0-en-us.png"><span class="notetitle"> </span>
+       <div class="notebody">
+        <p id="EN-US_TOPIC_0000002531522198__p4931133125315">The hardware provides the L2 cache to cache the data (including code segments and data segments) that accesses the GM, thereby accelerating the access speed and improving the access efficiency. The L2 cache outside the core loads data in the unit of cache lines. The cache line size (128, 256, or 512 bytes) varies with hardware specifications.</p>
+       </div>
+      </div></li>
+    </ul>
+   </div>
+   <div class="section" id="EN-US_TOPIC_0000002531522198__section123639375417">
+    <a name="EN-US_TOPIC_0000002531522198__section123639375417"></a><a name="section123639375417"></a>
+    <h4 class="sectiontitle">Storage Units and DMA Units</h4>
+    <p id="EN-US_TOPIC_0000002531522198__p3900151617318">To fully leverage the powerful computing capability of the AI processors, the prerequisite is that the input data can be fed to the compute units in a timely and accurate manner. Therefore, the memory system needs to be elaborately designed to ensure the data supply required by the compute units.</p>
+    <p id="EN-US_TOPIC_0000002531522198__en-us_topic_0228422248_p5635526319">As shown in the following figure, an AI Core includes multiple levels of local memory (internal storage), and loads data from the global memory (external storage) to the local memory for computation. The local memory of an AI Core includes the L1 Buffer, L0 Buffer, Unified Buffer, and so on. An AI Core also contains memory transfer engines (MTEs) to facilitate data movement and copy, which can convert the data format or type during data movement.</p>
+    <p id="EN-US_TOPIC_0000002531522198__p179251167215">For details about the internal storage units and DMA units, see <a href="#EN-US_TOPIC_0000002531522198__table1692510612218">Table 1</a> and <a href="#EN-US_TOPIC_0000002531522198__table288493152012">Table 2</a>.</p>
+    <div class="fignone" id="EN-US_TOPIC_0000002531522198__fig2032418113610">
+     <span class="figcap"><b>Figure 6 </b>Storage units</span>
+     <br><span><img class="eddx" id="EN-US_TOPIC_0000002531522198__image19324201164" src="figure/en-us_image_0000002531362400.png"></span>
+    </div>
+    <div class="tablenoborder">
+     <a name="EN-US_TOPIC_0000002531522198__table1692510612218"></a><a name="table1692510612218"></a>
+     <table cellpadding="4" cellspacing="0" summary="" id="EN-US_TOPIC_0000002531522198__table1692510612218" frame="border" border="1" rules="all">
+      <caption>
+       <b>Table 1 </b>Description of storage units
+      </caption>
+      <thead align="left">
+       <tr id="EN-US_TOPIC_0000002531522198__row1692576132110">
+        <th align="left" class="cellrowborder" valign="top" width="30.11%" id="mcps1.3.11.6.2.3.1.1">
+         <p id="EN-US_TOPIC_0000002531522198__p189252069218">Storage Unit</p></th>
+        <th align="left" class="cellrowborder" valign="top" width="69.89%" id="mcps1.3.11.6.2.3.1.2">
+         <p id="EN-US_TOPIC_0000002531522198__p17925161215">Description</p></th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr id="EN-US_TOPIC_0000002531522198__row892518618215">
+        <td class="cellrowborder" valign="top" width="30.11%" headers="mcps1.3.11.6.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531522198__p1292586202112">L1 Buffer</p></td>
+        <td class="cellrowborder" valign="top" width="69.89%" headers="mcps1.3.11.6.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531522198__p1492517613219">As a general part of the local memory, the L1 Buffer offers a large data buffer in the AI Core. It can temporarily store data that needs to be repeatedly used in the Cube Unit, thereby reducing the frequency that data is read from or written to the bus.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531522198__row1925146182113">
+        <td class="cellrowborder" valign="top" width="30.11%" headers="mcps1.3.11.6.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531522198__p1192512632115">L0A Buffer/L0B Buffer</p></td>
+        <td class="cellrowborder" valign="top" width="69.89%" headers="mcps1.3.11.6.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531522198__p192611610219">They store the inputs of Cube instructions.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531522198__row1192610642119">
+        <td class="cellrowborder" valign="top" width="30.11%" headers="mcps1.3.11.6.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531522198__p109268610212">L0C Buffer</p></td>
+        <td class="cellrowborder" valign="top" width="69.89%" headers="mcps1.3.11.6.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531522198__p49269611212">It stores the outputs of Cube instructions, which are part of the inputs for accumulation.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531522198__row9926467213">
+        <td class="cellrowborder" valign="top" width="30.11%" headers="mcps1.3.11.6.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531522198__p1692614642117">Unified Buffer</p></td>
+        <td class="cellrowborder" valign="top" width="69.89%" headers="mcps1.3.11.6.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531522198__p59267692111">The Unified Buffer stores the inputs and outputs of vector and scalar computations.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531522198__row185871713151111">
+        <td class="cellrowborder" valign="top" width="30.11%" headers="mcps1.3.11.6.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531522198__p8186194819417">BT Buffer</p></td>
+        <td class="cellrowborder" valign="top" width="69.89%" headers="mcps1.3.11.6.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531522198__p7587111381113">The BiasTable (BT) Buffer stores the bias in cube computations.</p></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531522198__row13135416151111">
+        <td class="cellrowborder" valign="top" width="30.11%" headers="mcps1.3.11.6.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531522198__p17491298118">FP Buffer</p></td>
+        <td class="cellrowborder" valign="top" width="69.89%" headers="mcps1.3.11.6.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531522198__p1213671651111">The FixPipe (FP) Buffer stores quantization parameters and ReLU parameters.</p></td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <div class="tablenoborder">
+     <a name="EN-US_TOPIC_0000002531522198__table288493152012"></a><a name="table288493152012"></a>
+     <table cellpadding="4" cellspacing="0" summary="" id="EN-US_TOPIC_0000002531522198__table288493152012" frame="border" border="1" rules="all">
+      <caption>
+       <b>Table 2 </b>DMA units
+      </caption>
+      <thead align="left">
+       <tr id="EN-US_TOPIC_0000002531522198__row19884103142012">
+        <th align="left" class="cellrowborder" valign="top" width="30.049999999999997%" id="mcps1.3.11.7.2.3.1.1">
+         <p id="EN-US_TOPIC_0000002531522198__p288473114204">DMA Unit</p></th>
+        <th align="left" class="cellrowborder" valign="top" width="69.95%" id="mcps1.3.11.7.2.3.1.2">
+         <p id="EN-US_TOPIC_0000002531522198__p8884531162011">Description</p></th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr id="EN-US_TOPIC_0000002531522198__row199091854122011">
+        <td class="cellrowborder" valign="top" width="30.049999999999997%" headers="mcps1.3.11.7.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531522198__p990975412200">MTE1</p></td>
+        <td class="cellrowborder" valign="top" width="69.95%" headers="mcps1.3.11.7.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531522198__p69911469917">Moves data in the following paths:</p>
+         <ul id="EN-US_TOPIC_0000002531522198__ul15750125414917">
+          <li id="EN-US_TOPIC_0000002531522198__li2750654593">L1-&gt;L0A/L0B</li>
+          <li id="EN-US_TOPIC_0000002531522198__li137215581114">L1-&gt;BT Buffer</li>
+         </ul></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531522198__row83637216">
+        <td class="cellrowborder" valign="top" width="30.049999999999997%" headers="mcps1.3.11.7.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531522198__p16440784214">MTE2</p></td>
+        <td class="cellrowborder" valign="top" width="69.95%" headers="mcps1.3.11.7.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531522198__p12680536151314">Moves data in the following paths:</p>
+         <ul id="EN-US_TOPIC_0000002531522198__ul1420163841318">
+          <li id="EN-US_TOPIC_0000002531522198__li5420133881318">GM-&gt;{L1, L0A/B}. In this path, data is moved based on the fractal size. If the data movement meets the cache line size alignment requirements, the performance is better.</li>
+          <li id="EN-US_TOPIC_0000002531522198__li147031641141315">GM-&gt;UB. Data movement based on the cache line size will achieve better performance.</li>
+         </ul></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531522198__row153848520214">
+        <td class="cellrowborder" valign="top" width="30.049999999999997%" headers="mcps1.3.11.7.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531522198__p121221999218">MTE3</p></td>
+        <td class="cellrowborder" valign="top" width="69.95%" headers="mcps1.3.11.7.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531522198__p1683722417444">Moves data in the following paths:</p>
+         <ul id="EN-US_TOPIC_0000002531522198__ul43441132124411">
+          <li id="EN-US_TOPIC_0000002531522198__li134403216445">UB -&gt; GM</li>
+         </ul></td>
+       </tr>
+       <tr id="EN-US_TOPIC_0000002531522198__row217791862110">
+        <td class="cellrowborder" valign="top" width="30.049999999999997%" headers="mcps1.3.11.7.2.3.1.1 ">
+         <p id="EN-US_TOPIC_0000002531522198__p61776186219">FixPipe</p></td>
+        <td class="cellrowborder" valign="top" width="69.95%" headers="mcps1.3.11.7.2.3.1.2 ">
+         <p id="EN-US_TOPIC_0000002531522198__p18986147134310">Moves data in the following paths. (The data format or type can be converted during data movement.)</p>
+         <ul id="EN-US_TOPIC_0000002531522198__ul189261456194111">
+          <li id="EN-US_TOPIC_0000002531522198__li292617561416">L0C-&gt;{GM/L1}</li>
+          <li id="EN-US_TOPIC_0000002531522198__li67511510154213">L1-&gt;FP Buffer</li>
+         </ul></td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </div>
+   <div class="note" id="EN-US_TOPIC_0000002531522198__note17393251051">
+    <img src="public_sys-resources/note_3.0-en-us.png"><span class="notetitle"> </span>
+    <div class="notebody">
+     <ul id="EN-US_TOPIC_0000002531522198__ul136541416437">
+      <li id="EN-US_TOPIC_0000002531522198__li76548417439">The size of a storage unit varies with the AI processor type. You can call <a href="/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_1034.html">GetCoreMemSize</a> to get the size.</li>
+      <li id="EN-US_TOPIC_0000002531522198__li42291439125314">By default, all data that is read from or written to the GM through the DMA units is cached in the L2 cache to accelerate the access speed and improve the access efficiency. The L2 cache outside the core loads data in the unit of cache lines. The cache line size (128, 256, or 512 bytes) varies with hardware specifications.</li>
+     </ul>
+    </div>
+   </div>
+   <div class="section" id="EN-US_TOPIC_0000002531522198__section147001014511">
+    <h4 class="sectiontitle">Typical Data Flows</h4>
+    <ul id="EN-US_TOPIC_0000002531522198__ul1773211015915">
+     <li id="EN-US_TOPIC_0000002531522198__li473217102098">The following figure shows the typical data flow of vector computation.
+      <p id="EN-US_TOPIC_0000002531522198__p11683140109"><a name="EN-US_TOPIC_0000002531522198__li473217102098"></a><a name="li473217102098"></a>GM → UB → Vector → UB → GM</p>
+      <p id="EN-US_TOPIC_0000002531522198__p4216396"><span><img class="eddx" id="EN-US_TOPIC_0000002531522198__image0859163145815" src="figure/en-us_image_0000002531362410.png"></span></p></li>
+     <li id="EN-US_TOPIC_0000002531522198__li57321610390">The following figure shows the typical data flows of cube computation.
+      <ul id="EN-US_TOPIC_0000002531522198__ul515813331051">
+       <li id="EN-US_TOPIC_0000002531522198__li171587331450">GM →L1→L0A/L0B →Cube →L0C→FixPipe→GM</li>
+       <li id="EN-US_TOPIC_0000002531522198__li497864512113">GM →L1→L0A/L0B →Cube →L0C→FixPipe→L1</li>
+      </ul>
+      <p id="EN-US_TOPIC_0000002531522198__p327013408102"><span><img class="eddx" id="EN-US_TOPIC_0000002531522198__image4790144011016" src="figure/en-us_image_0000002531362406.png"></span></p></li>
+    </ul>
+   </div>
+   <div class="section" id="EN-US_TOPIC_0000002531522198__section1296816241258">
+    <h4 class="sectiontitle">Typical Instruction Flows</h4>
+    <p id="EN-US_TOPIC_0000002531522198__p127mcpsimp">Multiple instructions enter the iCache from the system memory through the bus. Based on the instruction type, there are two kinds of subsequent instruction execution processes:</p>
+    <ul id="EN-US_TOPIC_0000002531522198__en-us_topic_0228422173_ul11724870415">
+     <li id="EN-US_TOPIC_0000002531522198__en-us_topic_0228422173_li11724571745">For a scalar instruction, it will be executed immediately by the Scalar Unit.</li>
+     <li id="EN-US_TOPIC_0000002531522198__en-us_topic_0228422173_li17324023942">For other instructions, they are scheduled to independent queues (vector instruction queue, cube instruction queue, and MTE1/MTE2/MTE3 instruction queues) by the Scalar Unit, and then executed by corresponding execution units.</li>
+    </ul>
+    <div class="fignone" id="EN-US_TOPIC_0000002531522198__fig1993349810">
+     <span class="figcap"><b>Figure 7 </b>Instruction processing by category</span>
+     <br><span><img class="eddx" id="EN-US_TOPIC_0000002531522198__image1499394886" src="figure/en-us_image_0000002562442307.png"></span>
+    </div>
+    <div class="p" id="EN-US_TOPIC_0000002531522198__p888213391910">
+     Instructions in the same queue are executed according to their enqueue sequence, and instructions in different queues can be executed in parallel. Such parallelism improves overall execution efficiency. For data dependency that may occur during parallel execution, the Event Sync module inserts synchronization instructions to control pipeline synchronization. The <strong id="EN-US_TOPIC_0000002531522198__b20146132115010">PipeBarrier</strong> and <strong id="EN-US_TOPIC_0000002531522198__b514652115501">SetFlag</strong>/<strong id="EN-US_TOPIC_0000002531522198__b814632111505">WaitFlag</strong> APIs are provided to ensure that the instructions in a queue and across queues are executed based on the logical relationship.
+     <ul id="EN-US_TOPIC_0000002531522198__ul63453923019">
+      <li id="EN-US_TOPIC_0000002531522198__li183457973013"><strong id="EN-US_TOPIC_0000002531522198__b18203105465014">PipeBarrier</strong> is an instruction used to control the execution sequence in a queue. (Although instructions are executed in sequence, it does not mean that the execution of the previous instruction ends when the next instruction starts to be executed.) <strong id="EN-US_TOPIC_0000002531522198__b42461386351140">PipeBarrier</strong> ensures that all data read and write operations of the previous instruction are completed before the next instruction is executed.</li>
+      <li id="EN-US_TOPIC_0000002531522198__li16345109113012"><strong id="EN-US_TOPIC_0000002531522198__b957519559513">SetFlag</strong> and <strong id="EN-US_TOPIC_0000002531522198__b125759558518">WaitFlag</strong> are a pair of inter-queue synchronization instructions.
+       <ul id="EN-US_TOPIC_0000002531522198__ul234511933010">
+        <li id="EN-US_TOPIC_0000002531522198__li234510903014"><strong id="EN-US_TOPIC_0000002531522198__b69091069451140">SetFlag</strong>: The current instruction starts to be executed after all read and write operations of the current instruction are completed and the corresponding flag bit in hardware is set to <strong id="EN-US_TOPIC_0000002531522198__b60802843551140">1</strong>.</li>
+        <li id="EN-US_TOPIC_0000002531522198__li53451495307"><strong id="EN-US_TOPIC_0000002531522198__b19273171216525">WaitFlag</strong>: When this instruction is executed, if the corresponding flag bit is <strong id="EN-US_TOPIC_0000002531522198__b11273412165210">0</strong>, the subsequent instructions in the queue are blocked; if the corresponding flag bit is <strong id="EN-US_TOPIC_0000002531522198__b827317120522">1</strong>, the subsequent instructions are executed after this bit is changed to <strong id="EN-US_TOPIC_0000002531522198__b02731512125214">0</strong>.</li>
+       </ul></li>
+     </ul>
+    </div>
+    <p id="EN-US_TOPIC_0000002531522198__p450635172418">Ascend C provides <a href="/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_00013.html">synchronization control APIs</a>. You can use this type of APIs to implement synchronization control. Generally, there is no need to consider synchronization when programming based on the programming model and paradigm described in <a href="atlas_ascendc_10_0012.html">Programming Model</a>. The programming model implements synchronization control. Using the programming model and paradigm is recommended. Manual synchronization control may complicate programming.</p>
+    <p id="EN-US_TOPIC_0000002531522198__p327224582415">However, we still hope that you can understand the basic principles of synchronization to better understand and design parallel compute programs. In a few cases, you need to manually insert synchronization. For details, see <a href="/document/detail/en/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0179.html#EN-US_TOPIC_0000002531541438__section14375133724414">Requirements on Enabling Manual Synchronization Control</a>.</p>
+   </div>
+  </div>
+  <div>
+   <div class="familylinks">
+    <div class="parentlink">
+     <strong>Parent topic:</strong> <a href="atlas_ascendc_10_0007.html">Hardware Implementation</a>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>

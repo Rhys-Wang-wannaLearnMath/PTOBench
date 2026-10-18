@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "authority": "selected_upstream",
+  "repository": "https://github.com/hw-native-sys/pypto-lib",
+  "revision": "15c9f1e15d625da2232e428e74ec5ef337495ae4",
+  "source_path": "models/deepseek_v4_flash_mtp/prefill_cp_zigzag.py",
+  "source_sha256": "b0665597af0dd888eecdc87b25877ce029f6970ce9ddac030acf38276cde3248",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "b0665597af0dd888eecdc87b25877ce029f6970ce9ddac030acf38276cde3248",
+  "dependencies": [
+    {
+      "source_path": "models/deepseek_v4_flash_mtp/config.py",
+      "source_sha256": "61b52e187ba1c2d95465e1c87bc8d125312ec349c92f7355a1061a2071995da4",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "61b52e187ba1c2d95465e1c87bc8d125312ec349c92f7355a1061a2071995da4"
+    }
+  ],
+  "selection": "deepseek_v4_flash_mtp.prefill_cp_zigzag_cp8_flash binds the complete FLASH preset to the pinned CP8 fixed-length projected-KV zigzag tail exchange. Latest upstream changes CP choices, padded segment semantics and config; the selected source and its sole config dependency remain byte-exact.",
+  "fixture_authority": "byte-exact official build_tensor_specs and golden_prefill_cp_zigzag_kv_tail_exchange"
+}

@@ -5,9 +5,6 @@ Presence checks only; recorded status is not fresh hardware acceptance.
 | Case | Evaluator | Asset issues |
 | --- | --- | --- |
 | deepseek_v4.combine_demo | present | certification_not_ready; comparator_hash_unbound_or_mismatched |
-| deepseek_v4.decode_attention_csa_demo | present | certification_not_ready; missing_candidate_seed_entry; comparator_hash_unbound_or_mismatched; fixture_000:missing_ref_outputs:x_out; fixture_000:missing_or_invalid_ref_latency |
-| deepseek_v4.decode_attention_csa_flash | present | certification_not_ready; missing_candidate_seed_entry; comparator_hash_unbound_or_mismatched; fixture_000:missing_ref_outputs:x_out; fixture_000:missing_or_invalid_ref_latency |
-| deepseek_v4.decode_attention_csa_pro | present | certification_not_ready; missing_candidate_seed_entry; comparator_hash_unbound_or_mismatched; fixture_000:missing_ref_outputs:x_out; fixture_000:missing_or_invalid_ref_latency |
 | deepseek_v4.decode_indexer_demo | present | certification_not_ready; missing_candidate_seed_entry; comparator_hash_unbound_or_mismatched; fixture_000:missing_ref_outputs:score,idx_kv_cache,topk_idxs; fixture_000:missing_or_invalid_ref_latency |
 | deepseek_v4.decode_indexer_flash | present | certification_not_ready; missing_candidate_seed_entry; comparator_hash_unbound_or_mismatched; fixture_000:missing_manifest; fixture_000:no_input_tensors; fixture_000:missing_ref_outputs:score,idx_kv_cache,topk_idxs; fixture_000:missing_or_invalid_ref_latency |
 | deepseek_v4.decode_indexer_pro | present | certification_not_ready; missing_candidate_seed_entry; comparator_hash_unbound_or_mismatched; fixture_000:missing_manifest; fixture_000:no_input_tensors; fixture_000:missing_ref_outputs:score,idx_kv_cache,topk_idxs; fixture_000:missing_or_invalid_ref_latency |

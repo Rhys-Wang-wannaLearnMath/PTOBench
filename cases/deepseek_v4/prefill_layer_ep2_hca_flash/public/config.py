@@ -1,4 +1,4 @@
-"""Fixed FLASH contract for DeepSeek-V4 packed prefill layer HCA EP2."""
+"""Fixed contract for deepseek_v4.prefill_layer_ep2_hca_flash."""
 
 from dataclasses import dataclass
 from typing import Literal, Optional, Tuple
@@ -140,7 +140,10 @@ USER_BATCH = 2
 CHUNK_LENS = (128, 192)
 START_POSITIONS = None
 LOGICAL_TOKENS = sum(CHUNK_LENS)
-PADDED_TOKENS = ((LOGICAL_TOKENS + TOKEN_TILE - 1) // TOKEN_TILE) * TOKEN_TILE
+PADDED_TOKENS = sum(
+    ((chunk_len + TOKEN_TILE - 1) // TOKEN_TILE) * TOKEN_TILE
+    for chunk_len in CHUNK_LENS
+)
 
 # Fixed cache, state, and quantization values.
 BLOCK_SIZE = 128
@@ -149,15 +152,8 @@ C128_COMPRESSOR_BLOCK_SIZE = 8
 INT8_SCALE_MAX = 127.0
 INT8_AMAX_EPS = 1e-4
 FP32_NEG_INF = -3.4028234663852886e38
-KV_ORI_MAX_BLOCKS = (
-    CASE_CONFIG.sliding_window + DECODE_SEQ + BLOCK_SIZE - 1
-) // BLOCK_SIZE
-KV_ORI_TABLE_MAX_BLOCKS = (
-    CASE_CONFIG.max_position_embeddings + BLOCK_SIZE - 1
-) // BLOCK_SIZE
 KV_CMP_MAX_BLOCKS = 32
 IDX_CACHE_MAX_BLOCKS = 64
-DECODE_ORI_BLOCK_NUM = DECODE_BATCH * KV_ORI_MAX_BLOCKS
 DECODE_CMP_BLOCK_NUM = DECODE_BATCH * KV_CMP_MAX_BLOCKS
 DECODE_IDX_BLOCK_NUM = DECODE_BATCH * IDX_CACHE_MAX_BLOCKS
 PREFILL_ORI_MAX_BLOCKS = (PREFILL_SEQ + BLOCK_SIZE - 1) // BLOCK_SIZE

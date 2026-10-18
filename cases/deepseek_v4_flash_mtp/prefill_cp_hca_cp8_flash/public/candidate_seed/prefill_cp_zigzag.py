@@ -1,0 +1,5 @@
+from config import CP_SIZE, CP_TAIL_WINDOW_ROWS, EPOCHS, HEAD_DIM, NUM_SEGMENTS, TAIL_ROWS
+from config import CASE_CONFIG as M
+
+ROW_TILE = 8
+

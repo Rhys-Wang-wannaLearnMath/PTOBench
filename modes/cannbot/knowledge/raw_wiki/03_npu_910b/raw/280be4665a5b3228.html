@@ -1,0 +1,526 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <meta name="search_title" content="">
+ </head>
+ <body>
+  <a name="ZH-CN_TOPIC_0000002531509894"></a><a name="ZH-CN_TOPIC_0000002531509894"></a>
+  <h1 class="topictitle1">避免bank冲突（NPU架构版本220x）</h1>
+  <div id="body0000002499562140">
+   <p id="ZH-CN_TOPIC_0000002531509894__p13367753124215">【优先级】高</p>
+   <div class="note" id="ZH-CN_TOPIC_0000002531509894__note478275818504">
+    <img src="public_sys-resources/note_3.0-zh-cn.png"><span class="notetitle"> </span>
+    <div class="notebody">
+     <p id="ZH-CN_TOPIC_0000002531509894__p17821658145013">该性能优化建议适用于如下产品型号：</p>
+     <ul id="ZH-CN_TOPIC_0000002531509894__ul723415519312">
+      <li id="ZH-CN_TOPIC_0000002531509894__li17391143711246"><span id="ZH-CN_TOPIC_0000002531509894__ph125524139437"><term id="ZH-CN_TOPIC_0000002531509894__zh-cn_topic_0000002562275259_term1253731311225">
+         Atlas A3 训练系列产品
+        </term>/<term id="ZH-CN_TOPIC_0000002531509894__zh-cn_topic_0000002562275259_term131434243115">
+         Atlas A3 推理系列产品
+        </term></span></li>
+      <li id="ZH-CN_TOPIC_0000002531509894__li519213411807"><span id="ZH-CN_TOPIC_0000002531509894__ph0552191394315"><term id="ZH-CN_TOPIC_0000002531509894__zh-cn_topic_0000002562275259_term11962195213215">
+         Atlas A2 训练系列产品
+        </term>/<term id="ZH-CN_TOPIC_0000002531509894__zh-cn_topic_0000002562275259_term184716139811">
+         Atlas A2 推理系列产品
+        </term></span></li>
+     </ul>
+    </div>
+   </div>
+   <p id="ZH-CN_TOPIC_0000002531509894__p6367145314424">【描述】为了提高数据访问的效率和吞吐量，Unified Buffer采用了bank（大小相等的内存模块）结构设计。Unified Buffer总大小为192K，划分为48个bank。每个bank由128行组成，每行长度为32B。这48个bank进一步组织为16个bank group，每个bank group包含3个bank，例如bank15、bank31和bank47组成一个bank group。</p>
+   <div class="fignone" id="ZH-CN_TOPIC_0000002531509894__fig1132542915196">
+    <span class="figcap"><b>图1 </b>bank结构示意图（图中箭头方向表示内存排布的顺序）</span>
+    <br><span><img class="eddx" id="ZH-CN_TOPIC_0000002531509894__image2358628131410" src="figure/zh-cn_image_0000002562270109.png"></span>
+   </div>
+   <p id="ZH-CN_TOPIC_0000002531509894__p611319595459">每个bank可以独立地进行数据的读写操作，允许多个数据请求同时进行。然而，当多个读写操作试图同时访问同一个bank或bank group时，由于硬件资源的限制，这些操作必须排队等待，会导致bank冲突，引起性能下降。</p>
+   <p id="ZH-CN_TOPIC_0000002531509894__p0113145913457">具体来说，Vector计算单元每拍（一个指令周期）能够从每个bank group中读取或写入一行数据。如果同一个API中的多个操作试图同时访问同一个bank或bank group，Vector计算单元无法在同一个周期内处理所有请求，导致这些请求排队等待。这种排队增加了数据访问的延迟，降低了系统的整体性能。</p>
+   <div class="section" id="ZH-CN_TOPIC_0000002531509894__section12644115352">
+    <h4 class="sectiontitle">bank冲突的典型场景</h4>
+    <p id="ZH-CN_TOPIC_0000002531509894__p538042111912">bank冲突主要可以分为以下三种场景：</p>
+    <ul id="ZH-CN_TOPIC_0000002531509894__ul18143165061719">
+     <li id="ZH-CN_TOPIC_0000002531509894__li121431150101719"><strong id="ZH-CN_TOPIC_0000002531509894__b791318474344">读写冲突</strong>：读操作和写操作同时尝试访问同一个bank。</li>
+     <li id="ZH-CN_TOPIC_0000002531509894__li397614863311"><strong id="ZH-CN_TOPIC_0000002531509894__b3728155118344">写写冲突</strong>：多个写操作同时尝试访问同一个bank group。</li>
+     <li id="ZH-CN_TOPIC_0000002531509894__li4687112214185"><strong id="ZH-CN_TOPIC_0000002531509894__b06581455173413">读读冲突</strong>：多个读操作同时尝试访问同一个bank group。</li>
+    </ul>
+    <p id="ZH-CN_TOPIC_0000002531509894__p18385193416579">下文给出了一些具体的示例，假设，0x10000地址在bank16上，0x10020在bank17上，0x20020在bank33上，如下图所示：</p>
+    <div class="fignone" id="ZH-CN_TOPIC_0000002531509894__fig129245311375">
+     <span class="figcap"><b>图2 </b>地址分配示意图</span>
+     <br><span><img class="eddx" id="ZH-CN_TOPIC_0000002531509894__image1390811383343" src="figure/zh-cn_image_0000002531510146.png"></span>
+    </div>
+    <p id="ZH-CN_TOPIC_0000002531509894__p1569413496117"></p>
+    <ul id="ZH-CN_TOPIC_0000002531509894__ul331717243389">
+     <li id="ZH-CN_TOPIC_0000002531509894__li1987054183914">读写冲突示例
+      <div class="p" id="ZH-CN_TOPIC_0000002531509894__p119635561391">
+       <a name="ZH-CN_TOPIC_0000002531509894__li1987054183914"></a><a name="li1987054183914"></a>Vector指令的源操作数src和目的操作数dst同时读写到同一个bank时造成读写冲突，具体分析如下： 
+       <div class="tablenoborder">
+        <table cellpadding="4" cellspacing="0" summary="" id="ZH-CN_TOPIC_0000002531509894__table06741342154717" frame="border" border="1" rules="all">
+         <caption>
+          <b>表1 </b>读写冲突示例
+         </caption>
+         <thead align="left">
+          <tr id="ZH-CN_TOPIC_0000002531509894__row1767434244710">
+           <th align="left" class="cellrowborder" valign="top" width="5.9988002399520095%" id="mcps1.3.7.7.1.1.1.2.7.1.1">
+            <p id="ZH-CN_TOPIC_0000002531509894__p17674144211470">序号</p></th>
+           <th align="left" class="cellrowborder" valign="top" width="9.948010397920417%" id="mcps1.3.7.7.1.1.1.2.7.1.2">
+            <p id="ZH-CN_TOPIC_0000002531509894__p9674114213473">src地址</p></th>
+           <th align="left" class="cellrowborder" valign="top" width="10.507898420315936%" id="mcps1.3.7.7.1.1.1.2.7.1.3">
+            <p id="ZH-CN_TOPIC_0000002531509894__p8674114294712">dst地址</p></th>
+           <th align="left" class="cellrowborder" valign="top" width="25.51489702059588%" id="mcps1.3.7.7.1.1.1.2.7.1.4">
+            <p id="ZH-CN_TOPIC_0000002531509894__p17674114244718">bank</p></th>
+           <th align="left" class="cellrowborder" valign="top" width="31.36372725454909%" id="mcps1.3.7.7.1.1.1.2.7.1.5">
+            <p id="ZH-CN_TOPIC_0000002531509894__p1567444234713">bank group</p></th>
+           <th align="left" class="cellrowborder" valign="top" width="16.666666666666664%" id="mcps1.3.7.7.1.1.1.2.7.1.6">
+            <p id="ZH-CN_TOPIC_0000002531509894__p1767410425479">结论</p></th>
+          </tr>
+         </thead>
+         <tbody>
+          <tr id="ZH-CN_TOPIC_0000002531509894__row126741742144713">
+           <td class="cellrowborder" valign="top" width="5.9988002399520095%" headers="mcps1.3.7.7.1.1.1.2.7.1.1 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p1367415427473">示例1</p></td>
+           <td class="cellrowborder" valign="top" width="9.948010397920417%" headers="mcps1.3.7.7.1.1.1.2.7.1.2 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p7674134216478">0x10020</p></td>
+           <td class="cellrowborder" valign="top" width="10.507898420315936%" headers="mcps1.3.7.7.1.1.1.2.7.1.3 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p1567416428472">0x10000</p></td>
+           <td class="cellrowborder" valign="top" width="25.51489702059588%" headers="mcps1.3.7.7.1.1.1.2.7.1.4 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p16674184212479">bank_id0 != bank_id1</p></td>
+           <td class="cellrowborder" valign="top" width="31.36372725454909%" headers="mcps1.3.7.7.1.1.1.2.7.1.5 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p7674042124711">bank_group_id0 != bank_group_id1</p></td>
+           <td class="cellrowborder" valign="top" width="16.666666666666664%" headers="mcps1.3.7.7.1.1.1.2.7.1.6 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p167515425479">src地址和dst地址分别属于bank16和bank17，故无冲突。</p></td>
+          </tr>
+          <tr id="ZH-CN_TOPIC_0000002531509894__row3675154284710">
+           <td class="cellrowborder" valign="top" width="5.9988002399520095%" headers="mcps1.3.7.7.1.1.1.2.7.1.1 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p967514254716">示例2</p></td>
+           <td class="cellrowborder" valign="top" width="9.948010397920417%" headers="mcps1.3.7.7.1.1.1.2.7.1.2 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p1467514214471">0x10020</p></td>
+           <td class="cellrowborder" valign="top" width="10.507898420315936%" headers="mcps1.3.7.7.1.1.1.2.7.1.3 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p156751042114711">0x10E20</p></td>
+           <td class="cellrowborder" valign="top" width="25.51489702059588%" headers="mcps1.3.7.7.1.1.1.2.7.1.4 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p1367534210471">bank_id0 == bank_id1</p></td>
+           <td class="cellrowborder" valign="top" width="31.36372725454909%" headers="mcps1.3.7.7.1.1.1.2.7.1.5 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p86756421472">bank_group_id0 == bank_group_id1</p></td>
+           <td class="cellrowborder" valign="top" width="16.666666666666664%" headers="mcps1.3.7.7.1.1.1.2.7.1.6 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p1667544264720">src地址和dst地址的地址都在bank17，故存在冲突。</p></td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+      </div></li>
+     <li id="ZH-CN_TOPIC_0000002531509894__li1264151618456">写写冲突示例
+      <div class="p" id="ZH-CN_TOPIC_0000002531509894__p13173203624514">
+       <a name="ZH-CN_TOPIC_0000002531509894__li1264151618456"></a><a name="li1264151618456"></a>Vector指令目的操作数dst对应的8个DataBlock（block0-block7）同时写到一个bank group时造成写写冲突，具体分析如下： 
+       <div class="tablenoborder">
+        <table cellpadding="4" cellspacing="0" summary="" id="ZH-CN_TOPIC_0000002531509894__table11121346153814" frame="border" border="1" rules="all">
+         <caption>
+          <b>表2 </b>写写冲突示例
+         </caption>
+         <thead align="left">
+          <tr id="ZH-CN_TOPIC_0000002531509894__row212044623812">
+           <th align="left" class="cellrowborder" valign="top" width="5.789726356216995%" id="mcps1.3.7.7.2.1.1.2.9.1.1">
+            <p id="ZH-CN_TOPIC_0000002531509894__p13120184619386">序号</p></th>
+           <th align="left" class="cellrowborder" valign="top" width="7.959673547767644%" id="mcps1.3.7.7.2.1.1.2.9.1.2">
+            <p id="ZH-CN_TOPIC_0000002531509894__p2012004612384">dst地址</p></th>
+           <th align="left" class="cellrowborder" valign="top" width="9.505520883341337%" id="mcps1.3.7.7.2.1.1.2.9.1.3">
+            <p id="ZH-CN_TOPIC_0000002531509894__p112014610383">blk_stride</p></th>
+           <th align="left" class="cellrowborder" valign="top" width="8.660585693710996%" id="mcps1.3.7.7.2.1.1.2.9.1.4">
+            <p id="ZH-CN_TOPIC_0000002531509894__p212024619386">block0_addr</p></th>
+           <th align="left" class="cellrowborder" valign="top" width="8.775804128660585%" id="mcps1.3.7.7.2.1.1.2.9.1.5">
+            <p id="ZH-CN_TOPIC_0000002531509894__p1120146103816">block1_addr</p></th>
+           <th align="left" class="cellrowborder" valign="top" width="8.967834853576573%" id="mcps1.3.7.7.2.1.1.2.9.1.6">
+            <p id="ZH-CN_TOPIC_0000002531509894__p141208461384">block2_addr</p></th>
+           <th align="left" class="cellrowborder" valign="top" width="6.721075372059531%" id="mcps1.3.7.7.2.1.1.2.9.1.7">
+            <p id="ZH-CN_TOPIC_0000002531509894__p202701742154610">...</p></th>
+           <th align="left" class="cellrowborder" valign="top" width="43.61977916466635%" id="mcps1.3.7.7.2.1.1.2.9.1.8">
+            <p id="ZH-CN_TOPIC_0000002531509894__p171201746183813">结论</p></th>
+          </tr>
+         </thead>
+         <tbody>
+          <tr id="ZH-CN_TOPIC_0000002531509894__row161211146173810">
+           <td class="cellrowborder" valign="top" width="5.789726356216995%" headers="mcps1.3.7.7.2.1.1.2.9.1.1 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p111208465382">示例1</p></td>
+           <td class="cellrowborder" valign="top" width="7.959673547767644%" headers="mcps1.3.7.7.2.1.1.2.9.1.2 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p212044615383">0x1FE00</p></td>
+           <td class="cellrowborder" valign="top" width="9.505520883341337%" headers="mcps1.3.7.7.2.1.1.2.9.1.3 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p14120046103813">16</p></td>
+           <td class="cellrowborder" valign="top" width="8.660585693710996%" headers="mcps1.3.7.7.2.1.1.2.9.1.4 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p1012016469382">0x1FE00</p></td>
+           <td class="cellrowborder" valign="top" width="8.775804128660585%" headers="mcps1.3.7.7.2.1.1.2.9.1.5 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p112019463387">0x20000</p></td>
+           <td class="cellrowborder" valign="top" width="8.967834853576573%" headers="mcps1.3.7.7.2.1.1.2.9.1.6 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p71213469382">0x20200</p></td>
+           <td class="cellrowborder" valign="top" width="6.721075372059531%" headers="mcps1.3.7.7.2.1.1.2.9.1.7 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p127119427464">...</p></td>
+           <td class="cellrowborder" valign="top" width="43.61977916466635%" headers="mcps1.3.7.7.2.1.1.2.9.1.8 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p81217462386">8个DataBlock均在一个bank group下，故全部冲突，8拍完成一个Repeat的写入。</p></td>
+          </tr>
+          <tr id="ZH-CN_TOPIC_0000002531509894__row1112120465382">
+           <td class="cellrowborder" valign="top" width="5.789726356216995%" headers="mcps1.3.7.7.2.1.1.2.9.1.1 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p1012184610384">示例2</p></td>
+           <td class="cellrowborder" valign="top" width="7.959673547767644%" headers="mcps1.3.7.7.2.1.1.2.9.1.2 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p41211746143815">0x1FE00</p></td>
+           <td class="cellrowborder" valign="top" width="9.505520883341337%" headers="mcps1.3.7.7.2.1.1.2.9.1.3 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p71211446173816">8</p></td>
+           <td class="cellrowborder" valign="top" width="8.660585693710996%" headers="mcps1.3.7.7.2.1.1.2.9.1.4 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p8121154673814">0x1FE00</p></td>
+           <td class="cellrowborder" valign="top" width="8.775804128660585%" headers="mcps1.3.7.7.2.1.1.2.9.1.5 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p512119464387">0x1FF00</p></td>
+           <td class="cellrowborder" valign="top" width="8.967834853576573%" headers="mcps1.3.7.7.2.1.1.2.9.1.6 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p912194611387">0x20000</p></td>
+           <td class="cellrowborder" valign="top" width="6.721075372059531%" headers="mcps1.3.7.7.2.1.1.2.9.1.7 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p20271174214619">...</p></td>
+           <td class="cellrowborder" valign="top" width="43.61977916466635%" headers="mcps1.3.7.7.2.1.1.2.9.1.8 ">
+            <p id="ZH-CN_TOPIC_0000002531509894__p1449153217134">block0和block2在一个bank group，存在冲突，4拍完成一个Repeat的写入。</p></td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+      </div></li>
+    </ul>
+    <ul id="ZH-CN_TOPIC_0000002531509894__ul934913518378">
+     <li id="ZH-CN_TOPIC_0000002531509894__li11171916144710">读读冲突
+      <ul id="ZH-CN_TOPIC_0000002531509894__ul34097224479">
+       <li id="ZH-CN_TOPIC_0000002531509894__li93490519374">Vector指令多个源操作数同时读到同一个bank group时造成读读冲突，具体分析如下： 
+        <div class="tablenoborder">
+         <table cellpadding="4" cellspacing="0" summary="" id="ZH-CN_TOPIC_0000002531509894__table1318881512255" frame="border" border="1" rules="all">
+          <caption>
+           <b>表3 </b>双src场景读读冲突示例
+          </caption>
+          <thead align="left">
+           <tr id="ZH-CN_TOPIC_0000002531509894__row8188715102517">
+            <th align="left" class="cellrowborder" valign="top" width="6.5786842631473705%" id="mcps1.3.7.8.1.1.1.1.2.7.1.1">
+             <p id="ZH-CN_TOPIC_0000002531509894__p111881154254">序号</p></th>
+            <th align="left" class="cellrowborder" valign="top" width="12.787442511497702%" id="mcps1.3.7.8.1.1.1.1.2.7.1.2">
+             <p id="ZH-CN_TOPIC_0000002531509894__p14188915172513">src0地址</p></th>
+            <th align="left" class="cellrowborder" valign="top" width="14.077184563087384%" id="mcps1.3.7.8.1.1.1.1.2.7.1.3">
+             <p id="ZH-CN_TOPIC_0000002531509894__p4188181542510">src1地址</p></th>
+            <th align="left" class="cellrowborder" valign="top" width="18.52629474105179%" id="mcps1.3.7.8.1.1.1.1.2.7.1.4">
+             <p id="ZH-CN_TOPIC_0000002531509894__p1618871572514">bank</p></th>
+            <th align="left" class="cellrowborder" valign="top" width="31.36372725454909%" id="mcps1.3.7.8.1.1.1.1.2.7.1.5">
+             <p id="ZH-CN_TOPIC_0000002531509894__p31886156253">bank group</p></th>
+            <th align="left" class="cellrowborder" valign="top" width="16.666666666666664%" id="mcps1.3.7.8.1.1.1.1.2.7.1.6">
+             <p id="ZH-CN_TOPIC_0000002531509894__p61881115112512">结论</p></th>
+           </tr>
+          </thead>
+          <tbody>
+           <tr id="ZH-CN_TOPIC_0000002531509894__row6188915102519">
+            <td class="cellrowborder" valign="top" width="6.5786842631473705%" headers="mcps1.3.7.8.1.1.1.1.2.7.1.1 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p10159543259">示例1</p></td>
+            <td class="cellrowborder" valign="top" width="12.787442511497702%" headers="mcps1.3.7.8.1.1.1.1.2.7.1.2 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p17188131518251">0x10020</p></td>
+            <td class="cellrowborder" valign="top" width="14.077184563087384%" headers="mcps1.3.7.8.1.1.1.1.2.7.1.3 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p1818811582515">0x20020</p></td>
+            <td class="cellrowborder" valign="top" width="18.52629474105179%" headers="mcps1.3.7.8.1.1.1.1.2.7.1.4 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p131881015122512">bank_id0 != bank_id1</p></td>
+            <td class="cellrowborder" valign="top" width="31.36372725454909%" headers="mcps1.3.7.8.1.1.1.1.2.7.1.5 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p518881513257">bank_group_id0 == bank_group_id1</p></td>
+            <td class="cellrowborder" valign="top" width="16.666666666666664%" headers="mcps1.3.7.8.1.1.1.1.2.7.1.6 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p3188215122513">存在冲突。</p></td>
+           </tr>
+           <tr id="ZH-CN_TOPIC_0000002531509894__row14188615142520">
+            <td class="cellrowborder" valign="top" width="6.5786842631473705%" headers="mcps1.3.7.8.1.1.1.1.2.7.1.1 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p318815156259">示例2</p></td>
+            <td class="cellrowborder" valign="top" width="12.787442511497702%" headers="mcps1.3.7.8.1.1.1.1.2.7.1.2 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p151881115192511">0x10020</p></td>
+            <td class="cellrowborder" valign="top" width="14.077184563087384%" headers="mcps1.3.7.8.1.1.1.1.2.7.1.3 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p12188201519257">0x10000</p></td>
+            <td class="cellrowborder" valign="top" width="18.52629474105179%" headers="mcps1.3.7.8.1.1.1.1.2.7.1.4 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p71881515182513">bank_id0 != bank_id1</p></td>
+            <td class="cellrowborder" valign="top" width="31.36372725454909%" headers="mcps1.3.7.8.1.1.1.1.2.7.1.5 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p1318817159254">bank_group_id0 != bank_group_id1</p></td>
+            <td class="cellrowborder" valign="top" width="16.666666666666664%" headers="mcps1.3.7.8.1.1.1.1.2.7.1.6 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p11881815182511">无冲突。</p></td>
+           </tr>
+          </tbody>
+         </table>
+        </div></li>
+       <li id="ZH-CN_TOPIC_0000002531509894__li143027258478">Vector指令某一个源操作数对应的8个DataBlock（block0-block7）读到同一个bank group时造成读读冲突，具体分析如下： 
+        <div class="tablenoborder">
+         <table cellpadding="4" cellspacing="0" summary="" id="ZH-CN_TOPIC_0000002531509894__table332972534717" frame="border" border="1" rules="all">
+          <caption>
+           <b>表4 </b>单src场景读读冲突示例
+          </caption>
+          <thead align="left">
+           <tr id="ZH-CN_TOPIC_0000002531509894__row832822516476">
+            <th align="left" class="cellrowborder" valign="top" width="6.117919521374119%" id="mcps1.3.7.8.1.1.2.1.2.9.1.1">
+             <p id="ZH-CN_TOPIC_0000002531509894__p157111614175011">序号</p></th>
+            <th align="left" class="cellrowborder" valign="top" width="11.560358969410403%" id="mcps1.3.7.8.1.1.2.1.2.9.1.2">
+             <p id="ZH-CN_TOPIC_0000002531509894__p33287255478">src地址</p></th>
+            <th align="left" class="cellrowborder" valign="top" width="9.910257647399403%" id="mcps1.3.7.8.1.1.2.1.2.9.1.3">
+             <p id="ZH-CN_TOPIC_0000002531509894__p73282255477">blk_stride</p></th>
+            <th align="left" class="cellrowborder" valign="top" width="10.798031458071987%" id="mcps1.3.7.8.1.1.2.1.2.9.1.4">
+             <p id="ZH-CN_TOPIC_0000002531509894__p1332819254473">block0_addr</p></th>
+            <th align="left" class="cellrowborder" valign="top" width="10.633986297404228%" id="mcps1.3.7.8.1.1.2.1.2.9.1.5">
+             <p id="ZH-CN_TOPIC_0000002531509894__p33281125164710">block1_addr</p></th>
+            <th align="left" class="cellrowborder" valign="top" width="9.234777574061564%" id="mcps1.3.7.8.1.1.2.1.2.9.1.6">
+             <p id="ZH-CN_TOPIC_0000002531509894__p632818253478">block2_addr</p></th>
+            <th align="left" class="cellrowborder" valign="top" width="6.754800733378366%" id="mcps1.3.7.8.1.1.2.1.2.9.1.7">
+             <p id="ZH-CN_TOPIC_0000002531509894__p20451145754719">...</p></th>
+            <th align="left" class="cellrowborder" valign="top" width="34.98986779889993%" id="mcps1.3.7.8.1.1.2.1.2.9.1.8">
+             <p id="ZH-CN_TOPIC_0000002531509894__p11328625144713">结论</p></th>
+           </tr>
+          </thead>
+          <tbody>
+           <tr id="ZH-CN_TOPIC_0000002531509894__row7329725144718">
+            <td class="cellrowborder" valign="top" width="6.117919521374119%" headers="mcps1.3.7.8.1.1.2.1.2.9.1.1 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p33281425114710">示例1</p></td>
+            <td class="cellrowborder" valign="top" width="11.560358969410403%" headers="mcps1.3.7.8.1.1.2.1.2.9.1.2 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p1932817255472">0x1FE00</p></td>
+            <td class="cellrowborder" valign="top" width="9.910257647399403%" headers="mcps1.3.7.8.1.1.2.1.2.9.1.3 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p113284254479">16</p></td>
+            <td class="cellrowborder" valign="top" width="10.798031458071987%" headers="mcps1.3.7.8.1.1.2.1.2.9.1.4 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p183285257479">0x1FE00</p></td>
+            <td class="cellrowborder" valign="top" width="10.633986297404228%" headers="mcps1.3.7.8.1.1.2.1.2.9.1.5 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p12329925194719">0x20000</p></td>
+            <td class="cellrowborder" valign="top" width="9.234777574061564%" headers="mcps1.3.7.8.1.1.2.1.2.9.1.6 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p45321853204715">0x20200</p></td>
+            <td class="cellrowborder" valign="top" width="6.754800733378366%" headers="mcps1.3.7.8.1.1.2.1.2.9.1.7 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p3451457164714">...</p></td>
+            <td class="cellrowborder" valign="top" width="34.98986779889993%" headers="mcps1.3.7.8.1.1.2.1.2.9.1.8 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p3329152520475">8个DataBlock均在一个bank group下，故全部冲突，8拍完成一个Repeat的读操作。</p></td>
+           </tr>
+           <tr id="ZH-CN_TOPIC_0000002531509894__row432932554719">
+            <td class="cellrowborder" valign="top" width="6.117919521374119%" headers="mcps1.3.7.8.1.1.2.1.2.9.1.1 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p18329112524713">示例2</p></td>
+            <td class="cellrowborder" valign="top" width="11.560358969410403%" headers="mcps1.3.7.8.1.1.2.1.2.9.1.2 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p163291925114715">0x1FE00</p></td>
+            <td class="cellrowborder" valign="top" width="9.910257647399403%" headers="mcps1.3.7.8.1.1.2.1.2.9.1.3 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p1032918252477">8</p></td>
+            <td class="cellrowborder" valign="top" width="10.798031458071987%" headers="mcps1.3.7.8.1.1.2.1.2.9.1.4 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p1732932594710">0x1FE00</p></td>
+            <td class="cellrowborder" valign="top" width="10.633986297404228%" headers="mcps1.3.7.8.1.1.2.1.2.9.1.5 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p103291125134710">0x1FF00</p></td>
+            <td class="cellrowborder" valign="top" width="9.234777574061564%" headers="mcps1.3.7.8.1.1.2.1.2.9.1.6 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p7329182515474">0x20000</p></td>
+            <td class="cellrowborder" valign="top" width="6.754800733378366%" headers="mcps1.3.7.8.1.1.2.1.2.9.1.7 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p1945115714477">...</p></td>
+            <td class="cellrowborder" valign="top" width="34.98986779889993%" headers="mcps1.3.7.8.1.1.2.1.2.9.1.8 ">
+             <p id="ZH-CN_TOPIC_0000002531509894__p9329192544712">block0和block2在同一个bank group下，存在冲突，4拍完成一个Repeat。</p></td>
+           </tr>
+          </tbody>
+         </table>
+        </div></li>
+      </ul></li>
+    </ul>
+    <div class="note" id="ZH-CN_TOPIC_0000002531509894__note1344673912372">
+     <img src="public_sys-resources/note_3.0-zh-cn.png"><span class="notetitle"> </span>
+     <div class="notebody">
+      <p id="ZH-CN_TOPIC_0000002531509894__p14435204094712">通过msProf工具可以进行资源冲突占比的相关性能数据采集。</p>
+      <p id="ZH-CN_TOPIC_0000002531509894__p34466394371">工具的具体使用方法和资源冲突占比文件性能数据文件说明请参考<span id="ZH-CN_TOPIC_0000002531509894__ph57035358317">《<a href="https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/900/devaids/optool/docs/zh/quick_start/mskpp_quick_start.md" target="_blank" rel="noopener noreferrer">算子开发工具</a>》</span>。</p>
+     </div>
+    </div>
+   </div>
+   <div class="section" id="ZH-CN_TOPIC_0000002531509894__section12501642143515">
+    <h4 class="sectiontitle">如何避免bank冲突</h4>
+    <p id="ZH-CN_TOPIC_0000002531509894__p18508171613464">避免bank冲突的方法有两种：<strong id="ZH-CN_TOPIC_0000002531509894__b12228132412254">优化计算逻辑</strong>和<strong id="ZH-CN_TOPIC_0000002531509894__b129185811257">优化地址分配</strong>。</p>
+    <ul id="ZH-CN_TOPIC_0000002531509894__ul9197634171217">
+     <li id="ZH-CN_TOPIC_0000002531509894__li12197034201215"><strong id="ZH-CN_TOPIC_0000002531509894__b14641432152615">优化计算逻辑</strong>
+      <p id="ZH-CN_TOPIC_0000002531509894__p13741641669">对一个shape为(8, 16, 16)的输入做(1, 0, 2)的transpose操作，输出shape为(16, 8, 16)。通过将计算逻辑由“跳读，连续写”修改为“连续读，跳写”可避免冲突问题。实现方案对比如下：</p>
+      <div class="tablenoborder">
+       <table cellpadding="4" cellspacing="0" summary="" id="ZH-CN_TOPIC_0000002531509894__table12921549195512" frame="border" border="1" rules="all">
+        <thead align="left">
+         <tr id="ZH-CN_TOPIC_0000002531509894__row1229364945511">
+          <th align="left" class="cellrowborder" valign="top" width="6.813978389954251%" id="mcps1.3.8.3.1.3.1.4.1.1">
+           <p id="ZH-CN_TOPIC_0000002531509894__p2081249145715">实现方案</p></th>
+          <th align="left" class="cellrowborder" valign="top" width="42.6652389759564%" id="mcps1.3.8.3.1.3.1.4.1.2">
+           <p id="ZH-CN_TOPIC_0000002531509894__p2029374985519">原始实现</p></th>
+          <th align="left" class="cellrowborder" valign="top" width="50.520782634089365%" id="mcps1.3.8.3.1.3.1.4.1.3">
+           <p id="ZH-CN_TOPIC_0000002531509894__p152931149115516">优化实现</p></th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr id="ZH-CN_TOPIC_0000002531509894__row1629374995517">
+          <td class="cellrowborder" valign="top" width="6.813978389954251%" headers="mcps1.3.8.3.1.3.1.4.1.1 ">
+           <p id="ZH-CN_TOPIC_0000002531509894__p108124995710">实现方法</p></td>
+          <td class="cellrowborder" valign="top" width="42.6652389759564%" headers="mcps1.3.8.3.1.3.1.4.1.2 ">
+           <p id="ZH-CN_TOPIC_0000002531509894__p55722115019">跳读，连续写</p>
+           <p id="ZH-CN_TOPIC_0000002531509894__p144638315712">同一Repeat内输入的8个DataBlock都在同一个bank group而发生读读冲突。</p></td>
+          <td class="cellrowborder" valign="top" width="50.520782634089365%" headers="mcps1.3.8.3.1.3.1.4.1.3 ">
+           <p id="ZH-CN_TOPIC_0000002531509894__p2293249135516">连续读，跳写</p>
+           <p id="ZH-CN_TOPIC_0000002531509894__p6641340414">同一个Repeat内输入的8个DataBlock不在同一个bank group内，避免了读读冲突。</p></td>
+         </tr>
+         <tr id="ZH-CN_TOPIC_0000002531509894__row14922142214585">
+          <td class="cellrowborder" valign="top" width="6.813978389954251%" headers="mcps1.3.8.3.1.3.1.4.1.1 ">
+           <p id="ZH-CN_TOPIC_0000002531509894__p6922182210587">示意图</p></td>
+          <td class="cellrowborder" valign="top" width="42.6652389759564%" headers="mcps1.3.8.3.1.3.1.4.1.2 ">
+           <p id="ZH-CN_TOPIC_0000002531509894__p10922222205810"><span><img class="imgResize" id="ZH-CN_TOPIC_0000002531509894__image1757423545813" src="figure/zh-cn_image_0000002562270129.png" title="点击放大"></span></p></td>
+          <td class="cellrowborder" valign="top" width="50.520782634089365%" headers="mcps1.3.8.3.1.3.1.4.1.3 ">
+           <p id="ZH-CN_TOPIC_0000002531509894__p1922622115813"><span><img class="imgResize" id="ZH-CN_TOPIC_0000002531509894__image6621154316580" src="figure/zh-cn_image_0000002531350194.png" title="点击放大"></span></p></td>
+         </tr>
+         <tr id="ZH-CN_TOPIC_0000002531509894__row3293124918559">
+          <td class="cellrowborder" valign="top" width="6.813978389954251%" headers="mcps1.3.8.3.1.3.1.4.1.1 ">
+           <p id="ZH-CN_TOPIC_0000002531509894__p12812993573">示例代码</p></td>
+          <td class="cellrowborder" valign="top" width="42.6652389759564%" headers="mcps1.3.8.3.1.3.1.4.1.2 ">
+           <div class="codecoloring" codetype="Cpp" id="ZH-CN_TOPIC_0000002531509894__screen924835613570">
+            <div class="highlight">
+             <table class="highlighttable">
+              <tbody>
+               <tr>
+                <td class="linenos">
+                 <div class="linenodiv">
+                  <pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre>
+                 </div></td>
+                <td class="code">
+                 <div>
+                  <pre><span></span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">mask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">128</span><span class="p">;</span>
+<span class="n">UnaryRepeatParams</span><span class="w"> </span><span class="n">params</span><span class="p">;</span>
+<span class="n">params</span><span class="p">.</span><span class="n">dstBlkStride</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="n">params</span><span class="p">.</span><span class="n">srcBlkStride</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">16</span><span class="p">;</span>
+<span class="k">for</span><span class="p">(</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;</span><span class="mi">16</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w">   </span><span class="p">{</span>
+<span class="w">    </span><span class="n">AscendC</span><span class="o">::</span><span class="n">Adds</span><span class="p">(</span><span class="n">dstLocal</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">128</span><span class="p">],</span><span class="w"> </span><span class="n">srcLocal</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">16</span><span class="p">],</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">mask</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">params</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+                 </div></td>
+               </tr>
+              </tbody>
+             </table>
+            </div>
+           </div></td>
+          <td class="cellrowborder" valign="top" width="50.520782634089365%" headers="mcps1.3.8.3.1.3.1.4.1.3 ">
+           <div class="codecoloring" codetype="Cpp" id="ZH-CN_TOPIC_0000002531509894__screen271414925813">
+            <div class="highlight">
+             <table class="highlighttable">
+              <tbody>
+               <tr>
+                <td class="linenos">
+                 <div class="linenodiv">
+                  <pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre>
+                 </div></td>
+                <td class="code">
+                 <div>
+                  <pre><span></span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">mask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">128</span><span class="p">;</span>
+<span class="n">UnaryRepeatParams</span><span class="w"> </span><span class="n">params</span><span class="p">;</span>
+<span class="n">params</span><span class="p">.</span><span class="n">dstBlkStride</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span>
+<span class="n">params</span><span class="p">.</span><span class="n">srcBlkStride</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="k">for</span><span class="p">(</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">&lt;</span><span class="mi">8</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w">   </span><span class="p">{</span>
+<span class="w">    </span><span class="n">AscendC</span><span class="o">::</span><span class="n">Adds</span><span class="p">(</span><span class="n">dstLocal</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">16</span><span class="p">],</span><span class="w"> </span><span class="n">srcLocal</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">256</span><span class="p">],</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">mask</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">params</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+                 </div></td>
+               </tr>
+              </tbody>
+             </table>
+            </div>
+           </div></td>
+         </tr>
+        </tbody>
+       </table>
+      </div></li>
+     <li id="ZH-CN_TOPIC_0000002531509894__li2066211291514"><strong id="ZH-CN_TOPIC_0000002531509894__b8706133611267">优化地址分配</strong>
+      <p id="ZH-CN_TOPIC_0000002531509894__p158874161232">实现连续4096个float元素的加法z = x + y，通过在内存分配时适当扩大内存，保证在一个Repeat内，x和y不会同时出现在同一个bank group内，x/y和z不会同时出现同一个bank内。完整样例可参考<span id="ZH-CN_TOPIC_0000002531509894__ph770717420283"><a href="https://gitee.com/ascend/samples/tree/master/operator/ascendc/4_best_practices/4_bank_conflict" target="_blank" rel="noopener noreferrer">避免bank冲突样例</a></span>。</p>
+      <p id="ZH-CN_TOPIC_0000002531509894__p11302142133719">实现方案对比如下：</p>
+      <div class="tablenoborder">
+       <table cellpadding="4" cellspacing="0" summary="" id="ZH-CN_TOPIC_0000002531509894__table839512544411" frame="border" border="1" rules="all">
+        <thead align="left">
+         <tr id="ZH-CN_TOPIC_0000002531509894__row73965541942">
+          <th align="left" class="cellrowborder" valign="top" width="6.813978389954251%" id="mcps1.3.8.3.2.4.1.4.1.1">
+           <p id="ZH-CN_TOPIC_0000002531509894__p63963545416">实现方案</p></th>
+          <th align="left" class="cellrowborder" valign="top" width="42.01304390148935%" id="mcps1.3.8.3.2.4.1.4.1.2">
+           <p id="ZH-CN_TOPIC_0000002531509894__p539610544415">原始实现</p></th>
+          <th align="left" class="cellrowborder" valign="top" width="51.17297770855641%" id="mcps1.3.8.3.2.4.1.4.1.3">
+           <p id="ZH-CN_TOPIC_0000002531509894__p6396185413418">优化实现</p></th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr id="ZH-CN_TOPIC_0000002531509894__row143961754148">
+          <td class="cellrowborder" valign="top" width="6.813978389954251%" headers="mcps1.3.8.3.2.4.1.4.1.1 ">
+           <p id="ZH-CN_TOPIC_0000002531509894__p43962544416">实现方法</p></td>
+          <td class="cellrowborder" valign="top" width="42.01304390148935%" headers="mcps1.3.8.3.2.4.1.4.1.2 ">
+           <p id="ZH-CN_TOPIC_0000002531509894__p33964541745">不做地址优化，直接使用InitBuffer分配内存，各个Tensor的地址分别为：</p>
+           <p id="ZH-CN_TOPIC_0000002531509894__p17357131764">x：起始地址0x0，tensor长度为4096 * sizeof(float)字节</p>
+           <p id="ZH-CN_TOPIC_0000002531509894__p15372720618">y：起始地址0x4000，tensor长度为4096 * sizeof(float)字节</p>
+           <p id="ZH-CN_TOPIC_0000002531509894__p138635471667">z：起始地址0x8000，tensor长度为4096 * sizeof(float)字节</p>
+           <p id="ZH-CN_TOPIC_0000002531509894__p1927691223819">在一个Repeat内，x和y同时读同一个bank group，x/y和z同时读写同一个bank。</p></td>
+          <td class="cellrowborder" valign="top" width="51.17297770855641%" headers="mcps1.3.8.3.2.4.1.4.1.3 ">
+           <p id="ZH-CN_TOPIC_0000002531509894__p330914381671">优化地址，使用InitBuffer分配内存时适当扩大内存申请，各个Tensor的地址分别为：</p>
+           <p id="ZH-CN_TOPIC_0000002531509894__p326294904420">x：起始地址0x0，tensor长度为(4096 * sizeof(float) + 256)字节</p>
+           <p id="ZH-CN_TOPIC_0000002531509894__p153096389720">y：起始地址0x4100，tensor长度为(64 * 1024 - (4096 * sizeof(float) + 256))字节</p>
+           <p id="ZH-CN_TOPIC_0000002531509894__p1130923814713">z：起始地址0x10000，tensor长度为4096 * sizeof(float) 字节</p>
+           <p id="ZH-CN_TOPIC_0000002531509894__p9897551154415">x多申请256字节，避免一个Repeat内x y同时读同一个bank group；y多申请空间，确保z不会和x/y落入同一个bank</p></td>
+         </tr>
+         <tr id="ZH-CN_TOPIC_0000002531509894__row83963547410">
+          <td class="cellrowborder" valign="top" width="6.813978389954251%" headers="mcps1.3.8.3.2.4.1.4.1.1 ">
+           <p id="ZH-CN_TOPIC_0000002531509894__p103961544412">示意图</p></td>
+          <td class="cellrowborder" valign="top" width="42.01304390148935%" headers="mcps1.3.8.3.2.4.1.4.1.2 ">
+           <p id="ZH-CN_TOPIC_0000002531509894__p575310529216"><span><img class="imgResize" id="ZH-CN_TOPIC_0000002531509894__image5993165819214" src="figure/zh-cn_image_0000002531510152.png" title="点击放大"></span></p></td>
+          <td class="cellrowborder" valign="top" width="51.17297770855641%" headers="mcps1.3.8.3.2.4.1.4.1.3 ">
+           <p id="ZH-CN_TOPIC_0000002531509894__p20186156039"><span><img class="imgResize" id="ZH-CN_TOPIC_0000002531509894__image35231563314" src="figure/zh-cn_image_0000002531350184.png" title="点击放大"></span></p></td>
+         </tr>
+         <tr id="ZH-CN_TOPIC_0000002531509894__row1539620548413">
+          <td class="cellrowborder" valign="top" width="6.813978389954251%" headers="mcps1.3.8.3.2.4.1.4.1.1 ">
+           <p id="ZH-CN_TOPIC_0000002531509894__p43961554645">示例代码</p></td>
+          <td class="cellrowborder" valign="top" width="42.01304390148935%" headers="mcps1.3.8.3.2.4.1.4.1.2 ">
+           <div class="codecoloring" codetype="Cpp" id="ZH-CN_TOPIC_0000002531509894__screen35066415507">
+            <div class="highlight">
+             <table class="highlighttable">
+              <tbody>
+               <tr>
+                <td class="linenos">
+                 <div class="linenodiv">
+                  <pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre>
+                 </div></td>
+                <td class="code">
+                 <div>
+                  <pre><span></span><span class="n">pipe</span><span class="p">.</span><span class="n">InitBuffer</span><span class="p">(</span><span class="n">inQueueX</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">4096</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">));</span>
+<span class="n">pipe</span><span class="p">.</span><span class="n">InitBuffer</span><span class="p">(</span><span class="n">inQueueY</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">4096</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">));</span>
+<span class="n">pipe</span><span class="p">.</span><span class="n">InitBuffer</span><span class="p">(</span><span class="n">outQueueZ</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">4096</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">));</span>
+</pre>
+                 </div></td>
+               </tr>
+              </tbody>
+             </table>
+            </div>
+           </div></td>
+          <td class="cellrowborder" valign="top" width="51.17297770855641%" headers="mcps1.3.8.3.2.4.1.4.1.3 ">
+           <div class="codecoloring" codetype="Cpp" id="ZH-CN_TOPIC_0000002531509894__screen51721010145115">
+            <div class="highlight">
+             <table class="highlighttable">
+              <tbody>
+               <tr>
+                <td class="linenos">
+                 <div class="linenodiv">
+                  <pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre>
+                 </div></td>
+                <td class="code">
+                 <div>
+                  <pre><span></span><span class="n">pipe</span><span class="p">.</span><span class="n">InitBuffer</span><span class="p">(</span><span class="n">inQueueX</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">4096</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">256</span><span class="p">);</span><span class="w"> </span><span class="c1">// 多申请256字节</span>
+<span class="n">pipe</span><span class="p">.</span><span class="n">InitBuffer</span><span class="p">(</span><span class="n">inQueueY</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="mi">4096</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">256</span><span class="p">));</span><span class="w"> </span><span class="c1">//多申请空间，确保z不会和x/y落入同一个bank， 64 * 1024是16个bank的空间，4096 * sizeof(float) + 256是x所占的空间</span>
+<span class="n">pipe</span><span class="p">.</span><span class="n">InitBuffer</span><span class="p">(</span><span class="n">outQueueZ</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">4096</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">));</span>
+</pre>
+                 </div></td>
+               </tr>
+              </tbody>
+             </table>
+            </div>
+           </div></td>
+         </tr>
+        </tbody>
+       </table>
+      </div></li>
+    </ul>
+   </div>
+  </div>
+  <div>
+   <div class="familylinks">
+    <div class="parentlink">
+     <strong>父主题：</strong> <a href="atlas_ascendc_best_practices_10_0025.html">避免Unified Buffer的bank冲突</a>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>

@@ -1,0 +1,8 @@
+"""Generate scope2 inputs with the frozen official initializer."""
+import common
+
+
+def build(case_dir, sealed_dir, case, seed):
+    return common.load_official_fixture_specs(
+        sealed_dir / "official/original.py", "scope2_official", seed
+    )

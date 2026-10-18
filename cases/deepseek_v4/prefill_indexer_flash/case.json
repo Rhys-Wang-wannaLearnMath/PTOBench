@@ -8,15 +8,32 @@
   "config": "public/config.py",
   "comparator": "public/comparator.json",
   "environment": "a2a3_single_card",
-  "fixture_ids": ["fixture_000"],
-  "scalars": ["num_tokens"],
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "scalars": [
+    "num_tokens"
+  ],
   "correctness": {
     "mode": "single_step",
-    "outputs": ["score", "idx_kv_cache", "idx_kv_scale", "topk_idxs"]
+    "outputs": [
+      "score",
+      "idx_kv_cache",
+      "idx_kv_scale",
+      "topk_idxs"
+    ]
   },
   "state": {
     "behavior": "mutating",
-    "initial_state": ["inner_kv_state", "inner_score_state", "idx_kv_cache", "idx_kv_scale"],
+    "initial_state": [
+      "inner_kv_state",
+      "inner_score_state",
+      "idx_kv_cache",
+      "idx_kv_scale"
+    ],
     "restore_before_each_launch": true
+  },
+  "runtime": {
+    "device_id": 6
   }
 }

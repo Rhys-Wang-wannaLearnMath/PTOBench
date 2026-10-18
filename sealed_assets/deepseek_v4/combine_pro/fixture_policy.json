@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "fixture_seeds": {"fixture_000": 0},
+  "builder": "build_tensor_specs",
+  "builder_args": [],
+  "seed_scope": "official torch CPU seed scope; routing uses Generator.manual_seed(0)",
+  "source": "official/original.py"
+}

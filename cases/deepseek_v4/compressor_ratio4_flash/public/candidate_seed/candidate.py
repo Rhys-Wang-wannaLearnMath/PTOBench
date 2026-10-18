@@ -313,8 +313,8 @@ def compressor(
 def compressor_test(
     x: pl.Tensor[[B, S, D], pl.BF16],
     kv: pl.Out[pl.Tensor[[B, S, HEAD_DIM], pl.FP32]],
-    kv_state: pl.Out[pl.Tensor[[B, STATE_LEN, OUT_DIM], pl.FP32]],
-    score_state: pl.Out[pl.Tensor[[B, STATE_LEN, OUT_DIM], pl.FP32]],
+    kv_state: pl.InOut[pl.Tensor[[B, STATE_LEN, OUT_DIM], pl.FP32]],
+    score_state: pl.InOut[pl.Tensor[[B, STATE_LEN, OUT_DIM], pl.FP32]],
     wkv: pl.Tensor[[D, OUT_DIM], pl.BF16],
     wgate: pl.Tensor[[D, OUT_DIM], pl.BF16],
     ape: pl.Tensor[[COMPRESS_RATIO, OUT_DIM], pl.FP32],
@@ -324,7 +324,7 @@ def compressor_test(
     even_select: pl.Tensor[[ROPE_HEAD_DIM, ROPE_HEAD_DIM // 2], pl.BF16],
     odd_select: pl.Tensor[[ROPE_HEAD_DIM, ROPE_HEAD_DIM // 2], pl.BF16],
     hadamard: pl.Tensor[[HEAD_DIM, HEAD_DIM], pl.BF16],
-    kv_cache: pl.Out[pl.Tensor[[B, IDX_KV_LEN, HEAD_DIM], pl.BF16]],
+    kv_cache: pl.InOut[pl.Tensor[[B, IDX_KV_LEN, HEAD_DIM], pl.BF16]],
     start_pos: pl.Scalar[pl.INT32],
     rotate: pl.Scalar[pl.BOOL],
 ):

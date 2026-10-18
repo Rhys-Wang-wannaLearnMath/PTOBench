@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_paths": [
+    {
+      "path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/deepseek_v4_decode_moe_expert.py",
+      "sha256": "d719628712b91d56536a8caa2a6889e989bcb89b7fedbedd0b45486c1f5b3063"
+    }
+  ],
+  "source_sha256": "d719628712b91d56536a8caa2a6889e989bcb89b7fedbedd0b45486c1f5b3063",
+  "frozen_copies": [
+    {
+      "path": "original.py",
+      "sha256": "d719628712b91d56536a8caa2a6889e989bcb89b7fedbedd0b45486c1f5b3063"
+    }
+  ],
+  "frozen_copy_sha256": "d719628712b91d56536a8caa2a6889e989bcb89b7fedbedd0b45486c1f5b3063",
+  "dependencies": [],
+  "selection": "Complete self-contained DeepSeek-V4 decode routed-expert plus shared-expert demo workload selected by Stage 1; the source has no config dependency.",
+  "fixture_authority": "real TensorSpec builder and official golden_fn"
+}

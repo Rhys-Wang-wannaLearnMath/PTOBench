@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.prefill_qkv_proj_rope_v2_prefill_flash",
+  "description": "deepseek_v4.prefill_qkv_proj_rope_v2_prefill_flash: frozen ND W8A8C16 Q/KV LoRA projection and interleaved RoPE, FLASH preset, prefill B=1 S=128",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "qkv_proj_rope_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card_libstdcxx",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "q",
+      "kv",
+      "qr",
+      "qr_scale"
+    ]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  },
+  "runtime": {
+    "device_id": 4
+  }
+}

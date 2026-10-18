@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.hc_post_v2_decode_pro",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "7f6194b7c92f4b321483bc37676b5de66af5124a75b7ca5ad631ebeb3436eb21"
+}

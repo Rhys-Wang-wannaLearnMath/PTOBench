@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.decode_moe_expert",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "127d4d884487b65bb00546bc9c28e52dad0d2432e254a3ed1b8c53f182589062"
+}

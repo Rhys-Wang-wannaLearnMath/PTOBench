@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "authority": "selected_upstream",
+  "repository": "https://github.com/hw-native-sys/pypto-lib.git",
+  "revision": "15c9f1e15d625da2232e428e74ec5ef337495ae4",
+  "source_path": "models/deepseek_v4_flash_mtp/prefill_cp_zigzag.py",
+  "source_sha256": "b0665597af0dd888eecdc87b25877ce029f6970ce9ddac030acf38276cde3248",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "b0665597af0dd888eecdc87b25877ce029f6970ce9ddac030acf38276cde3248",
+  "dependencies": [
+    {
+      "source_path": "models/deepseek_v4_flash_mtp/config.py",
+      "source_sha256": "61b52e187ba1c2d95465e1c87bc8d125312ec349c92f7355a1061a2071995da4",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "61b52e187ba1c2d95465e1c87bc8d125312ec349c92f7355a1061a2071995da4"
+    }
+  ],
+  "selection": "Pinned CP4 projected-KV tail exchange with complete DEMO preset bound through public Case config; preserved source and dependency are byte-exact.",
+  "fixture_authority": "byte-exact official TensorSpec builder and golden function"
+}

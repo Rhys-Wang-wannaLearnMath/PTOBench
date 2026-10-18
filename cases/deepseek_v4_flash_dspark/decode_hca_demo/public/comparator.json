@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "x_out": {
+      "method": "custom",
+      "name": "ratio_reldiff",
+      "diff_thd": 0.003,
+      "pct_thd": 0.008,
+      "max_diff_hd": 1.0
+    },
+    "kv_cache": {
+      "method": "custom",
+      "name": "mapped_pool_ratio_allclose",
+      "mapping_name": "ori_slot_mapping",
+      "mapping_shape": [
+        128
+      ],
+      "block_size": 128,
+      "leading_rank_axis": false,
+      "atol": 0.001,
+      "rtol": 0.0078125,
+      "max_error_ratio": 0.005
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_mtp.prefill_cp_swa_cp2_flash",
+  "description": "DeepSeek V4 FLASH CP2 zigzag SWA prefill attention",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "prefill_cp_swa_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_deepseek_v4_moe_ep2",
+  "fixture_ids": ["fixture_000"],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": ["x_out", "kv_cache"]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": ["kv_cache"],
+    "restore_before_each_launch": true
+  },
+  "scalars": []
+}

@@ -1,0 +1,351 @@
+[
+  {
+    "name": "x_hc",
+    "scalar": false,
+    "shape": [
+      128,
+      4,
+      6144
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "hc_attn_fn",
+    "scalar": false,
+    "shape": [
+      24,
+      24576
+    ],
+    "dtype": "float32",
+    "resident": null
+  },
+  {
+    "name": "hc_attn_scale",
+    "scalar": false,
+    "shape": [
+      3
+    ],
+    "dtype": "float32",
+    "resident": null
+  },
+  {
+    "name": "hc_attn_base",
+    "scalar": false,
+    "shape": [
+      24
+    ],
+    "dtype": "float32",
+    "resident": null
+  },
+  {
+    "name": "attn_norm_w",
+    "scalar": false,
+    "shape": [
+      6144
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "wq_a",
+    "scalar": false,
+    "shape": [
+      6144,
+      1536
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "wq_b",
+    "scalar": false,
+    "shape": [
+      1536,
+      65536
+    ],
+    "dtype": "int8",
+    "resident": null
+  },
+  {
+    "name": "wq_b_scale",
+    "scalar": false,
+    "shape": [
+      65536
+    ],
+    "dtype": "float32",
+    "resident": null
+  },
+  {
+    "name": "wkv",
+    "scalar": false,
+    "shape": [
+      6144,
+      512
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "gamma_cq",
+    "scalar": false,
+    "shape": [
+      1536
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "gamma_ckv",
+    "scalar": false,
+    "shape": [
+      512
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "freqs_cos",
+    "scalar": false,
+    "shape": [
+      1048576,
+      64
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "freqs_sin",
+    "scalar": false,
+    "shape": [
+      1048576,
+      64
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "cmp_wkv",
+    "scalar": false,
+    "shape": [
+      512,
+      6144
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "cmp_wgate",
+    "scalar": false,
+    "shape": [
+      512,
+      6144
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "cmp_ape",
+    "scalar": false,
+    "shape": [
+      128,
+      512
+    ],
+    "dtype": "float32",
+    "resident": null
+  },
+  {
+    "name": "cmp_norm_w",
+    "scalar": false,
+    "shape": [
+      512
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "cmp_kv_state",
+    "scalar": false,
+    "shape": [
+      131072,
+      8,
+      512
+    ],
+    "dtype": "float32",
+    "resident": null
+  },
+  {
+    "name": "cmp_score_state",
+    "scalar": false,
+    "shape": [
+      131072,
+      8,
+      512
+    ],
+    "dtype": "float32",
+    "resident": null
+  },
+  {
+    "name": "compress_state_block_table",
+    "scalar": false,
+    "shape": [
+      131072
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "kv_cache",
+    "scalar": false,
+    "shape": [
+      1,
+      128,
+      1,
+      512
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "ori_slot_mapping",
+    "scalar": false,
+    "shape": [
+      128
+    ],
+    "dtype": "int64",
+    "resident": null
+  },
+  {
+    "name": "ori_block_table",
+    "scalar": false,
+    "shape": [
+      1
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "cmp_kv",
+    "scalar": false,
+    "shape": [
+      256,
+      128,
+      1,
+      512
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "cmp_block_table",
+    "scalar": false,
+    "shape": [
+      32
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "cmp_sparse_indices",
+    "scalar": false,
+    "shape": [
+      128,
+      1152
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "cmp_sparse_lens",
+    "scalar": false,
+    "shape": [
+      128
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "position_ids",
+    "scalar": false,
+    "shape": [
+      128
+    ],
+    "dtype": "int32",
+    "resident": null
+  },
+  {
+    "name": "cmp_slot_mapping",
+    "scalar": false,
+    "shape": [
+      128
+    ],
+    "dtype": "int64",
+    "resident": null
+  },
+  {
+    "name": "state_slot_mapping",
+    "scalar": false,
+    "shape": [
+      128
+    ],
+    "dtype": "int64",
+    "resident": null
+  },
+  {
+    "name": "attn_sink",
+    "scalar": false,
+    "shape": [
+      128
+    ],
+    "dtype": "float32",
+    "resident": null
+  },
+  {
+    "name": "wo_a",
+    "scalar": false,
+    "shape": [
+      16,
+      1024,
+      4096
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "wo_b",
+    "scalar": false,
+    "shape": [
+      6144,
+      16384
+    ],
+    "dtype": "int8",
+    "resident": null
+  },
+  {
+    "name": "wo_b_scale",
+    "scalar": false,
+    "shape": [
+      6144
+    ],
+    "dtype": "float32",
+    "resident": null
+  },
+  {
+    "name": "x_out",
+    "scalar": false,
+    "shape": [
+      128,
+      4,
+      6144
+    ],
+    "dtype": "bfloat16",
+    "resident": null
+  },
+  {
+    "name": "num_tokens",
+    "scalar": true,
+    "shape": null,
+    "dtype": "int32",
+    "resident": null
+  }
+]

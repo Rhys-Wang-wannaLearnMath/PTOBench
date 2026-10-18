@@ -1,0 +1,1722 @@
+{
+  "schema_version": 1,
+  "record_type": "environment_inventory",
+  "captured_at": "2026-10-05T16:08:10.938429+08:00",
+  "timezone": "Asia/Shanghai",
+  "scope": "Current local PyPTO-Lib/PTOBench host; inventory, not a runtime profile or install lock file.",
+  "recommended_application_python": "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+  "host": {
+    "architecture": "aarch64",
+    "os": "Huawei Cloud EulerOS 2.0",
+    "kernel": "5.10.0-136.12.0.86.r1526_92.hce2.aarch64",
+    "npu_model": "Ascend 910B4",
+    "npu_count": 8,
+    "hbm_gib_per_device": 32,
+    "device_ids": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "driver_version": "25.5.0",
+    "a5_hardware_present": false,
+    "device_allocation_recorded": false
+  },
+  "source_repositories": {
+    "pypto_lib": {
+      "path": "/data1/home/ziruiwang/pypto-lib",
+      "head": "9c5dfec2dfa18f056098000123e10de06de32426",
+      "has_tracked_modifications": true
+    },
+    "ptobench": {
+      "path": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench",
+      "head": "7a31910487ca1eb8867efad937bc7211e95ca457",
+      "has_tracked_modifications": true
+    },
+    "official": {
+      "repo": "/data1/home/ziruiwang/pypto-official-747e1e4b",
+      "head": "747e1e4ba99f13dea1a609d893ac7512e85a5897",
+      "submodules": "6f8310e238fc3ce68f42f391cbe93fd156bb2c23 3rdparty/libbacktrace (6f8310e)\n 919908742b4fdbc575e77fe1a8657e70c9573c44 3rdparty/msgpack-c (9199087)\n 4e4d3a4ad1e54c1db3d50e72decc025a9075bfa0 runtime (4e4d3a4)",
+      "tracked_status": "M python/pypto/jit/decorator.py\n M tests/ut/jit/test_decorator.py",
+      "matching_python_files": 134,
+      "different_python_files": [
+        "jit/decorator.py"
+      ],
+      "installed_jit_decorator_matches_head": true
+    },
+    "legacy": {
+      "repo": "/data1/home/ziruiwang/pypto-ci-head-672871bd-wt",
+      "head": "672871bd9628aac43241f7e5e0e552efeb891f71",
+      "submodules": "6f8310e238fc3ce68f42f391cbe93fd156bb2c23 3rdparty/libbacktrace (heads/master)\n 919908742b4fdbc575e77fe1a8657e70c9573c44 3rdparty/msgpack-c (9199087)\n dccb8379080b43173744b9981de2542b3d025e19 runtime (dccb837)",
+      "tracked_status": "",
+      "matching_python_files": 125,
+      "different_python_files": [],
+      "installed_jit_decorator_matches_head": true
+    }
+  },
+  "python_environments": {
+    "official": {
+      "python": "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+      "python_version": "3.10.20 (main, Apr 14 2026, 14:26:21) [Clang 22.1.3 ]",
+      "pypto": {
+        "file": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/pypto/__init__.py",
+        "version": "0.1.0"
+      },
+      "simpler": {
+        "file": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/simpler/__init__.py",
+        "version": null
+      },
+      "simpler_setup": {
+        "file": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/simpler_setup/__init__.py",
+        "version": null
+      },
+      "torch": {
+        "file": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/torch/__init__.py",
+        "version": "2.6.0+cpu"
+      },
+      "golden": {
+        "file": "/data1/home/ziruiwang/pypto-lib/golden/__init__.py",
+        "version": null
+      },
+      "dist_pypto": {
+        "version": "0.1.0",
+        "direct_url": "{\"url\":\"file:///data1/home/ziruiwang/pypto-official-747e1e4b\",\"dir_info\":{}}"
+      },
+      "dist_simpler": {
+        "version": "0.1.0",
+        "direct_url": "{\"url\":\"file:///data1/home/ziruiwang/pypto-official-747e1e4b/runtime\",\"dir_info\":{}}"
+      },
+      "dist_torch": {
+        "version": "2.6.0+cpu",
+        "direct_url": null
+      },
+      "dist_ptoas": {
+        "error": "No package metadata was found for ptoas"
+      },
+      "dist_pytest": {
+        "version": "9.1.1",
+        "direct_url": null
+      },
+      "dist_mkdocs": {
+        "error": "No package metadata was found for mkdocs"
+      },
+      "dist_mkdocs-material": {
+        "error": "No package metadata was found for mkdocs-material"
+      },
+      "dist_scikit-build-core": {
+        "version": "1.0.3",
+        "direct_url": null
+      },
+      "dist_nanobind": {
+        "version": "2.15.0",
+        "direct_url": null
+      },
+      "dist_cmake": {
+        "version": "4.4.3",
+        "direct_url": null
+      },
+      "dist_ninja": {
+        "version": "1.13.2",
+        "direct_url": null
+      },
+      "signatures": {
+        "run": "(fn: Any, specs: list[golden.spec.TensorSpec | golden.spec.ScalarSpec], golden_fn: collections.abc.Callable | None = None, golden_data: str | None = None, config: Optional[Any] = None, rtol: float = 1e-05, atol: float = 1e-05, compare_fn: dict[str, collections.abc.Callable] | None = None, compile_only: bool = False, runtime_dir: str | None = None, save_data: bool = False, capture_outputs: bool = False) -> golden.runner.RunResult",
+        "TensorSpec": "(name: 'str', shape: 'list[int]', dtype: 'torch.dtype', init_value: 'int | float | torch.Tensor | Callable | None' = None, resident: 'int | str | bool | None' = None) -> None",
+        "ScalarSpec": "(name: 'str', dtype: 'torch.dtype', value: 'int | float | bool | torch.Tensor', compile_runtime: 'bool' = False, benchmark_step: 'int | float | None' = None) -> None",
+        "RunConfig": "(*, arch: pypto.pypto_core.backend.BackendType = <factory>, execution_mode: pypto.runtime.runner.ExecutionMode = <ExecutionMode.SIM: 2>, device_id: int = 0, rtol: float = 1e-05, atol: float = 1e-05, strategy: pypto.ir.pass_manager.OptimizationStrategy = <factory>, dump_passes: bool | pypto.ir.pass_manager.PassDumpLevel = False, save_kernels: bool = False, save_kernels_dir: str | None = None, codegen_only: bool = False, enable_chip_swimlane: int | bool = 0, enable_dump_args: int = 0, enable_pmu: int = 0, enable_dep_gen: bool = False, enable_scope_stats: bool = False, compile_profiling: bool = False, diagnostic_phase: pypto.pypto_core.passes.DiagnosticPhase | None = None, disabled_diagnostics: pypto.pypto_core.passes.DiagnosticCheckSet | None = None, golden_data_dir: str | None = None, aicpu_thread_num: int | None = None, ring_task_window: int | list[int] | tuple[int, ...] | None = None, ring_heap: int | list[int] | tuple[int, ...] | None = None, ring_dep_pool: int | list[int] | tuple[int, ...] | None = None, distributed_config: 'DistributedConfig | None' = None, analyze_auto_scopes_for_deps: bool = False, memory_planner: pypto.pypto_core.passes.MemoryPlanner | None = None, dump_ptoas_passes: bool = False, platform: 'str | None' = None) -> None"
+      },
+      "simpler_project_root": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/simpler_setup/_assets",
+      "isa_pin": "a8040450238f162985d8b596fbebeb54bfba2bf5",
+      "visible_distributions": [
+        {
+          "name": "asc_op_compile_base",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/asc_op_compile_base-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "asc_opc_tool",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/asc_opc_tool-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "auto_tune",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/auto_tune-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "cloudpickle",
+          "version": "3.1.2",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/cloudpickle-3.1.2.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "cmake",
+          "version": "4.4.3",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/cmake-4.4.3.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "dataflow",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/dataflow-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "es_cv",
+          "version": "1.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/es_cv-1.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "es_math",
+          "version": "1.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/es_math-1.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "es_nn",
+          "version": "1.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/es_nn-1.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "exceptiongroup",
+          "version": "1.3.1",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/exceptiongroup-1.3.1.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "filelock",
+          "version": "3.32.3",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/filelock-3.32.3.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "fsspec",
+          "version": "2026.7.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/fsspec-2026.7.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "ge-py",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/ge_py-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "hccl",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/hccl-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "iniconfig",
+          "version": "2.3.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/iniconfig-2.3.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "Jinja2",
+          "version": "3.1.6",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/jinja2-3.1.6.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "llm_datadist",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/llm_datadist-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "llm_datadist_v1",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/llm_datadist_v1-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "MarkupSafe",
+          "version": "3.0.3",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/markupsafe-3.0.3.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "mindstudio-kl",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mindstudio_kl-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mindstudio-kpp",
+          "version": "0.0.0.dev0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mindstudio_kpp-0.0.0.dev0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mindstudio-opgen",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mindstudio_opgen-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mindstudio-opst",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mindstudio_opst-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mpmath",
+          "version": "1.3.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/mpmath-1.3.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "ms_service_profiler",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/ms_service_profiler-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "msobjdump",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/msobjdump-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mspti",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mspti-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "nanobind",
+          "version": "2.15.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/nanobind-2.15.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "networkx",
+          "version": "3.4.2",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/networkx-3.4.2.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "ninja",
+          "version": "1.13.2",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/ninja-1.13.2.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "npu_ops_transformer",
+          "version": "1.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/npu_ops_transformer-1.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "numpy",
+          "version": "2.2.6",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/numpy-2.2.6.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "op_compile_tool",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/op_compile_tool-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "opc_tool",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/opc_tool-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "packaging",
+          "version": "26.3",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/packaging-26.3.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "pathspec",
+          "version": "1.1.1",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/pathspec-1.1.1.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "pluggy",
+          "version": "1.6.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/pluggy-1.6.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "Pygments",
+          "version": "2.21.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/pygments-2.21.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "pypto",
+          "version": "0.1.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/pypto-0.1.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "pytest",
+          "version": "9.1.1",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/pytest-9.1.1.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "PyYAML",
+          "version": "6.0.3",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/pyyaml-6.0.3.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "schedule_search",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/schedule_search-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "scikit_build_core",
+          "version": "1.0.3",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/scikit_build_core-1.0.3.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "show_kernel_debug_data",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/show_kernel_debug_data-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "simpler",
+          "version": "0.1.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/simpler-0.1.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "superkernel",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/superkernel-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "sympy",
+          "version": "1.13.1",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/sympy-1.13.1.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "te",
+          "version": "0.4.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/te-0.4.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "tomli",
+          "version": "2.4.1",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/tomli-2.4.1.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "torch",
+          "version": "2.6.0+cpu",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/torch-2.6.0+cpu.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "typing_extensions",
+          "version": "4.16.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/typing_extensions-4.16.0.dist-info",
+          "location_kind": "venv"
+        }
+      ],
+      "incomplete_metadata": [
+        "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/cannsim-0.1.0.dist-info"
+      ]
+    },
+    "legacy": {
+      "python": "/data1/home/ziruiwang/pypto-lib/.venv/bin/python",
+      "python_version": "3.10.20 (main, Apr 14 2026, 14:26:21) [Clang 22.1.3 ]",
+      "pypto": {
+        "file": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/pypto/__init__.py",
+        "version": "0.1.0"
+      },
+      "simpler": {
+        "file": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/simpler/__init__.py",
+        "version": null
+      },
+      "simpler_setup": {
+        "file": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/simpler_setup/__init__.py",
+        "version": null
+      },
+      "torch": {
+        "file": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/torch/__init__.py",
+        "version": "2.13.0+cu130"
+      },
+      "golden": {
+        "file": "/data1/home/ziruiwang/pypto-lib/golden/__init__.py",
+        "version": null
+      },
+      "dist_pypto": {
+        "version": "0.1.0",
+        "direct_url": "{\"dir_info\": {}, \"url\": \"file:///data1/home/ziruiwang/pypto-ci-head-672871bd-wt\"}"
+      },
+      "dist_simpler": {
+        "version": "0.1.0",
+        "direct_url": "{\"dir_info\": {}, \"url\": \"file:///data1/home/ziruiwang/pypto-ci-head-672871bd-wt/runtime\"}"
+      },
+      "dist_torch": {
+        "version": "2.13.0",
+        "direct_url": null
+      },
+      "dist_ptoas": {
+        "error": "No package metadata was found for ptoas"
+      },
+      "dist_pytest": {
+        "version": "9.0.3",
+        "direct_url": null
+      },
+      "dist_mkdocs": {
+        "error": "No package metadata was found for mkdocs"
+      },
+      "dist_mkdocs-material": {
+        "error": "No package metadata was found for mkdocs-material"
+      },
+      "dist_scikit-build-core": {
+        "version": "0.12.2",
+        "direct_url": null
+      },
+      "dist_nanobind": {
+        "version": "2.12.0",
+        "direct_url": null
+      },
+      "dist_cmake": {
+        "version": "4.3.2",
+        "direct_url": null
+      },
+      "dist_ninja": {
+        "version": "1.13.0",
+        "direct_url": null
+      },
+      "signatures": {
+        "run": "(fn: Any, specs: list[golden.spec.TensorSpec | golden.spec.ScalarSpec], golden_fn: collections.abc.Callable | None = None, golden_data: str | None = None, config: Optional[Any] = None, rtol: float = 1e-05, atol: float = 1e-05, compare_fn: dict[str, collections.abc.Callable] | None = None, compile_only: bool = False, runtime_dir: str | None = None, save_data: bool = False, capture_outputs: bool = False) -> golden.runner.RunResult",
+        "TensorSpec": "(name: 'str', shape: 'list[int]', dtype: 'torch.dtype', init_value: 'int | float | torch.Tensor | Callable | None' = None, resident: 'int | str | bool | None' = None) -> None",
+        "ScalarSpec": "(name: 'str', dtype: 'torch.dtype', value: 'int | float | bool | torch.Tensor', compile_runtime: 'bool' = False, benchmark_step: 'int | float | None' = None) -> None",
+        "RunConfig": "(platform: str = 'a2a3sim', device_id: int = 0, rtol: float = 1e-05, atol: float = 1e-05, strategy: pypto.ir.pass_manager.OptimizationStrategy = <factory>, backend_type: pypto.pypto_core.backend.BackendType = <factory>, dump_passes: bool | pypto.ir.pass_manager.PassDumpLevel = False, save_kernels: bool = False, save_kernels_dir: str | None = None, codegen_only: bool = False, enable_l2_swimlane: bool = False, enable_dump_args: int = 0, enable_pmu: int = 0, enable_dep_gen: bool = False, enable_scope_stats: bool = False, compile_profiling: bool = False, diagnostic_phase: pypto.pypto_core.passes.DiagnosticPhase | None = None, disabled_diagnostics: pypto.pypto_core.passes.DiagnosticCheckSet | None = None, golden_data_dir: str | None = None, aicpu_thread_num: int | None = None, ring_task_window: int | list[int] | tuple[int, ...] | None = None, ring_heap: int | list[int] | tuple[int, ...] | None = None, ring_dep_pool: int | list[int] | tuple[int, ...] | None = None, distributed_config: 'DistributedConfig | None' = None, analyze_auto_scopes_for_deps: bool = False, memory_planner: pypto.pypto_core.passes.MemoryPlanner | None = None) -> None"
+      },
+      "simpler_project_root": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/simpler_setup/_assets",
+      "isa_pin": "83d01313d9bfc247c4b7c8bcf969d1019f0d106f",
+      "visible_distributions": [
+        {
+          "name": "asc_op_compile_base",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/asc_op_compile_base-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "asc_opc_tool",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/asc_opc_tool-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "auto_tune",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/auto_tune-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "cloudpickle",
+          "version": "3.1.2",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/cloudpickle-3.1.2.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "cmake",
+          "version": "4.3.2",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/cmake-4.3.2.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "cuda-bindings",
+          "version": "13.3.1",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/cuda_bindings-13.3.1.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "cuda-pathfinder",
+          "version": "1.5.6",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/cuda_pathfinder-1.5.6.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "cuda-toolkit",
+          "version": "13.0.3.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/cuda_toolkit-13.0.3.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "dataflow",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/dataflow-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "es_cv",
+          "version": "1.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/es_cv-1.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "es_math",
+          "version": "1.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/es_math-1.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "es_nn",
+          "version": "1.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/es_nn-1.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "exceptiongroup",
+          "version": "1.3.1",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/exceptiongroup-1.3.1.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "filelock",
+          "version": "3.29.7",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/filelock-3.29.7.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "fsspec",
+          "version": "2026.6.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/fsspec-2026.6.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "ge-py",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/ge_py-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "hccl",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/hccl-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "iniconfig",
+          "version": "2.3.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/iniconfig-2.3.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "Jinja2",
+          "version": "3.1.6",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/jinja2-3.1.6.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "llm_datadist",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/llm_datadist-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "llm_datadist_v1",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/llm_datadist_v1-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "MarkupSafe",
+          "version": "3.0.3",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/markupsafe-3.0.3.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "mindstudio-kl",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mindstudio_kl-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mindstudio-kpp",
+          "version": "0.0.0.dev0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mindstudio_kpp-0.0.0.dev0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mindstudio-opgen",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mindstudio_opgen-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mindstudio-opst",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mindstudio_opst-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mpmath",
+          "version": "1.3.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/mpmath-1.3.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "ms_service_profiler",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/ms_service_profiler-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "msobjdump",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/msobjdump-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mspti",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mspti-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "nanobind",
+          "version": "2.12.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/nanobind-2.12.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "networkx",
+          "version": "3.4.2",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/networkx-3.4.2.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "ninja",
+          "version": "1.13.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/ninja-1.13.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "npu_ops_transformer",
+          "version": "1.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/npu_ops_transformer-1.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "numpy",
+          "version": "2.2.6",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/numpy-2.2.6.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "nvidia-cublas",
+          "version": "13.1.1.3",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/nvidia_cublas-13.1.1.3.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "nvidia-cuda-cupti",
+          "version": "13.0.85",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/nvidia_cuda_cupti-13.0.85.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "nvidia-cuda-nvrtc",
+          "version": "13.0.88",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/nvidia_cuda_nvrtc-13.0.88.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "nvidia-cuda-runtime",
+          "version": "13.0.96",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/nvidia_cuda_runtime-13.0.96.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "nvidia-cudnn-cu13",
+          "version": "9.20.0.48",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/nvidia_cudnn_cu13-9.20.0.48.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "nvidia-cufft",
+          "version": "12.0.0.61",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/nvidia_cufft-12.0.0.61.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "nvidia-cufile",
+          "version": "1.15.1.6",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/nvidia_cufile-1.15.1.6.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "nvidia-curand",
+          "version": "10.4.0.35",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/nvidia_curand-10.4.0.35.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "nvidia-cusolver",
+          "version": "12.0.4.66",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/nvidia_cusolver-12.0.4.66.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "nvidia-cusparse",
+          "version": "12.6.3.3",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/nvidia_cusparse-12.6.3.3.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "nvidia-cusparselt-cu13",
+          "version": "0.8.1",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/nvidia_cusparselt_cu13-0.8.1.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "nvidia-nccl-cu13",
+          "version": "2.29.7",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/nvidia_nccl_cu13-2.29.7.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "nvidia-nvjitlink",
+          "version": "13.3.33",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/nvidia_nvjitlink-13.3.33.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "nvidia-nvshmem-cu13",
+          "version": "3.4.5",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/nvidia_nvshmem_cu13-3.4.5.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "nvidia-nvtx",
+          "version": "13.0.85",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/nvidia_nvtx-13.0.85.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "op_compile_tool",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/op_compile_tool-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "opc_tool",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/opc_tool-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "packaging",
+          "version": "26.2",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/packaging-26.2.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "pathspec",
+          "version": "1.1.1",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/pathspec-1.1.1.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "pip",
+          "version": "26.2",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/pip-26.2.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "pluggy",
+          "version": "1.6.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/pluggy-1.6.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "Pygments",
+          "version": "2.20.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/pygments-2.20.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "pypto",
+          "version": "0.1.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/pypto-0.1.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "pytest",
+          "version": "9.0.3",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/pytest-9.0.3.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "schedule_search",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/schedule_search-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "scikit_build_core",
+          "version": "0.12.2",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/scikit_build_core-0.12.2.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "setuptools",
+          "version": "83.0.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/setuptools-83.0.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "show_kernel_debug_data",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/show_kernel_debug_data-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "simpler",
+          "version": "0.1.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/simpler-0.1.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "superkernel",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/superkernel-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "sympy",
+          "version": "1.14.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/sympy-1.14.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "te",
+          "version": "0.4.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/te-0.4.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "tomli",
+          "version": "2.4.1",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/tomli-2.4.1.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "torch",
+          "version": "2.13.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/torch-2.13.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "triton",
+          "version": "3.7.1",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/triton-3.7.1.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "typing_extensions",
+          "version": "4.16.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/typing_extensions-4.16.0.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "wheel",
+          "version": "0.47.0",
+          "metadata_path": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/wheel-0.47.0.dist-info",
+          "location_kind": "venv"
+        }
+      ],
+      "incomplete_metadata": [
+        "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/cannsim-0.1.0.dist-info"
+      ]
+    },
+    "ptoas": {
+      "python": "/data1/home/ziruiwang/ptoas-v0.60/bin/python",
+      "python_version": "3.10.20 (main, Apr 14 2026, 14:26:21) [Clang 22.1.3 ]",
+      "pypto": {
+        "error": "ModuleNotFoundError(\"No module named 'pypto'\")"
+      },
+      "simpler": {
+        "error": "ModuleNotFoundError(\"No module named 'simpler'\")"
+      },
+      "simpler_setup": {
+        "error": "ModuleNotFoundError(\"No module named 'simpler_setup'\")"
+      },
+      "torch": {
+        "error": "ModuleNotFoundError(\"No module named 'torch'\")"
+      },
+      "golden": {
+        "error": "ModuleNotFoundError(\"No module named 'torch'\")"
+      },
+      "dist_pypto": {
+        "error": "No package metadata was found for pypto"
+      },
+      "dist_simpler": {
+        "error": "No package metadata was found for simpler"
+      },
+      "dist_torch": {
+        "error": "No package metadata was found for torch"
+      },
+      "dist_ptoas": {
+        "version": "0.60",
+        "direct_url": "{\"url\":\"file:///tmp/ptoas-0.60-cp310-cp310-manylinux_2_34_aarch64.whl\",\"archive_info\":{}}"
+      },
+      "dist_pytest": {
+        "error": "No package metadata was found for pytest"
+      },
+      "dist_mkdocs": {
+        "error": "No package metadata was found for mkdocs"
+      },
+      "dist_mkdocs-material": {
+        "error": "No package metadata was found for mkdocs-material"
+      },
+      "dist_scikit-build-core": {
+        "error": "No package metadata was found for scikit-build-core"
+      },
+      "dist_nanobind": {
+        "error": "No package metadata was found for nanobind"
+      },
+      "dist_cmake": {
+        "error": "No package metadata was found for cmake"
+      },
+      "dist_ninja": {
+        "error": "No package metadata was found for ninja"
+      },
+      "api_error": "ModuleNotFoundError(\"No module named 'torch'\")",
+      "visible_distributions": [
+        {
+          "name": "asc_op_compile_base",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/asc_op_compile_base-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "asc_opc_tool",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/asc_opc_tool-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "auto_tune",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/auto_tune-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "dataflow",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/dataflow-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "es_cv",
+          "version": "1.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/es_cv-1.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "es_math",
+          "version": "1.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/es_math-1.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "es_nn",
+          "version": "1.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/es_nn-1.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "ge-py",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/ge_py-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "hccl",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/hccl-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "llm_datadist",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/llm_datadist-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "llm_datadist_v1",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/llm_datadist_v1-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mindstudio-kl",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mindstudio_kl-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mindstudio-kpp",
+          "version": "0.0.0.dev0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mindstudio_kpp-0.0.0.dev0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mindstudio-opgen",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mindstudio_opgen-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mindstudio-opst",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mindstudio_opst-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "ms_service_profiler",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/ms_service_profiler-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "msobjdump",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/msobjdump-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mspti",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mspti-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "npu_ops_transformer",
+          "version": "1.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/npu_ops_transformer-1.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "numpy",
+          "version": "2.2.6",
+          "metadata_path": "/data1/home/ziruiwang/ptoas-v0.60/lib/python3.10/site-packages/numpy-2.2.6.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "op_compile_tool",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/op_compile_tool-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "opc_tool",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/opc_tool-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "ptoas",
+          "version": "0.60",
+          "metadata_path": "/data1/home/ziruiwang/ptoas-v0.60/lib/python3.10/site-packages/ptoas-0.60.dist-info",
+          "location_kind": "venv"
+        },
+        {
+          "name": "schedule_search",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/schedule_search-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "show_kernel_debug_data",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/show_kernel_debug_data-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "superkernel",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/superkernel-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "te",
+          "version": "0.4.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/te-0.4.0.dist-info",
+          "location_kind": "cann"
+        }
+      ],
+      "incomplete_metadata": [
+        "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/cannsim-0.1.0.dist-info"
+      ]
+    },
+    "a5": {
+      "python": "/data1/home/ziruiwang/pypto-lib/.venv-official-a5/bin/python",
+      "python_version": "3.10.20 (main, Apr 14 2026, 14:26:21) [Clang 22.1.3 ]",
+      "pypto": {
+        "error": "ModuleNotFoundError(\"No module named 'pypto'\")"
+      },
+      "simpler": {
+        "error": "ModuleNotFoundError(\"No module named 'simpler'\")"
+      },
+      "simpler_setup": {
+        "error": "ModuleNotFoundError(\"No module named 'simpler_setup'\")"
+      },
+      "torch": {
+        "error": "ModuleNotFoundError(\"No module named 'torch'\")"
+      },
+      "golden": {
+        "error": "ModuleNotFoundError(\"No module named 'torch'\")"
+      },
+      "dist_pypto": {
+        "error": "No package metadata was found for pypto"
+      },
+      "dist_simpler": {
+        "error": "No package metadata was found for simpler"
+      },
+      "dist_torch": {
+        "error": "No package metadata was found for torch"
+      },
+      "dist_ptoas": {
+        "error": "No package metadata was found for ptoas"
+      },
+      "dist_pytest": {
+        "error": "No package metadata was found for pytest"
+      },
+      "dist_mkdocs": {
+        "error": "No package metadata was found for mkdocs"
+      },
+      "dist_mkdocs-material": {
+        "error": "No package metadata was found for mkdocs-material"
+      },
+      "dist_scikit-build-core": {
+        "error": "No package metadata was found for scikit-build-core"
+      },
+      "dist_nanobind": {
+        "error": "No package metadata was found for nanobind"
+      },
+      "dist_cmake": {
+        "error": "No package metadata was found for cmake"
+      },
+      "dist_ninja": {
+        "error": "No package metadata was found for ninja"
+      },
+      "api_error": "ModuleNotFoundError(\"No module named 'torch'\")",
+      "visible_distributions": [
+        {
+          "name": "asc_op_compile_base",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/asc_op_compile_base-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "asc_opc_tool",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/asc_opc_tool-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "auto_tune",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/auto_tune-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "dataflow",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/dataflow-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "es_cv",
+          "version": "1.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/es_cv-1.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "es_math",
+          "version": "1.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/es_math-1.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "es_nn",
+          "version": "1.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/es_nn-1.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "ge-py",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/ge_py-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "hccl",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/hccl-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "llm_datadist",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/llm_datadist-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "llm_datadist_v1",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/llm_datadist_v1-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mindstudio-kl",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mindstudio_kl-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mindstudio-kpp",
+          "version": "0.0.0.dev0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mindstudio_kpp-0.0.0.dev0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mindstudio-opgen",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mindstudio_opgen-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mindstudio-opst",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mindstudio_opst-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "ms_service_profiler",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/ms_service_profiler-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "msobjdump",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/msobjdump-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "mspti",
+          "version": "26.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/mspti-26.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "npu_ops_transformer",
+          "version": "1.0.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/npu_ops_transformer-1.0.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "op_compile_tool",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/op_compile_tool-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "opc_tool",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/opc_tool-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "schedule_search",
+          "version": "0.0.1",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/schedule_search-0.0.1.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "show_kernel_debug_data",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/show_kernel_debug_data-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "superkernel",
+          "version": "0.1.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/superkernel-0.1.0.dist-info",
+          "location_kind": "cann"
+        },
+        {
+          "name": "te",
+          "version": "0.4.0",
+          "metadata_path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/te-0.4.0.dist-info",
+          "location_kind": "cann"
+        }
+      ],
+      "incomplete_metadata": [
+        "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages/cannsim-0.1.0.dist-info"
+      ]
+    }
+  },
+  "toolchain": {
+    "active_ptoas": {
+      "version": "0.60",
+      "root": "/data1/home/ziruiwang/ptoas-v0.60",
+      "source_pypto_pin": "v0.60",
+      "original_wheel_sha256_verified": false
+    },
+    "legacy_pypto_ptoas_pin": "v0.54",
+    "pypto_lib_ci_ptoas_pin": "v0.43",
+    "pypto_lib_ci_isa_pin": "8bd3ac8f30bd237f9eaf12c142002a5cc0edb143",
+    "pto_isa": {
+      "official": {
+        "assets_root": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/simpler_setup/_assets",
+        "required_pin": "a8040450238f162985d8b596fbebeb54bfba2bf5",
+        "checkout_head": "a8040450238f162985d8b596fbebeb54bfba2bf5",
+        "checkout_clean": true,
+        "runtime_build_metadata": {
+          ".venv-official/lib/python3.10/site-packages/simpler_setup/_assets/build/lib/pto_isa_build.json": {
+            "actual_checkout_commit": "a8040450238f162985d8b596fbebeb54bfba2bf5",
+            "checkout_path": "/data1/home/ziruiwang/pypto-official-747e1e4b/runtime/build/pto-isa",
+            "pin_file": "/data1/home/ziruiwang/pypto-official-747e1e4b/runtime/pto_isa.pin",
+            "required_commit_from_pin": "a8040450238f162985d8b596fbebeb54bfba2bf5",
+            "runtime_artifacts": {
+              "a2a3/onboard/host_build_graph": {
+                "actual_checkout_commit": "a8040450238f162985d8b596fbebeb54bfba2bf5",
+                "checkout_path": "/data1/home/ziruiwang/pypto-official-747e1e4b/runtime/build/pto-isa",
+                "pin_file": "/data1/home/ziruiwang/pypto-official-747e1e4b/runtime/pto_isa.pin",
+                "required_commit_from_pin": "a8040450238f162985d8b596fbebeb54bfba2bf5"
+              },
+              "a2a3/onboard/tensormap_and_ringbuffer": {
+                "actual_checkout_commit": "a8040450238f162985d8b596fbebeb54bfba2bf5",
+                "checkout_path": "/data1/home/ziruiwang/pypto-official-747e1e4b/runtime/build/pto-isa",
+                "pin_file": "/data1/home/ziruiwang/pypto-official-747e1e4b/runtime/pto_isa.pin",
+                "required_commit_from_pin": "a8040450238f162985d8b596fbebeb54bfba2bf5"
+              },
+              "a5/onboard/host_build_graph": {
+                "actual_checkout_commit": "a8040450238f162985d8b596fbebeb54bfba2bf5",
+                "checkout_path": "/data1/home/ziruiwang/pypto-official-747e1e4b/runtime/build/pto-isa",
+                "pin_file": "/data1/home/ziruiwang/pypto-official-747e1e4b/runtime/pto_isa.pin",
+                "required_commit_from_pin": "a8040450238f162985d8b596fbebeb54bfba2bf5"
+              },
+              "a5/onboard/tensormap_and_ringbuffer": {
+                "actual_checkout_commit": "a8040450238f162985d8b596fbebeb54bfba2bf5",
+                "checkout_path": "/data1/home/ziruiwang/pypto-official-747e1e4b/runtime/build/pto-isa",
+                "pin_file": "/data1/home/ziruiwang/pypto-official-747e1e4b/runtime/pto_isa.pin",
+                "required_commit_from_pin": "a8040450238f162985d8b596fbebeb54bfba2bf5"
+              }
+            },
+            "schema_version": 3
+          }
+        },
+        "runtime_binary_count": 23
+      },
+      "legacy": {
+        "assets_root": "/data1/home/ziruiwang/pypto-lib/.venv/lib/python3.10/site-packages/simpler_setup/_assets",
+        "required_pin": "83d01313d9bfc247c4b7c8bcf969d1019f0d106f",
+        "checkout_head": "83d01313d9bfc247c4b7c8bcf969d1019f0d106f",
+        "checkout_clean": true,
+        "runtime_build_metadata": {
+          ".venv/lib/python3.10/site-packages/simpler_setup/_assets/build/lib/pto_isa_build.json": {
+            "actual_checkout_commit": "83d01313d9bfc247c4b7c8bcf969d1019f0d106f",
+            "checkout_path": "/data1/home/ziruiwang/pypto-ci-head-672871bd-wt/runtime/build/pto-isa",
+            "pin_file": "/data1/home/ziruiwang/pypto-ci-head-672871bd-wt/runtime/pto_isa.pin",
+            "required_commit_from_pin": "83d01313d9bfc247c4b7c8bcf969d1019f0d106f",
+            "runtime_artifacts": {
+              "a2a3/onboard/host_build_graph": {
+                "actual_checkout_commit": "83d01313d9bfc247c4b7c8bcf969d1019f0d106f",
+                "checkout_path": "/data1/home/ziruiwang/pypto-ci-head-672871bd-wt/runtime/build/pto-isa",
+                "pin_file": "/data1/home/ziruiwang/pypto-ci-head-672871bd-wt/runtime/pto_isa.pin",
+                "required_commit_from_pin": "83d01313d9bfc247c4b7c8bcf969d1019f0d106f"
+              },
+              "a2a3/onboard/tensormap_and_ringbuffer": {
+                "actual_checkout_commit": "83d01313d9bfc247c4b7c8bcf969d1019f0d106f",
+                "checkout_path": "/data1/home/ziruiwang/pypto-ci-head-672871bd-wt/runtime/build/pto-isa",
+                "pin_file": "/data1/home/ziruiwang/pypto-ci-head-672871bd-wt/runtime/pto_isa.pin",
+                "required_commit_from_pin": "83d01313d9bfc247c4b7c8bcf969d1019f0d106f"
+              }
+            },
+            "schema_version": 3
+          }
+        },
+        "runtime_binary_count": 24
+      }
+    },
+    "cann_components": {
+      "runtime": "Version=9.0.0\nversion_dir=cann\ntimestamp=20260428_134817545\n",
+      "bisheng-compiler": "Version=9.0.0\nversion_dir=cann\ntimestamp=20260428_134817545\n",
+      "mindstudio-opprof": "[PACKAGE]\nName=mindstudio-opprof\nVersion=26.0.0",
+      "simulator": "Version=9.0.0\nversion_dir=cann\ntimestamp=20260428_134817545\n",
+      "hccl": "Version=9.0.0\nversion_dir=cann\nrequired_package_hcomm_version=\">=8.5\"\nrequired_package_runtime_version=\">=8.5\"\nrequired_package_metadef_version=\">=8.5\"\ntimestamp=20260428_134817545\nhost_only=false\n",
+      "pyACL": "Version=9.0.0\n"
+    },
+    "gcc_15_on_path": null
+  },
+  "host_tools": {
+    "uv": {
+      "path": "/data1/home/ziruiwang/.local/bin/uv",
+      "command": [
+        "uv",
+        "--version"
+      ],
+      "exit": 0,
+      "stdout": "uv 0.11.8 (aarch64-unknown-linux-gnu)",
+      "stderr": ""
+    },
+    "gcc": {
+      "path": "/usr/bin/gcc",
+      "command": [
+        "gcc",
+        "--version"
+      ],
+      "exit": 0,
+      "stdout": "gcc (GCC) 10.3.1\nCopyright (C) 2020 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+      "stderr": ""
+    },
+    "g++": {
+      "path": "/usr/bin/g++",
+      "command": [
+        "g++",
+        "--version"
+      ],
+      "exit": 0,
+      "stdout": "g++ (GCC) 10.3.1\nCopyright (C) 2020 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+      "stderr": ""
+    },
+    "g++-15": {
+      "path": "/data1/home/ziruiwang/.local/bin/g++-15",
+      "command": [
+        "g++-15",
+        "-dumpfullversion"
+      ],
+      "exit": 0,
+      "stdout": "15.2.0",
+      "stderr": ""
+    },
+    "cmake": {
+      "path": "/usr/bin/cmake",
+      "command": [
+        "cmake",
+        "--version"
+      ],
+      "exit": 0,
+      "stdout": "cmake version 3.22.0\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake).",
+      "stderr": ""
+    },
+    "ninja": {
+      "path": "/usr/bin/ninja",
+      "command": [
+        "ninja",
+        "--version"
+      ],
+      "exit": 0,
+      "stdout": "1.8.2",
+      "stderr": ""
+    },
+    "git": {
+      "path": "/usr/bin/git",
+      "command": [
+        "git",
+        "--version"
+      ],
+      "exit": 0,
+      "stdout": "git version 2.33.0",
+      "stderr": ""
+    },
+    "msprof": {
+      "path": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0/bin/msprof",
+      "command": [
+        "msprof",
+        "--version"
+      ],
+      "exit": 255,
+      "stdout": "Usage:\n      msprof [--options]\n\nThis is subcommand for operator optimization situation:\n      op                                Use binary msopprof to operator optimization (msprof op ...)\n\nOptions:\n      --output                          <Optional> Specify the directory that is used for storing data results.\n      --application                     <Optional> Specify application path, considering the risk of privilege escalation, please pay attention to\n\t\t\t\t\t\t   the group of the application and confirm whether it is the same as the user currently.\n\t\t\t\t\t\t   [Note] This option will be discarded in later versions.\n\t\t\t\t\t\t   you can try to use: msprof [msprof arguments] <app> [app arguments]\n      --ascendcl                        <Optional> Show acl profiling data, the default value is on.\n      --ge-api                          <Optional> Specify if report GE event, the default value is off. The possible parameters are 'l0', 'l1' or 'off'.\n      --runtime-api                     <Optional> Show runtime api profiling data, the default value is off.\n      --task-time                       <Optional> Show task profiling data, the default value is on. The possible parameters are 'l0', 'l1', 'l2', 'on' or 'off'.\n      --task-memory                     <Optional> Show the memory usage of the operator, the default value is off. The possible parameters are 'on' or 'off'.\n      --ai-core                         <Optional> Turn on / off the ai core profiling, the default value is on when collecting app Profiling.\n      --aic-mode                        <Optional> Set the aic profiling mode to task-based or sample-based.\n\t\t\t\t\t\t   In task-based mode, profiling data will be collected by tasks.\n\t\t\t\t\t\t   In sample-based mode, profiling data will be collected in a specific interval.\n\t\t\t\t\t\t   The default value is task-based in AI task mode, sample-based in system mode.\n      --aic-freq                        <Optional> The aic sampling frequency in hertz, the default value is 100 Hz, the range is 1 to 100 Hz.\n      --environment                     <Optional> User app custom environment variable configuration.\n      --sys-period                      <Optional> Set total sampling period of system profiling in seconds.\n      --sys-devices                     <Optional> Specify the profiling scope by device ID when collect sys profiling.The value is all or ID list (split with ',').\n      --hccl                            <Optional> Show hccl profiling data, the default value is off. [Note] This option will be discarded in later versions.\n      --msproftx                        <Optional> Show msproftx and mstx data, the default value is off.\n      --mstx-domain-include             <Optional> Choose to only include mstx events from a comma separated list of domains;\n\t\t\t\t\t\t   `default` filters the mstx default domain;\n\t\t\t\t\t\t   The switch is only applicable when parameter msproftx is set to on;\n\t\t\t\t\t\t   The switch cannot be set with mstx-domain-exclude at the same time.\n      --mstx-domain-exclude             <Optional> Choose to exclude mstx events from a comma separated list of domains;\n\t\t\t\t\t\t   `default` excludes the mstx default domain;\n\t\t\t\t\t\t   The switch is only applicable when parameter msproftx is set to on;\n\t\t\t\t\t\t   The switch cannot be set with mstx-domain-include at the same time.\n      --storage-limit                   <Optional> Specify the output directory volume. range 200MB ~ 4294967295MB.\n      --model-execution                 <Optional> Show ge model execution profiling data, the default value is off. [Note] This option will be discarded in later versions.\n      --aic-metrics                     <Optional> The aic metrics groups, include ArithmeticUtilization, PipeUtilization, Memory, MemoryL0, ResourceConflictRatio, MemoryUB, L2Cache, MemoryAccess.\n\t\t\t\t\t\t   the default value is PipeUtilization.\n      --python-path                     <Optional> Specify the python interpreter path that is used for analysis, please ensure the python version is 3.7.5 or later.\n      --parse                           <Optional> Switch for using msprof to parse collecting data, the default value is off.\n      --query                           <Optional> Switch for using msprof to query collecting data, the default value is off.\n      --export                          <Optional> Switch for using msprof to export collecting data, the default value is off.\n      --clear                           <Optional> Switch for using msprof to analyze or export data in clear mode, the default value is off.\n      --analyze                         <Optional> Switch for using msprof to analyze collecting data, the default value is off.\n      --rule                            <Optional> Switch specified rule for using msprof to analyze collecting data, include communication, communication_matrix.\n\t\t\t\t\t\t   the default value is communication,communication_matrix.\n      --iteration-id                    <Optional> The export iteration id, only used when argument export is on, the default value is 1.\n      --model-id                        <Optional> The export model id, only used when argument export is on, msprof will export minium accessible model by default.\n      --summary-format                  <Optional> The export summary file format, only used when argument export is on, include csv, json, the default value is csv.\n      --type                            <Optional> The export type, only used when argument `export` is on \n\t\t\t\t\t\t   or when collecting data, include text, db.\n\t\t\t\t\t\t   the default value is text(which will also export the database).\n      --reports                         <Optional> Specify the path that is used for controlling the export scope of collecting results\n      --aicpu                           <Optional> Show aicpu profiling data, the default value is off.\n      --sys-hardware-mem                <Optional> LLC, DDR, HBM acquisition switch, optional on / off, the default value is off.\n      --sys-hardware-mem-freq           <Optional> LLC, DDR, HBM acquisition frequency, range 1 ~ 100, the default value is 50, unit Hz.\n      --llc-profiling                   <Optional> The llc profiling groups, include read, write. the default value is read.\n      --sys-cpu-profiling               <Optional> The CPU acquisition switch, optional on / off,the default value is off.\n      --sys-cpu-freq                    <Optional> The cpu sampling frequency in hertz. the default value is 50 Hz, the range is 1 to 50 Hz.\n      --sys-profiling                   <Optional> The System CPU usage and system memory acquisition switch,the default value is off.\n      --sys-sampling-freq               <Optional> The sys sampling frequency in hertz. the default value is 10 Hz, the range is 1 to 10 Hz.\n      --sys-pid-profiling               <Optional> The CPU usage of the process and the memory acquisition switch of the process,the default value is off.\n      --sys-pid-sampling-freq           <Optional> The pid sampling frequency in hertz. the default value is 10 Hz, the range is 1 to 10 Hz.\n      --sys-io-profiling                <Optional> NIC, ROCE acquisition switch, the default value is off.\n      --sys-io-sampling-freq            <Optional> NIC, ROCE acquisition frequency, range 1 ~ 100, the default value is 100, unit Hz.\n      --instr-profiling                 <Optional> Show instr profiling data, the default value is off.\n      --instr-profiling-freq            <Optional> The instr profiling sampling period in clock-cycle, the default value is 1000 cycle, the range is 300 to 30000 cycle.\n      --sys-interconnection-profiling   <Optional> PCIE, HCCS acquisition switch, the default value is off.\n      --sys-interconnection-freq        <Optional> PCIE, HCCS acquisition frequency, range 1 ~ 50, the default value is 50, unit Hz.\n      --dvpp-profiling                  <Optional> DVPP acquisition switch, the default value is off.\n      --dvpp-freq                       <Optional> DVPP acquisition frequency, range 1 ~ 100, the default value is 50, unit Hz.\n      --l2                              <Optional> L2 Cache and SMMU acquisition switch. The default value is off.\n      --host-sys                        <Optional> The host-sys data type, include cpu, mem, disk, network, osrt\n      --host-sys-pid                    <Optional> Set the PID of the app process for which you want to collect performance data.\n      --host-sys-usage                  <Optional> The host-sys-usage data type, include cpu, mem.(full-platform)\n      --host-sys-usage-freq             <Optional> The sampling frequency in hertz. the default value is 50 Hz the range is 1 to 50 Hz.\n      --dynamic                         <Optional> Dynamic profiling switch, the default value is off.\n      --pid                             <Optional> Dynamic profiling pids of the target processes\n      --delay                           <Optional> Collect start delay time in seconds, range 1 ~ 4294967295s.\n      --duration                        <Optional> Collection duration in seconds, range 1 ~ 4294967295s.\n      --help                            <Optional> help message.",
+      "stderr": "msprof: unrecognized option '--version'",
+      "version_query_supported": false,
+      "component_version": "26.0.0"
+    },
+    "codex": {
+      "path": "/data1/home/ziruiwang/.local/npm/bin/codex",
+      "command": [
+        "codex",
+        "--version"
+      ],
+      "exit": 0,
+      "stdout": "codex-cli 0.159.2",
+      "stderr": ""
+    },
+    "claude": {
+      "path": "/data1/home/ziruiwang/.local/npm/bin/claude",
+      "command": [
+        "claude",
+        "--version"
+      ],
+      "exit": 0,
+      "stdout": "2.1.288 (Claude Code)",
+      "stderr": ""
+    },
+    "pi": {
+      "path": "/data1/home/ziruiwang/.local/npm/bin/pi",
+      "command": [
+        "pi",
+        "--version"
+      ],
+      "exit": 0,
+      "stdout": "1.0.0",
+      "stderr": ""
+    },
+    "opencode": {
+      "path": "/data1/home/ziruiwang/.local/npm/bin/opencode",
+      "command": [
+        "opencode",
+        "--version"
+      ],
+      "exit": 0,
+      "stdout": "1.18.34",
+      "stderr": ""
+    }
+  },
+  "shell_environment": {
+    "VIRTUAL_ENV": null,
+    "CONDA_PREFIX": null,
+    "PYTHONPATH": "/data1/home/ziruiwang/pypto-lib:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/python/site-packages:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/opp/built-in/op_impl/ai_core/tbe:",
+    "PATH": "/data1/home/ziruiwang/.local/npm/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-arm64/vendor/aarch64-unknown-linux-musl/codex-path:/data1/home/ziruiwang/.local/npm/bin:/data1/home/ziruiwang/.local/node/current/bin:/data1/home/ziruiwang/.local/bin:/data1/home/ziruiwang/ptoas-v0.60:/data1/home/ziruiwang/ptoas-v0.60/bin:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/bin:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/bin:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/tools/ccec_compiler/bin:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/tools/profiler/bin:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/tools/ascend_system_advisor/asys:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/tools/show_kernel_debug_data:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/tools/msobjdump:/data1/home/ziruiwang/.codex/tmp/arg0/codex-arg0SMUaG8:/data1/home/ziruiwang/.local/npm/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-arm64/vendor/aarch64-unknown-linux-musl/codex-path:/data1/home/ziruiwang/.local/npm/bin:/data1/home/ziruiwang/.local/node/current/bin:/data1/home/ziruiwang/.local/bin:/data1/home/ziruiwang/.cargo/bin:/data1/home/ziruiwang/.local/npm/bin:/data1/home/ziruiwang/.local/node/current/bin:/data1/home/ziruiwang/.local/bin:/data1/home/ziruiwang/.local/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin",
+    "LD_LIBRARY_PATH": "/data1/home/ziruiwang/miniforge3/lib:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/lib64:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/lib64/plugin/opskernel:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/lib64/plugin/nnengine:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/opp/built-in/op_impl/ai_core/tbe/op_tiling/lib/linux/aarch64:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver",
+    "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60",
+    "PTO_ISA_ROOT": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/simpler_setup/_assets/build/pto-isa",
+    "ASCEND_HOME_PATH": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0",
+    "CANN_ROOT": null,
+    "PYPTO_CANN_ROOT": "/usr/local/Ascend/cann-9.0.0",
+    "CANN_SET_ENV_FILE": "/usr/local/Ascend/cann-9.0.0/cann/set_env.sh",
+    "CC": null,
+    "CXX": null
+  },
+  "ptobench": {
+    "benchmark_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench",
+    "repo_root": "/data1/home/ziruiwang/pypto-lib",
+    "path_defaults": {
+      "ptoas_root": "/data1/home/ziruiwang/ptoas-v0.60",
+      "cann_root": "/usr/local/Ascend/cann-9.0.0/cann",
+      "miniforge_root": "/data1/home/ziruiwang/miniforge3"
+    },
+    "launcher_requirements": "PyYAML>=6,<7",
+    "profile_count": 30,
+    "profile_python_interpreters": [
+      ".venv-official/bin/python"
+    ],
+    "profile_platforms": [
+      "a2a3"
+    ],
+    "benchmark_defaults": {
+      "warmup": 5,
+      "rounds": 10
+    },
+    "profile_inputs_sha256": {
+      "a2a3_deepseek_v4_moe_ep2": "f900523b34976ef935b36038b332b7576ac2540d189e7dd700c4e2f510f52704",
+      "a2a3_deepseek_v4_moe_ep8": "6c59661cf909f722b1a489e7a34520287aae475017a8f466d1fed366dd82a57d",
+      "a2a3_deepseek_v4_prefill_cp_swa_cp4": "2226d1ae48d4193f0cad614d247986ab026376404da1030871c0b30931057996",
+      "a2a3_deepseek_v4_prefill_layer_ep4_csa_flash": "b162605b972bca1632ed1162d56a8250584a2dc4e3b9caa14054c79e7387524b",
+      "a2a3_moe_ep2_demo": "8e217cde4046a3d6757c6e8a3493d16aad1f44f759aded543cea721562f8228c",
+      "a2a3_moe_ep2_demo_admission_20261003": "d70862ca45106f5e3ac08763eb96fba955c5bc102f8909e683fa79d27e4a2b3b",
+      "a2a3_moe_ep2_flash": "8426ae39f3df0c9dfd252184cad94cf6f081de8ecc7662359da778c266b93fa0",
+      "a2a3_moe_ep2_flash_admission_20261003": "2b7ec465606711f124fb60a2203f9bb61be0e2bfde5f7f3c8873196e5d855fc6",
+      "a2a3_moe_ep2_pro": "fefd40e8ba82c656ecbba805f3507eac9c472c632d7d473d6c828b585501c36a",
+      "a2a3_moe_ep2_pro_admission_20261003": "1ecda961b293fbba11f27d7b9c0494d227b2166842ea526893d16000ab0db3d2",
+      "a2a3_moe_ep4_demo": "3c2a6083aff1d28772b545fd634bd4c4363a921c192aefa052e74c7a7ba4bd56",
+      "a2a3_moe_ep4_demo_admission_20261003": "35b79ef5d09aca354d0eb8384f71349b38519ae48d3de7a5ca8d406485e2657f",
+      "a2a3_moe_ep4_flash": "5605bb462e5e983f542325d42cc9719ea0fe8cd51f06a2dca6310fc0ab51e9a4",
+      "a2a3_moe_ep4_flash_admission_20261003": "ed724ad3dbe11c72a8a9329e04a0b8159ff7520919a9150e4822340f6553e7e6",
+      "a2a3_moe_ep4_pro": "7e10e3b003b7f8e1cd26da82ee6a3fce7c4a5649b1708064e8e32781e9fb9106",
+      "a2a3_moe_ep4_pro_admission_20261003": "c1fb3e5b9f81b66a10cee6914fb8b6deaf18455dbf9c603db3f457d85fc84fbf",
+      "a2a3_prefill_attention_hca_demo_admission_20261003": "416c87a7f48a42e1c4f5365ace1f99a14637a6da2e1e2f163d0f620f7676827d",
+      "a2a3_prefill_attention_hca_flash_admission_20261003": "83b29ced140696f5ac4ead95ffefd88baa67336d7c929446aa73e436516bcb0d",
+      "a2a3_prefill_attention_hca_pro_admission_20261003": "161fd32da324fd2a90970aaf16698e5f07f871a5426bbc5961dc21458dc6960a",
+      "a2a3_prefill_layer_ep2_csa_demo": "324433eabbaf85744fae7d291e390acae35ffadbc0b0d6559b3a4d86f625a10d",
+      "a2a3_prefill_layer_ep2_csa_demo_admission_20261003": "de679fd48196687045ca15c9570515c414633ed74cc03c884be2a42c46d3d7b2",
+      "a2a3_prefill_layer_ep2_csa_flash": "2c579a9e65fda32c2c4702e2b03390d594e9fd499b2bbf14534da02e5f0f2112",
+      "a2a3_prefill_layer_ep2_csa_flash_admission_20261003": "042888cc9cb123a78eccb573084cf9e50494d59d86fd4d4a32678ec26aa482da",
+      "a2a3_prefill_layer_ep2_csa_pro": "8b444e352e5f90c830f5fc26b3ef59b4fc41a6c7a3f8b7985717d6347285fdf3",
+      "a2a3_prefill_layer_ep2_csa_pro_admission_20261003": "aae80e1fe59967d4f409f9e73dc90cfb47e04dca4c928d005b51c72d1700b5d9",
+      "a2a3_prefill_layer_ep2_csa_pro_repair_idle67": "c21e4ad5c7e6db469bdea92276847a3333637b894067064f09f466faf3346af4",
+      "a2a3_single_card": "12769f86e1ac3012fd9dea35d72fe9003bd1c163c81e00531e2fb72e11392bbe",
+      "a2a3_synthetic_token_loop_ep2_idle67": "bf9e4f862bcf619a15955a641e970de30b7190584507325599926e145b508a8d",
+      "a2a3_synthetic_token_loop_ep2_libstdcxx_idle67": "9bb69fcf0b4cffb116e07a190aa7d78dbb6140296a539ecc1b359929653addde",
+      "qwen3_14b_decode_layer_single_layer_max_seq_127": "dd9438746496606f43798f41badb19d9b3877238b09640626b494a0c6d77d76c"
+    }
+  },
+  "verification": {
+    "verified_on": "2026-10-05",
+    "official_golden_tests": {
+      "passed": 308,
+      "failed": 1,
+      "failure": "torch.float8_e8m0fnu is unavailable in Torch 2.6.0+cpu"
+    },
+    "legacy_golden_tests": {
+      "passed": 241,
+      "failed": 68
+    },
+    "official_venv_dependency_check": "pass; 26 venv packages",
+    "legacy_venv_dependency_check": "nvidia-cusparselt-cu13 built for a different platform",
+    "minimum_kernel_simulators": {
+      "a2a3sim": "PASS",
+      "a5sim": "PASS"
+    },
+    "golden_save_and_replay": "PASS",
+    "runtime_dir_replay_benchmark": {
+      "result": "PASS",
+      "rounds": 3,
+      "warmup": 1
+    },
+    "v41_cpu_golden": "PASS",
+    "ptobench_launcher_help": "PASS",
+    "ptobench_agent_cli_help": "PASS",
+    "not_recertified": [
+      "real-device model execution",
+      "HCCL multi-device execution",
+      "real-weight loading/token generation",
+      "Ascend A5 real-device execution",
+      "In-Core instruction profiling",
+      "agent backend authentication"
+    ]
+  },
+  "evidence": {
+    "original_audit_directory": "/data1/home/ziruiwang/pypto-lib/test_results/official_docs_audit_20261005",
+    "audit_report": "/data1/home/ziruiwang/pypto-lib/test_results/official_docs_audit_20261005/README.md",
+    "package_inventory": "/data1/home/ziruiwang/pypto-lib/test_results/official_docs_audit_20261005/python_packages.json",
+    "source_provenance": "/data1/home/ziruiwang/pypto-lib/test_results/official_docs_audit_20261005/source_provenance.json",
+    "official_golden_log": "/data1/home/ziruiwang/pypto-lib/test_results/official_docs_audit_20261005/pytest_official.log",
+    "legacy_golden_log": "/data1/home/ziruiwang/pypto-lib/test_results/official_docs_audit_20261005/pytest_legacy.log",
+    "simulator_logs": [
+      "/data1/home/ziruiwang/pypto-lib/test_results/official_docs_audit_20261005/smoke_a2a3sim.log",
+      "/data1/home/ziruiwang/pypto-lib/test_results/official_docs_audit_20261005/smoke_a5sim.log",
+      "/data1/home/ziruiwang/pypto-lib/test_results/official_docs_audit_20261005/smoke_save.log",
+      "/data1/home/ziruiwang/pypto-lib/test_results/official_docs_audit_20261005/smoke_replay_benchmark.log"
+    ],
+    "cli_help_checked_in_current_summary_turn": true
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.decode_qkv_proj_rope_flash",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "9563a0bbaaa89801b9abb08b1d5561dd3f4bf740b3213aed1070d9caee22632a"
+}

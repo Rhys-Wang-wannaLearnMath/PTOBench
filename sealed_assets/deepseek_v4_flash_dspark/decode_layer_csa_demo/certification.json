@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4_flash_dspark.decode_layer_csa_demo",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "cdeeb31eeb2789c4aa97f484fcece6da24bf87162cd169c8502766dbfd93475a"
+}

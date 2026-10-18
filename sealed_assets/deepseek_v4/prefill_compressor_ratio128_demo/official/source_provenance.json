@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/prefill_compressor_ratio128.py",
+  "source_sha256": "78e7db5c4e29bb74c1a8ed6e849cb6f419393e5a37f050c8b3343f91dffee060",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "78e7db5c4e29bb74c1a8ed6e849cb6f419393e5a37f050c8b3343f91dffee060",
+  "source_commit": "97cf255f7c0c91fe547201f93ad52a55a96cea2d",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/config.py",
+      "source_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/rope_tables.py",
+      "source_sha256": "6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59",
+      "frozen_copy": "rope_tables.py",
+      "frozen_copy_sha256": "6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59"
+    }
+  ],
+  "selection": "Frozen single-request token-major ratio-128 prefill workload bound to DEMO. Current successors alter the state and cache ABI; preserve the selected algorithm, Fixture and correctness outputs.",
+  "fixture_authority": "original.py::build_tensor_specs with public CASE_CONFIG and START_POS"
+}

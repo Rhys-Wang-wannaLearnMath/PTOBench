@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/decode_indexer.py",
+  "source_sha256": "d1062721019b890dd1d7bf09210977643af643edd9eb30f03c419b555d70aee4",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "d1062721019b890dd1d7bf09210977643af643edd9eb30f03c419b555d70aee4",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/config.py",
+      "source_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/decode_indexer_compressor.py",
+      "source_sha256": "875861daa1c585cba8202609036f36cdb71ae5f2f888ae6e7efad97232b45b70",
+      "frozen_copy": "decode_indexer_compressor.py",
+      "frozen_copy_sha256": "875861daa1c585cba8202609036f36cdb71ae5f2f888ae6e7efad97232b45b70"
+    }
+  ],
+  "selection": "Preserve the complete frozen Batch 07 static decode-indexer workload: ratio-4 overlapping compression, paged BF16 cache and full score/index outputs. Current upstream serving successors change ABI, cache dtype/scales and state, so they are comparator evidence rather than replacement workload sources. Bind the complete PRO preset through the public CASE_CONFIG without modifying preserved source.",
+  "fixture_authority": "byte-exact official TensorSpec builder and golden function"
+}

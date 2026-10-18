@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.prefill_swa_pro",
+  "description": "DeepSeek-V4 Flash dspark packed prefill sliding-window attention (PRO preset)",
+  "workspace": "public/candidate_seed",
+  "module": "prefill_swa_pro.py",
+  "entry": "prefill_attention_swa_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "deepseek_v4_flash_dspark__prefill_swa_pro_manual_idle_20261007_libstdcxx",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "scalars": [
+    "num_tokens"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "kv_cache",
+      "x_out"
+    ]
+  },
+  "state": {
+    "behavior": "inout",
+    "initial_state": [
+      "kv_cache"
+    ],
+    "restore_before_each_launch": true
+  },
+  "runtime": {
+    "ring_heap": [
+      0,
+      536870912,
+      0,
+      0
+    ]
+  }
+}

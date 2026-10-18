@@ -1,1 +1,30 @@
-{"schema_version":1,"outputs":{"score":{"method":"ratio_allclose","rtol":0.0078125,"atol":0.0001,"max_error_ratio":0.005},"idx_kv_cache":{"method":"ratio_allclose","rtol":0.0078125,"atol":0.0001,"max_error_ratio":0.005},"topk_idxs":{"method":"custom","name":"topk_pair_compare","values_output":"score","dim":-1,"descending":true}}}
+{
+  "schema_version": 1,
+  "outputs": {
+    "score": {
+      "method": "custom",
+      "name": "score_valid_region_compare",
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 0.005,
+      "invalid_value": -3.4028234663852886e+38,
+      "hard_multiplier": 4,
+      "hard_atol": 0.005
+    },
+    "idx_kv_cache": {
+      "method": "ratio_allclose",
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 7.62939453125e-08
+    },
+    "topk_idxs": {
+      "method": "custom",
+      "name": "topk_pair_compare",
+      "values_output": "score",
+      "dim": -1,
+      "descending": true,
+      "topk": 1024,
+      "index_offset": 128
+    }
+  }
+}

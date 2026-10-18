@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/deepseek_v4_decode_qkv_proj_rope.py",
+  "source_sha256": "2ba386bb54f25ea3632bb761b67b26996afc969652c7eda177e6a881786a2978",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "2ba386bb54f25ea3632bb761b67b26996afc969652c7eda177e6a881786a2978",
+  "dependencies": [],
+  "selection": "The approved self-contained frozen corpus source preserves the legacy T=16 selector-matrix ABI and historical Q/KV projection workload. No separate configuration dependency or named preset exists.",
+  "fixture_authority": "real TensorSpec builder and official golden function"
+}

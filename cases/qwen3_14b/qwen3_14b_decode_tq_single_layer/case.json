@@ -26,5 +26,8 @@
       "quant_v_scales"
     ],
     "restore_before_each_launch": true
+  },
+  "runtime": {
+    "device_id": 6
   }
 }

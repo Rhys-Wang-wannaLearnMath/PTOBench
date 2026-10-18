@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.moe_ep_ep8_demo",
+  "description": "Historical moe_ep.py decode EP8 DEMO, layer_id=0",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "l3_moe_ep",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_moe_ep_ep8_libstdcxx",
+  "runtime": {
+    "device_ids": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ]
+  },
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "x_next"
+    ]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  }
+}

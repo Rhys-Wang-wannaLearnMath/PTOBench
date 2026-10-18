@@ -6,6 +6,7 @@ import os
 import sys
 import time
 
+import profile_modes
 import session
 import session_actions
 
@@ -40,16 +41,29 @@ def _emit_result(result):
 
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
+    root = os.environ.get('PTOBENCH_SESSION_ROOT')
+    try:
+        enabled_profiles = (session.read_session(root)['profiling_modes'] if root
+                            else list(profile_modes.public_enabled_modes()))
+    except Exception as error:
+        _emit_result(session_actions._error_result(error))
+        return session_actions._error_result(error).exit_code
     parser = Parser(prog='ptobench', allow_abbrev=False)
     commands = parser.add_subparsers(dest='action', required=True, parser_class=Parser)
-    evaluate = commands.add_parser('evaluate', allow_abbrev=False)
-    evaluate.add_argument('workspace', nargs='?', default='.')
-    profile = commands.add_parser('profile', allow_abbrev=False)
-    profile.add_argument('mode', choices=('runtime', 'pmu', 'compiler'))
-    profile.add_argument('workspace', nargs='?', default='.')
-    fork = commands.add_parser('fork', allow_abbrev=False)
-    fork.add_argument('workspace', nargs='?', default='.')
-    root = os.environ.get('PTOBENCH_SESSION_ROOT')
+    evaluate = commands.add_parser('evaluate', allow_abbrev=False,
+                                  help='Check correctness and measure Candidate latency.',
+                                  description='Check correctness and measure Candidate latency; costs one exploration action.')
+    evaluate.add_argument('workspace', nargs='?', default='.', help='Registered workspace root (default: current directory).')
+    if enabled_profiles:
+        profile = commands.add_parser('profile', allow_abbrev=False,
+                                      help='Collect runtime, PMU or compiler diagnostics.',
+                                      description='Collect diagnostics without output correctness checking; use evaluate to validate. Costs one exploration action.')
+        profile.add_argument('mode', choices=enabled_profiles,
+                             help='runtime: scheduling/dependencies; pmu: hardware counters; compiler: compiler/IR diagnostics.')
+        profile.add_argument('workspace', nargs='?', default='.', help='Registered workspace root (default: current directory).')
+    fork = commands.add_parser('fork', allow_abbrev=False, help='Copy source into a new registered workspace.',
+                               description='Copy source into a new registered workspace and return its path; costs no hardware action.')
+    fork.add_argument('workspace', nargs='?', default='.', help='Registered parent workspace root (default: current directory).')
     try:
         args = parser.parse_args(argv)
         if not root:

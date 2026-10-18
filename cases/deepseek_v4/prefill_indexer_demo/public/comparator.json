@@ -15,9 +15,7 @@
       "index_offset": 256,
       "invalid_below_offset_to_neg_inf": true,
       "dim": -1,
-      "descending": true,
-      "rtol": 0.001,
-      "atol": 0.001
+      "descending": true
     },
     "idx_kv_cache": {
       "method": "custom",
@@ -30,7 +28,9 @@
         "atol": 1.0,
         "max_error_ratio": 0.01
       },
-      "inactive": {"method": "exact"}
+      "inactive": {
+        "method": "exact"
+      }
     },
     "idx_kv_scale": {
       "method": "custom",
@@ -43,7 +43,9 @@
         "atol": 0.0001,
         "max_error_ratio": 0.01
       },
-      "inactive": {"method": "exact"}
+      "inactive": {
+        "method": "exact"
+      }
     }
   }
 }

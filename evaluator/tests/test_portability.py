@@ -111,8 +111,8 @@ class PortabilityTests(unittest.TestCase):
                 else:
                     common.REPO_ROOT = bench
                 fixture.launcher_config(backend, mode='all')
-                profile = bench / f'launcher/profiles/{backend}/default.yaml'
-                shutil.copyfile(SOURCE_BENCHMARK / f'launcher/profiles/{backend}/default.yaml', profile)
+                profile = bench / f'modes/_shared/profiles/{backend}/default.yaml'
+                shutil.copyfile(SOURCE_BENCHMARK / f'modes/_shared/profiles/{backend}/default.yaml', profile)
                 with mock.patch.dict(os.environ, {'PTOBENCH_SEALED_ROOT': str(assets)}):
                     process, value = fixture.launch()
                     self.assertEqual(process.returncode, 0, (value, process.stderr.decode()))

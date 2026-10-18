@@ -3,6 +3,15 @@
 实验入口为 `pto-launcher run EXPERIMENT.yaml` / `pto-launcher status SESSION_ROOT`。
 配置、工具接入与自动收尾说明见 [LAUNCHER.md](LAUNCHER.md)。
 
+实验方法通过 YAML 顶层 `mode` 选择，默认 `basic`，与 Codex/Pi backend 独立。
+Basic 已使用独立方法入口，自行准备任务说明、执行 Agent 并收集原生会话；
+PTOBench 只提供共同评测、预算和原始实验记录。
+Basic 与 CANNBot 均开放 evaluate、fork 和全部三种 profile。
+CANNBot 使用固定上游 PyPTO 性能入口，支持 Pi/Codex；[运行说明](modes/cannbot/README.md)。
+Ours 目录已预留。方法组织和接入方式见 [modes/README.md](modes/README.md)，必须保留的
+原始会话、配置、测量和失败附件见 [RUN_RECORDS.md](RUN_RECORDS.md)。初始
+性能直接使用 Case 的已认证缓存，不要求 Agent 额外 evaluate 原始代码。
+
 本目录既可以作为 `pypto-lib/benchmarks/PTOBench` 嵌套运行，
 也可以从 [PTOBench GitHub 仓库](https://github.com/Rhys-Wang-wannaLearnMath/PTOBench) 独立克隆。独立运行时，设置
 `PTOBENCH_REPO_ROOT` 指向要评测的 PyPTO-Lib 源码 checkout；未设置时，嵌套在
@@ -18,6 +27,10 @@ Case、Evaluator、Session 和 Launcher 不依赖当前工作目录或固定的�
 源码/运行时、CANN、PTOAS 和匹配的 sealed asset bundle；环境路径设置见
 [environments/README.md](environments/README.md)。Launcher 依赖安装、Agent 工具和
 认证设置见 [LAUNCHER.md](LAUNCHER.md)。
+
+当前主机的软件版本、依赖来源、工具链路径和已验证范围见
+[当前软件栈与运行环境](ENVIRONMENT.md)（2026-10-05 核实），完整版本记录见
+[环境快照](environments/inventory/20261005.json)。
 
 ## 独立运行
 
@@ -46,6 +59,10 @@ v0.2 将一个 Case 分成公开资产和评测专用资产：
 - `cases/`：Agent 可见的 Case 描述、只读契约、公开比较规则和 Candidate workspace。只有 workspace 可写，其内部文件自由。
 - `sealed_assets/`：评测器专用的输入、初始状态、NPU Ref、CPU Oracle、缓存输出和 Case-local evaluator。Agent 不应读取此目录。
 
+Case 资产按模型组织为 `cases/<model>/<case>/` 和
+`sealed_assets/<model>/<case>/`。历史 `models_0912.*`、`models_1001.*`
+Case ID 仍可使用，Evaluator 会将它们映射到新的模型目录；旧的时间前缀目录不再作为规范布局。
+
 每个公开 Case 使用三个简单文件划分职责：
 
 - `case.json`：Case 路由、环境和评测模式；
@@ -71,7 +88,12 @@ Comparator 的上游对齐原则在集成到 pypto-lib 时见 `../mig_workflow/C
 
 Agent CLI 是 `ptobench`，提供 evaluate、profile runtime/pmu/compiler 和 fork。
 `evaluate` 始终使用 clean 模式；启用的三种 profile 只运行 Candidate，
-生成诊断信息，不产生正式性能成绩。
+生成诊断信息，不检查输出正确性、不产生正式性能成绩。Agent profile 成功
+表示诊断执行成功，结果不含 `correctness` 字段；正确性以 `evaluate` 和最终
+fresh clean 为准。profile 不生成可供最终选择的 Snapshot。
+迁移验收使用的 maintenance Session 仍保留原有 profiling 正确性检查。
+探索 `evaluate` 使用 2 次预热、3 次正式测量并取中位数；session 最终验证
+使用 Case 的正式配置，目前为 5 次预热、10 次正式测量。两者都保留原始样本。
 中央 `evaluator/evaluate.py` 只提供统一结果格式。每个 Case 的
 `sealed_assets/<family>/<case>/evaluate.py` 保留从原始实现提取的 TensorSpec、运行
 方式，并完成该 Case 的具体执行。Comparator 的规则公开存放，由 Case-local
@@ -159,7 +181,8 @@ benchmark 目录，不能只把脚本单独复制到 workspace。若不使用
 `PATH`，也可以直接调用该脚本的绝对路径。
 
 CLI 保留 Evaluator 的 stdout/stderr 并保存两份日志，最后打印一行 Session JSON。
-成功且 correctness/integrity PASS 时，从同一份冻结源码保存只读 Snapshot。
+evaluate 成功且 correctness/integrity PASS 时，从同一份冻结源码保存只读 Snapshot。
+Agent profile 仅保存诊断和执行记录，仍检查执行错误及完整性，但不作正确性认证。
 公开 `.benchmark_outputs/<internal_mode>/latest_result.json` 和
 `latest_session_result.json` 是诊断副本；修改它们不影响权威事件或成绩。
 pmu/compiler 仍分别使用内部 hardware/compile 产物目录。profile 无有效 latency

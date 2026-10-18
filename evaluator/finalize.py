@@ -178,7 +178,8 @@ def _prepare_final(root, record, selected):
             with file_tree.open_file(target / relative) as fd:
                 os.fchmod(fd, entry['mode'] | 0o200)
     case = session._read(Path(record['case_dir']) / 'case.json')
-    workspace.write_context(Path(record['case_dir']), Path(record['sealed_dir']), case, target, parent_workspace=source)
+    workspace.write_context(Path(record['case_dir']), Path(record['sealed_dir']), case, target,
+                            parent_workspace=source, **session.context_options(record))
     roots = {'context_final': integrity.ProtectionRoot(target / '.benchmark_context', 'context', readonly=True),
              'final_source': integrity.ProtectionRoot(final / 'source_manifest.json', 'records'),
              'final_selection': integrity.ProtectionRoot(final / 'selection.json', 'records'),
@@ -211,7 +212,8 @@ def _finish_locked(root, record, selected, signal_state):
     frozen = root / 'final/workspace'
     session.reserve_action(root, seq, 'finish', workspace_path=frozen, source_manifest=manifest)
     argv = [sys.executable, str(common.BENCHMARK_ROOT / 'evaluator/evaluate.py'), '--case', record['case_id'],
-            '--candidate', str(frozen), '--phase', 'all', '--profile-mode', 'clean', '--result', str(root / 'final/result.json')]
+            '--candidate', str(frozen), '--phase', 'all', '--profile-mode', 'clean',
+            '--measurement-mode', 'formal', '--result', str(root / 'final/result.json')]
     environment = os.environ.copy()
     environment.pop('PYPTO_BENCH_ENV', None)
     environment.pop('PYPTO_BENCH_PROFILE', None)
@@ -250,7 +252,8 @@ def _finish_locked(root, record, selected, signal_state):
     updates = {'final_evaluator_result': raw_bytes} if raw_bytes is not None else None
     session.complete_action(root, seq, exit_code=exit_code, error_code=error_code, integrity_passed=intact,
                             result=raw, repaired_paths=repaired, action_started=started,
-                            final_result=body, record_updates=updates)
+                            final_result=body, record_updates=updates,
+                            artifact_index=actions.action_records.archive(root, seq, root / 'final'))
     actions._clear_marker()
     return FinalResult(**body)
 

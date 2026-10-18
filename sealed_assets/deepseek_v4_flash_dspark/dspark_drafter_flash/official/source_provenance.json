@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.dspark_drafter_flash",
+  "authority": "recovered_coherent_historical_upstream",
+  "repository": "https://github.com/hw-native-sys/pypto-lib",
+  "commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8",
+  "source_recovery_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/SOURCE_RECOVERY.json",
+  "selection_rationale": "Preserve the complete three-layer DSpark workload from PR #939; all recovered source files match one upstream commit. Current upstream changes sampling, CP topology, cache ownership, ABI, Fixture and golden semantics. The authorized PRO import adaptations are confined to fixture_builder.py; official source stays byte-exact.",
+  "source": {
+    "source_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/dspark_drafter.py",
+    "source_sha256": "56ee65925dfacb1c628020da4b091ea120bc2de44f3d534485f9fec971c52a36",
+    "preserved_path": "official/original.py",
+    "preserved_sha256": "56ee65925dfacb1c628020da4b091ea120bc2de44f3d534485f9fec971c52a36",
+    "upstream_path": "models/deepseek_v4_flash_dspark/dspark_drafter.py",
+    "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8"
+  },
+  "dependencies": [
+    {
+      "source_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/config.py",
+      "source_sha256": "f2dd407448542652f2118ecf057477b4adf46adb757a2b8db37cf528090a201f",
+      "preserved_path": "official/original_config.py",
+      "preserved_sha256": "f2dd407448542652f2118ecf057477b4adf46adb757a2b8db37cf528090a201f",
+      "upstream_path": "models/deepseek_v4_flash_dspark/config.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/dspark_attention.py",
+      "source_sha256": "0bb1776088d20c69d48b86ff8b5af98286fdbd158837109676c770641ca07f11",
+      "preserved_path": "official/dspark_attention.py",
+      "preserved_sha256": "0bb1776088d20c69d48b86ff8b5af98286fdbd158837109676c770641ca07f11",
+      "upstream_path": "models/deepseek_v4_flash_dspark/dspark_attention.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/dspark_context_kv.py",
+      "source_sha256": "75ad21a06441e1fbddf31a892a8d58239185f6d7376cd2efc5fbf34702c715e0",
+      "preserved_path": "official/dspark_context_kv.py",
+      "preserved_sha256": "75ad21a06441e1fbddf31a892a8d58239185f6d7376cd2efc5fbf34702c715e0",
+      "upstream_path": "models/deepseek_v4_flash_dspark/dspark_context_kv.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/dspark_proj.py",
+      "source_sha256": "43967fc7b4fc18620902b7526e7aff6d47849640fbcc641e00118e781842b6da",
+      "preserved_path": "official/dspark_proj.py",
+      "preserved_sha256": "43967fc7b4fc18620902b7526e7aff6d47849640fbcc641e00118e781842b6da",
+      "upstream_path": "models/deepseek_v4_flash_dspark/dspark_proj.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/expert_routed.py",
+      "source_sha256": "cbf2c384f9a62f2b64f5a277af0a25890f017a701ce097c82bc56d5e887680ce",
+      "preserved_path": "official/expert_routed.py",
+      "preserved_sha256": "cbf2c384f9a62f2b64f5a277af0a25890f017a701ce097c82bc56d5e887680ce",
+      "upstream_path": "models/deepseek_v4_flash_dspark/expert_routed.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/expert_shared.py",
+      "source_sha256": "23dfc1bd5f2f01f73261f88feb90fbbb41e94830e495ee5fa8e6295a7ae6e391",
+      "preserved_path": "official/expert_shared.py",
+      "preserved_sha256": "23dfc1bd5f2f01f73261f88feb90fbbb41e94830e495ee5fa8e6295a7ae6e391",
+      "upstream_path": "models/deepseek_v4_flash_dspark/expert_shared.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/gate.py",
+      "source_sha256": "407df9874c50bf19885d279bd92ba0d2368b91e2a97468571193f297868ad228",
+      "preserved_path": "official/gate.py",
+      "preserved_sha256": "407df9874c50bf19885d279bd92ba0d2368b91e2a97468571193f297868ad228",
+      "upstream_path": "models/deepseek_v4_flash_dspark/gate.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/hc_head.py",
+      "source_sha256": "255f1a84dead23312cf25b695b2faf13d1e897208c7291ca0ca0912d54ce49f2",
+      "preserved_path": "official/hc_head.py",
+      "preserved_sha256": "255f1a84dead23312cf25b695b2faf13d1e897208c7291ca0ca0912d54ce49f2",
+      "upstream_path": "models/deepseek_v4_flash_dspark/hc_head.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/hc_post.py",
+      "source_sha256": "a80e0d393e4211bca80ac047cf90b8d7a908ee3300d5b43f33db9b0a6754bfb7",
+      "preserved_path": "official/hc_post.py",
+      "preserved_sha256": "a80e0d393e4211bca80ac047cf90b8d7a908ee3300d5b43f33db9b0a6754bfb7",
+      "upstream_path": "models/deepseek_v4_flash_dspark/hc_post.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/hc_pre.py",
+      "source_sha256": "76d202d353c23ffbca986064e304253693093ba09bd90233805aa9937dc32dc0",
+      "preserved_path": "official/hc_pre.py",
+      "preserved_sha256": "76d202d353c23ffbca986064e304253693093ba09bd90233805aa9937dc32dc0",
+      "upstream_path": "models/deepseek_v4_flash_dspark/hc_pre.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/lookup_embedding.py",
+      "source_sha256": "fff321372d6933c21506e8615371dac5b344fb7ef69b4456fd0088bde23e9210",
+      "preserved_path": "official/lookup_embedding.py",
+      "preserved_sha256": "fff321372d6933c21506e8615371dac5b344fb7ef69b4456fd0088bde23e9210",
+      "upstream_path": "models/deepseek_v4_flash_dspark/lookup_embedding.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/moe.py",
+      "source_sha256": "d7bbb07337678c9b0b7ed3f40cab8f54c167c316ad6add1051145bcca06fb3fc",
+      "preserved_path": "official/moe.py",
+      "preserved_sha256": "d7bbb07337678c9b0b7ed3f40cab8f54c167c316ad6add1051145bcca06fb3fc",
+      "upstream_path": "models/deepseek_v4_flash_dspark/moe.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/qkv_proj_rope.py",
+      "source_sha256": "8ebd6cb3d1b73a9b21d728ee495165da69bfacff2d99f32540a215f30231636d",
+      "preserved_path": "official/qkv_proj_rope.py",
+      "preserved_sha256": "8ebd6cb3d1b73a9b21d728ee495165da69bfacff2d99f32540a215f30231636d",
+      "upstream_path": "models/deepseek_v4_flash_dspark/qkv_proj_rope.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/rmsnorm.py",
+      "source_sha256": "bc0602db075cff0abf5184ea9381d02bfdd3411ad7e608d4cb326463bd347b36",
+      "preserved_path": "official/rmsnorm.py",
+      "preserved_sha256": "bc0602db075cff0abf5184ea9381d02bfdd3411ad7e608d4cb326463bd347b36",
+      "upstream_path": "models/deepseek_v4_flash_dspark/rmsnorm.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8"
+    },
+    {
+      "source_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/dspark_drafter/utils.py",
+      "source_sha256": "338946443a895af2632f592a15788c968c487fcae15202a2b865a45cd174d1c9",
+      "preserved_path": "official/utils.py",
+      "preserved_sha256": "338946443a895af2632f592a15788c968c487fcae15202a2b865a45cd174d1c9",
+      "upstream_path": "models/deepseek_v4_flash_dspark/utils.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8"
+    }
+  ]
+}

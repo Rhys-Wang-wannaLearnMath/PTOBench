@@ -16,6 +16,24 @@
       "rtol": 0.0078125,
       "atol": 0.0001,
       "max_error_ratio": 0.005
+    },
+    "cmp_kv": {
+      "method": "ratio_allclose",
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 0.005
+    },
+    "idx_kv_cache": {
+      "method": "ratio_allclose",
+      "rtol": 0.0,
+      "atol": 1.0,
+      "max_error_ratio": 0.01
+    },
+    "idx_kv_scale": {
+      "method": "ratio_allclose",
+      "rtol": 0.0078125,
+      "atol": 0.0001,
+      "max_error_ratio": 0.01
     }
   }
 }

@@ -1,0 +1,144 @@
+"""Independent CPU golden for packed SWA prefill."""
+
+from config import BLOCK_SIZE, CASE_CONFIG as M, PREFILL_BATCH, PREFILL_CMP_BLOCK_NUM, PREFILL_CMP_MAX_BLOCKS, PREFILL_SEQ
+
+from hc_post import golden_hc_post_prefill
+
+from hc_pre import golden_hc_pre
+
+from qkv_proj_rope import golden_qkv_proj_rope
+
+from rmsnorm import golden_rms_norm
+
+from prefill_sparse_attn import golden_prefill_sparse_attn
+
+from utils import cache_row_from_table
+
+B = PREFILL_BATCH
+
+S = PREFILL_SEQ
+
+T = B * S
+
+D = M.hidden_size
+
+H = M.num_attention_heads
+
+HEAD_DIM = M.head_dim
+
+ROPE_DIM = M.qk_rope_head_dim
+
+Q_LORA = M.q_lora_rank
+
+WIN = M.sliding_window
+
+IDX_TOPK = M.index_topk
+
+HC_MULT = M.hc_mult
+
+CMP_BLOCK_NUM = PREFILL_CMP_BLOCK_NUM
+
+SPARSE_CMP_MAX_BLOCKS = PREFILL_CMP_MAX_BLOCKS
+
+def golden_prefill_attention_swa(tensors):
+    """Torch reference for token-major packed SWA prefill."""
+    import torch
+
+
+    num_tokens = int(tensors["num_tokens"])
+    x_hc_rect = tensors["x_hc"].view(B, S, HC_MULT, D)
+    x_hc_flat = x_hc_rect.view(T, HC_MULT, D)
+    x_mixed = torch.zeros(T, D, dtype=torch.bfloat16)
+    post = torch.zeros(T, HC_MULT, dtype=torch.float32)
+    comb = torch.zeros(T, HC_MULT * HC_MULT, dtype=torch.float32)
+    golden_hc_pre({
+        "x": x_hc_flat,
+        "hc_fn": tensors["hc_attn_fn"],
+        "hc_scale": tensors["hc_attn_scale"],
+        "hc_base": tensors["hc_attn_base"],
+        "x_mixed": x_mixed,
+        "post": post,
+        "comb": comb,
+    })
+
+    q = torch.zeros(T, H, HEAD_DIM, dtype=torch.bfloat16)
+    kv = torch.zeros(T, HEAD_DIM, dtype=torch.bfloat16)
+    qr = torch.zeros(T, Q_LORA, dtype=torch.int8)
+    qr_scale = torch.zeros(T, 1, dtype=torch.float32)
+    rope_cos_t = torch.zeros(T, ROPE_DIM, dtype=torch.bfloat16)
+    rope_sin_t = torch.zeros(T, ROPE_DIM, dtype=torch.bfloat16)
+    x_normed = golden_rms_norm(x_mixed, tensors["attn_norm_w"])
+    positions = tensors["position_ids"].to(torch.long)
+    rope_cos_t = tensors["freqs_cos"].index_select(0, positions).contiguous()
+    rope_sin_t = tensors["freqs_sin"].index_select(0, positions).contiguous()
+    golden_qkv_proj_rope({
+        "x": x_normed,
+        "wq_a": tensors["wq_a"],
+        "wq_b": tensors["wq_b"],
+        "wq_b_scale": tensors["wq_b_scale"],
+        "wkv": tensors["wkv"],
+        "rope_cos": rope_cos_t,
+        "rope_sin": rope_sin_t,
+        "gamma_cq": tensors["gamma_cq"],
+        "gamma_ckv": tensors["gamma_ckv"],
+        "q": q,
+        "kv": kv,
+        "qr": qr,
+        "qr_scale": qr_scale,
+    })
+
+    kv_cache_in = tensors["kv_cache"].clone()
+    kv_cache_flat = kv_cache_in.view(kv_cache_in.shape[0] * BLOCK_SIZE, HEAD_DIM)
+    for t in range(num_tokens):
+        dst_row = int(tensors["ori_slot_mapping"][t].item())
+        if dst_row >= 0:
+            kv_cache_flat[dst_row, :] = kv[t]
+
+    def build_swa_metadata():
+        idx = torch.full((T, WIN), -1, dtype=torch.int32)
+        pos = tensors["position_ids"]
+        table = tensors["block_table"]
+        for t in range(num_tokens):
+            abs_pos = int(pos[t].item())
+            window_valid = min(WIN, abs_pos + 1)
+            key_start_abs = abs_pos + 1 - window_valid
+            for k, key_abs in enumerate(range(key_start_abs, abs_pos + 1)):
+                row = cache_row_from_table(table, key_abs)
+                if row >= 0:
+                    idx[t, k] = row
+        return idx
+
+    attn_out = torch.zeros(T, D, dtype=torch.bfloat16)
+    golden_prefill_sparse_attn({
+        "q": q,
+        "ori_kv": kv_cache_in,
+        "swa_indices": build_swa_metadata(),
+        "cmp_kv": torch.zeros(CMP_BLOCK_NUM, BLOCK_SIZE, 1, HEAD_DIM, dtype=torch.bfloat16),
+        "cmp_block_table": torch.zeros(SPARSE_CMP_MAX_BLOCKS, dtype=torch.int32),
+        "cmp_indices": torch.full((T, IDX_TOPK), -1, dtype=torch.int32),
+        "attn_sink": tensors["attn_sink"],
+        "num_tokens": tensors["num_tokens"],
+        "freqs_cos": rope_cos_t,
+        "freqs_sin": rope_sin_t,
+        "wo_a": tensors["wo_a"],
+        "wo_b": tensors["wo_b"],
+        "wo_b_scale": tensors["wo_b_scale"],
+        "attn_out": attn_out,
+    })
+
+    tensors["kv_cache"][:] = kv_cache_in
+
+    y = torch.zeros(T, HC_MULT, D, dtype=torch.float32)
+    golden_hc_post_prefill({
+        "x": attn_out.view(T, D),
+        "residual": x_hc_flat,
+        "post": post,
+        "comb": comb,
+        "y": y,
+        "num_tokens": tensors["num_tokens"],
+    })
+    tensors["x_out"][:] = y
+
+def compute(values):
+    golden_prefill_attention_swa(values)
+    return {"kv_cache": values["kv_cache"].clone(), "x_out": values["x_out"].clone()}

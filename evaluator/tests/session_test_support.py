@@ -70,6 +70,7 @@ class SessionTestBase(unittest.TestCase):
                    'case_id': case_id, 'ref_output_cache': 'ready',
                    'comparator_sha256': common.sha256_file(case_dir / 'public/comparator.json')})
         write_json(sealed / 'ref_performance.json', {'schema_version': 1, 'status': 'ready',
+                   'compiler_tuning': dict(common.TUNING_DEFAULTS),
                    'fixtures': {'fixture_000': {'median_effective_us': 1.0}}})
         write_json(sealed / 'fixtures/fixture_000/manifest.json', {'schema_version': 1, 'fixture_id': 'fixture_000',
                    'inputs_dir': 'in', 'outputs_dir': 'out', 'seed': 0})

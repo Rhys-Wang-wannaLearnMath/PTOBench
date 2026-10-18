@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_v01_frozen_copy",
+  "source_path": "benchmarks/pypto_lib_bench-v0.1/cases/deepseek_v4/prefill_attention_swa/official_golden/original.py",
+  "source_sha256": "fc909a7be93f285a9a88d7d91efebcae134c03c37213d2435b7a43dcb9da1481",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "fc909a7be93f285a9a88d7d91efebcae134c03c37213d2435b7a43dcb9da1481",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_batch08/config.py",
+      "source_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "frozen_copy_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_attention_swa_demo/official/original_config.py"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_batch08/rope_tables.py",
+      "source_sha256": "6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59",
+      "frozen_copy": "rope_tables.py",
+      "frozen_copy_sha256": "6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59",
+      "frozen_copy_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_attention_swa_demo/official/rope_tables.py"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_batch08/hc_pre_v2.py",
+      "source_sha256": "f35f52c6c17366dc3abce6caebab82e6d46f89c49d99856db5e57edc0b4c32a8",
+      "frozen_copy": "hc_pre_v2.py",
+      "frozen_copy_sha256": "f35f52c6c17366dc3abce6caebab82e6d46f89c49d99856db5e57edc0b4c32a8",
+      "frozen_copy_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_attention_swa_demo/official/hc_pre_v2.py"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_batch08/hc_post_v2.py",
+      "source_sha256": "43266edbf56d8dc84899de3b7a428ea3b08f4113b51ed5438d2a392170356c78",
+      "frozen_copy": "hc_post_v2.py",
+      "frozen_copy_sha256": "43266edbf56d8dc84899de3b7a428ea3b08f4113b51ed5438d2a392170356c78",
+      "frozen_copy_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_attention_swa_demo/official/hc_post_v2.py"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_batch08/rmsnorm.py",
+      "source_sha256": "fc0817fb24dd0ce9a075ca48ee82ea0af091ffe6c48e0d216933c10d5d74ce26",
+      "frozen_copy": "rmsnorm.py",
+      "frozen_copy_sha256": "fc0817fb24dd0ce9a075ca48ee82ea0af091ffe6c48e0d216933c10d5d74ce26",
+      "frozen_copy_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_attention_swa_demo/official/rmsnorm.py"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_batch08/prefill_qkv_proj_rope_v2.py",
+      "source_sha256": "97b0079558e2c81bf50abf1d52231faf50801279797ae0b3f5cba1101179529e",
+      "frozen_copy": "prefill_qkv_proj_rope_v2.py",
+      "frozen_copy_sha256": "97b0079558e2c81bf50abf1d52231faf50801279797ae0b3f5cba1101179529e",
+      "frozen_copy_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_attention_swa_demo/official/prefill_qkv_proj_rope_v2.py"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_batch08/prefill_sparse_attn_v2.py",
+      "source_sha256": "e343d127905f527b30035c936f3fcb738b36662ee0cec4c87745a81b6dbc9293",
+      "frozen_copy": "prefill_sparse_attn_v2.py",
+      "frozen_copy_sha256": "e343d127905f527b30035c936f3fcb738b36662ee0cec4c87745a81b6dbc9293",
+      "frozen_copy_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_attention_swa_demo/official/prefill_sparse_attn_v2.py"
+    }
+  ],
+  "selection": "deepseek_v4.prefill_attention_swa_demo: preserve reviewed Batch-08 BF16 token-major single-request SWA overlay/cache workload and frozen dependency closure; bind complete DEMO through public CASE_CONFIG. Current FLASH-MTP/PRO successor changes ABI, dtypes, cache metadata and topology, so it is not an interface-only replacement.",
+  "fixture_authority": "byte-exact build_tensor_specs and golden_prefill_attention_swa",
+  "case_id": "deepseek_v4.prefill_attention_swa_demo",
+  "selected_preset": "DEMO",
+  "frozen_copy_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_attention_swa_demo/official/original.py"
+}

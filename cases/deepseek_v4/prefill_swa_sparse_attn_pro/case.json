@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4.prefill_swa_sparse_attn_pro",
+  "description": "DeepSeek V4 PRO prefill SWA sparse attention and output projection",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "prefill_swa_sparse_attn_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "scalars": [
+    "start_pos"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "kv_cache",
+      "attn_out"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "kv_cache"
+    ],
+    "restore_before_each_launch": true
+  }
+}

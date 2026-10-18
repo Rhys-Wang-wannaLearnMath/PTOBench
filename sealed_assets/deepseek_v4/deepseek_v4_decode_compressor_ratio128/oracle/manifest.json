@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "files": [
+    {"path": "ref_cpu.py", "reason": "independent CPU oracle for the declared kv_state/score_state/out outputs"}
+  ]
+}

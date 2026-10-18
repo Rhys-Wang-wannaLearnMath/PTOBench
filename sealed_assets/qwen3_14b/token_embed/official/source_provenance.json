@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "authority": "frozen_v0_1_formal_contract",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/qwen3_14b/token_embed.py",
+  "source_sha256": "c7d645563878939ff7be6027b1173d644a60dff18ae36881ec25e251df95a25d",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "c7d645563878939ff7be6027b1173d644a60dff18ae36881ec25e251df95a25d",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/qwen3_14b_legacy_leaf/config.py",
+      "source_sha256": "2901fb5a4449060bce81fae76b0f7a05b48df0bc3254d5017fc4679f7c635991",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "2901fb5a4449060bce81fae76b0f7a05b48df0bc3254d5017fc4679f7c635991"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/qwen3_14b_legacy_leaf/constants.py",
+      "source_sha256": "00db5be8040420fd5045e4b15969606c0e19b08e435d8cec076b7c7dfd6a942a",
+      "frozen_copy": "constants.py",
+      "frozen_copy_sha256": "00db5be8040420fd5045e4b15969606c0e19b08e435d8cec076b7c7dfd6a942a"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/qwen3_14b_legacy_leaf/greedy_sample.py",
+      "source_sha256": "814fa6cee788c13236482619d1c890aeedd8add153595d9ff11a31241a553e06",
+      "frozen_copy": "greedy_sample.py",
+      "frozen_copy_sha256": "814fa6cee788c13236482619d1c890aeedd8add153595d9ff11a31241a553e06"
+    }
+  ],
+  "selection": "The standalone workload was removed upstream, so this Case preserves the coherent frozen v0.1 formal token-embedding contract and its complete hash-bound dependency closure.",
+  "fixture_authority": "byte-exact official TensorSpec builder and golden function"
+}

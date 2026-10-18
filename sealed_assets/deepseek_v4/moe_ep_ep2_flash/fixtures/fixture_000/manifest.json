@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "fixture_id": "fixture_000",
+  "source_id": "public_normal_0",
+  "seed": 0,
+  "generation": "official.build_tensor_specs",
+  "inputs_dir": "in",
+  "outputs_dir": "out",
+  "scalars": [
+    "layer_id"
+  ]
+}

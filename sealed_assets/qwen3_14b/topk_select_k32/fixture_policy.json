@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "fixture_seeds": {
+    "fixture_000": 0
+  },
+  "builder": "build_tensor_specs",
+  "builder_args": [32],
+  "seed_scope": "official torch CPU seed scope",
+  "source": "official/original.py"
+}

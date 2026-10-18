@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.prefill_indexer_demo",
+  "description": "DeepSeek-V4 Flash dspark packed prefill indexer, DEMO preset, B1 S128, ratio-4 compressor, C8 paged cache and causal paired Top-K",
+  "workspace": "public/candidate_seed",
+  "module": "prefill_indexer.py",
+  "entry": "prefill_indexer_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "deepseek_v4_flash_dspark__prefill_indexer_demo_manual_idle_20261007_libstdcxx",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "runtime": {
+    "platform": "a2a3",
+    "device_id": 6,
+    "rtol": 0.001,
+    "atol": 0.001
+  },
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "score",
+      "idx_kv_cache",
+      "idx_kv_scale",
+      "topk_idxs"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "inner_compress_state",
+      "idx_kv_cache",
+      "idx_kv_scale"
+    ],
+    "restore_before_each_launch": true
+  },
+  "scalars": [
+    "num_tokens"
+  ]
+}

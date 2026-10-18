@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "warmup": 5,
+  "iterations": 10,
+  "compiler_tuning": {
+    "memory_planner": "PYPTO",
+    "analyze_auto_scopes_for_deps": false
+  },
+  "fixtures": {
+    "fixture_000": {
+      "raw_samples_effective_us": [
+        4488.259,
+        4592.82,
+        4586.3,
+        4528.08,
+        4473.4,
+        4586.32,
+        4519.24,
+        4538.46,
+        4568.12,
+        4575.92
+      ],
+      "samples_effective_us": [
+        4488.259,
+        4592.82,
+        4586.3,
+        4528.08,
+        4473.4,
+        4586.32,
+        4519.24,
+        4538.46,
+        4568.12,
+        4575.92
+      ],
+      "median_effective_us": 4553.29,
+      "mean_effective_us": 4545.6919
+    }
+  }
+}

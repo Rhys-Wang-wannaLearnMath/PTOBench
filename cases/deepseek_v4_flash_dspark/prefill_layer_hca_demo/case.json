@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.prefill_layer_hca_demo",
+  "description": "DeepSeek-V4 DSpark DEMO DSA-CP prefill layer: HCA attention followed by MoE, EP2/TP2, one invocation",
+  "workspace": "public/candidate_seed",
+  "module": "prefill_layer.py",
+  "entry": "l3_prefill_layer",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_models_0912_prefill_layer_ep2_maintenance",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "scalars": [
+    "layer_id"
+  ],
+  "runtime": {
+    "ring_heap": [
+      1073741824,
+      1073741824,
+      1073741824,
+      1073741824
+    ]
+  },
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "hca_compress_state",
+      "csa_compress_state",
+      "csa_inner_compress_state",
+      "kv_cache",
+      "hca_cmp_kv",
+      "csa_cmp_kv",
+      "idx_kv_cache",
+      "idx_kv_scale",
+      "attn_stage",
+      "x_mixed",
+      "post_ffn",
+      "comb_ffn",
+      "ffn_out",
+      "x_next"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "hca_compress_state",
+      "csa_compress_state",
+      "csa_inner_compress_state",
+      "kv_cache",
+      "hca_cmp_kv",
+      "csa_cmp_kv",
+      "idx_kv_cache",
+      "idx_kv_scale",
+      "attn_stage"
+    ],
+    "restore_before_each_launch": true
+  }
+}

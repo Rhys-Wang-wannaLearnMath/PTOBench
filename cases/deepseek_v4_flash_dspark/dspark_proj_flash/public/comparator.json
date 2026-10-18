@@ -1,0 +1,1 @@
+{"schema_version":1,"outputs":{"main_x":{"method":"ratio_allclose","rtol":0.005,"atol":0.005,"max_error_ratio":0.01}}}

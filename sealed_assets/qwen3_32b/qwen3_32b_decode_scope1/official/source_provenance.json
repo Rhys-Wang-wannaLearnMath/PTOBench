@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/qwen3_32b/qwen3_32b_decode_scope1.py",
+  "source_sha256": "82f170a449bf3cd3b81c0d6d4301b9cdf593ce8c13366580b8a5fd15261035fe",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "82f170a449bf3cd3b81c0d6d4301b9cdf593ce8c13366580b8a5fd15261035fe",
+  "dependencies": [],
+  "selection": "The self-contained frozen corpus source is the approved Qwen3-32B decode Scope 1 workload with flat 2-D operands and FP32 Q/K/V projection outputs; no separate configuration dependency or alternate named preset exists.",
+  "fixture_authority": "real TensorSpec builder and official golden_fn"
+}

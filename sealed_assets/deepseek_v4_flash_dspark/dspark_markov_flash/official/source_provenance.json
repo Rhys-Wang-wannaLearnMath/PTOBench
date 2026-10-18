@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.dspark_markov_flash",
+  "authority": "frozen official upstream source",
+  "upstream_repository": "https://github.com/hw-native-sys/pypto-lib.git",
+  "selected_upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8",
+  "selected_upstream_path": "models/deepseek_v4_flash_dspark/dspark_markov.py",
+  "source": {
+    "repository_path": "benchmarks/mig_data_models/manual_repairs_20261007/source_closures/dspark_markov/dspark_markov.py",
+    "upstream_path": "models/deepseek_v4_flash_dspark/dspark_markov.py",
+    "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8",
+    "sha256": "9f9e51e1de079e7b30b9b0f171c626dde4c0ed1b8599eceaa896d9fec00fec2d",
+    "frozen_path": "official/original.py",
+    "frozen_sha256": "9f9e51e1de079e7b30b9b0f171c626dde4c0ed1b8599eceaa896d9fec00fec2d"
+  },
+  "dependencies": [
+    {
+      "repository_path": "benchmarks/mig_data_models/manual_repairs_20261007/source_closures/dspark_markov/markov_head.py",
+      "upstream_path": "models/deepseek_v4_flash_dspark/markov_head.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8",
+      "sha256": "68d79ffa11df8e806458c030d8ccc4d92b852f22ef1365e5a0cc54bcc445246f",
+      "frozen_path": "official/markov_head.py",
+      "frozen_sha256": "68d79ffa11df8e806458c030d8ccc4d92b852f22ef1365e5a0cc54bcc445246f"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/manual_repairs_20261007/source_closures/dspark_markov/config.py",
+      "upstream_path": "models/deepseek_v4_flash_dspark/config.py",
+      "upstream_commit": "2d5b17bb2c864f44b047bcd3c0122c539d55acd8",
+      "sha256": "f2dd407448542652f2118ecf057477b4adf46adb757a2b8db37cf528090a201f",
+      "frozen_path": "official/original_config.py",
+      "frozen_sha256": "f2dd407448542652f2118ecf057477b4adf46adb757a2b8db37cf528090a201f"
+    }
+  ],
+  "selection_rationale": "Preserve the coherent recovered same-commit full-vocabulary single-card seven-step Markov workload and its complete three-file closure. Current upstream changes inputs, output ABI and distributed topology. Bind FLASH through the public configuration alias without editing official bytes."
+}

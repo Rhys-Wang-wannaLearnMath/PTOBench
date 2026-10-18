@@ -1,0 +1,15 @@
+# Preparation-only smoke configuration. Do not start until the provider profile
+# has been reviewed manually.
+# Pi provider/model: modes/_shared/profiles/pi/glm-5.3-flash-max.yaml
+case: deepseek_v4_flash_dspark.prefill_layer_csa_demo
+mode: basic
+optimizer:
+  id: smoke_basic_pi
+  backend: pi
+  profile: glm-5.3-flash-max
+output:
+  runs_root: ../runs
+  snapshots_root: ../snapshots
+budget:
+  max_hardware_actions: unlimited
+  finish_actions: 1

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_mtp.prefill_cp_swa_cp4_demo",
+  "description": "DeepSeek V4 DEMO CP4 SWA prefill attention",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "prefill_cp_swa_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_deepseek_v4_prefill_cp_swa_cp4",
+  "runtime": {"device_ids": [0, 1, 2, 3]},
+  "fixture_ids": ["fixture_000"],
+  "correctness": {"mode": "single_step", "outputs": ["x_out", "kv_cache"]},
+  "state": {"behavior": "mutating", "initial_state": ["kv_cache"], "restore_before_each_launch": true}
+}

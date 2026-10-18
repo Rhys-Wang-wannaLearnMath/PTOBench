@@ -1,0 +1,1 @@
+{"schema_version":1,"source":"v0.1 frozen official_golden/original.py","source_sha256":"14d5656378796dd1493d9897f5d3d6ec1dcb93ef1d832d6a14aa462e714c9d10","ref_source_sha256":"30529aa48f33abbd10e6e069b6a0db8fd7b12049c33296a0dbf585d579594545","workload":"deepseek_v3_2_decode_front_scope2_int8_indexer","state_behavior":"mutating"}

@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.dspark_drafter_pro",
+  "description": "Historical three-layer DeepSeek V4 DSpark drafter, PRO, batch4, EP2",
+  "workspace": "public/candidate_seed",
+  "module": "dspark_drafter.py",
+  "entry": "l3_dspark_drafter",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_models_manual_deepseek_v4_flash_dspark__dspark_drafter_pro_idle45",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "runtime": {
+    "ring_heap": [
+      4294967296,
+      4294967296,
+      4294967296,
+      4294967296
+    ]
+  },
+  "scalars": [],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "initial_hidden",
+      "intermediate_hidden",
+      "kv_caches",
+      "head_hidden"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "kv_caches"
+    ],
+    "restore_before_each_launch": true
+  }
+}

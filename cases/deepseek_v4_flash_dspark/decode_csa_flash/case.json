@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.decode_csa_flash",
+  "description": "DeepSeek-V4 Flash dspark decode CSA, FLASH preset, ratio-4 one-step decode",
+  "workspace": "public/candidate_seed",
+  "module": "decode_csa.py",
+  "entry": "attention_csa_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_single_card",
+  "fixture_ids": ["fixture_000"],
+  "runtime": {
+    "platform": "a2a3",
+    "device_id": 0,
+    "rtol": 0.01,
+    "atol": 0.01,
+    "enable_dep_gen": true
+  },
+  "correctness": {"mode": "single_step", "outputs": ["x_out", "kv_cache"]},
+  "state": {
+    "behavior": "mutating",
+    "initial_state": ["kv_cache"],
+    "restore_before_each_launch": true
+  }
+}

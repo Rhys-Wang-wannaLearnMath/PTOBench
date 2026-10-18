@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.decode_indexer_flash",
+  "authority": "frozen source snapshot",
+  "upstream_repository": "https://github.com/hw-native-sys/pypto-lib.git",
+  "selected_upstream_commit": "7f15a1fa6bad2b7030eada571bfe23641d1bddd3",
+  "selected_upstream_path": "models/deepseek_v4_flash_dspark/decode_indexer.py",
+  "source": {
+    "repository_path": "models/0912/deepseek_v4_flash_dspark/decode_indexer.py",
+    "sha256": "56bb878c2c66ceb76c0f95e13ccef7488bbdf3ca843aba9a3c8910d3504d9486",
+    "frozen_path": "official/original.py",
+    "frozen_sha256": "56bb878c2c66ceb76c0f95e13ccef7488bbdf3ca843aba9a3c8910d3504d9486"
+  },
+  "dependencies": [
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/config.py",
+      "sha256": "e823df2d88d5f128b928e476f94ee46eb6f3fd1c2c21c506f9334f66c74f0bd9",
+      "frozen_path": "official/original_config.py",
+      "frozen_sha256": "e823df2d88d5f128b928e476f94ee46eb6f3fd1c2c21c506f9334f66c74f0bd9"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/decode_indexer_compressor.py",
+      "sha256": "91626888a004997fc0a5d3e6b794c70d1a37755eac6b66e090932188eb1d8d19",
+      "frozen_path": "official/decode_indexer_compressor.py",
+      "frozen_sha256": "91626888a004997fc0a5d3e6b794c70d1a37755eac6b66e090932188eb1d8d19"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/rope_interleave.py",
+      "sha256": "310fe1ce05261850d7a6bb67caee9b6dacca1eb913dadddcf14483efb5b331f7",
+      "frozen_path": "official/rope_interleave.py",
+      "frozen_sha256": "310fe1ce05261850d7a6bb67caee9b6dacca1eb913dadddcf14483efb5b331f7"
+    },
+    {
+      "repository_path": "models/0912/deepseek_v4_flash_dspark/utils.py",
+      "sha256": "9b110b3d2de05e84b61d53cdcd23d658afcc02dbb769060e5cfb01b095a23cc1",
+      "frozen_path": "official/utils.py",
+      "frozen_sha256": "9b110b3d2de05e84b61d53cdcd23d658afcc02dbb769060e5cfb01b095a23cc1"
+    }
+  ],
+  "selection_rationale": "Preserve the approved B=64/S=2 FLASH ratio-4 decode indexer workload and its five-file source closure. Current upstream changes the output ABI, paging geometry, offset scalar and Top-K workload. Select FLASH through the public config alias without modifying preserved source."
+}

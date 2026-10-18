@@ -1,0 +1,35 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="search_title" content=""></head><body><a name="ZH-CN_TOPIC_0000002531522186"></a><a name="ZH-CN_TOPIC_0000002531522186"></a>
+
+<h1 class="topictitle1">如何使用Tiling依赖的头文件</h1>
+<div id="body0000002522860379"><p id="ZH-CN_TOPIC_0000002531522186__zh-cn_topic_0000002267401474_p188291848141213">由于AI处理器的Scalar计算单元执行能力有限，为减少算子Kernel侧的Scalar计算，将部分计算在Host端执行，这需要编写<a href="atlas_ascendc_10_0064.html">Host端Tiling代码</a>。注意，在程序中调用高阶API的Tiling接口或者使用高阶API的Tiling结构体参数时，需要引入依赖的头文件。在不同的Tiling实现方式下，具体为：</p>
+<ul id="ZH-CN_TOPIC_0000002531522186__ul14141588465"><li id="ZH-CN_TOPIC_0000002531522186__li17414145817461"><a href="atlas_ascendc_10_00024.html">使用标准C++语法定义Tiling结构体</a><div class="p" id="ZH-CN_TOPIC_0000002531522186__p13597143614474">这种方式需要引入依赖的头文件如下。所有高阶API的Tiling结构体定义在AscendC::tiling命名空间下，因此需要通过AscendC::tiling访问具体API的Tiling结构体。<div class="codecoloring" codetype="Cpp" id="ZH-CN_TOPIC_0000002531522186__screen288304844620"><div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;kernel_tiling/kernel_tiling.h&quot;</span>
+
+<span class="c1">// ...</span>
+<span class="n">AscendC</span><span class="o">::</span><span class="n">tiling</span><span class="o">::</span><span class="n">TCubeTiling</span><span class="w"> </span><span class="n">cubeTilingData</span><span class="p">;</span>
+</pre></div></td></tr></table></div>
+</div>
+</div>
+</li><li id="ZH-CN_TOPIC_0000002531522186__li3862184916473"><a href="atlas_ascendc_10_00023.html">使用TILING_DATA_DEF宏定义Tiling结构体</a><div class="p" id="ZH-CN_TOPIC_0000002531522186__p223311363313">这种方式需要引入依赖的头文件如下。所有高阶API的Tiling结构体和Tiling函数定义在optiling命名空间下。<div class="codecoloring" codetype="Cpp" id="ZH-CN_TOPIC_0000002531522186__zh-cn_topic_0000002267401474_screen113641954149"><div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;tiling/tiling_api.h&quot;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">optiling</span><span class="w"> </span><span class="p">{</span>
+<span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div></td></tr></table></div>
+</div>
+</div>
+</li></ul>
+</div>
+<div>
+<div class="familylinks">
+<div class="parentlink"><strong>父主题：</strong> <a href="atlas_ascendc_10_10046.html">常用操作速查指导</a></div>
+</div>
+</div>
+
+</body></html>

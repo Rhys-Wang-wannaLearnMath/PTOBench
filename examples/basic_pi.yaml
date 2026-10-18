@@ -1,0 +1,12 @@
+case: deepseek_v4.rmsnorm_decode_demo
+mode: basic
+optimizer:
+  id: basic_pi
+  backend: pi
+  profile: default
+output:
+  runs_root: ../runs
+  snapshots_root: ../snapshots
+budget:
+  max_hardware_actions: 20
+  finish_actions: 1

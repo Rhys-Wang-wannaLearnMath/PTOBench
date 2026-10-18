@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "authority": "frozen_v0.1_selected_source",
+  "source_path": "benchmarks/pypto_lib_bench-v0.1/cases/deepseek_v4/prefill_sparse_attn_v2/official_golden/original.py",
+  "source_sha256": "e343d127905f527b30035c936f3fcb738b36662ee0cec4c87745a81b6dbc9293",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "e343d127905f527b30035c936f3fcb738b36662ee0cec4c87745a81b6dbc9293",
+  "dependencies": [
+    {"source_path":"benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_batch08/config.py","source_sha256":"68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e","frozen_copy":"original_config.py","frozen_copy_sha256":"68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e"},
+    {"source_path":"benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4_batch08/rope_tables.py","source_sha256":"6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59","frozen_copy":"rope_tables.py","frozen_copy_sha256":"6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59"}
+  ],
+  "selection": "PRO preset contract for deepseek_v4.prefill_sparse_attn_v2_pro; preserves the standalone v2 overlay/sparse-KV workload.",
+  "fixture_authority": "byte-exact build_tensor_specs and golden_prefill_sparse_attn"
+}

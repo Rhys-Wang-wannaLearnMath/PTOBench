@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "outputs": {
+    "x_norm": {
+      "method": "allclose",
+      "rtol": 1e-05,
+      "atol": 1e-05
+    },
+    "indices": {
+      "method": "allclose",
+      "rtol": 1e-05,
+      "atol": 1e-05
+    },
+    "weights": {
+      "method": "allclose",
+      "rtol": 1e-05,
+      "atol": 1e-05
+    }
+  }
+}

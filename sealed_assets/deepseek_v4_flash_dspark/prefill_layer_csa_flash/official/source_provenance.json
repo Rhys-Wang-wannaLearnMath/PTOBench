@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "authority": "byte-exact recovered upstream prefill-layer source closure",
+  "source_case_id": "models_0912.deepseek_v4_flash_dspark__prefill_layer",
+  "case_id": "deepseek_v4_flash_dspark.prefill_layer_csa_flash",
+  "repository_url": "https://github.com/hw-native-sys/pypto-lib.git",
+  "source_commit": "b165655521bca63170fe8fc994425c3931a302da",
+  "source": {
+    "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/prefill_layer.py",
+    "upstream_repository_path": "models/deepseek_v4_flash_dspark/prefill_layer.py",
+    "sha256": "658447477543015ca1b867dc0c95ab09c82d520a5cd5ecca2ac83f7b80eaa377",
+    "frozen_path": "official/original.py",
+    "frozen_sha256": "658447477543015ca1b867dc0c95ab09c82d520a5cd5ecca2ac83f7b80eaa377"
+  },
+  "dependencies": [
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/config.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/config.py",
+      "sha256": "f2dd407448542652f2118ecf057477b4adf46adb757a2b8db37cf528090a201f",
+      "frozen_path": "official/original_config.py",
+      "frozen_sha256": "f2dd407448542652f2118ecf057477b4adf46adb757a2b8db37cf528090a201f"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/expert_routed.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/expert_routed.py",
+      "sha256": "548681967e303d5d89da2661398e6fa5274718f5486bef6344ad91011c320a5e",
+      "frozen_path": "official/expert_routed.py",
+      "frozen_sha256": "548681967e303d5d89da2661398e6fa5274718f5486bef6344ad91011c320a5e"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/expert_shared.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/expert_shared.py",
+      "sha256": "89363ce80dc7359b8513864fdcd3328e24c8987648ef3701a6cdc74b106f068d",
+      "frozen_path": "official/expert_shared.py",
+      "frozen_sha256": "89363ce80dc7359b8513864fdcd3328e24c8987648ef3701a6cdc74b106f068d"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/gate.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/gate.py",
+      "sha256": "03837f608463ac3b4ae2d91ef34c7485099e026b352b3693a01ba417fa66dabf",
+      "frozen_path": "official/gate.py",
+      "frozen_sha256": "03837f608463ac3b4ae2d91ef34c7485099e026b352b3693a01ba417fa66dabf"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/hc_post.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/hc_post.py",
+      "sha256": "765c6b64dd5c2dced5add48735dd2b3e58f95042b37ff74dc0cd213839f2f8dd",
+      "frozen_path": "official/hc_post.py",
+      "frozen_sha256": "765c6b64dd5c2dced5add48735dd2b3e58f95042b37ff74dc0cd213839f2f8dd"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/hc_pre.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/hc_pre.py",
+      "sha256": "125e9f6bb2e0a2475088b768e4be9f11e9c6393c8d50d8c5dfa6cbc4acbaa3e1",
+      "frozen_path": "official/hc_pre.py",
+      "frozen_sha256": "125e9f6bb2e0a2475088b768e4be9f11e9c6393c8d50d8c5dfa6cbc4acbaa3e1"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/moe.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/moe.py",
+      "sha256": "46e34692347e832a8a54d42953f21f2a70a8e08816c1671e334e8233e992b773",
+      "frozen_path": "official/moe.py",
+      "frozen_sha256": "46e34692347e832a8a54d42953f21f2a70a8e08816c1671e334e8233e992b773"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/prefill_compressor_ratio128.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/prefill_compressor_ratio128.py",
+      "sha256": "d09a864d60973d256191c6257a99c678fe59a0113baeaeec9f0d4b41137c509f",
+      "frozen_path": "official/prefill_compressor_ratio128.py",
+      "frozen_sha256": "d09a864d60973d256191c6257a99c678fe59a0113baeaeec9f0d4b41137c509f"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/prefill_compressor_ratio4.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/prefill_compressor_ratio4.py",
+      "sha256": "fab46fdd708239f331f7011f564e42e162c583b584ba29b1d7eb39a6357fa17f",
+      "frozen_path": "official/prefill_compressor_ratio4.py",
+      "frozen_sha256": "fab46fdd708239f331f7011f564e42e162c583b584ba29b1d7eb39a6357fa17f"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/prefill_cp_token_allgather.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/prefill_cp_token_allgather.py",
+      "sha256": "ba7b550134c4916712f761e5d5d8cb83c8bbe243d5b90ee50ba2007a1cf57a7d",
+      "frozen_path": "official/prefill_cp_token_allgather.py",
+      "frozen_sha256": "ba7b550134c4916712f761e5d5d8cb83c8bbe243d5b90ee50ba2007a1cf57a7d"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/prefill_csa.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/prefill_csa.py",
+      "sha256": "743cdf7ec17677b40edb85580bd9a57010f1f3de9103211f117a8a88958f7c87",
+      "frozen_path": "official/prefill_csa.py",
+      "frozen_sha256": "743cdf7ec17677b40edb85580bd9a57010f1f3de9103211f117a8a88958f7c87"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/prefill_fwd.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/prefill_fwd.py",
+      "sha256": "d99e7926417395bce77e8a0558fa03a61c2c9c755758ba604d5f0494c4bc35f6",
+      "frozen_path": "official/prefill_fwd.py",
+      "frozen_sha256": "d99e7926417395bce77e8a0558fa03a61c2c9c755758ba604d5f0494c4bc35f6"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/prefill_hca.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/prefill_hca.py",
+      "sha256": "25bcbd24235bc84129598fde6ebbd732c75a085f7e58ef982c1ac5dea54e0066",
+      "frozen_path": "official/prefill_hca.py",
+      "frozen_sha256": "25bcbd24235bc84129598fde6ebbd732c75a085f7e58ef982c1ac5dea54e0066"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/prefill_indexer.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/prefill_indexer.py",
+      "sha256": "8c1ec96373d9f589e2e82b6433dc3d63af031cd1cac2a79ca5b1c40c11391cee",
+      "frozen_path": "official/prefill_indexer.py",
+      "frozen_sha256": "8c1ec96373d9f589e2e82b6433dc3d63af031cd1cac2a79ca5b1c40c11391cee"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/prefill_indexer_compressor.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/prefill_indexer_compressor.py",
+      "sha256": "82e8a8c6e858fcbba1eb23128129c93b9083436a5c94816efad39cce85bb3132",
+      "frozen_path": "official/prefill_indexer_compressor.py",
+      "frozen_sha256": "82e8a8c6e858fcbba1eb23128129c93b9083436a5c94816efad39cce85bb3132"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/prefill_o_proj.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/prefill_o_proj.py",
+      "sha256": "4c20ab63bb7e58eb3cf76ae22e1d04e89faeb54ca98f3cbebfca9ce9c447a90b",
+      "frozen_path": "official/prefill_o_proj.py",
+      "frozen_sha256": "4c20ab63bb7e58eb3cf76ae22e1d04e89faeb54ca98f3cbebfca9ce9c447a90b"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/prefill_sparse_attn.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/prefill_sparse_attn.py",
+      "sha256": "932bde3c5006f30cc94f01926dbcf907cb2556d8e65af40be78f67d9b8a72827",
+      "frozen_path": "official/prefill_sparse_attn.py",
+      "frozen_sha256": "932bde3c5006f30cc94f01926dbcf907cb2556d8e65af40be78f67d9b8a72827"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/prefill_swa.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/prefill_swa.py",
+      "sha256": "8f82e469ae6bc5fbe5ba8d335d291f0d5e74d8f2d1d891a8d4c3ae5ccac388cd",
+      "frozen_path": "official/prefill_swa.py",
+      "frozen_sha256": "8f82e469ae6bc5fbe5ba8d335d291f0d5e74d8f2d1d891a8d4c3ae5ccac388cd"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/qkv_proj_rope.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/qkv_proj_rope.py",
+      "sha256": "f3af47d3c91abdad0e95229adfbfe2364b6f34ef9d8174ee7093cea169e154e6",
+      "frozen_path": "official/qkv_proj_rope.py",
+      "frozen_sha256": "f3af47d3c91abdad0e95229adfbfe2364b6f34ef9d8174ee7093cea169e154e6"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/rmsnorm.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/rmsnorm.py",
+      "sha256": "fab8402d18470dcb0c441c6edbce58d822378989035e8e07bcc8aca0e8549b8d",
+      "frozen_path": "official/rmsnorm.py",
+      "frozen_sha256": "fab8402d18470dcb0c441c6edbce58d822378989035e8e07bcc8aca0e8549b8d"
+    },
+    {
+      "repository_path": "benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/utils.py",
+      "upstream_repository_path": "models/deepseek_v4_flash_dspark/utils.py",
+      "sha256": "f5d0ab71a2e0dfbf2a6d5b72188e4948024dc1811d60a1f30611495562fe8906",
+      "frozen_path": "official/utils.py",
+      "frozen_sha256": "f5d0ab71a2e0dfbf2a6d5b72188e4948024dc1811d60a1f30611495562fe8906"
+    }
+  ],
+  "selection_rationale": "Preserve the historical full-group DSA-CP attention-plus-MoE workload. Current upstream successor changes packed-request, cache/RoPE and NZ weight interfaces; those are not interface-only source replacements. Preset/mode binding and approved sealed import compatibility are isolated in fixture_builder.py.",
+  "bound_source_path": "/data1/home/ziruiwang/pypto-lib/benchmarks/mig_data_models/maintenance/recovery_20261006/source_closures/prefill_layer/prefill_layer.py",
+  "maintenance_record_sha256": "8f1797c11d975c42adbf4283a84810a293362971595b62b747c3c523e0335e08"
+}

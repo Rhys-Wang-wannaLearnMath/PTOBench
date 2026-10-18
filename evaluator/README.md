@@ -51,9 +51,13 @@ python benchmarks/PTOBench/evaluator/evaluate.py \
   --phase all --result latest_result.json
 ```
 
-`correctness` executes one step. `performance` and `all` additionally run five
-warmups and ten measured launches, restoring the fixture state before every
-launch. State restoration is outside the measured device interval.
+`correctness` executes one step. Maintenance `performance`/`all` and Session final
+verification use the Case's formal settings (currently five warmups and ten
+measured launches). The exploration `ptobench evaluate` CLI instead uses two
+warmups and three measured launches. Both paths retain raw measured samples and
+restore stateful fixture inputs before every launch. State restoration is outside
+the measured device interval. The internal evaluator's `--measurement-mode`
+selects this policy; Agent CLI users cannot override it.
 
 Optional profiling modes are configured in `profile_modes.py`:
 
@@ -63,9 +67,13 @@ ptobench profile pmu ./workspace
 ptobench profile compiler ./workspace
 ```
 
-Every profiling mode performs exactly one correctness dispatch. `ptobench profile`
-does not expose a phase override: profiling checks availability and emitted
-diagnostics, not warmups, measured rounds, or performance.
+Every profiling mode performs exactly one *logical* correctness invocation per
+Fixture. `ptobench profile` does not expose a phase override: profiling checks
+availability and emitted diagnostics, not warmups, measured rounds, or
+performance. On a real device, runtime chip-swimlane collection may implement
+that invocation as separate native dependency-graph and clean-timing passes;
+those passes are diagnostic collection, not additional benchmark rounds. A
+mutating Case must restore its declared initial state before each native pass.
 
 Session creation and fork write only enabled public modes to
 `.benchmark_context/profiling_modes.json` and lists only those modes in the

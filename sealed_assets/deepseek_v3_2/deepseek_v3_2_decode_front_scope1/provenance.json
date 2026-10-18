@@ -1,0 +1,1 @@
+{"schema_version": 1, "source": "pypto_lib_bench-v0.1/cases/deepseek_v3_2/deepseek_v3_2_decode_front_scope1", "official_source": "official/original.py", "source_mode": "frozen_v0.1", "fixture_seeds": [0]}

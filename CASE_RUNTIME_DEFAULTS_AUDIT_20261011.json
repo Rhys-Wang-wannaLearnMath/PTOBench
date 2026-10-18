@@ -1,0 +1,19 @@
+{
+  "generated_at": "2026-10-11",
+  "effective_defaults": {
+    "memory_planner": "Evaluator maps the public default to MemoryPlanner.PYPTO",
+    "analyze_auto_scopes_for_deps": false
+  },
+  "case_json_count": 318,
+  "malformed_case_json": [],
+  "special_overrides_after_fix": [],
+  "removed_overrides": [
+    {
+      "case_id": "deepseek_v4.synthetic_token_loop_prefill_pro",
+      "parameter": "analyze_auto_scopes_for_deps",
+      "old_value": true,
+      "action": "removed; ring_heap preserved"
+    }
+  ],
+  "all_cases_conform_after_fix": true
+}

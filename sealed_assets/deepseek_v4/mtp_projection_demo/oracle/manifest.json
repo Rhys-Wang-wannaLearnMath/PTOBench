@@ -1,0 +1,1 @@
+{"schema_version":1,"files":[{"path":"ref_cpu.py","reason":"independent CPU Oracle compute implementation"}],"excluded":["NPU Ref/Candidate implementation","Fixture generation","evaluator code","RunConfig/profiling harness","standalone CLI"]}

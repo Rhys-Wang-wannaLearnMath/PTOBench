@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.dspark_markov_demo",
+  "description": "DeepSeek-V4 DSpark DEMO full-vocabulary rank-256 Markov sampler, seven sequential greedy steps, batch 4",
+  "workspace": "public/candidate_seed",
+  "module": "dspark_markov.py",
+  "entry": "markov_sample",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_models_manual_deepseek_v4_flash_dspark__dspark_markov_demo_idle6_libstdcxx",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "draft_token_ids"
+    ]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  }
+}

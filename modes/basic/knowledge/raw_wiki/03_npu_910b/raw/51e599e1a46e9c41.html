@@ -1,0 +1,179 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="search_title" content=""></head><body><a name="EN-US_TOPIC_0000002531522238"></a><a name="EN-US_TOPIC_0000002531522238"></a>
+
+<h1 class="topictitle1">NPU Architecture Version 220x</h1>
+<div id="body0000002477825678"><p id="EN-US_TOPIC_0000002531522238__p8060118">This section describes the hardware constraints and recommended solutions. The corresponding product models are as follows:</p>
+<ul id="EN-US_TOPIC_0000002531522238__ul723415519312"><li id="EN-US_TOPIC_0000002531522238__li17391143711246"><span id="EN-US_TOPIC_0000002531522238__ph16239174011416"><term id="EN-US_TOPIC_0000002531522238__en-us_topic_0000002562275259_term1253731311225">Atlas A3 training product</term>/<term id="EN-US_TOPIC_0000002531522238__en-us_topic_0000002562275259_term131434243115">Atlas A3 inference product</term></span></li><li id="EN-US_TOPIC_0000002531522238__li519213411807"><span id="EN-US_TOPIC_0000002531522238__ph1292674871116"><term id="EN-US_TOPIC_0000002531522238__en-us_topic_0000002562275259_term11962195213215">Atlas A2 training product</term>/<term id="EN-US_TOPIC_0000002531522238__en-us_topic_0000002562275259_term898114865714">Atlas A2 inference product</term></span></li></ul>
+
+<div class="tablenoborder"><table cellpadding="4" cellspacing="0" summary="" id="EN-US_TOPIC_0000002531522238__table5984016192019" frame="border" border="1" rules="all"><caption><b>Table 1 </b>Hardware constraints and recommended solutions</caption><thead align="left"><tr id="EN-US_TOPIC_0000002531522238__row49841016132015"><th align="left" class="cellrowborder" valign="top" width="13.608639136086392%" id="mcps1.3.3.2.4.1.1"><p id="EN-US_TOPIC_0000002531522238__p1498411692018">Category</p>
+</th>
+<th align="left" class="cellrowborder" valign="top" width="33.406659334066596%" id="mcps1.3.3.2.4.1.2"><p id="EN-US_TOPIC_0000002531522238__p16984816162019">Hardware Constraint</p>
+</th>
+<th align="left" class="cellrowborder" valign="top" width="52.98470152984702%" id="mcps1.3.3.2.4.1.3"><p id="EN-US_TOPIC_0000002531522238__p681910154818">Recommended Solution</p>
+</th>
+</tr>
+</thead>
+<tbody><tr id="EN-US_TOPIC_0000002531522238__row1098410169204"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p73939428116">Memory access (L0 Buffer/L1 Buffer/UB)</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p339313421116">The minimum access granularities/alignment requirements of each storage unit are as follows:</p>
+<p id="EN-US_TOPIC_0000002531522238__p14393742910">Unified Buffer: 32-byte aligned</p>
+<p id="EN-US_TOPIC_0000002531522238__p1339384218119">L1 Buffer: 32-byte aligned</p>
+<p id="EN-US_TOPIC_0000002531522238__p03939425116">L0A Buffer/L0B Buffer: 512-byte aligned</p>
+<p id="EN-US_TOPIC_0000002531522238__p139316421914">L0C Buffer: 64-byte aligned</p>
+<p id="EN-US_TOPIC_0000002531522238__p1739319428114">BiasTable Buffer: 64-byte aligned</p>
+<p id="EN-US_TOPIC_0000002531522238__p13932421316">FixPipe Buffer: 128-byte aligned</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><ul id="EN-US_TOPIC_0000002531522238__ul9477161417"><li id="EN-US_TOPIC_0000002531522238__li194715165415">During data movement, alignment constraints need to be considered.</li><li id="EN-US_TOPIC_0000002531522238__li247121614410">For the UB, in some non-aligned scenarios, you can use the non-aligned movement API or use some techniques (for example, including redundant data during move-in and removing redundant data during move-out) to solve the problem. For details, see <a href="atlas_ascendc_10_0034.html">Non-Alignment Scenario</a>.</li></ul>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row698415161206"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p153938429117">Memory access (UB)</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p1393442615">UB bank access conflicts (vector computation access/movement access).</p>
+<p id="EN-US_TOPIC_0000002531522238__p73934420118"></p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p123932421311">The addresses need to be staggered during software implementation based on the chip requirements to resolve bank conflicts. For details, see <a href="atlas_ascendc_best_practices_10_0025.html">Avoiding Bank Conflicts in the Unified Buffer</a>.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row798416160209"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p5393154210115">Memory access (GM)</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p11393174214120">When multiple cores concurrently access the GM at the same address, the access is serialized by hardware.</p>
+<p id="EN-US_TOPIC_0000002531522238__p14393442116"></p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p9393104218116">Access to the same address is serialized by hardware, and the performance (queuing time) decreases by about 10% to 20%.</p>
+<p id="EN-US_TOPIC_0000002531522238__p539311424118">Multi-core access is staggered (by adjusting the data access sequence and modifying the tiling policy) so that the first data load to the L2 cache improves subsequent access performance. For details, see <a href="atlas_ascendc_best_practices_10_00013.html">Avoiding Same-Address Access</a>.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row189843164202"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p1339364210115">Memory access (GM)</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p153934427114">When the length of data moved at a time is greater than 16 KB, the optimal bandwidth performance can be achieved.</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p1839334215112">According to the test experience, optimal bandwidth performance can be achieved when data to be moved at a time is greater than 16 KB. Therefore, it is recommended that a large data block be moved at a time. (The size varies with the chip.)</p>
+<p id="EN-US_TOPIC_0000002531522238__p14280187181119">For details, see <a href="atlas_ascendc_best_practices_10_0013.html">Transferring a Large Data Block at a Time</a>.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row10984111617206"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p1139394216112">Memory access (GM--&gt;L1)</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p139313427112">The interval between adjacent data blocks of the source operand in DataCopy (the interval between the tail of the previous data block and the head of the next data block) does not exceed 65535. The unit is a data block (32 bytes).</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p6393842612">If the interval between the tail of the previous data block and the head of the next data block exceeds 65535, the instruction needs to be split into multiple ones.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row28355376396"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p1839313422120">Memory access (GM)</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p439317429119">Data is 128-byte, 256-byte, and 512-byte aligned for movement. If the data is not aligned, the length is rounded up.</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p133931242413">Ensure that the inner axis of the tiling is 128-byte, 256-byte, or 512-byte aligned.</p>
+<p id="EN-US_TOPIC_0000002531522238__p4131102271514">For details, see <a href="atlas_ascendc_best_practices_10_0014.html">Using 512-Byte Alignment for the GM Address</a>.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row7725134123913"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p1639310422014">Cube</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p339311421712">The depth of the MTE1 and MMAD instruction queues is 32.</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p113937420111">The corresponding instruction queue is prone to be full, which blocks the delivery of other instructions and causes pipeline interruption.</p>
+<p id="EN-US_TOPIC_0000002531522238__p18393742614">To move data from the L1 Buffer to the L0 Buffer using Load2D, 32 instructions need to be transmitted. However, Load3D requires only one instruction to implement data movement. Therefore, Load3D is recommended.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row10203343193114"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p1139319422115">iCache</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p139319421513">The iCache hardware specification is limited to 32 KB.</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p23931842016">Split the Tiling_key or use template functions to reduce code segments. For details, see <a href="atlas_ascendc_10_00025.html">Tiling Template Programming</a>.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row194173017534"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p1839310421316">iCache</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p1139313428113">When multiple cores concurrently access the iCache at the same address, the access is serialized by hardware.</p>
+<p id="EN-US_TOPIC_0000002531522238__p8393542217"></p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p639415421613">In small-shape scenarios, reduce the number of started cores to the greatest extent to minimize the issue of concurrent access to the same address by multiple cores.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row724416349531"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p4394342218">DCache</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p11394134215110">The DCache hardware specification is limited to 32 KB.</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p939416422113">None</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row6730204410538"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p153942421414">Scalar</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p73942421015">When scalar data is written to the GM, the data is cached in the DCache. The hardware does not ensure the consistency between the DCache and GM. You need to ensure the consistency.</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p1139411421118">Use <strong id="EN-US_TOPIC_0000002531522238__b21127413451012">DataCacheCleanAndInvalid</strong> to ensure consistency.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row56187293595"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p113943421110">Cube</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p439413421616">The L0C Buffer capacity is 128 KB.</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p439454212111">None</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row16184293594"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p939494215115">Cube</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p12394194219112">The BiasTable Buffer is 1 KB.</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p1639410425117">None</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row1361852935918"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p339410421114">Cube</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p14651181022320">In cube computation scenarios, the float computing power is 1/4 of the half computing power.</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p73946421415">None</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row196181129135911"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p193948425111">Cube</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p163941542119">In the cube output channel quantization scenario, quantization from int32_t to bfloat16_t is not supported.</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><ul id="EN-US_TOPIC_0000002531522238__ul7869116221"><li id="EN-US_TOPIC_0000002531522238__li78651115224">The AIV involves conversions from int32_t to float and from float to bfloat16_t.</li><li id="EN-US_TOPIC_0000002531522238__li198661132217">The AIC supports channel quantization from float to bfloat16_t.</li></ul>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row661982915597"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p0394442216">Vector</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p339412428113">For the Reduce API, the performance of half data is poorer than that of float data.</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p173946428117">When half data is written back to the UB, it is not 32-byte aligned, resulting in performance deterioration. It is recommended that half data be converted to float data for computation. In this scenario, the float data type is recommended.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row461911299592"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p14394142119">Vector</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p93942421517">The time taken by the Exp/Ln API to process the same amount of half/float data is the same.</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p1139412421411">The float data type has been optimized internally, so the performance of the two data types is similar. You can select a proper precision type as needed.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row13619162955918"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p039544211115">Pipeline synchronization (intra-core)</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p439594219111">If the set/wait synchronization does not match, the status remains, affecting subsequent operators.</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p10395542819">Use the twin debugging/mssanitizer tool to identify such issues in advance.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row96190298591"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p1395242514">Pipeline synchronization (inter-core)</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p12395184212116">The <strong id="EN-US_TOPIC_0000002531522238__b94721898151012">CrossCoreSetFlag</strong> counter has a limit. If the number of times exceeds 15, reverse synchronization is required. Otherwise, the system may be suspended.</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p11395342314">Use the twin debugging/mssanitizer tool to report errors in advance in scenarios where the limit is exceeded.</p>
+</td>
+</tr>
+<tr id="EN-US_TOPIC_0000002531522238__row13620172910597"><td class="cellrowborder" valign="top" width="13.608639136086392%" headers="mcps1.3.3.2.4.1.1 "><p id="EN-US_TOPIC_0000002531522238__p139512427119">General API restrictions</p>
+</td>
+<td class="cellrowborder" valign="top" width="33.406659334066596%" headers="mcps1.3.3.2.4.1.2 "><p id="EN-US_TOPIC_0000002531522238__p1396164216116">General restrictions on the overlapping of the source and destination operand addresses when using Ascend C APIs</p>
+</td>
+<td class="cellrowborder" valign="top" width="52.98470152984702%" headers="mcps1.3.3.2.4.1.3 "><p id="EN-US_TOPIC_0000002531522238__p143966421117">To save memory space when using high-dimensional tensor sharding compute APIs of basic APIs, you can define a tensor shared by the source and destination operands (by address overlapping). Pay attention to the following restrictions when using this:</p>
+<ul id="EN-US_TOPIC_0000002531522238__ul24282818269"><li id="EN-US_TOPIC_0000002531522238__li7428286263">In a single repeat, the source operand must completely overlap the destination operand. Partial overlapping is not supported.</li><li id="EN-US_TOPIC_0000002531522238__li642628192617">Among multiple repeats, the destination operand of a previous repeat cannot overlap the source operand of a subsequent repeat. For example, the destination operand of the <em id="EN-US_TOPIC_0000002531522238__i164229333251012">N</em>th repeat is the source operand of the (<em id="EN-US_TOPIC_0000002531522238__i107249468451012">N</em>+1)th repeat. In this case, the <em id="EN-US_TOPIC_0000002531522238__i96513289451012">N </em>th repeat may overwrite the value of the source operand, resulting in an unexpected result. In particular, for some two-operand compute APIs (<strong id="EN-US_TOPIC_0000002531522238__b175606356651012">Add</strong>, <strong id="EN-US_TOPIC_0000002531522238__b54409306251012">Sub</strong>, <strong id="EN-US_TOPIC_0000002531522238__b36478739051012">Mul</strong>, <strong id="EN-US_TOPIC_0000002531522238__b51748158251012">Max</strong>, <strong id="EN-US_TOPIC_0000002531522238__b77140017251012">Min</strong>, <strong id="EN-US_TOPIC_0000002531522238__b208622536651012">AddRelu</strong>, and <strong id="EN-US_TOPIC_0000002531522238__b41461942951012">SubRelu</strong>), when the data type is half, int32_t, or float, the destination operand of a previous repeat can overlap the source operand of a subsequent repeat. This is only applicable when the destination operand overlaps the second source operand, and <strong id="EN-US_TOPIC_0000002531522238__b120076570551012">src1RepStride</strong> or <strong id="EN-US_TOPIC_0000002531522238__b105900232651012">dstRepStride</strong> must be <strong id="EN-US_TOPIC_0000002531522238__b15718863051012">0</strong>.</li></ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<div class="familylinks">
+<div class="parentlink"><strong>Parent topic:</strong> <a href="atlas_ascendc_10_00061.html">Hardware Constraints</a></div>
+</div>
+</div>
+
+</body></html>

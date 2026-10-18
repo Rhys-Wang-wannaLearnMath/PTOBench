@@ -1,0 +1,237 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <meta name="search_title" content="">
+ </head>
+ <body>
+  <a name="ZH-CN_TOPIC_0000002531362258"></a><a name="ZH-CN_TOPIC_0000002531362258"></a>
+  <h1 class="topictitle1">NPU架构版本220x</h1>
+  <div id="body0000002380477949">
+   <p id="ZH-CN_TOPIC_0000002531362258__p37545579517">本节介绍__NPU_ARCH__版本号为220x的硬件架构和其功能说明，其中220代表IP核编号，x表示同一个IP核的配置版本号。对应的产品型号为：</p>
+   <ul id="ZH-CN_TOPIC_0000002531362258__ul723415519312">
+    <li id="ZH-CN_TOPIC_0000002531362258__li17391143711246"><span id="ZH-CN_TOPIC_0000002531362258__ph16239174011416"><term id="ZH-CN_TOPIC_0000002531362258__zh-cn_topic_0000002562275259_term1253731311225">
+       Atlas A3 训练系列产品
+      </term>/<term id="ZH-CN_TOPIC_0000002531362258__zh-cn_topic_0000002562275259_term131434243115">
+       Atlas A3 推理系列产品
+      </term></span></li>
+    <li id="ZH-CN_TOPIC_0000002531362258__li519213411807"><span id="ZH-CN_TOPIC_0000002531362258__ph1292674871116"><term id="ZH-CN_TOPIC_0000002531362258__zh-cn_topic_0000002562275259_term11962195213215">
+       Atlas A2 训练系列产品
+      </term>/<term id="ZH-CN_TOPIC_0000002531362258__zh-cn_topic_0000002562275259_term184716139811">
+       Atlas A2 推理系列产品
+      </term></span></li>
+   </ul>
+   <div class="section" id="ZH-CN_TOPIC_0000002531362258__section2189135013710">
+    <h4 class="sectiontitle">硬件架构图</h4>
+    <p id="ZH-CN_TOPIC_0000002531362258__p17937143475">如下图所示，本架构中AI Core分为AIC和AIV两个独立的核，分别用于矩阵计算和向量计算。每个核都有自己的Scalar单元，能独立加载自己的代码段。AIV与AIC之间通过Global Memory进行数据传递。</p>
+    <p id="ZH-CN_TOPIC_0000002531362258__p86731656143918"></p>
+    <p id="ZH-CN_TOPIC_0000002531362258__p5632585117"><span><img class="eddx" id="ZH-CN_TOPIC_0000002531362258__image845985821119" src="figure/zh-cn_image_0000002531362420.png"></span></p>
+   </div>
+   <div class="section" id="ZH-CN_TOPIC_0000002531362258__section8490181519513">
+    <h4 class="sectiontitle">计算单元</h4>
+    <p id="ZH-CN_TOPIC_0000002531362258__p9332323115"><strong id="ZH-CN_TOPIC_0000002531362258__b8482127181119">Cube计算单元和Vector计算单元分离部署</strong></p>
+    <p id="ZH-CN_TOPIC_0000002531362258__p1187711016229">本架构中，Cube计算单元和Vector计算单元分别部署在AIC核和AIV核上，每个核都有自己的Scalar单元，能独立加载自己的代码段。</p>
+    <p id="ZH-CN_TOPIC_0000002531362258__p125657368118"><strong id="ZH-CN_TOPIC_0000002531362258__b438645222118">Vector计算单元</strong></p>
+    <ul id="ZH-CN_TOPIC_0000002531362258__ul105688367113">
+     <li id="ZH-CN_TOPIC_0000002531362258__li15568536171117">Vector计算单元的数据来自于Unified Buffer，要求32字节对齐。</li>
+    </ul>
+    <p id="ZH-CN_TOPIC_0000002531362258__p614615011227"><strong id="ZH-CN_TOPIC_0000002531362258__b1543567152217">Cube计算单元</strong></p>
+    <ul id="ZH-CN_TOPIC_0000002531362258__ul181521903222">
+     <li id="ZH-CN_TOPIC_0000002531362258__li10112192794415">Cube计算单元可以访问的存储单元有L0A Buffer、L0B Buffer、L0C Buffer，其中L0A Buffer存储左矩阵，L0B Buffer存储右矩阵，L0C Buffer存储矩阵乘的结果和中间结果。</li>
+    </ul>
+   </div>
+   <div class="section" id="ZH-CN_TOPIC_0000002531362258__section6500173264510">
+    <h4 class="sectiontitle">存储单元</h4>
+    <p id="ZH-CN_TOPIC_0000002531362258__p0961184951413"><strong id="ZH-CN_TOPIC_0000002531362258__b1036114421362">获取存储单元的内存空间大小</strong></p>
+    <p id="ZH-CN_TOPIC_0000002531362258__p137313581426">开发者可以通过<a href="/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_1025.html">平台信息获取</a>接口查询各存储单元的内存空间大小。</p>
+    <p id="ZH-CN_TOPIC_0000002531362258__p557913211619"><strong id="ZH-CN_TOPIC_0000002531362258__b142781831273">各存储单元的最小访问粒度（对齐要求）</strong></p>
+    <div class="tablenoborder">
+     <table cellpadding="4" cellspacing="0" summary="" id="ZH-CN_TOPIC_0000002531362258__table12348145512210" frame="border" border="1" rules="all">
+      <thead align="left">
+       <tr id="ZH-CN_TOPIC_0000002531362258__row3348175522218">
+        <th align="left" class="cellrowborder" valign="top" width="7.5200000000000005%" id="mcps1.3.5.5.1.4.1.1">
+         <p id="ZH-CN_TOPIC_0000002531362258__p1680716381143">核</p></th>
+        <th align="left" class="cellrowborder" valign="top" width="46.22%" id="mcps1.3.5.5.1.4.1.2">
+         <p id="ZH-CN_TOPIC_0000002531362258__p5348145515229">存储单元</p></th>
+        <th align="left" class="cellrowborder" valign="top" width="46.26%" id="mcps1.3.5.5.1.4.1.3">
+         <p id="ZH-CN_TOPIC_0000002531362258__p16348125520221">对齐要求</p></th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr id="ZH-CN_TOPIC_0000002531362258__row11348135516221">
+        <td class="cellrowborder" valign="top" width="7.5200000000000005%" headers="mcps1.3.5.5.1.4.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531362258__p48071138245">AIV</p></td>
+        <td class="cellrowborder" valign="top" width="46.22%" headers="mcps1.3.5.5.1.4.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531362258__p63481755122216"><span id="ZH-CN_TOPIC_0000002531362258__ph15348135502220">Unified Buffer</span></p></td>
+        <td class="cellrowborder" valign="top" width="46.26%" headers="mcps1.3.5.5.1.4.1.3 ">
+         <p id="ZH-CN_TOPIC_0000002531362258__p1634825512226">32Byte对齐。</p></td>
+       </tr>
+       <tr id="ZH-CN_TOPIC_0000002531362258__row1534865520225">
+        <td class="cellrowborder" rowspan="6" valign="top" width="7.5200000000000005%" headers="mcps1.3.5.5.1.4.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531362258__p567812161851">AIC</p></td>
+        <td class="cellrowborder" valign="top" width="46.22%" headers="mcps1.3.5.5.1.4.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531362258__p7349175582217"><span id="ZH-CN_TOPIC_0000002531362258__ph1234918559222">L1 Buffer</span></p></td>
+        <td class="cellrowborder" valign="top" width="46.26%" headers="mcps1.3.5.5.1.4.1.3 ">
+         <p id="ZH-CN_TOPIC_0000002531362258__p2034975519227">32Byte对齐。</p></td>
+       </tr>
+       <tr id="ZH-CN_TOPIC_0000002531362258__row14349855162220">
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531362258__p2349175522213"><span id="ZH-CN_TOPIC_0000002531362258__ph12349175572211">L0A Buffer</span></p></td>
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531362258__p12349105510223">512Byte对齐。</p></td>
+       </tr>
+       <tr id="ZH-CN_TOPIC_0000002531362258__row83498556224">
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531362258__p143491455162210"><span id="ZH-CN_TOPIC_0000002531362258__ph5349135515225">L0B Buffer</span></p></td>
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531362258__p234945516225">512Byte对齐。</p></td>
+       </tr>
+       <tr id="ZH-CN_TOPIC_0000002531362258__row13491655162217">
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531362258__p43494555226"><span id="ZH-CN_TOPIC_0000002531362258__ph17349155514229">L0C Buffer</span></p></td>
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531362258__p14349125512220">64Byte对齐。</p></td>
+       </tr>
+       <tr id="ZH-CN_TOPIC_0000002531362258__row15518316118">
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531362258__p13625119517">BiasTable Buffer</p></td>
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531362258__p1462519119">64Byte对齐。</p></td>
+       </tr>
+       <tr id="ZH-CN_TOPIC_0000002531362258__row16156956113">
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.1 ">
+         <p id="ZH-CN_TOPIC_0000002531362258__p126251896119">Fixpipe Buffer</p></td>
+        <td class="cellrowborder" valign="top" headers="mcps1.3.5.5.1.4.1.2 ">
+         <p id="ZH-CN_TOPIC_0000002531362258__p2229125511616">64Byte对齐。</p></td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <p id="ZH-CN_TOPIC_0000002531362258__p11659195111419"><strong id="ZH-CN_TOPIC_0000002531362258__b89817347810">各存储单元推荐使用的数据排布格式</strong></p>
+    <ul id="ZH-CN_TOPIC_0000002531362258__ul359653311157">
+     <li id="ZH-CN_TOPIC_0000002531362258__li55961433181516">L0A Buffer、L0B Buffer和L0C Buffer推荐分别采用以下分形格式： 
+      <ul id="ZH-CN_TOPIC_0000002531362258__ul13596163341517">
+       <li id="ZH-CN_TOPIC_0000002531362258__li859723371517">L0A Buffer：FRACTAL_ZZ</li>
+       <li id="ZH-CN_TOPIC_0000002531362258__li6597533101514">L0B Buffer：FRACTAL_ZN</li>
+       <li id="ZH-CN_TOPIC_0000002531362258__li188941186169">L0C Buffer：FRACTAL_NZ</li>
+      </ul>
+      <p id="ZH-CN_TOPIC_0000002531362258__p1215942141617">这些格式针对矩阵乘法等计算密集型任务进行优化，可显著提升计算效率。</p></li>
+     <li id="ZH-CN_TOPIC_0000002531362258__li4597123313158">L1 Buffer缓存推荐使用FRACTAL_NZ格式。当L1 Buffer采用NZ格式时，数据搬运到L0A/L0B Buffer（需分别转换为ZZ和ZN格式）时，可降低格式转换开销。</li>
+     <li id="ZH-CN_TOPIC_0000002531362258__li15219497416">Unified Buffer对数据格式没有要求。</li>
+    </ul>
+    <p id="ZH-CN_TOPIC_0000002531362258__p8380123012413"><strong id="ZH-CN_TOPIC_0000002531362258__b1378315413145">解决存储单元的访问冲突</strong><strong id="ZH-CN_TOPIC_0000002531362258__b9380123010413">，提升读写性能</strong></p>
+    <p id="ZH-CN_TOPIC_0000002531362258__p99008191443">当多个操作尝试同时访问<span id="ZH-CN_TOPIC_0000002531362258__ph17905719344">Unified Buffer</span>同一个bank或者bank group时，可能会发生bank冲突，包括读写冲突、写写冲突、读读冲突，这种冲突会导致访问排队，降低性能。可以通过优化bank分配的方式来提升读写性能，具体信息请参考<a href="atlas_ascendc_best_practices_10_0025.html">避免Unified Buffer的bank冲突</a>章节。</p>
+   </div>
+   <div class="section" id="ZH-CN_TOPIC_0000002531362258__section1073952984611">
+    <h4 class="sectiontitle">搬运单元</h4>
+    <p id="ZH-CN_TOPIC_0000002531362258__p5480181613105"><strong id="ZH-CN_TOPIC_0000002531362258__b154442701010">搬运时的对齐要求</strong></p>
+    <p id="ZH-CN_TOPIC_0000002531362258__p17726164211811">由于搬运后的数据用于参与数据计算，因此对搬运数据大小有要求，搬运到<span id="ZH-CN_TOPIC_0000002531362258__ph354310598510">Unified Buffer</span>的数据大小需要按照DataBlock对齐，其余存储单元的数据搬运必须按<a href="atlas_ascendc_10_0099.html">分形要求</a>进行搬运。例如，数据从<span id="ZH-CN_TOPIC_0000002531362258__ph15434590517">L1 Buffer</span>搬运到<span id="ZH-CN_TOPIC_0000002531362258__ph25432059958">L0A Buffer</span>时，数据格式需要从NZ转换为ZZ格式，搬运数据的大小要按分形大小对齐，如果L1 Buffer的剩余大小不足1个分形，则硬件执行中会出现异常。</p>
+    <p id="ZH-CN_TOPIC_0000002531362258__p1252212711917"><strong id="ZH-CN_TOPIC_0000002531362258__b188818311993">支持跨卡数据搬运（Hccs物理链路）</strong></p>
+    <p id="ZH-CN_TOPIC_0000002531362258__p16239153515911">在跨卡通信算子开发场景，DataCopy类接口支持跨卡数据搬运，在<span id="ZH-CN_TOPIC_0000002531362258__ph165367271496"><term id="ZH-CN_TOPIC_0000002531362258__zh-cn_topic_0000002562275259_term11962195213215_1">
+       Atlas A2 训练系列产品
+      </term>/<term id="ZH-CN_TOPIC_0000002531362258__zh-cn_topic_0000002562275259_term184716139811_1">
+       Atlas A2 推理系列产品
+      </term></span>设备上，仅支持Hccs物理链路，不支持其他通路；开发者开发过程中，请关注涉及卡间通信的物理通路； 通过npu-smi info -t topo指令查询Hccs 物理通路。</p>
+    <p id="ZH-CN_TOPIC_0000002531362258__p14322114320913"><strong id="ZH-CN_TOPIC_0000002531362258__b13211443917">支持Fixpipe硬件化加速</strong></p>
+    <p id="ZH-CN_TOPIC_0000002531362258__p9457174518105">Fixpipe是NPU将典型操作进行硬化的加速模块，位于AIC内部，配合Cube计算单元完成随路计算，主要功能如下：</p>
+    <ul id="ZH-CN_TOPIC_0000002531362258__ul17783183113313">
+     <li id="ZH-CN_TOPIC_0000002531362258__li378393163310">量化反量化：包括S322FP16、S322S32、S322S4、S322S8、S322S16、FP322FP16、FP322BF16、FP322S8、FP322S4、FP322FP32。</li>
+     <li id="ZH-CN_TOPIC_0000002531362258__li14240552113318">Relu功能，包括ReLu、PReLu和Leaky ReLu等典型的激活函数。</li>
+     <li id="ZH-CN_TOPIC_0000002531362258__li153283559333">数据格式转换，包括： 
+      <ul id="ZH-CN_TOPIC_0000002531362258__ul1253815271295">
+       <li id="ZH-CN_TOPIC_0000002531362258__li165381272091">通过Channel merge、Channel split可以实现分形大小的转换，保证输出到L1 Buffer/GM的分形满足诉求。</li>
+       <li id="ZH-CN_TOPIC_0000002531362258__li55383271918">NZ2ND数据格式转换。</li>
+      </ul></li>
+    </ul>
+    <p id="ZH-CN_TOPIC_0000002531362258__p2538182711915"><span><img class="eddx" id="ZH-CN_TOPIC_0000002531362258__image1553862717916" src="figure/zh-cn_image_0000002562282333.png"></span></p>
+    <p id="ZH-CN_TOPIC_0000002531362258__p97501425744"></p>
+    <p id="ZH-CN_TOPIC_0000002531362258__p157711910468">上图中，Channel merge支持S8、U8、S4和U4数据类型，而Channel split支持FP32数据类型。</p>
+    <ul id="ZH-CN_TOPIC_0000002531362258__ul9679722161">
+     <li id="ZH-CN_TOPIC_0000002531362258__li19679172219610">Channel merge（S8和U8数据类型） 
+      <p id="ZH-CN_TOPIC_0000002531362258__p115384272916"><a name="ZH-CN_TOPIC_0000002531362258__li19679172219610"></a><a name="li19679172219610"></a>对于转换为S8或U8的目标数据类型，分形矩阵通过硬件从16x16转换为16x32，如果输出通道数N是16的偶数倍，则N方向上每2个相邻的16x16分形矩阵将合并为1个16x32分形矩阵。如果N是16的奇数倍，则将通道1到通道（N–16）合并，最后16个通道保持未合并。</p>
+      <p id="ZH-CN_TOPIC_0000002531362258__p165389271498">如下所示，目标数据类型为S8，M为32，N为48，首先将前2列16x16分形矩阵合并为一个16x32矩阵，然后将剩余的16x16分形矩阵直接移入L1 Buffer。</p>
+      <p id="ZH-CN_TOPIC_0000002531362258__p65383272098"><span><img class="eddx" id="ZH-CN_TOPIC_0000002531362258__image16538127397" src="figure/zh-cn_image_0000002531522356.png"></span></p></li>
+     <li id="ZH-CN_TOPIC_0000002531362258__li1124612214438">Channel merge（S4和U4数据类型） 
+      <p id="ZH-CN_TOPIC_0000002531362258__p1653810274916"><a name="ZH-CN_TOPIC_0000002531362258__li1124612214438"></a><a name="li1124612214438"></a>对于转换为S4或U4的目标数据类型，分形矩阵通过硬件从16x16转换为16x64，如果输出通道数N是64的倍数，则N方向上每4个相邻的16x16分形矩阵将合并为1个16x64分形矩阵。</p>
+      <p id="ZH-CN_TOPIC_0000002531362258__p5538427895">例如，这里目标数据类型为S4，M为32，N为64，首先将第1行16x16分形矩阵合并为一个16x64矩阵，然后将第2行16x16分形矩阵也合并。</p>
+      <p id="ZH-CN_TOPIC_0000002531362258__p13538227996">在这种情况下，N的配置必须是64的倍数。</p>
+      <p id="ZH-CN_TOPIC_0000002531362258__p1753819277917"><span><img class="eddx" id="ZH-CN_TOPIC_0000002531362258__image12538427097" src="figure/zh-cn_image_0000002562442323.png"></span></p></li>
+     <li id="ZH-CN_TOPIC_0000002531362258__li197803913610">FP32 Channel split： 
+      <p id="ZH-CN_TOPIC_0000002531362258__p16538527091"><a name="ZH-CN_TOPIC_0000002531362258__li197803913610"></a><a name="li197803913610"></a>对于目标类型为FP32，分形矩阵可以通过硬件从16x16转换为16x8，如果使能Channel split，则每个16x16分形矩阵将被分裂为2个16x8分形矩阵。</p>
+      <p id="ZH-CN_TOPIC_0000002531362258__p155389278917">如下图所示，这里的目标数据类型是FP32，M是64，N是32，它将被拆分为16个16x8的分形。</p>
+      <p id="ZH-CN_TOPIC_0000002531362258__p65385275911"><span><img class="eddx" id="ZH-CN_TOPIC_0000002531362258__image13538152718912" src="figure/zh-cn_image_0000002562282323.png"></span></p></li>
+    </ul>
+   </div>
+   <div class="section" id="ZH-CN_TOPIC_0000002531362258__section41753664816">
+    <h4 class="sectiontitle">同步控制</h4>
+    <ul id="ZH-CN_TOPIC_0000002531362258__ul102881408385">
+     <li id="ZH-CN_TOPIC_0000002531362258__li1528817019381">核内同步 
+      <p id="ZH-CN_TOPIC_0000002531362258__p133214519339"><a name="ZH-CN_TOPIC_0000002531362258__li1528817019381"></a><a name="li1528817019381"></a>由于AI Core内部的执行单元（如MTE2搬运单元、Vector计算单元等）以异步并行的方式运行，在读写Local Memory（如Unified Buffer）时可能存在数据依赖关系。为确保数据一致性及计算正确性，需通过同步控制协调操作时序。</p>
+      <p id="ZH-CN_TOPIC_0000002531362258__p688810015359">以MTE2从GM搬运数据至UB，进行Vector计算单元的Abs计算，再搬运回GM的流程为例，需满足以下同步条件：</p>
+      <ol id="ZH-CN_TOPIC_0000002531362258__ol7706133011367">
+       <li id="ZH-CN_TOPIC_0000002531362258__li970643043613">数据搬运与计算顺序 
+        <ul id="ZH-CN_TOPIC_0000002531362258__ul10369250369">
+         <li id="ZH-CN_TOPIC_0000002531362258__li1136985143612">GM→UB搬运完成后再启动Vector单元的Abs计算（避免计算时未完成搬运导致的数据缺失）；</li>
+         <li id="ZH-CN_TOPIC_0000002531362258__li1336918533620">Vector计算完成后再执行UB→GM的数据搬运（确保结果数据已就绪）。</li>
+        </ul></li>
+       <li id="ZH-CN_TOPIC_0000002531362258__li61511336143617">循环搬运计算场景的同步规则 
+        <ul id="ZH-CN_TOPIC_0000002531362258__ul742511421365">
+         <li id="ZH-CN_TOPIC_0000002531362258__li16425184273612">前序计算完成后再启动新搬运：上一次计算未完成时，不得触发新数据搬运（防止UB中旧数据被覆盖）；</li>
+         <li id="ZH-CN_TOPIC_0000002531362258__li19425442193617">前序数据搬出完成后再启动新计算：上一次数据未完全从UB搬出时，不得触发新计算任务（避免目标内存区域的覆盖冲突）。</li>
+        </ul></li>
+      </ol>
+      <p id="ZH-CN_TOPIC_0000002531362258__p2032141121020">同步控制流程如下图所示：</p>
+      <p id="ZH-CN_TOPIC_0000002531362258__p232131118105"><span><img class="imgResize" id="ZH-CN_TOPIC_0000002531362258__image588652016510" src="figure/zh-cn_image_0000002531522348.png" title="点击放大"></span></p>
+      <p id="ZH-CN_TOPIC_0000002531362258__p13321151151012">上图中，ID1、ID2、ID3、ID4、ID5、ID6表示事件ID（EventID），每个EventID对应一块存储数据的搬运状态，确保数据操作的正确性和一致性。</p>
+      <div class="p" id="ZH-CN_TOPIC_0000002531362258__p17321181181012">
+       需要注意以下几点： 
+       <ul id="ZH-CN_TOPIC_0000002531362258__ul1832171161010">
+        <li id="ZH-CN_TOPIC_0000002531362258__li123215116105">建议通过<a href="/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0114.html">AllocEventID</a>或者<a href="/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0116.html">FetchEventID</a>接口获取EventID，以确保其合法性和有效性。</li>
+        <li id="ZH-CN_TOPIC_0000002531362258__li13321101111017">EventID的数量有限，使用后应立即调用ReleaseEventID释放资源，避免EventID耗尽，影响系统正常运行。</li>
+        <li id="ZH-CN_TOPIC_0000002531362258__li10321511101016">SetFlag和WaitFlag必须成对使用，且SetFlag和WaitFlag的参数必须完全一致（包括模板参数和事件ID）。如果不匹配，可能导致当前核的计算异常，或影响下一个核的算子执行，引发timeout问题。 
+         <p id="ZH-CN_TOPIC_0000002531362258__p23211411171016"><a name="ZH-CN_TOPIC_0000002531362258__li10321511101016"></a><a name="li10321511101016"></a>例如，SetFlag&lt;HardEvent::S_MTE3&gt;(1)和SetFlag&lt;HardEvent::MTE3_MTE1&gt;(1)设置的不是同一个EventID，因为其模板参数不同。只有当模板参数和事件ID完全一致时，才表示同一个EventID。</p></li>
+        <li id="ZH-CN_TOPIC_0000002531362258__li9321181119105">不允许连续设置同一个EventID，因为这可能导致事件状态混乱或未被正确处理。</li>
+        <li id="ZH-CN_TOPIC_0000002531362258__li82521537131010">不建议手动插入 TEventID，不能手动插入6和7的TEventID，因为它们可能被系统预留或用于特殊用途。</li>
+       </ul>
+      </div></li>
+    </ul>
+    <ul id="ZH-CN_TOPIC_0000002531362258__ul1152119143813">
+     <li id="ZH-CN_TOPIC_0000002531362258__li15211893385">核间同步 
+      <p id="ZH-CN_TOPIC_0000002531362258__p171591342162613"><a name="ZH-CN_TOPIC_0000002531362258__li15211893385"></a><a name="li15211893385"></a>当不同核之间操作同一块全局内存时，可能存在读后写、写后读以及写后写等数据依赖问题，需要进行核间同步控制。</p>
+      <p id="ZH-CN_TOPIC_0000002531362258__p1674218763313">核间同步控制分为以下几种模式，如下图所示：</p>
+      <ul id="ZH-CN_TOPIC_0000002531362258__ul141016593335">
+       <li id="ZH-CN_TOPIC_0000002531362258__li11101145913317">模式0：AI Core核间的同步控制。对于AIC场景，同步所有的AIC核，直到所有的AIC核都执行到CrossCoreSetFlag时，CrossCoreWaitFlag后续的指令才会执行；对于AIV场景，同步所有的AIV核，直到所有的AIV核都执行到CrossCoreSetFlag时，CrossCoreWaitFlag后续的指令才会执行。</li>
+       <li id="ZH-CN_TOPIC_0000002531362258__li9101155917337">模式1：AI Core内部，AIV核之间的同步控制。如果两个AIV核都运行了CrossCoreSetFlag，CrossCoreWaitFlag后续的指令才会执行。</li>
+       <li id="ZH-CN_TOPIC_0000002531362258__li1110105914331">模式2：AI Core内部，AIC与AIV之间的同步控制。在AIC核执行CrossCoreSetFlag之后， 两个AIV上CrossCoreWaitFlag后续的指令才会继续执行；两个AIV都执行CrossCoreSetFlag后，AIC上CrossCoreWaitFlag后续的指令才能执行。</li>
+      </ul>
+      <p id="ZH-CN_TOPIC_0000002531362258__p2030114311401"><span><img class="eddx" id="ZH-CN_TOPIC_0000002531362258__image3101165953311" src="figure/zh-cn_image_0000002531362416.png"></span></p>
+      <p id="ZH-CN_TOPIC_0000002531362258__p22981745720">例如，在AIC中将L0C的计算结果搬运到GM后，AIV需要将GM的数据搬运到UB。此时，可以使用CrossCoreSetFlag和CrossCoreWaitFlag命令，确保数据从L0C成功搬运到GM后，再从GM搬运到UB，流程如下图所示。</p>
+      <p id="ZH-CN_TOPIC_0000002531362258__p12616171618535"><span><img class="eddx" id="ZH-CN_TOPIC_0000002531362258__image14615111618533" src="figure/zh-cn_image_0000002562282319.png"></span></p>
+      <p id="ZH-CN_TOPIC_0000002531362258__p33611047175617"><a href="/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0273.html">CrossCoreSetFlag</a>和<a href="/document/detail/zh/CANNCommunityEdition/900/API/ascendcopapi/atlasascendc_api_07_0274.html">CrossCoreWaitFlag</a>接口配合使用。使用时需传入核间同步的标记ID(flagId)，即上图中的ID1，每个ID对应一个初始值为0的计数器。执行CrossCoreSetFlag后ID对应的计数器增加1；执行CrossCoreWaitFlag时如果对应的计数器数值为0则阻塞不执行；如果对应的计数器大于0，则计数器减一，同时后续指令开始执行。flagId取值范围是0-10。</p>
+      <p id="ZH-CN_TOPIC_0000002531362258__p077045765910">需要注意以下几点：</p>
+      <ul id="ZH-CN_TOPIC_0000002531362258__ul12255254725">
+       <li id="ZH-CN_TOPIC_0000002531362258__li494214561027"><strong id="ZH-CN_TOPIC_0000002531362258__b1094175614220">成对使用</strong>
+        <p id="ZH-CN_TOPIC_0000002531362258__p1147817583210">CrossCoreSetFlag和CrossCoreWaitFlag必须成对使用，否则可能导致算子超时问题。</p></li>
+       <li id="ZH-CN_TOPIC_0000002531362258__li1768086538"><strong id="ZH-CN_TOPIC_0000002531362258__b96801061931">一致性要求</strong>
+        <p id="ZH-CN_TOPIC_0000002531362258__p154514812317">CrossCoreSetFlag 的模板参数和flagId必须与CrossCoreWaitFlag完全一致，否则视为不同的flagId。例如，CrossCoreSetFlag&lt;0x0, PIPE_MTE3&gt;(0x8) 和 CrossCoreSetFlag&lt;0x2, PIPE_FIX&gt;(0x8) 设置的不是同一个flagId。</p></li>
+       <li id="ZH-CN_TOPIC_0000002531362258__li811215501831"><strong id="ZH-CN_TOPIC_0000002531362258__b101121050232">避免连续设置</strong>
+        <p id="ZH-CN_TOPIC_0000002531362258__p43885119316">不允许连续设置同一个flagId，以防止计数器状态混乱。</p></li>
+       <li id="ZH-CN_TOPIC_0000002531362258__li145222123411"><strong id="ZH-CN_TOPIC_0000002531362258__b1252211121741">与高阶 API 的使用冲突</strong>
+        <p id="ZH-CN_TOPIC_0000002531362258__p27094241045">Matmul高阶API内部实现中使用了本接口进行核间同步控制，所以不建议开发者同时使用该接口和Matmul高阶API，否则会有flagId冲突的风险。</p></li>
+       <li id="ZH-CN_TOPIC_0000002531362258__li729353518415"><strong id="ZH-CN_TOPIC_0000002531362258__b1329318351645">计数器限制</strong>
+        <p id="ZH-CN_TOPIC_0000002531362258__p412153611417">同一flagId的计数器最多可以设置15次。</p></li>
+       <li id="ZH-CN_TOPIC_0000002531362258__li8811645844"><strong id="ZH-CN_TOPIC_0000002531362258__b118117454412">默认流水类型</strong>
+        <p id="ZH-CN_TOPIC_0000002531362258__p19748845745">CrossCoreWaitFlag不需要显式设置指令所在的流水类型，默认使用PIPE_S。</p></li>
+      </ul></li>
+    </ul>
+   </div>
+  </div>
+  <div>
+   <div class="familylinks">
+    <div class="parentlink">
+     <strong>父主题：</strong> <a href="atlas_ascendc_10_0009.html">架构规格</a>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>

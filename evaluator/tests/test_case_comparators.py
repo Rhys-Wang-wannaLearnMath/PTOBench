@@ -64,6 +64,42 @@ def comparator_examples(name, rule, config):
         rejected = torch.zeros_like(expected)
     elif method != "custom":
         raise AssertionError(f"Unsupported comparator method: {method}")
+    elif rule["name"] == "topk_pair_compare" and "paired_output" in rule:
+        # Current indexers bind a score tensor and may select only the visible
+        # prefix of each active token, padding the rest with -1.
+        padded = "padding" in rule
+        width = config.INDEXER_SCORE_CAP if padded else config.SCORE_LEN
+        shape = (3, width) if padded else (1, 1, width)
+        scores = torch.arange(width, 0, -1, dtype=torch.float32).expand(shape).clone()
+        if not rule["descending"]:
+            scores = scores.flip(-1)
+        if padded:
+            inputs = {"num_tokens": torch.tensor(2, dtype=torch.int32),
+                      "position_ids": torch.tensor([7, 11, 0], dtype=torch.int32)}
+            expected = torch.full(shape, rule["padding"], dtype=torch.int32)
+            expected[0, :2] = torch.arange(2)
+            expected[1, :3] = torch.arange(3)
+            bad_tail = expected.clone()
+            bad_tail[2, 0] = 0
+            duplicate = expected.clone()
+            duplicate[0, 1] = 0
+            extras.extend([
+                ("inactive token must remain padded", bad_tail, False, {}),
+                ("duplicate visible index", duplicate, False, {}),
+                ("missing token metadata", expected.clone(), False, {"inputs": {}}),
+            ])
+        else:
+            expected = (torch.arange(width, dtype=torch.int32) + rule["offset"]).expand(shape).clone()
+        rejected = expected.clone()
+        rejected[..., :2] = rejected[..., :2].flip(-1)
+        paired = rule["paired_output"]
+        actual_outputs[paired] = scores
+        expected_outputs[paired] = scores
+        extras.extend([
+            ("tied permutation", rejected.clone(), True,
+             {"actual_outputs": {paired: torch.ones_like(scores)}}),
+            ("missing paired score", expected.clone(), False, {"actual_outputs": {}}),
+        ])
     elif rule["name"] in {"topk_pair_compare", "indexed_topk_pair"}:
         indexed = rule["name"] == "indexed_topk_pair" or name == "topk_idxs"
         if rule["name"] == "indexed_topk_pair":
@@ -144,6 +180,29 @@ def comparator_examples(name, rule, config):
         nonfinite = expected.clone()
         nonfinite[0, 0, 0, 0] = torch.nan
         extras.append(("nonfinite active value", nonfinite, False, {}))
+    elif rule["name"] == "mapped_pool_ratio_allclose":
+        block_size = rule["block_size"]
+        expected = torch.ones((2, block_size, 2), dtype=torch.float32)
+        mapping = torch.full(rule["mapping_shape"], -1, dtype=torch.int32)
+        mapping.reshape(-1)[:2] = torch.tensor([0, block_size])
+        binding = rule["mapping"] if "mapping" in rule else rule["mapping_name"]
+        inputs[binding] = mapping
+        rejected = expected.clone()
+        rejected[0, 0] = 100
+        unmapped = expected.clone()
+        unmapped[0, 1] = 100
+        invalid_mapping = mapping.clone()
+        invalid_mapping.reshape(-1)[0] = 2 * block_size
+        duplicate_mapping = mapping.clone()
+        duplicate_mapping.reshape(-1)[1] = 0
+        extras.extend([
+            ("unmapped pool row changed", unmapped, False, {}),
+            ("missing mappings", expected.clone(), False, {"inputs": {}}),
+            ("mapping outside pool", expected.clone(), False,
+             {"inputs": {binding: invalid_mapping}}),
+            ("duplicate mapped row", expected.clone(), False,
+             {"inputs": {binding: duplicate_mapping}}),
+        ])
     elif rule["name"] == "mapped_pool_compare":
         bindings = rule["mapping_inputs"]
         ranks = 2 if rule["ranked"] else 1
@@ -219,6 +278,42 @@ def comparator_examples(name, rule, config):
         extras.extend([
             ("unselected chunk rows", padding_changed, padding_policy == "ignore", {}),
             ("missing chunk metadata", expected.clone(), False, {"inputs": {}}),
+        ])
+    elif rule["name"] in {"score_valid_region_ratio_allclose", "score_valid_rows_ratio_allclose"}:
+        token_rows = rule["name"] == "score_valid_rows_ratio_allclose"
+        expected = torch.full((3, 4) if token_rows else (1, 1, 4), rule["tail_sentinel"])
+        if token_rows:
+            inputs["num_tokens"] = torch.tensor(2, dtype=torch.int32)
+            expected[:2] = 1
+        else:
+            expected[..., :2] = 1
+        rejected = expected.clone()
+        rejected.reshape(-1)[0] = 100
+        changed_tail = expected.clone()
+        changed_tail.reshape(-1)[-1] = 100
+        nonfinite = expected.clone()
+        nonfinite.reshape(-1)[0] = torch.nan
+        extras.extend([
+            ("inactive score tail", changed_tail, not token_rows, {}),
+            ("nonfinite active score", nonfinite, False, {}),
+        ])
+        if token_rows:
+            extras.append(("missing token count", expected.clone(), False, {"inputs": {}}))
+    elif rule["name"] == "valid_ratio_reldiff" and (
+        rule.get("valid_rows_from") == "num_tokens" or rule.get("valid_prefix") == "num_tokens"
+    ):
+        expected = torch.zeros((3, 2), dtype=torch.bfloat16)
+        expected[:2] = 1
+        inputs["num_tokens"] = torch.tensor(2, dtype=torch.int32)
+        rejected = expected.clone()
+        rejected[0] = 100
+        nonzero_tail = expected.clone()
+        nonzero_tail[-1] = 1
+        extras.extend([
+            ("inactive token must remain zero", nonzero_tail, False, {}),
+            ("missing token count", expected.clone(), False, {"inputs": {}}),
+            ("token count out of bounds", expected.clone(), False,
+             {"inputs": {"num_tokens": torch.tensor(4, dtype=torch.int32)}}),
         ])
     elif rule["name"] in {"ratio_reldiff", "valid_ratio_reldiff"}:
         rows = rule.get("valid_rows")
@@ -315,36 +410,35 @@ class CaseComparatorTest(unittest.TestCase):
             print(f"NOT_RUN (non-ready, missing evaluator): {case_id}", flush=True)
 
     def test_declared_methods_and_strict_schema(self):
-        qwen_case_path = (
+        ratio_case_path = (
             BENCHMARK_ROOT
-            / "cases/qwen3_14b/qwen3_14b_decode/case.json"
+            / "cases/deepseek_v4_flash_dspark/dspark_proj_flash/case.json"
         )
-        qwen_case = json.loads(qwen_case_path.read_text(encoding="utf-8"))
-        qwen_evaluator = common.load_case_evaluator(
-            common.sealed_root() / "qwen3_14b/qwen3_14b_decode"
+        ratio_case = json.loads(ratio_case_path.read_text(encoding="utf-8"))
+        ratio_evaluator = common.load_case_evaluator(
+            common.sealed_root() / "deepseek_v4_flash_dspark/dspark_proj_flash"
         )
-        ratio = qwen_evaluator._compare(
-            qwen_case_path.parent, qwen_case,
-        )["out"]
+        ratio = ratio_evaluator.make_compare(ratio_case_path.parent, ratio_case)["main_x"]
+        rule = common.read_json(ratio_case_path.parent / ratio_case["comparator"])["outputs"]["main_x"]
         expected = torch.zeros(100)
         actual = expected.clone()
-        actual[:2] = 1
+        allowed = round(rule["max_error_ratio"] * expected.numel())
+        actual[:allowed] = 1
         self.assertTrue(ratio(actual, expected)[0])
-        actual[2] = 1
+        actual[allowed] = 1
         self.assertFalse(ratio(actual, expected)[0])
+        actual = expected.clone()
         actual[0] = torch.nan
         self.assertFalse(ratio(actual, expected)[0])
 
-        greedy_case_path = (
-            BENCHMARK_ROOT / "cases/qwen3_14b/greedy_sample/case.json"
+        allclose_case_path = (
+            BENCHMARK_ROOT / "cases/deepseek_v4_flash_dspark/dspark_markov_flash/case.json"
         )
-        greedy_case = json.loads(greedy_case_path.read_text(encoding="utf-8"))
-        greedy_evaluator = common.load_case_evaluator(
-            common.sealed_root() / "qwen3_14b/greedy_sample"
+        allclose_case = json.loads(allclose_case_path.read_text(encoding="utf-8"))
+        allclose_evaluator = common.load_case_evaluator(
+            common.sealed_root() / "deepseek_v4_flash_dspark/dspark_markov_flash"
         )
-        allclose = greedy_evaluator._compare(
-            greedy_case_path.parent, greedy_case,
-        )["sampled_ids"]
+        allclose = allclose_evaluator.make_compare(allclose_case_path.parent, allclose_case)["draft_token_ids"]
         self.assertTrue(allclose(torch.tensor([1, 2]), torch.tensor([1, 2]))[0])
         self.assertFalse(allclose(torch.tensor([1, 3]), torch.tensor([1, 2]))[0])
 
@@ -353,7 +447,7 @@ class CaseComparatorTest(unittest.TestCase):
             public = root / "public"
             public.mkdir()
             invalid_case = {
-                **qwen_case,
+                **ratio_case,
                 "comparator": "public/comparator.json",
                 "correctness": {"outputs": ["out"]},
             }
@@ -362,23 +456,23 @@ class CaseComparatorTest(unittest.TestCase):
                 '"method":"ratio_allclose","rtol":0.0,"atol":0.0}}}\n',
                 encoding="utf-8",
             )
-            with self.assertRaisesRegex(ValueError, "requires exactly"):
-                qwen_evaluator._compare(root, invalid_case)
+            with self.assertRaisesRegex(ValueError, "invalid ratio_allclose fields"):
+                ratio_evaluator.make_compare(root, invalid_case)
 
             (public / "comparator.json").write_text(
                 '{"schema_version":1,"outputs":{"out":{"method":"unknown"}}}\n',
                 encoding="utf-8",
             )
             with self.assertRaisesRegex(ValueError, "unsupported comparator method"):
-                qwen_evaluator._compare(root, invalid_case)
+                ratio_evaluator.make_compare(root, invalid_case)
 
             (public / "comparator.json").write_text(
                 '{"schema_version":1,"outputs":{"other":{"method":"allclose",'
                 '"rtol":0.0,"atol":0.0}}}\n',
                 encoding="utf-8",
             )
-            with self.assertRaisesRegex(ValueError, "exactly match"):
-                qwen_evaluator._compare(root, invalid_case)
+            with self.assertRaisesRegex(ValueError, "output coverage disagrees"):
+                ratio_evaluator.make_compare(root, invalid_case)
 
 
 if __name__ == "__main__":

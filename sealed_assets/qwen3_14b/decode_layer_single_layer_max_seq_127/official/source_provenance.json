@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "authority": "byte_exact_read_only_corpus_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/qwen3_14b/decode_layer.py",
+  "source_sha256": "06fe34315176f76239749115fffe83c9f7b39adc14b80d5f6af409fc72f86837",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "06fe34315176f76239749115fffe83c9f7b39adc14b80d5f6af409fc72f86837",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/qwen3_14b_legacy_decode_tq/config.py",
+      "source_sha256": "9dbbdee0ff07db71108ccc22837a87ca00d591573f33c559aea56ebf03c56b19",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "9dbbdee0ff07db71108ccc22837a87ca00d591573f33c559aea56ebf03c56b19"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/qwen3_14b_legacy_decode_tq/constants.py",
+      "source_sha256": "00db5be8040420fd5045e4b15969606c0e19b08e435d8cec076b7c7dfd6a942a",
+      "frozen_copy": "constants.py",
+      "frozen_copy_sha256": "00db5be8040420fd5045e4b15969606c0e19b08e435d8cec076b7c7dfd6a942a"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/qwen3_14b_legacy_decode_tq/rms_lm_head.py",
+      "source_sha256": "4506cd86d6ade4b415e9d56d02fac8501fa3d3f9a55aea7f692104296ba2de05",
+      "frozen_copy": "rms_lm_head.py",
+      "frozen_copy_sha256": "4506cd86d6ade4b415e9d56d02fac8501fa3d3f9a55aea7f692104296ba2de05"
+    }
+  ],
+  "selection": "The frozen v0.1 one-layer Qwen3-14B decode source is the approved workload; its complete legacy config, constants, and rms_lm_head closure is preserved byte-exactly. The current dynamic full-decode successor has a different ABI and is excluded.",
+  "fixture_authority": "byte-exact official random_inputs and private _build_specs via Case-local compatibility adapter"
+}

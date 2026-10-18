@@ -1,0 +1,21 @@
+from config import D, HC_MULT
+
+def golden_hc_post(tensors):
+    """Torch reference, direct port of model.py Block.hc_post 684-687."""
+    import torch
+
+    x        = tensors["x"].float()
+    residual = tensors["residual"].float()
+    post     = tensors["post"].float()
+    comb     = tensors["comb"].float().reshape(-1, HC_MULT, HC_MULT)  # [B, S, HC, HC]
+
+    T = x.shape[0]
+    y_fp32 = torch.zeros(T, HC_MULT, D, dtype=torch.float32)
+    for out_h in range(HC_MULT):
+        y_row = x * post[:, out_h:out_h + 1]
+        for in_h in range(HC_MULT):
+            y_row = y_row + residual[:, in_h, :] * comb[:, in_h, out_h:out_h + 1]
+        y_fp32[:, out_h, :] = y_row
+    y = y_fp32.to(torch.bfloat16)
+
+    tensors["y"][:] = y

@@ -1,5 +1,0 @@
-argv: ["{repo_root}/benchmarks/mig_workflow/agent_provider/launch.py", pi, --print, --provider, profile-gateway, --model, deepseek-flash, "{prompt}"]
-version_argv: [pi, --version]
-help_argv: [pi, --help]
-env: {}
-model: profile-gateway/deepseek-flash

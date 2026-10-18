@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4_flash_mtp.prefill_cp_swa_cp2_demo",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "eed558cdc0ce56a72c7060a3c9780e545a1cba5cec42cbcd3339c5bb16a6a9f4"
+}

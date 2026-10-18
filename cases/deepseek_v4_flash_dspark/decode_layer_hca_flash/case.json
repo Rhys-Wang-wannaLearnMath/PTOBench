@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.decode_layer_hca_flash",
+  "description": "DeepSeek-V4 D-Spark integrated decode layer, HCA attention and MoE (FLASH preset, TP2/EP2)",
+  "workspace": "public/candidate_seed",
+  "module": "decode_layer.py",
+  "entry": "l3_decode_layer_hca",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "models_0912_decode_layer_hca_flash_a2a3_45",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "scalars": [
+    "layer_id",
+    "local_t"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "compress_state",
+      "kv_cache",
+      "cmp_kv",
+      "x_attn_active",
+      "x_moe_next",
+      "x_next"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "compress_state",
+      "kv_cache",
+      "cmp_kv"
+    ],
+    "restore_before_each_launch": true
+  }
+}

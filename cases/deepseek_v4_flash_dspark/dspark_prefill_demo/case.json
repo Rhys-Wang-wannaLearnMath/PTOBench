@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.dspark_prefill_demo",
+  "description": "DeepSeek-V4 DEMO DSpark prompt prefill and seven-query drafting, batch 4, three draft layers, EP2, one invocation",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "l3_dspark_drafter",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "deepseek_v4_flash_dspark__dspark_prefill_flash_manual_idle_20261007_libstdcxx",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "runtime": {
+    "ring_heap": [
+      4294967296,
+      4294967296,
+      4294967296,
+      4294967296
+    ]
+  },
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "initial_hidden",
+      "intermediate_hidden",
+      "kv_caches",
+      "head_hidden"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "kv_caches"
+    ],
+    "restore_before_each_launch": true
+  }
+}

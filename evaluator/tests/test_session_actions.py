@@ -199,6 +199,10 @@ class SessionActionsTest(ActionTestBase):
         self.assertIsNone(record['active_action'])
         self.assertTrue(record['exploration_closed'])
         self.assertEqual(len(self.events()),1)
+        archive = self.handle.session_root / self.events()[0]['artifact_index']
+        execution = json.loads((archive.parent / 'process_execution.json').read_text())
+        self.assertEqual(execution['received_signal'], signal.SIGTERM)
+        self.assertEqual(execution['exit_code'], -signal.SIGTERM)
         self.assertFalse((self.bench/'.ptobench/active_action.json').exists())
 
     def test_repeated_signals_cannot_interrupt_term_then_kill_cleanup(self):

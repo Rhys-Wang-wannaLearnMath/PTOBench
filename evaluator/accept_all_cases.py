@@ -138,11 +138,14 @@ def enumerate_cases(bench):
             row["case_json_sha256"] = common.sha256_file(path)
             case_id = value.get("case_id")
             row["case_id"] = case_id if isinstance(case_id, str) else None
-            expected = ".".join(path.parent.parts[-2:])
-            if (not isinstance(case_id, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]*\.[A-Za-z0-9][A-Za-z0-9_-]*", case_id)
-                    or case_id != expected):
+            valid_id = (isinstance(case_id, str)
+                        and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]*\.[A-Za-z0-9][A-Za-z0-9_-]*", case_id))
+            expected = common.case_relative_path(case_id) if valid_id else None
+            actual = path.parent.relative_to(bench / "cases")
+            if (not valid_id
+                    or actual != expected):
                 row["identity_errors"].append("case_id_path_mismatch_or_invalid")
-            sealed = common.sealed_root() / path.parent.relative_to(bench / "cases")
+            sealed = common.sealed_root() / actual
             if (sealed / "certification.json").is_file():
                 cert = session._read(sealed / "certification.json")
                 json.dumps(cert, allow_nan=False)
@@ -393,11 +396,14 @@ class AcceptanceRunner:
                 self.blocked_case(case, "device_or_toolchain_unavailable:" + "; ".join(self.device_cache[key]))
                 return
             case_dir = self.bench / Path(case["case_path"]).parent
-            case["source_hash"] = workspace.source_manifest(case_dir / value["workspace"])["content_sha256"]
             handle = session.create_session(case["case_id"],
                 {"id": "acceptance", "backend": "internal_validation", "profile": "full_v02"},
                 {"runs_root": self.output / "runs", "snapshots_root": self.output / "snapshots"},
                 {"max_hardware_actions": 4, "finish_actions": 1})
+            # Session initialization adds the editable default tuning.json to
+            # the seed Workspace. Freeze the hash from that published root so
+            # fork verification covers the same source tree as the workers.
+            case["source_hash"] = workspace.source_manifest(handle.initial_workspace)["content_sha256"]
             protection = session._read(handle.protection_root / "manifest.json")
             for name, global_name in (("case", "cases"), ("sealed", "sealed"), ("environment", "environments")):
                 info = protection["roots"][name]

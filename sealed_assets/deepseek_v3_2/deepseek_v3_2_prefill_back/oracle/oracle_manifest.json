@@ -1,0 +1,15 @@
+{
+  "authority": "candidate_external_ref_cpu",
+  "dtype_semantics": "Reduced official prefill-back profile uses chunked BF16 matmul inputs with FP32 accumulation and BF16 MLP round points.",
+  "entry": "ref_cpu.py::compute",
+  "imports_candidate": false,
+  "reads_npu_output": false,
+  "supported_scope": {
+    "attn_out": 16384,
+    "batch": 4,
+    "ep_nodes": 128,
+    "hidden": 7168,
+    "intermediate": 18432,
+    "max_seq": 128
+  }
+}

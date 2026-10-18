@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_mtp.prefill_cp_zigzag_cp2_demo",
+  "description": "DeepSeek-V4 Flash MTP CP2 prefill zigzag projected-KV tail exchange, DEMO preset",
+  "workspace": "public/candidate_seed",
+  "module": "candidate.py",
+  "entry": "prefill_cp_zigzag_kv_tail_exchange_test",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "a2a3_deepseek_v4_moe_ep2_libstdcxx",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "logical_tails_out",
+      "decode_raw_window_out"
+    ]
+  },
+  "state": {
+    "behavior": "none",
+    "initial_state": [],
+    "restore_before_each_launch": false
+  }
+}

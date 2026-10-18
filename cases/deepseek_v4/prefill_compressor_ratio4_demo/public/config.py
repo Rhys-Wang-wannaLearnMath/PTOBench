@@ -6,7 +6,7 @@
 # INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 # See LICENSE in the root of the software repository for the full text of the License.
 # -----------------------------------------------------------------------------------------------------------
-"""DeepSeek-V4 configuration"""
+"""Fixed contract for deepseek_v4.prefill_compressor_ratio4_demo."""
 
 from dataclasses import dataclass
 from typing import Literal, Optional, Tuple
@@ -144,11 +144,9 @@ DEMO = DeepSeekV4Config(
 
 CASE_CONFIG = DEMO
 
-FLASH = CASE_CONFIG
-# Fixed deployment and operator values for this Case.
+# Fixed prefill deployment and operator values for this Case.
+# The compressed cache shares the source's decode-batch physical pool.
 DECODE_BATCH = 8
-DECODE_SEQ = 1
-DECODE_TOKENS = DECODE_BATCH * DECODE_SEQ
 PREFILL_BATCH = 1
 PREFILL_SEQ = 128
 PREFILL_TOKENS = PREFILL_BATCH * PREFILL_SEQ

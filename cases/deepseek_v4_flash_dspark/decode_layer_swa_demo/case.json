@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "case_id": "deepseek_v4_flash_dspark.decode_layer_swa_demo",
+  "description": "DeepSeek-V4 D-Spark integrated decode layer, SWA attention and MoE (DEMO preset, TP2/EP2)",
+  "workspace": "public/candidate_seed",
+  "module": "decode_layer.py",
+  "entry": "l3_decode_layer_swa",
+  "config": "public/config.py",
+  "comparator": "public/comparator.json",
+  "environment": "models_0912_decode_layer_swa_demo_a2a3_45",
+  "fixture_ids": [
+    "fixture_000"
+  ],
+  "scalars": [
+    "layer_id",
+    "local_t"
+  ],
+  "correctness": {
+    "mode": "single_step",
+    "outputs": [
+      "kv_cache",
+      "x_attn_active",
+      "x_moe_next",
+      "x_next"
+    ]
+  },
+  "state": {
+    "behavior": "mutating",
+    "initial_state": [
+      "kv_cache"
+    ],
+    "restore_before_each_launch": true
+  }
+}

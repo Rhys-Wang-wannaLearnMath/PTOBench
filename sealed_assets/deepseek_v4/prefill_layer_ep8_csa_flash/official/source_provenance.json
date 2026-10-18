@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "authority": "sha256_bound_corpus_and_frozen_v01_dependencies",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/prefill_layer.py",
+  "source_sha256": "4bf4d98d8c2e47f266354fb8b7cf2d61d859f383749dfdd071772a9d157ccc6e",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "4bf4d98d8c2e47f266354fb8b7cf2d61d859f383749dfdd071772a9d157ccc6e",
+  "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/original.py",
+  "copied_sha256": "4bf4d98d8c2e47f266354fb8b7cf2d61d859f383749dfdd071772a9d157ccc6e",
+  "source_git_blob": "72b1713468ca4e3e821151d1d369fe28579ff1df",
+  "selection": "Preserve the frozen packed request-aware prefill layer because current upstream changes precision, ABI, pool coordinates and state semantics. Bind the selected FLASH preset without altering source bytes; PRO is excluded by the source HC reduction assertion.",
+  "fixture_authority": "original.py::build_tensor_specs with canonical public LAYER_ID, CHUNK_LENS, START_POSITIONS and EP_WORLD_SIZE; source RNG order and initial mutable state preserved",
+  "dependencies": [
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/config.py",
+      "source_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "frozen_copy": "original_config.py",
+      "frozen_copy_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/original_config.py",
+      "copied_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/rope_tables.py",
+      "source_sha256": "6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59",
+      "frozen_copy": "rope_tables.py",
+      "frozen_copy_sha256": "6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/rope_tables.py",
+      "copied_sha256": "6ebff12c81382a9af75e1151121eab84f814bc84a1fb61bfa0915a09e0919c59"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/moe.py",
+      "source_sha256": "a04255581c7ad609076e88f63768d9756f4d48287a68ec521272b69f1fafcc0e",
+      "frozen_copy": "moe.py",
+      "frozen_copy_sha256": "a04255581c7ad609076e88f63768d9756f4d48287a68ec521272b69f1fafcc0e",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/moe.py",
+      "copied_sha256": "a04255581c7ad609076e88f63768d9756f4d48287a68ec521272b69f1fafcc0e"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/prefill_attention_swa.py",
+      "source_sha256": "fc909a7be93f285a9a88d7d91efebcae134c03c37213d2435b7a43dcb9da1481",
+      "frozen_copy": "prefill_attention_swa.py",
+      "frozen_copy_sha256": "fc909a7be93f285a9a88d7d91efebcae134c03c37213d2435b7a43dcb9da1481",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/prefill_attention_swa.py",
+      "copied_sha256": "fc909a7be93f285a9a88d7d91efebcae134c03c37213d2435b7a43dcb9da1481"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/prefill_attention_hca.py",
+      "source_sha256": "b9f593660c9b277404ab8a4d9b5e8f59cd463c7e34f24e4dd8f83d0df396ae43",
+      "frozen_copy": "prefill_attention_hca.py",
+      "frozen_copy_sha256": "b9f593660c9b277404ab8a4d9b5e8f59cd463c7e34f24e4dd8f83d0df396ae43",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/prefill_attention_hca.py",
+      "copied_sha256": "b9f593660c9b277404ab8a4d9b5e8f59cd463c7e34f24e4dd8f83d0df396ae43"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/prefill_attention_csa.py",
+      "source_sha256": "60c650a26eba057d64cacc99ea01a1a85775c025ca0748d95e7159658cdc5da2",
+      "frozen_copy": "prefill_attention_csa.py",
+      "frozen_copy_sha256": "60c650a26eba057d64cacc99ea01a1a85775c025ca0748d95e7159658cdc5da2",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/prefill_attention_csa.py",
+      "copied_sha256": "60c650a26eba057d64cacc99ea01a1a85775c025ca0748d95e7159658cdc5da2"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/hc_pre_v2.py",
+      "source_sha256": "d9bdd864f553761f499432fb3bcfe1db8881b2979461204cdfe5785be5bc5a5f",
+      "frozen_copy": "hc_pre_v2.py",
+      "frozen_copy_sha256": "d9bdd864f553761f499432fb3bcfe1db8881b2979461204cdfe5785be5bc5a5f",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/hc_pre_v2.py",
+      "copied_sha256": "d9bdd864f553761f499432fb3bcfe1db8881b2979461204cdfe5785be5bc5a5f"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/hc_post_v2.py",
+      "source_sha256": "f3a0265ba266eed1bd0c480cdd2d61b4b77ce612b4c44c0124d91131258d7f5c",
+      "frozen_copy": "hc_post_v2.py",
+      "frozen_copy_sha256": "f3a0265ba266eed1bd0c480cdd2d61b4b77ce612b4c44c0124d91131258d7f5c",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/hc_post_v2.py",
+      "copied_sha256": "f3a0265ba266eed1bd0c480cdd2d61b4b77ce612b4c44c0124d91131258d7f5c"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/gate.py",
+      "source_sha256": "c79165cc4cee2044c033527dafb562e44fdc4113f51ffc4d9208b763f67b3f50",
+      "frozen_copy": "gate.py",
+      "frozen_copy_sha256": "c79165cc4cee2044c033527dafb562e44fdc4113f51ffc4d9208b763f67b3f50",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/gate.py",
+      "copied_sha256": "c79165cc4cee2044c033527dafb562e44fdc4113f51ffc4d9208b763f67b3f50"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/expert_shared.py",
+      "source_sha256": "b010d1914a90528373ebdba362ba5c37b07b01f6d7fc08bacde32123593a7a74",
+      "frozen_copy": "expert_shared.py",
+      "frozen_copy_sha256": "b010d1914a90528373ebdba362ba5c37b07b01f6d7fc08bacde32123593a7a74",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/expert_shared.py",
+      "copied_sha256": "b010d1914a90528373ebdba362ba5c37b07b01f6d7fc08bacde32123593a7a74"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/expert_routed.py",
+      "source_sha256": "e6bc6458dd64cfb9e777be54e312b44de9300a440a9f0c24c672973e40c29271",
+      "frozen_copy": "expert_routed.py",
+      "frozen_copy_sha256": "e6bc6458dd64cfb9e777be54e312b44de9300a440a9f0c24c672973e40c29271",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/expert_routed.py",
+      "copied_sha256": "e6bc6458dd64cfb9e777be54e312b44de9300a440a9f0c24c672973e40c29271"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/prefill_qkv_proj_rope_v2.py",
+      "source_sha256": "032e7ca86f096886487ed37d158d4cd4484a7a3cb2fe4ecec322c2f6b6ef3f68",
+      "frozen_copy": "prefill_qkv_proj_rope_v2.py",
+      "frozen_copy_sha256": "032e7ca86f096886487ed37d158d4cd4484a7a3cb2fe4ecec322c2f6b6ef3f68",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/prefill_qkv_proj_rope_v2.py",
+      "copied_sha256": "032e7ca86f096886487ed37d158d4cd4484a7a3cb2fe4ecec322c2f6b6ef3f68"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/prefill_sparse_attn_v2.py",
+      "source_sha256": "e343d127905f527b30035c936f3fcb738b36662ee0cec4c87745a81b6dbc9293",
+      "frozen_copy": "prefill_sparse_attn_v2.py",
+      "frozen_copy_sha256": "e343d127905f527b30035c936f3fcb738b36662ee0cec4c87745a81b6dbc9293",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/prefill_sparse_attn_v2.py",
+      "copied_sha256": "e343d127905f527b30035c936f3fcb738b36662ee0cec4c87745a81b6dbc9293"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/rmsnorm.py",
+      "source_sha256": "4c041b40ff9b37da5dc3dc050d8a39d29db8eb577a568abad853efc41b5a2c1b",
+      "frozen_copy": "rmsnorm.py",
+      "frozen_copy_sha256": "4c041b40ff9b37da5dc3dc050d8a39d29db8eb577a568abad853efc41b5a2c1b",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/rmsnorm.py",
+      "copied_sha256": "4c041b40ff9b37da5dc3dc050d8a39d29db8eb577a568abad853efc41b5a2c1b"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/prefill_compressor_ratio128.py",
+      "source_sha256": "78e7db5c4e29bb74c1a8ed6e849cb6f419393e5a37f050c8b3343f91dffee060",
+      "frozen_copy": "prefill_compressor_ratio128.py",
+      "frozen_copy_sha256": "78e7db5c4e29bb74c1a8ed6e849cb6f419393e5a37f050c8b3343f91dffee060",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/prefill_compressor_ratio128.py",
+      "copied_sha256": "78e7db5c4e29bb74c1a8ed6e849cb6f419393e5a37f050c8b3343f91dffee060"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/prefill_compressor_ratio4.py",
+      "source_sha256": "f261cf232147a2230231da41e07c5cb9a84cf724a400beef4e364ce58d5a9e02",
+      "frozen_copy": "prefill_compressor_ratio4.py",
+      "frozen_copy_sha256": "f261cf232147a2230231da41e07c5cb9a84cf724a400beef4e364ce58d5a9e02",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/prefill_compressor_ratio4.py",
+      "copied_sha256": "f261cf232147a2230231da41e07c5cb9a84cf724a400beef4e364ce58d5a9e02"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/prefill_hc_pre.py",
+      "source_sha256": "8ba656865ff4fb249746573b000a0079dc75b08ca1db932063881a3a3c3c5f73",
+      "frozen_copy": "prefill_hc_pre.py",
+      "frozen_copy_sha256": "8ba656865ff4fb249746573b000a0079dc75b08ca1db932063881a3a3c3c5f73",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/prefill_hc_pre.py",
+      "copied_sha256": "8ba656865ff4fb249746573b000a0079dc75b08ca1db932063881a3a3c3c5f73"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/prefill_hc_post.py",
+      "source_sha256": "9f3e51cbf8b1b9e258874b1ca104cb0e8e94793e2d42f153bea2cac75243f25f",
+      "frozen_copy": "prefill_hc_post.py",
+      "frozen_copy_sha256": "9f3e51cbf8b1b9e258874b1ca104cb0e8e94793e2d42f153bea2cac75243f25f",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/prefill_hc_post.py",
+      "copied_sha256": "9f3e51cbf8b1b9e258874b1ca104cb0e8e94793e2d42f153bea2cac75243f25f"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/prefill_indexer.py",
+      "source_sha256": "1ea13b2b83f7376d3122c08754078efdf51769298ac601066060f7bb97300769",
+      "frozen_copy": "prefill_indexer.py",
+      "frozen_copy_sha256": "1ea13b2b83f7376d3122c08754078efdf51769298ac601066060f7bb97300769",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/prefill_indexer.py",
+      "copied_sha256": "1ea13b2b83f7376d3122c08754078efdf51769298ac601066060f7bb97300769"
+    },
+    {
+      "source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/prefill_indexer_compressor.py",
+      "source_sha256": "0ab7dfbc70a5fc3cbd91559b112d027bf9df9a7297478e79973a8d938d322e0e",
+      "frozen_copy": "prefill_indexer_compressor.py",
+      "frozen_copy_sha256": "0ab7dfbc70a5fc3cbd91559b112d027bf9df9a7297478e79973a8d938d322e0e",
+      "copied_path": "benchmarks/pypto_lib_bench-v0.2/sealed_assets/deepseek_v4/prefill_layer_ep8_csa_flash/official/prefill_indexer_compressor.py",
+      "copied_sha256": "0ab7dfbc70a5fc3cbd91559b112d027bf9df9a7297478e79973a8d938d322e0e"
+    }
+  ]
+}

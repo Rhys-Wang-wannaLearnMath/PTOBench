@@ -40,6 +40,7 @@ def _reference_summary(sealed: Path) -> dict:
             for name, values in data.get("fixtures", {}).items()
             if "median_effective_us" in values
         }
+        result["compiler_tuning"] = data.get("compiler_tuning", common.TUNING_DEFAULTS)
     return result
 
 
@@ -51,96 +52,97 @@ def _environment_summary(case: dict) -> dict:
             "device": profile.get("device", 0)}
 
 
-def _readme(case: dict, enabled_profiles: dict[str, dict[str, str]]) -> str:
-    profiling = ""
-    profiling_file = ""
-    outputs_description = (
-        "- `.benchmark_outputs/`: evaluator-generated clean results and compiler output."
-    )
+def _readme(case: dict, enabled_profiles: dict[str, dict[str, str]], *, mode=None) -> str:
+    profile_files = ""
+    mode_file = ""
+    profile_commands = ""
+    diagnostics = ""
+    if mode is not None:
+        mode_file = "\n| `mode.json` | Experiment method identity. |"
     if enabled_profiles:
-        profiling_file = (
-            "\n- `.benchmark_context/profiling_modes.json`: profiling modes available in this workspace."
-        )
-        outputs_description = (
-            "- `.benchmark_outputs/`: evaluator-generated results, compiler output, "
-            "and profiling diagnostics, separated by mode."
-        )
-        commands = "\n".join(
-            f"- `ptobench profile {name} .`: {values['description']}"
+        profile_files = "\n| `profiling_modes.json` | Available diagnostics and their meanings. |"
+        profile_commands = "\n".join(
+            f"| `ptobench profile {name} .` | {values['description']} | "
+            f"`.benchmark_outputs/{profile_modes.PUBLIC_TO_INTERNAL[name]}/` |"
             for name, values in enabled_profiles.items()
-        )
-        profiling = f"""
+        ) + "\n"
+        diagnostics = " Agent profile operations collect diagnostics without output correctness checking. Use evaluate to validate correctness and clean latency."
+    return f"""# Benchmark workspace
 
-## Diagnostics
-
-The following optional diagnostics are available:
-
-{commands}
-
-Each profiling command performs one correctness dispatch; it does not measure
-performance, and reserves one exploration action. Profiling results are diagnostic only. After an optimization, run
-`ptobench evaluate .` again for the formal clean performance result.
-"""
-    return f"""# Benchmark Workspace
-
-Case: `{case['case_id']}`
+Optimize Case `{case['case_id']}`: minimize latency while preserving correctness.
+Candidate entry: `{case['module']}::{case['entry']}`. Preserve the inputs, outputs,
+shapes, dtypes and comparison rules in the public contract below.
+Edit Candidate implementation and its local helpers; keep `.benchmark_context/`
+unchanged. Do not inspect hidden test/reference assets. Use the public CLI for
+hardware experiments. PATH and `PTOBENCH_SESSION_ROOT` are already set by the launcher.
 
 ## Files
 
-- Files outside `.benchmark_context/` and `.benchmark_outputs/`: editable Candidate
-  implementation and its local helper dependencies.
-{outputs_description}
-- `.benchmark_context/case.json`: Case description and evaluation mode.
-- `.benchmark_context/config.py`: fixed configuration for this Case; read-only information.
-- `.benchmark_context/comparator.json`: correctness comparison rules; read-only information.
-- `.benchmark_context/reference.json`: public summary of certified reference status and performance.
-- `.benchmark_context/environment.json`: target platform and device summary.
-- `.benchmark_context/workspace.json`: binding between this workspace and the Case.{profiling_file}
-- `.benchmark_context/starting_point/`: read-only copy of the Candidate at workspace creation.
+The following files are read-only and relative to `.benchmark_context/`:
 
-The files under `.benchmark_context/` are informational snapshots. Official evaluation
-reads the canonical Case and sealed assets outside this workspace.
-Case identity and budget come from the protected Session
-registry. `PTOBENCH_SESSION_ROOT` must be set, and this root must be registered.
+| File | Purpose |
+| --- | --- |
+| `case.json`, `config.py`, `comparator.json` | Case description, fixed inputs/outputs/configuration and correctness rules. |
+| `reference.json` | Certified baseline latency in microseconds; no initial evaluation is required. |
+| `environment.json` | Target platform and device. |
+| `workspace.json` | Current workspace path, entry and parent workspace. |{mode_file}{profile_files}
+| `starting_point/` | Source copy from when this workspace was created. |
 
-## Candidate Contract
+`tuning.json` is editable workspace configuration:
 
-The evaluator loads `{case['module']}` and calls `{case['entry']}`. The entry may
-import any local files copied into this workspace. Preserve the input/output ABI
-described by `case.json` and `config.py`; implementation files, helper layout,
-and optimization choices are otherwise free.
+- `memory_planner`: `PYPTO` (default), `DSA_RP`, or `PTOAS`; controls memory reuse and buffer layout.
+- `analyze_auto_scopes_for_deps`: `false` (default) or `true`; enables compiler AUTO-scope dependency analysis.
 
-## Evaluate
+These options affect Candidate evaluate and diagnostic runs. Reference and
+baseline measurements always use `PYPTO + false`. Keep the Case contract,
+inputs, outputs, shapes, dtypes and comparator unchanged. `enable_dep_gen` is
+a separate diagnostic option. If `tuning.json` is absent, the defaults apply.
 
-```bash
-ptobench evaluate .
-```
+`.benchmark_outputs/` contains generated results, compiler output and diagnostics.
+It appears after commands run. These files are feedback copies; editing them does
+not change recorded results. Method-specific resources are introduced by your method.
 
-Formal inputs and reference output tensors are hidden from this workspace.
-The default result and compiler output are written under
-`.benchmark_outputs/clean/`.
-These outputs are diagnostic copies. Bench records authoritative results and
-readonly Snapshots from the frozen implementation; edits here cannot change them.
-Evaluate reserves one exploration action; failure does not refund it.
-The experiment's final score comes from an independent clean verification of
-a selected historical Snapshot in a fresh final workspace. Bench performs this
-after exploration closes, using the separate finish budget.
+## Commands
 
-## Fork
+| Command | Purpose | Output |
+| --- | --- | --- |
+| `ptobench evaluate .` | Check correctness and measure clean latency/speedup against the baseline. | `.benchmark_outputs/clean/` |
+{profile_commands}| `ptobench fork .` | Copy implementation into a new registered workspace; returns its absolute path. | New workspace |
 
-```bash
-ptobench fork .
-```
+Replace `.` with another registered workspace path, or omit it to use the current
+directory. Use a workspace root, not a subdirectory. After fork, edit and evaluate the returned workspace;
+its changes are independent of the parent. `ptobench --help` shows available commands.
+Each accepted hardware experiment costs one action, including unchanged-source
+runs, failed attempts and interruptions. Rejected requests cost nothing; fork
+costs nothing. All workspaces and Agent stages share the same Bench Session budget.
 
-Bench chooses and registers the child workspace and returns its absolute path.
-Fork copies implementation files, regenerates context and consumes no hardware action.
-{profiling}
+## Read feedback
+
+Each command ends with JSON: `status` is PASS, FAIL or REJECTED; `error_code` and
+`message` explain failures. `latency_us` is Candidate median latency in microseconds
+(lower is better); `remaining_hardware_actions` reports the remaining budget.
+Fork returns `workspace`, the new registered root.{diagnostics}
+In the output directory, `latest_result.json` contains correctness, raw samples,
+speedup (higher is better) and available artifact/build paths.
+`latest_session_result.json` contains the command status, latency and budget feedback.
+Use the returned artifact/build paths to locate detailed compiler and diagnostic files.
 """
 
 
 def _assert_destination(destination: Path) -> None:
     if destination.exists() and any(destination.iterdir()):
         raise SystemExit(f"workspace is not empty: {destination}")
+
+
+def _ensure_tuning(destination: Path) -> None:
+    """Create the editable tuning file for newly initialized workspaces."""
+    path = destination / "tuning.json"
+    if path.exists():
+        if not path.is_file() or path.is_symlink():
+            raise InvalidWorkspaceError(f"tuning.json is not a regular file: {path}")
+        return
+    data = (json.dumps(common.TUNING_DEFAULTS, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+    file_tree.atomic_bytes(path, data, mode=0o644)
 
 
 CANDIDATE_EXCLUDES = frozenset({
@@ -260,12 +262,14 @@ def copy_candidate_tree(source: Path, destination: Path, *, max_retries: int = 3
 
 def write_context(case_dir: Path, sealed: Path, case: dict, destination: Path,
                    parent_workspace: Path | None = None,
-                   workspace_path: Path | None = None) -> None:
+                   workspace_path: Path | None = None, *, enabled_profiles=None, mode=None) -> None:
     metadata = destination / ".benchmark_context"
     with file_tree.open_directory(metadata, create=True):
         pass
     copy_candidate_tree(destination, metadata / "starting_point")
-    enabled_profiles = profile_modes.public_enabled_modes()
+    available = profile_modes.public_enabled_modes()
+    enabled_profiles = (available if enabled_profiles is None else
+                        {name: available[name] for name in enabled_profiles if name in available})
     for name, source in _case_files(case_dir, case).items():
         with file_tree.open_file(source) as descriptor:
             with os.fdopen(os.dup(descriptor), "rb") as reader:
@@ -283,6 +287,8 @@ def write_context(case_dir: Path, sealed: Path, case: dict, destination: Path,
     write_json("workspace.json", binding)
     write_json("reference.json", _reference_summary(sealed))
     write_json("environment.json", _environment_summary(case))
+    if mode is not None:
+        write_json("mode.json", mode)
     profiling_path = metadata / "profiling_modes.json"
     if enabled_profiles:
         write_json("profiling_modes.json", {
@@ -292,17 +298,18 @@ def write_context(case_dir: Path, sealed: Path, case: dict, destination: Path,
     elif profiling_path.exists():
         with file_tree.open_parent(profiling_path) as (descriptor, name):
             file_tree.remove_at(descriptor, name)
-    file_tree.atomic_bytes(metadata / "README.md", _readme(case, enabled_profiles).encode("utf-8"))
+    file_tree.atomic_bytes(metadata / "README.md", _readme(case, enabled_profiles, mode=mode).encode("utf-8"))
     _readonly(metadata)
 
 
-def init_workspace(case_dir: Path, sealed: Path, case: dict, destination: Path) -> None:
+def init_workspace(case_dir: Path, sealed: Path, case: dict, destination: Path, **context_options) -> None:
     destination = file_tree.absolute_path(destination)
     if destination.is_symlink():
         raise InvalidWorkspaceError(f"workspace cannot be a symlink: {destination}")
     _assert_destination(destination)
     copy_candidate_tree(case_dir / case["workspace"], destination)
-    write_context(case_dir, sealed, case, destination)
+    _ensure_tuning(destination)
+    write_context(case_dir, sealed, case, destination, **context_options)
 
 
 def fork_workspace(parent: Path, destination: Path) -> dict[str, str | None]:
@@ -332,6 +339,7 @@ def fork_workspace(parent: Path, destination: Path) -> dict[str, str | None]:
     temporary = destination.parent / temporary_name
     try:
         copy_candidate_tree(parent, temporary)
+        _ensure_tuning(temporary)
         write_context(case_dir, sealed, case, temporary, parent_workspace=parent,
                        workspace_path=destination)
         with file_tree.open_directory(destination.parent) as descriptor:

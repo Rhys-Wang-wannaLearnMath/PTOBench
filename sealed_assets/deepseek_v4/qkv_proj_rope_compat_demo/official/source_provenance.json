@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "authority": "selected_frozen_source_target_byte_exact_copy",
+  "source_path": "benchmarks/datasets/models_optimization_corpus_20260605/sources_target/deepseek_v4/qkv_proj_rope.py",
+  "source_sha256": "411b8d123312d7e8d0f03fb926abd5f6714d7425803251b18b427a2699ec6ee7",
+  "frozen_copy": "original.py",
+  "frozen_copy_sha256": "411b8d123312d7e8d0f03fb926abd5f6714d7425803251b18b427a2699ec6ee7",
+  "dependencies": [
+    {"source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/config.py", "source_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e", "frozen_copy": "original_config.py", "frozen_copy_sha256": "68dd414e5c698f48e0dd95c0a53394acfc4aed67817facf82b43ed03b4d2da8e"},
+    {"source_path": "benchmarks/pypto_lib_bench-v0.1/shared/frozen_dependencies/deepseek_v4/decode_qkv_proj_rope.py", "source_sha256": "2e5e6a13773af1e48160bbbb0657271fd0363adf10e7994501ab4e20194b88f4", "frozen_copy": "decode_qkv_proj_rope.py", "frozen_copy_sha256": "2e5e6a13773af1e48160bbbb0657271fd0363adf10e7994501ab4e20194b88f4"}
+  ],
+  "selection": "Preserve the static BF16/INT8 v0.1 compatibility workload; the current successor changes shape, dtype, ABI, and normalization semantics.",
+  "fixture_authority": "byte-exact build_tensor_specs and golden_qkv_proj_rope"
+}

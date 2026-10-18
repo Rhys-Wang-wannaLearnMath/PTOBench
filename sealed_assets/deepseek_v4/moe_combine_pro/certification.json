@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.moe_combine_pro",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "8d349ed15451851f3d25e8df63556e5f5fe95d543994ac6da88e514c5260a2a4"
+}

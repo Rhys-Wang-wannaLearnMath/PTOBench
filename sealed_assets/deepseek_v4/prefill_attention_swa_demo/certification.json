@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "ready",
+  "case_id": "deepseek_v4.prefill_attention_swa_demo",
+  "ref_output_cache": "ready",
+  "cpu_oracle_role": "one_time_ref_certification",
+  "comparator_sha256": "f13ec1a2ace7bf7c569a307ffce9dcb4c4519592b81e55d5fbfa549c27545fc0"
+}
