@@ -4,7 +4,7 @@
 
 **架构：** 先用不占 NPU 的真实 Pi Smoke 验证账号、挂载、工具、Socket、Gateway 和网络边界，再串行运行正确性与 Combined Profile 验收。PTOmni 不在本轮范围。
 
-**验收边界：** 所有 Smoke 均创建新 Session 并走唯一的专用 Agent 用户路径；不通过旧 Session Workspace、旧身份映射或 legacy runner 验收。旧历史记录保留，不自动迁移或恢复旧运行目录。
+**验收边界：** 所有 Smoke 均创建新 Session 并走唯一的专用 Agent 用户路径；不通过旧 Session Workspace、旧身份映射或 legacy runner 验收。旧历史文件可留存，但不迁移、不恢复，也不要求新实现兼容旧隔离状态。
 
 **依赖：** Plan 01–04 通过；管理员完成一次性账号、共享组、sudoers 与 ACL 配置。
 
@@ -19,7 +19,7 @@
 - [ ] Smoke 只接受 Basic/CANNBot 和 Formal/Held-out CSV 中存在的 Case ID；默认只允许 `fork/help`，不挂 NPU 设备。Pi 在临时 Session 创建 helper、Fork 一个 Worker、读取子 Worker 后退出；不得触发自动 Finalize 或 Case Evaluate。
 - [ ] 分别对 Basic、CANNBot 运行一个 Formal 和一个 Held-out Smoke。核实运行时实际宿主 UID/GID、组、`CapEff`、`NoNewPrivs`；Agent 不属于硬件组、没有 sudo 权限；Broker 与 NPU Worker 仍具有原凭据。
 - [ ] 检查 Pi 设置、session、锁文件可正常读写并可由 Broker 归档；Pi 原生文件工具和 Shell/Python 均不能读取私有设置/Session；Context/Outputs 不可写；Candidate/helper/tuning 可写。
-- [ ] 检查动态 Fork 立即可见、父子 Candidate 独立、Broker 更新 Outputs 后 Agent 可读但不可改；确认 current Session 外的 Session/Case 和 PTOBench 内部源码不可见。
+- [ ] 检查同 Session 每个 Worker 的 Candidate 都能读写、Context/Outputs 都可读但不可改；动态 Fork 立即可见，Fork 后父子 Candidate 独立，Broker 更新 Outputs 后 Agent 可读但不可改；确认 current Session 外的 Session/Case 和 PTOBench 内部源码不可见。
 - [ ] 检查 `.env` 分属各 mode、DeepSeek Flash/High 配置生效，真实 Key 只在 Gateway；CLI、Gateway、CANNBot Socket 正常；Web Search/Web Fetch 不可用、Shell/Python 公网连接失败。
 - [ ] Smoke 全部通过后，对 Formal 60 和 Held-out 15 执行正确性 Evaluate；结果只写新验收目录，不更新 Seed/Reference/Baseline/CV。
 - [ ] 依据已选 Case 的 Granularity、设备数和单机/多机模式做 Combined Profile 覆盖。明确检查至少两个 Granularity、单卡、多卡、8 卡和真实跨 host 多机；缺少跨 host Case 时报告缺口，不把 8 卡称为多机。
