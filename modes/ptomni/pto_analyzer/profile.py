@@ -151,6 +151,7 @@ class ProfileArchive:
         ):
             raise ProfileRefError("artifact index does not match the protection manifest")
         self._cache: dict[str, ArtifactRead] = {}
+        self._session_cache: dict[str, Any] = {}
 
     def artifact_paths(self, basename: str) -> list[str]:
         return sorted(path for path in self._entries if fnmatch.fnmatchcase(PurePosixPath(path).name, basename))
@@ -230,21 +231,24 @@ class ProfileArchive:
 def _find_event(root: Path, event_seq: int) -> dict[str, Any]:
     if not isinstance(event_seq, int) or isinstance(event_seq, bool) or event_seq < 1:
         raise ProfileRefError("event sequence must be a positive integer")
+    match = None
+    match_count = 0
     try:
-        lines = (root / "events.jsonl").read_text(encoding="utf-8").splitlines()
+        with (root / "events.jsonl").open(encoding="utf-8") as stream:
+            for line in stream:
+                try:
+                    event = json.loads(line)
+                except json.JSONDecodeError as exc:
+                    raise ProfileRefError("event ledger contains invalid JSON") from exc
+                if isinstance(event, dict) and type(event.get("seq")) is int and event["seq"] == event_seq:
+                    match_count += 1
+                    if match is None:
+                        match = event
     except (OSError, UnicodeDecodeError) as exc:
         raise ProfileRefError("cannot read PTOBench event ledger") from exc
-    matches = []
-    for line in lines:
-        try:
-            event = json.loads(line)
-        except json.JSONDecodeError as exc:
-            raise ProfileRefError("event ledger contains invalid JSON") from exc
-        if isinstance(event, dict) and type(event.get("seq")) is int and event["seq"] == event_seq:
-            matches.append(event)
-    if len(matches) != 1:
+    if match_count != 1 or match is None:
         raise ProfileRefError("selected event is missing or ambiguous")
-    return matches[0]
+    return match
 
 
 def _event_case_id(event: dict[str, Any]) -> Any:

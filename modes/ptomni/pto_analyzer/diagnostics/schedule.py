@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import copy
+import json
 import re
 from collections import defaultdict, deque
 from typing import Any
 
 from ..profile import ArtifactRead, ProfileArchive
-from .common import DetailRecords, add_records, family_sources, json_array_count, json_value, make_result, observation
+from .common import DetailRecords, IssueSamples, add_records, family_sources, json_array_count, json_value, make_result, observation
 
 _GRAPH_FAMILIES = [("dependency_graph", ["deps.json"], True)]
 _GAP_FAMILIES = [
@@ -19,93 +21,281 @@ _DISTRIBUTION_FAMILIES = [("runtime_swimlane", ["chip_swimlane_records.json"], T
 def dependency_path_check(
     archive: ProfileArchive, *, include_details: bool = True, detail_cursor: tuple[Any, ...] | None = None, detail_limit: int | None = None,
 ) -> dict[str, Any]:
+    cached = archive._session_cache.get("dependency_path_check")
+    if cached is not None:
+        base_result, detail_index = cached
+        if not include_details:
+            return copy.deepcopy(base_result)
+        return _dependency_graph_page(archive, base_result, detail_index, detail_cursor, detail_limit)
+
+    base_result = archive._session_cache.get("dependency_path_summary")
+    compute_graph_facts = base_result is None
+
     sources = family_sources(archive, ["deps.json"])
     stats: dict[str, dict[str, Any]] = {}
     observations = []
-    details = DetailRecords(
-        include_details, limit=detail_limit, after=detail_cursor,
-        key=lambda row: (row["source_ref"]["path"], row["record_type"], row.get("task_id", ""),
-                         row.get("pred", ""), row.get("succ", "")),
-    )
+    detail_index = []
+    detail_count = 0
+    texts = archive._session_cache.setdefault("dependency_graph_texts", {})
     for source in sources:
         if source.status != "present":
             continue
-        graph, seen, error = json_value(source)
-        if error:
-            add_records(stats, "dependency_graph", seen=seen, rejected=seen,
-                        issues=[error], source=source)
+        parsed = _parse_dependency_graph_source(
+            source, include_details=include_details, include_graph_facts=compute_graph_facts, text_cache=texts,
+            detail_offset=detail_count,
+        )
+        if parsed.get("error"):
+            if compute_graph_facts:
+                add_records(stats, "dependency_graph", seen=parsed.get("seen", 1), rejected=parsed.get("rejected", 1),
+                            issues=[parsed["error"]], source=source)
             continue
-        if not isinstance(graph, dict):
-            add_records(stats, "dependency_graph", seen=seen, rejected=seen,
-                        issues=["dependency graph root is not an object"], source=source)
-            continue
-        tasks = graph.get("tasks")
-        edges = graph.get("edges")
-        if not isinstance(tasks, list) or not isinstance(edges, list):
-            add_records(stats, "dependency_graph", seen=1, rejected=1,
-                        issues=["dependency graph must contain task and edge arrays"], source=source)
-            continue
-        parsed_tasks: set[str] = set()
-        parsed_edges: set[tuple[str, str]] = set()
-        edge_record_count = 0
-        issues = []
-        task_rejected = 0
-        edge_rejected = 0
-        for index, task in enumerate(tasks):
-            if not isinstance(task, dict) or task.get("task_id") is None:
-                task_rejected += 1
-                issues.append(f"task record {index}: missing task_id")
-                tasks[index] = None
-                continue
-            task_id = str(task["task_id"])
-            if task_id in parsed_tasks:
-                task_rejected += 1
-                issues.append(f"task record {index}: duplicate task_id {task_id}")
-                tasks[index] = None
-                continue
-            parsed_tasks.add(task_id)
-            if include_details:
-                details.append(
-                    lambda: {"record_type": "task", "source_ref": source.source(), "task_id": task_id, "record": task},
-                    sort_key=(source.path, "task", task_id, "", ""),
-                )
+        if compute_graph_facts:
+            add_records(stats, "dependency_graph", seen=parsed["seen"], parsed=parsed["parsed"],
+                        rejected=parsed["rejected"], issues=parsed["issues"], source=source)
+            observations.extend(_graph_observations(
+                source, parsed["tasks"], parsed["edges"], parsed["edge_record_count"],
+            ))
+        if include_details:
+            detail_index.extend(parsed["detail_index"])
+        detail_count += parsed["detail_count"]
+
+    if base_result is None:
+        details = DetailRecords(False)
+        details.count = detail_count
+        base_result = make_result(
+            archive, "Schedule", "dependency_path_check", _GRAPH_FAMILIES, observations,
+            ["Graph measurements describe the indexed dependency structure only; no runtime weights or latency are attached.",
+             "Duplicate edge records are counted separately from unique task-to-task edges, and endpoints absent from task metadata remain explicit."],
+            records=stats, detail_records=details,
+        )
+        archive._session_cache["dependency_path_summary"] = copy.deepcopy(base_result)
+    if not include_details:
+        return copy.deepcopy(base_result)
+
+    detail_index.sort(key=lambda entry: (entry[0], entry[1]))
+    if detail_count != base_result["details"]["total_records"]:
+        raise ValueError("dependency detail index does not match the cached summary count")
+    if detail_limit is not None:
+        archive._session_cache["dependency_path_check"] = (copy.deepcopy(base_result), detail_index)
+    return _dependency_graph_page(archive, base_result, detail_index, detail_cursor, detail_limit)
+
+
+def _parse_dependency_graph_source(
+    source: ArtifactRead,
+    *,
+    include_details: bool,
+    include_graph_facts: bool,
+    text_cache: dict[str, str],
+    detail_offset: int,
+) -> dict[str, Any]:
+    if source.data is None:
+        return {"error": "dependency graph source has no data"}
+    try:
+        text = text_cache.get(source.path)
+        if text is None:
+            text = source.data.decode(json.detect_encoding(source.data))
+            text_cache[source.path] = text
+
+        tasks: set[str] = set()
+        unique_edges: set[tuple[str, str]] = set()
+        detail_index = []
+        issues = IssueSamples()
+        state = {
+            "tasks": {"is_array": False, "seen": 0, "rejected": 0, "parsed": 0},
+            "edges": {"is_array": False, "seen": 0, "rejected": 0, "parsed": 0},
+        }
+        ordinal = 0
+        node_labels: dict[str, str] = {}
+
+        def canonical(value: Any) -> str:
+            label = str(value)
+            return node_labels.setdefault(label, label)
+
+        def begin_array(name: str, is_array: bool) -> None:
+            nonlocal tasks, unique_edges, detail_index, ordinal
+            state[name] = {"is_array": is_array, "seen": 0, "rejected": 0, "parsed": 0}
+            if name == "tasks":
+                tasks = set()
             else:
-                details.count_only()
-            tasks[index] = None
-        if tasks:
-            del task
-        for index, edge in enumerate(edges):
-            if not isinstance(edge, dict) or edge.get("pred") is None or edge.get("succ") is None:
-                edge_rejected += 1
-                issues.append(f"edge record {index}: missing pred or succ endpoint")
-                edges[index] = None
-                continue
-            pair = (str(edge["pred"]), str(edge["succ"]))
-            parsed_edges.add(pair)
-            edge_record_count += 1
+                unique_edges = set()
             if include_details:
-                details.append(
-                    lambda: {"record_type": "edge", "source_ref": source.source(), "pred": pair[0], "succ": pair[1], "record": edge},
-                    sort_key=(source.path, "edge", "", pair[0], pair[1]),
-                )
+                detail_index = [entry for entry in detail_index if entry[0][1] != ("task" if name == "tasks" else "edge")]
+            ordinal = detail_offset + sum(
+                state[array_name]["parsed"] for array_name in ("tasks", "edges") if array_name != name
+            )
+
+        def consume(name: str, index: int, row: Any, start: int, end: int) -> None:
+            nonlocal ordinal
+            current = state[name]
+            current["seen"] += 1
+            if name == "tasks":
+                if not isinstance(row, dict) or row.get("task_id") is None:
+                    current["rejected"] += 1
+                    issues.add(f"task record {index}: missing task_id")
+                    return
+                task_id = canonical(row["task_id"])
+                if task_id in tasks:
+                    current["rejected"] += 1
+                    issues.add(f"task record {index}: duplicate task_id {task_id}")
+                    return
+                tasks.add(task_id)
+                current["parsed"] += 1
+                ordinal += 1
+                if include_details:
+                    detail_index.append(((source.path, "task", task_id, "", ""), ordinal, start, end))
+                return
+
+            if not isinstance(row, dict) or row.get("pred") is None or row.get("succ") is None:
+                current["rejected"] += 1
+                issues.add(f"edge record {index}: missing pred or succ endpoint")
+                return
+            pair = (canonical(row["pred"]), canonical(row["succ"]))
+            if include_graph_facts:
+                unique_edges.add(pair)
+            current["parsed"] += 1
+            ordinal += 1
+            if include_details:
+                detail_index.append(((source.path, "edge", "", pair[0], pair[1]), ordinal, start, end))
+
+        is_object, fields = _json_object_arrays(text, {"tasks", "edges"}, begin_array, consume)
+        if not is_object:
+            return {"error": "dependency graph root is not an object", "seen": 1, "rejected": 1}
+        if fields.get("tasks") is not True or fields.get("edges") is not True:
+            return {"error": "dependency graph must contain task and edge arrays", "seen": 1, "rejected": 1}
+        task_state = state["tasks"]
+        edge_state = state["edges"]
+        edge_record_count = edge_state["parsed"]
+        parsed_edges = unique_edges if include_graph_facts else set()
+        return {
+            "tasks": tasks,
+            "edges": parsed_edges,
+            "edge_record_count": edge_record_count,
+            "seen": task_state["seen"] + edge_state["seen"],
+            "parsed": task_state["parsed"] + edge_record_count,
+            "rejected": task_state["rejected"] + edge_state["rejected"],
+            "issues": issues,
+            "detail_count": task_state["parsed"] + edge_record_count,
+            "detail_index": detail_index,
+        }
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError, RecursionError):
+        return {"error": "invalid JSON document", "seen": 1, "rejected": 1}
+
+
+def _dependency_graph_page(
+    archive: ProfileArchive,
+    base_result: dict[str, Any],
+    detail_index: list[tuple[tuple[str, str, str, str, str], int, int, int]],
+    after: tuple[Any, ...] | None,
+    limit: int | None,
+) -> dict[str, Any]:
+    result = copy.deepcopy(base_result)
+    first = 0
+    if after is not None:
+        low, high = 0, len(detail_index)
+        while low < high:
+            middle = (low + high) // 2
+            entry = detail_index[middle]
+            if (entry[0], entry[1]) <= after:
+                low = middle + 1
             else:
-                details.count_only()
-            edges[index] = None
-        if edges:
-            del edge
-        add_records(stats, "dependency_graph", seen=len(tasks) + len(edges),
-                    parsed=len(parsed_tasks) + edge_record_count, rejected=task_rejected + edge_rejected,
-                    issues=issues, source=source)
-        del graph, tasks, edges
-        facts = _graph_observations(source, parsed_tasks, parsed_edges, edge_record_count)
-        observations.extend(facts)
-    details.sort()
-    return make_result(
-        archive, "Schedule", "dependency_path_check", _GRAPH_FAMILIES, observations,
-        ["Graph measurements describe the indexed dependency structure only; no runtime weights or latency are attached.",
-         "Duplicate edge records are counted separately from unique task-to-task edges, and endpoints absent from task metadata remain explicit."],
-        records=stats, detail_records=details,
-    )
+                high = middle
+        first = low
+    end = len(detail_index) if limit is None else min(len(detail_index), first + limit)
+    records = []
+    for sort_key, _, start, stop in detail_index[first:end]:
+        source = archive.read(sort_key[0])
+        if source.status != "present" or source.data is None:
+            raise ValueError("cached dependency source is no longer available in this ToolSession")
+        text = archive._session_cache["dependency_graph_texts"][source.path]
+        record = json.loads(text[start:stop])
+        if sort_key[1] == "task":
+            records.append({"record_type": "task", "source_ref": source.source(), "task_id": sort_key[2], "record": record})
+        else:
+            records.append({"record_type": "edge", "source_ref": source.source(),
+                            "pred": sort_key[3], "succ": sort_key[4], "record": record})
+    result["_detail_records"] = records
+    result["_detail_last_key"] = (detail_index[end - 1][0], detail_index[end - 1][1]) if end > first else None
+    result["_detail_has_more"] = end < len(detail_index)
+    return result
+
+
+def _json_object_arrays(
+    text: str,
+    fields: set[str],
+    begin_array: Any,
+    consume: Any,
+) -> tuple[bool, dict[str, bool]]:
+    decoder = json.JSONDecoder()
+    position = _skip_json_text_space(text, 0)
+    if position >= len(text) or text[position] != "{":
+        _, position = decoder.raw_decode(text, position)
+        if _skip_json_text_space(text, position) != len(text):
+            raise json.JSONDecodeError("extra data", text, position)
+        return False, {}
+    position += 1
+    array_fields: dict[str, bool] = {}
+
+    def read_array(name: str, index: int) -> int:
+        position = _skip_json_text_space(text, index + 1)
+        if position < len(text) and text[position] == "]":
+            return position + 1
+        item_index = 0
+        while True:
+            item_start = position
+            item, position = decoder.raw_decode(text, position)
+            consume(name, item_index, item, item_start, position)
+            item_index += 1
+            position = _skip_json_text_space(text, position)
+            if position < len(text) and text[position] == ",":
+                position = _skip_json_text_space(text, position + 1)
+                if position >= len(text) or text[position] == "]":
+                    raise json.JSONDecodeError("expected an array value", text, position)
+            elif position < len(text) and text[position] == "]":
+                return position + 1
+            else:
+                raise json.JSONDecodeError("expected ',' or ']' in array", text, position)
+
+    while True:
+        position = _skip_json_text_space(text, position)
+        if position < len(text) and text[position] == "}":
+            position += 1
+            break
+        name, position = decoder.raw_decode(text, position)
+        if not isinstance(name, str):
+            raise json.JSONDecodeError("object key must be a string", text, position)
+        position = _skip_json_text_space(text, position)
+        if position >= len(text) or text[position] != ":":
+            raise json.JSONDecodeError("expected ':' after object key", text, position)
+        position = _skip_json_text_space(text, position + 1)
+        if name in fields:
+            is_array = position < len(text) and text[position] == "["
+            begin_array(name, is_array)
+            array_fields[name] = is_array
+            if is_array:
+                position = read_array(name, position)
+            else:
+                _, position = decoder.raw_decode(text, position)
+        else:
+            _, position = decoder.raw_decode(text, position)
+        position = _skip_json_text_space(text, position)
+        if position < len(text) and text[position] == ",":
+            position = _skip_json_text_space(text, position + 1)
+            if position >= len(text) or text[position] == "}":
+                raise json.JSONDecodeError("expected an object key", text, position)
+        elif position < len(text) and text[position] == "}":
+            position += 1
+            break
+        else:
+            raise json.JSONDecodeError("expected ',' or '}' in object", text, position)
+    if _skip_json_text_space(text, position) != len(text):
+        raise json.JSONDecodeError("extra data", text, position)
+    return True, array_fields
+
+
+def _skip_json_text_space(text: str, position: int) -> int:
+    while position < len(text) and text[position] in " \t\r\n":
+        position += 1
+    return position
 
 
 def dispatch_gap_check(
@@ -131,8 +321,9 @@ def dispatch_gap_check(
         arrays = _swimlane_arrays(value)
         intervals, rejected, issues, clock_freq_hz = _aicore_intervals(value)
         if not arrays:
-            add_records(stats, "runtime_swimlane", seen=1, rejected=1,
-                        issues=["swimlane contains no recognized record arrays", *issues], source=source)
+            array_issues = IssueSamples(["swimlane contains no recognized record arrays"])
+            array_issues.extend(issues)
+            add_records(stats, "runtime_swimlane", seen=1, rejected=1, issues=array_issues, source=source)
             continue
         row_count = sum(len(rows) for _, rows in arrays)
         aicore_rows = value.get("aicore_tasks")
@@ -234,8 +425,9 @@ def task_distribution_check(
         arrays = _swimlane_arrays(value)
         intervals, rejected, issues, clock_freq_hz = _aicore_intervals(value)
         if not arrays:
-            add_records(stats, "runtime_swimlane", seen=1, rejected=1,
-                        issues=["swimlane contains no recognized record arrays", *issues], source=source)
+            array_issues = IssueSamples(["swimlane contains no recognized record arrays"])
+            array_issues.extend(issues)
+            add_records(stats, "runtime_swimlane", seen=1, rejected=1, issues=array_issues, source=source)
             continue
         count = sum(len(rows) for _, rows in arrays)
         aicore_rows = value.get("aicore_tasks")
@@ -385,7 +577,7 @@ def _swimlane_arrays(value: dict[str, Any]) -> list[tuple[str, list[Any]]]:
     return [(name, value[name]) for name in names if isinstance(value.get(name), list)]
 
 
-def _aicore_intervals(value: dict[str, Any]) -> tuple[list[tuple[int, str, int, int, int]], int, list[str], int | None]:
+def _aicore_intervals(value: dict[str, Any]) -> tuple[list[tuple[int, str, int, int, int]], int, IssueSamples, int | None]:
     if "aicore_tasks" not in value:
         return [], 0, ["aicore_tasks is missing"], None
     rows = value["aicore_tasks"]
@@ -401,21 +593,21 @@ def _aicore_intervals(value: dict[str, Any]) -> tuple[list[tuple[int, str, int, 
             or not isinstance(core_types, list) or len(core_types) != core_count):
         return [], len(rows), ["AICore tuples lack valid clock frequency, core count, or core type metadata"], None
     parsed = []
-    issues = []
+    issues = IssueSamples()
     seen_keys = set()
     for index, row in enumerate(rows):
         if not isinstance(row, list) or len(row) not in {5, 6}:
-            issues.append(f"AICore tuple {index}: expected five or six fields")
+            issues.add(f"AICore tuple {index}: expected five or six fields")
             continue
         core, token, reg_task_id, start, end = row[0], row[1], row[2], row[3], row[4]
         if (type(core) is not int or not 0 <= core < core_count or token is None
                 or type(reg_task_id) is not int or reg_task_id < 0
                 or type(start) is not int or type(end) is not int or start <= 0 or end < start):
-            issues.append(f"AICore tuple {index}: invalid core, task token, or interval cycles")
+            issues.add(f"AICore tuple {index}: invalid core, task token, or interval cycles")
             continue
         key = core, reg_task_id
         if key in seen_keys:
-            issues.append(f"AICore tuple {index}: duplicate core/register-task identity")
+            issues.add(f"AICore tuple {index}: duplicate core/register-task identity")
             continue
         seen_keys.add(key)
         parsed.append((core, str(token), reg_task_id, start, end))
@@ -425,8 +617,8 @@ def _aicore_intervals(value: dict[str, Any]) -> tuple[list[tuple[int, str, int, 
 def _complete_aicore_intervals(
     value: dict[str, Any],
     intervals: list[tuple[int, str, int, int, int]],
-    issues: list[str],
-) -> tuple[list[tuple[int, str, int, int, int]], list[str]]:
+    issues: IssueSamples,
+) -> tuple[list[tuple[int, str, int, int, int]], IssueSamples]:
     if value.get("chip_swimlane_level") != 4:
         return [], ["AICore interval gaps require level-4 swimlane coverage"]
     if issues:
@@ -435,28 +627,28 @@ def _complete_aicore_intervals(
     if not isinstance(rows, list):
         return [], ["AICPU dispatch/finish records are missing"]
     scheduler_keys = set()
-    scheduler_issues = []
+    scheduler_issues = IssueSamples()
     metadata = value["metadata"]
     for index, row in enumerate(rows):
         if not isinstance(row, list) or len(row) != 4:
-            scheduler_issues.append(f"AICPU tuple {index}: expected four fields")
+            scheduler_issues.add(f"AICPU tuple {index}: expected four fields")
             continue
         core, reg_task_id, dispatch, finish = row
         if (type(core) is not int or not 0 <= core < metadata["num_cores"] or type(reg_task_id) is not int
                 or reg_task_id < 0 or type(dispatch) is not int or type(finish) is not int
                 or dispatch <= 0 or finish < dispatch):
-            scheduler_issues.append(f"AICPU tuple {index}: invalid core, task identity, or dispatch/finish cycles")
+            scheduler_issues.add(f"AICPU tuple {index}: invalid core, task identity, or dispatch/finish cycles")
             continue
         key = core, reg_task_id
         if key in scheduler_keys:
-            scheduler_issues.append(f"AICPU tuple {index}: duplicate core/register-task identity")
+            scheduler_issues.add(f"AICPU tuple {index}: duplicate core/register-task identity")
             continue
         scheduler_keys.add(key)
     aicore_keys = {(core, reg_task_id) for core, _, reg_task_id, _, _ in intervals}
     if scheduler_issues:
         return [], scheduler_issues
     if scheduler_keys != aicore_keys:
-        return [], ["AICore and AICPU records do not have complete one-to-one core/register-task coverage"]
+        return [], IssueSamples(["AICore and AICPU records do not have complete one-to-one core/register-task coverage"])
     return intervals, []
 
 

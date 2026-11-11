@@ -23,6 +23,7 @@ _TOOLS = {
     "Dataflow": {
         "tile_access_check": dataflow.tile_access_check,
         "buffer_pressure_check": dataflow.buffer_pressure_check,
+        "tile_memory_allocation_summary": dataflow.tile_memory_allocation_summary,
     },
     "Schedule": {
         "dependency_path_check": schedule.dependency_path_check,
@@ -36,6 +37,7 @@ _DESCRIPTIONS = {
     "compute_task_share": "Aggregate PMU counters by task only after same-dispatch task and callable joins validate.",
     "tile_access_check": "Summarize all archived compiler hint categories and preserve their original text.",
     "buffer_pressure_check": "Summarize MemoryReuse hints and Scope fields without inferring capacity pressure.",
+    "tile_memory_allocation_summary": "Summarize verified static allocation requests by artifact, function, memory space, and operation without inferring runtime pressure.",
     "dependency_path_check": "Summarize normalized dependency graph structure without runtime weights.",
     "dispatch_gap_check": "Summarize same-core AICore interval gaps in cycles; these gaps are not attributed to scheduling.",
     "task_distribution_check": "Summarize AICore interval durations per core, tuple counts, and distinct raw task tokens without inferring busy time or load balance.",

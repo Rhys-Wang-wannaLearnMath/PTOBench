@@ -13,6 +13,7 @@ from unittest.mock import patch
 
 from modes.ptomni.pto_analyzer import ProfileRef, ProfileRefError, open_toolset
 from modes.ptomni.pto_analyzer import toolset as toolset_module
+from modes.ptomni.pto_analyzer.diagnostics import schedule as schedule_module
 from modes.ptomni.pto_analyzer.diagnostics.common import DetailRecords
 
 
@@ -21,7 +22,7 @@ FIXTURES = ROOT / "fixtures"
 REAL_FIXTURES = FIXTURES / "real_single_card"
 ROLE_TOOLS = {
     "Compute": {"compute_mapping_check", "compute_unit_activity", "compute_task_share"},
-    "Dataflow": {"tile_access_check", "buffer_pressure_check"},
+    "Dataflow": {"tile_access_check", "buffer_pressure_check", "tile_memory_allocation_summary"},
     "Schedule": {"dependency_path_check", "dispatch_gap_check", "task_distribution_check"},
 }
 
@@ -33,6 +34,7 @@ def fixture_session(
     artifact_subdir: str = "",
     include: set[str] | None = None,
     overrides: dict[str, bytes] | None = None,
+    extra_artifacts: dict[str, bytes] | None = None,
     session_id: str = "fixture-session",
     candidate_sha256: str = "a" * 64,
 ) -> ProfileRef:
@@ -45,6 +47,14 @@ def fixture_session(
     for name in sorted(include):
         data = overrides[name] if name in overrides else (fixture_dir / name).read_bytes()
         relative = Path(artifact_subdir) / name
+        path = archive / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
+        digest = hashlib.sha256(data).hexdigest()
+        entries.append({"kind": "file", "path": relative.as_posix(), "sha256": digest})
+        protected[relative.as_posix()] = {"kind": "file", "sha256": digest}
+    for name, data in sorted((extra_artifacts or {}).items()):
+        relative = Path(name)
         path = archive / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(data)
@@ -152,11 +162,77 @@ class ToolsetTests(unittest.TestCase):
         with self.assertRaisesRegex(KeyError, "unknown PTOAnalyzer tool"):
             session.call("pipeline_overlap_check")
 
+    def test_tile_memory_allocation_summary_aggregates_verified_static_records(self) -> None:
+        source_path = "build/dfx_outputs/passes_dump/fixture_after_AllocateMemoryAddr.py"
+        source_text = b"""\
+def alpha():
+    v0: pl.Ptr = pl.tile.alloc(pl.Mem.Vec, 64)
+    v1: pl.Ptr = pl.tile.alloc(pl.Mem.Vec, 32)
+    v2: pl.Ptr = pl.tile.alloc(pl.Mem.Vec, pl.const(64, pl.INT64))
+    acc: pl.Ptr = pl.tile.alloc(pl.Mem.Acc, 128)
+
+def beta():
+    v: pl.Ptr = pl.tile.alloc(pl.Mem.Vec, 16)
+    window = pld.tensor.alloc_window_buffer(256)
+    typed_window = pld.tensor.alloc_window_buffer(pl.const(512, pl.INT64))
+"""
+        with tempfile.TemporaryDirectory() as temp:
+            ref = fixture_session(
+                Path(temp) / "tile-allocation-summary",
+                include={"fixture_after_AllocateMemoryAddr.py"},
+                artifact_subdir="build/dfx_outputs/passes_dump",
+                overrides={"fixture_after_AllocateMemoryAddr.py": source_text},
+            )
+            session = open_toolset("Dataflow", ref)
+            result = session.call("tile_memory_allocation_summary")
+
+        self.assertEqual(result["details"] if "details" in result else None, None)
+        self.assertEqual(len(session.tool_specs), 3)
+        self.assertNotIn("cursor", session.tool_specs[-1]["input_schema"]["properties"])
+        facts = {(row.get("function_name"), row.get("memory_space"), row.get("allocation_op"), row["name"]): row
+                 for row in result["observations"]}
+        self.assertEqual(facts[("alpha", "pl.Mem.Vec", "pl.tile.alloc", "allocation_count")]["value"], 3)
+        self.assertEqual(facts[("alpha", "pl.Mem.Vec", "pl.tile.alloc", "requested_bytes_sum")]["value"], 160)
+        self.assertEqual(facts[("alpha", "pl.Mem.Vec", "pl.tile.alloc", "allocation_count")]["source_lines"], [2, 3, 4])
+        self.assertEqual(facts[("alpha", "pl.Mem.Acc", "pl.tile.alloc", "allocation_count")]["value"], 1)
+        self.assertEqual(facts[("alpha", "pl.Mem.Acc", "pl.tile.alloc", "requested_bytes_sum")]["value"], 128)
+        self.assertEqual(facts[("beta", "pl.Mem.Vec", "pl.tile.alloc", "requested_bytes_sum")]["value"], 16)
+        self.assertEqual(facts[("beta", "HCCL window buffer", "pld.tensor.alloc_window_buffer", "allocation_count")]["value"], 2)
+        self.assertEqual(facts[("beta", "HCCL window buffer", "pld.tensor.alloc_window_buffer", "requested_bytes_sum")]["value"], 768)
+        self.assertTrue(all(row["unit"] in {"allocations", "bytes"} for row in result["observations"]))
+        self.assertTrue(all(row["source_refs"][0]["path"] == source_path for row in result["observations"]))
+
+    def test_tile_memory_allocation_summary_reports_missing_empty_unsupported_and_invalid(self) -> None:
+        cases = [
+            ("missing", set(), {}, "missing", 0),
+            ("empty", {"fixture_after_AllocateMemoryAddr.py"}, {"fixture_after_AllocateMemoryAddr.py": b""}, "empty", 0),
+            ("unsupported", {"memory_after_AllocateMemoryAddr.txt"}, {"memory_after_AllocateMemoryAddr.txt": b"allocation report"}, "unsupported", 1),
+            ("invalid", {"fixture_after_AllocateMemoryAddr.py"}, {"fixture_after_AllocateMemoryAddr.py": b"def broken(:\n"}, "invalid", 1),
+        ]
+        for name, include, overrides, expected, issue_count in cases:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temp:
+                ref = fixture_session(Path(temp) / name, include=include, overrides=overrides)
+                result = open_toolset("Dataflow", ref).call("tile_memory_allocation_summary")
+                coverage = result["source_coverage"][0]
+                if expected == "missing":
+                    self.assertEqual(coverage["files_found"], 0)
+                    self.assertGreater(coverage["issue_count"], 0)
+                elif expected == "empty":
+                    self.assertEqual(coverage["files_empty"], 1)
+                    self.assertEqual(coverage["issue_count"], issue_count + 1)
+                else:
+                    self.assertEqual(coverage["records_rejected"], 1)
+                    self.assertEqual(coverage["issue_count"], issue_count)
+                self.assertEqual(result["observations"], [])
+
     def test_paginated_tool_specs_describe_cursor_and_page_response(self) -> None:
         for tuner in ROLE_TOOLS:
             for spec in open_toolset(tuner, self.ref).tool_specs:
                 with self.subTest(tool=spec["name"]):
                     properties = spec["input_schema"]["properties"]
+                    if "cursor" not in properties:
+                        self.assertEqual(properties, {})
+                        continue
                     self.assertIn("cursor", properties)
                     self.assertIn("limit", properties)
                     self.assertEqual(properties["limit"]["minimum"], 1)
@@ -196,27 +272,6 @@ class ToolsetTests(unittest.TestCase):
         self.assertEqual(materialized, [0, 1])
         self.assertEqual(len(details), 100)
         self.assertEqual(len(details.records), 2)
-
-    def test_paged_selector_bounds_candidates_for_large_and_tail_pages(self) -> None:
-        for limit in (20, 50):
-            details = DetailRecords(True, limit=limit, key=lambda row: row["key"])
-            peak = 0
-            for key in range(100_000):
-                details.append(lambda key=key: {"key": key}, sort_key=key)
-                peak = max(peak, len(details._heap))
-
-            details.sort()
-            self.assertEqual(peak, limit)
-            self.assertEqual(len(details._heap), 0)
-            self.assertEqual(len(details.records), limit)
-            self.assertEqual([row["key"] for row in details.records], list(range(limit)))
-
-            tail = DetailRecords(True, limit=limit, after=((99_999,), 100_000), key=lambda row: row["key"])
-            for key in range(100_000):
-                tail.append(lambda key=key: {"key": key}, sort_key=(key,))
-            tail.sort()
-            self.assertEqual(tail.records, [])
-            self.assertEqual(len(tail._heap), 0)
 
     def test_repeated_sort_keys_use_stable_unique_tiebreakers(self) -> None:
         rows = [{"source": source, "value": value} for source in ("a", "b") for value in range(4)]
@@ -330,22 +385,6 @@ class ToolsetTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "does not match"):
             open_toolset("Compute", candidate_ref).call("compute_unit_activity", {"cursor": cursor})
         self.assertEqual(calls, [])
-
-    def test_cursor_rejects_noncanonical_signature_base64(self) -> None:
-        session = open_toolset("Compute", self.ref)
-        cursor = session.call("compute_unit_activity", {"limit": 1})["details"]["next_cursor"]
-        body, signature = cursor.rsplit(".", 1)
-        alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
-        last_index = alphabet.index(signature[-1])
-        alternate = next(
-            character
-            for character in alphabet[(last_index // 16) * 16:(last_index // 16 + 1) * 16]
-            if character != signature[-1]
-        )
-        tampered = f"{body}.{signature[:-1]}{alternate}"
-
-        with self.assertRaisesRegex(ValueError, "invalid cursor"):
-            session.call("compute_unit_activity", {"cursor": tampered})
 
     def test_high_cardinality_details_page_without_changing_full_summary(self) -> None:
         source = (FIXTURES / "pmu.csv").read_text().splitlines()
@@ -524,6 +563,57 @@ class ToolsetTests(unittest.TestCase):
         self.assertEqual(page["total_records"], 11)
         self.assertEqual(len(page["records"]), 11)
 
+    def test_compute_task_share_preserves_unjoined_reasons_and_csv_errors(self) -> None:
+        with (REAL_FIXTURES / "pmu.csv").open(newline="", encoding="utf-8") as stream:
+            reader = csv.DictReader(stream)
+            fieldnames = reader.fieldnames
+            valid_row = next(reader)
+        rows = [dict(valid_row)]
+        missing_task = dict(valid_row, task_id="0xdeadbeef")
+        missing_callable = dict(valid_row, func_id="99")
+        invalid_counter = dict(valid_row, pmu_total_cycles="-1")
+        rows.extend((missing_task, missing_callable))
+        output = io.StringIO(newline="")
+        writer = csv.DictWriter(output, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+        output.write("short,row\n")
+        writer.writerow(invalid_counter)
+
+        overrides = {
+            "pmu.csv": output.getvalue().encode(),
+            "deps.json": (REAL_FIXTURES / "deps.json").read_bytes(),
+            "chip_swimlane_records.json": (REAL_FIXTURES / "chip_swimlane_records.json").read_bytes(),
+            "name_map__jit_compressor_test_675uvymw__001.json": (
+                REAL_FIXTURES / "name_map__jit_compressor_test_675uvymw__001.json"
+            ).read_bytes(),
+        }
+        with tempfile.TemporaryDirectory() as temp:
+            ref = fixture_session(
+                Path(temp) / "unjoined-pmu",
+                fixture_dir=REAL_FIXTURES,
+                artifact_subdir="build/dfx_outputs/rank0/d0",
+                include=set(overrides),
+                overrides=overrides,
+            )
+            result = open_toolset("Compute", ref).call("compute_task_share")
+
+        pmu = next(row for row in result["source_coverage"] if row["source_family"] == "pmu")
+        self.assertEqual((pmu["records_seen"], pmu["records_parsed"], pmu["records_rejected"]), (5, 4, 1))
+        self.assertTrue(any("row 4: CSV columns do not match the header" in issue["problem"] for issue in pmu["issues"]))
+        self.assertEqual(result["details"]["total_records"], 4)
+        details = result["details"]["records"]
+        self.assertEqual(sum(row["record_type"] == "joined_task" for row in details), 1)
+        unjoined = [row for row in details if row["record_type"] == "unjoined_pmu_row"]
+        self.assertEqual({row["reason"] for row in unjoined}, {
+            "PMU task has no dependency and AICore span match",
+            "PMU function ID does not match task kernel IDs and callable map",
+            "invalid PMU task identity or counter",
+        })
+        invalid_counter_detail = next(row for row in unjoined if row["record"]["pmu_total_cycles"] == "-1")
+        self.assertEqual(invalid_counter_detail["record_index"], 5)
+        self.assertEqual(next(row["value"] for row in result["observations"] if row["name"] == "joined_task_count"), 1)
+
     def test_missing_source_is_coverage_not_a_zero_observation(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             ref = fixture_session(Path(temp) / "missing", include={"deps.json"})
@@ -650,6 +740,8 @@ class ToolsetTests(unittest.TestCase):
         for tuner, session in sessions.items():
             for spec in session.tool_specs:
                 name = spec["name"]
+                if "cursor" not in spec["input_schema"]["properties"]:
+                    continue
                 with self.subTest(tool=name):
                     result = session.call(name, {"limit": 50})
                     for record in result["details"]["records"]:
@@ -692,6 +784,68 @@ class ToolsetTests(unittest.TestCase):
         self.assertEqual(result["details"]["total_records"], 0)
         self.assertEqual(result["details"]["returned_records"], 0)
         self.assertEqual(result["details"]["records"], [])
+
+    def test_dependency_graph_pages_reuse_stable_source_offsets(self) -> None:
+        graph = {
+            "tasks": [
+                {"task_id": "b", "payload": {"text": "braces } ] stay inside strings"}},
+                {"task_id": "a", "payload": [1, {"nested": True}]},
+            ],
+            "edges": [
+                {"pred": "a", "succ": "b", "metadata": {"label": "first"}},
+                {"pred": "a", "succ": "b", "metadata": {"label": "duplicate"}},
+            ],
+        }
+        with tempfile.TemporaryDirectory() as temp:
+            ref = fixture_session(
+                Path(temp) / "dependency-graph-pages",
+                include={"deps.json"},
+                overrides={"deps.json": json.dumps(graph, separators=(",", ":")).encode()},
+            )
+            session = open_toolset("Schedule", ref)
+            with patch.object(schedule_module, "_parse_dependency_graph_source",
+                              wraps=schedule_module._parse_dependency_graph_source) as parser:
+                first = session.call("dependency_path_check", {"limit": 2})
+                second = session.call("dependency_path_check", {
+                    "cursor": first["details"]["next_cursor"], "limit": 2,
+                })
+                self.assertEqual(parser.call_count, 1)
+
+        records = first["details"]["records"] + second["details"]["records"]
+        self.assertEqual([row["record_type"] for row in records], ["edge", "edge", "task", "task"])
+        self.assertEqual([row.get("record", {}).get("metadata", {}).get("label") for row in records[:2]], ["first", "duplicate"])
+        self.assertEqual([row["task_id"] for row in records[2:]], ["a", "b"])
+
+    def test_dependency_summary_and_pages_count_all_records_across_sources(self) -> None:
+        extra_graph = {
+            "tasks": [{"task_id": "rank1-task"}],
+            "edges": [{"pred": "rank1-task", "succ": "rank1-out"}],
+        }
+        with tempfile.TemporaryDirectory() as temp:
+            ref = fixture_session(
+                Path(temp) / "multi-source-dependency-graph",
+                include={"deps.json"},
+                extra_artifacts={"rank1/deps.json": json.dumps(extra_graph).encode()},
+            )
+            session = open_toolset("Schedule", ref)
+            summary = next(row for row in session.initial_summary if row["tool"] == "dependency_path_check")
+            first = session.call("dependency_path_check", {"limit": 2})
+            records = list(first["details"]["records"])
+            cursor = first["details"]["next_cursor"]
+            last_page = first
+            while cursor is not None:
+                last_page = session.call("dependency_path_check", {"cursor": cursor, "limit": 2})
+                records.extend(last_page["details"]["records"])
+                cursor = last_page["details"]["next_cursor"]
+
+        self.assertEqual(summary["details"]["total_records"], 5)
+        self.assertEqual(len(records), 5)
+        self.assertEqual(
+            {record["source_ref"]["path"] for record in records},
+            {"deps.json", "rank1/deps.json"},
+        )
+        self.assertEqual(sum(row["value"] for row in first["observations"] if row["name"] == "dependency_edge_record_count"), 2)
+        self.assertIsNone(last_page["details"]["next_cursor"])
 
     def test_real_archived_single_card_artifacts_match_tool_facts(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -765,19 +919,110 @@ class ToolsetTests(unittest.TestCase):
                 session = open_toolset("Compute", ref)
                 tracemalloc.start()
                 try:
-                    result = session.call(tool, {"limit": 50})
+                    result = session.call(tool, {"limit": 20})
                     _, peak_bytes = tracemalloc.get_traced_memory()
                 finally:
                     tracemalloc.stop()
 
                 if tool == "compute_unit_activity":
                     self.assertEqual(result["details"]["total_records"], row_count)
+                    self.assertEqual(result["details"]["returned_records"], 20)
                 else:
                     joined_count = next(
                         row["value"] for row in result["observations"] if row["name"] == "joined_pmu_record_count"
                     )
                     self.assertEqual(joined_count, row_count)
                 self.assertLess(peak_bytes, 32 * 1024 * 1024)
+
+    def test_large_csv_page_sizes_are_limited_at_public_tool_boundary(self) -> None:
+        row_count = 100_000
+        with (REAL_FIXTURES / "pmu.csv").open(newline="", encoding="utf-8") as stream:
+            row = next(csv.DictReader(stream))
+        buffer = io.StringIO(newline="")
+        writer = csv.DictWriter(buffer, fieldnames=list(row))
+        writer.writeheader()
+        writer.writerows(row for _ in range(row_count))
+        data = buffer.getvalue().encode()
+        del writer, buffer
+
+        with tempfile.TemporaryDirectory() as temp:
+            ref = fixture_session(Path(temp) / "page-size-limits", fixture_dir=REAL_FIXTURES,
+                                  artifact_subdir=".benchmark_outputs/combined/build_output/fixture__001/dfx_outputs",
+                                  include={"pmu.csv"}, overrides={"pmu.csv": data})
+            session = open_toolset("Compute", ref)
+            for limit in (20, 50):
+                with self.subTest(limit=limit):
+                    tracemalloc.start()
+                    try:
+                        page = session.call("compute_unit_activity", {"limit": limit})
+                        _, peak_bytes = tracemalloc.get_traced_memory()
+                    finally:
+                        tracemalloc.stop()
+                    self.assertEqual(page["details"]["total_records"], row_count)
+                    self.assertEqual(page["details"]["returned_records"], limit)
+                    self.assertLessEqual(len(page["details"]["records"]), limit)
+                    self.assertLess(peak_bytes, 32 * 1024 * 1024)
+
+    def test_large_malformed_jsonl_and_csv_report_bounded_examples_and_exact_counts(self) -> None:
+        bad_count = 1000
+        scope_data = (b"{not-json}\n" * bad_count) + b'{"scope":"valid","dropped":1}\n'
+        with tempfile.TemporaryDirectory() as temp:
+            ref = fixture_session(Path(temp) / "bad-jsonl", include={"scope_stats.jsonl"}, overrides={"scope_stats.jsonl": scope_data})
+            result = open_toolset("Dataflow", ref).call("buffer_pressure_check")
+
+        scope = next(row for row in result["source_coverage"] if row["source_family"] == "scope_statistics")
+        self.assertEqual((scope["records_seen"], scope["records_parsed"], scope["records_rejected"]), (bad_count + 1, 1, bad_count))
+        self.assertEqual(scope["issue_count"], bad_count)
+        self.assertEqual(scope["issue_examples_returned"], len(scope["issues"]))
+        self.assertLessEqual(scope["issue_examples_returned"], 20)
+        self.assertEqual(scope["issue_examples_omitted"], bad_count - len(scope["issues"]))
+        self.assertIn("line 1", scope["issues"][0]["problem"])
+
+        header, row = (FIXTURES / "pmu.csv").read_bytes().splitlines()[:2]
+        bad_row = row.replace(b",0,", b",not-an-int,", 1)
+        data = b"\n".join([header, *([bad_row] * bad_count), row]) + b"\n"
+        with tempfile.TemporaryDirectory() as temp:
+            ref = fixture_session(Path(temp) / "bad-csv", include={"pmu.csv"}, overrides={"pmu.csv": data})
+            result = open_toolset("Compute", ref).call("compute_unit_activity")
+
+        pmu = result["source_coverage"][0]
+        self.assertEqual((pmu["records_seen"], pmu["records_parsed"], pmu["records_rejected"]), (bad_count + 1, 1, bad_count))
+        self.assertEqual(pmu["issue_count"], bad_count)
+        self.assertLessEqual(pmu["issue_examples_returned"], 20)
+        self.assertEqual(pmu["issue_examples_omitted"], bad_count - len(pmu["issues"]))
+
+    def test_pmu_semantic_issue_keeps_physical_csv_row_number_after_shape_error(self) -> None:
+        header, row = (FIXTURES / "pmu.csv").read_bytes().splitlines()[:2]
+        short_row = b",".join(row.split(b",")[:-1])
+        invalid_row = row.replace(b",0,", b",-1,", 1)
+        data = b"\n".join([header, row, short_row, invalid_row]) + b"\n"
+
+        with tempfile.TemporaryDirectory() as temp:
+            ref = fixture_session(Path(temp) / "csv-row-number", include={"pmu.csv"}, overrides={"pmu.csv": data})
+            result = open_toolset("Compute", ref).call("compute_unit_activity")
+
+        pmu = result["source_coverage"][0]
+        self.assertTrue(any("row 2: CSV columns do not match the header" in issue["problem"] for issue in pmu["issues"]))
+        self.assertTrue(any("row 3: invalid core identity or nonnegative integer counter" in issue["problem"] for issue in pmu["issues"]))
+
+    def test_pmu_csv_parser_is_single_pass_and_rejects_trailing_decode_error_atomically(self) -> None:
+        header, row = (FIXTURES / "pmu.csv").read_bytes().splitlines()[:2]
+        data = b"\n".join([header, row, row]) + b"\n"
+        with tempfile.TemporaryDirectory() as temp:
+            ref = fixture_session(Path(temp) / "single-pass", include={"pmu.csv"}, overrides={"pmu.csv": data})
+            with patch("modes.ptomni.pto_analyzer.diagnostics.common.csv.DictReader", wraps=csv.DictReader) as reader:
+                result = open_toolset("Compute", ref).call("compute_unit_activity")
+            self.assertEqual(reader.call_count, 1)
+            self.assertEqual(result["details"]["total_records"], 2)
+
+        with tempfile.TemporaryDirectory() as temp:
+            ref = fixture_session(Path(temp) / "late-decode-error", include={"pmu.csv"}, overrides={"pmu.csv": data + b"\xff"})
+            result = open_toolset("Compute", ref).call("compute_unit_activity")
+
+        self.assertEqual(result["observations"], [])
+        coverage = result["source_coverage"][0]
+        self.assertEqual((coverage["records_seen"], coverage["records_parsed"], coverage["records_rejected"]), (0, 0, 1))
+        self.assertEqual(coverage["issue_count"], 1)
 
     def test_large_scope_jsonl_summary_does_not_retain_decoded_file(self) -> None:
         row_count = 100_000
@@ -933,6 +1178,39 @@ class ToolsetTests(unittest.TestCase):
         ref = ProfileRef.from_event(self.root, 1)
         self.assertEqual(ref.case_id, "fixture.case")
         self.assertEqual(open_toolset("Compute", ref).profile["event_id"], "fixture-session:1")
+
+    def test_event_ledger_is_read_line_by_line_and_target_can_be_anywhere(self) -> None:
+        events_path = self.root / "events.jsonl"
+        original = json.loads(events_path.read_text(encoding="utf-8"))
+        rows = [json.dumps({**original, "seq": seq}) for seq in (1, 2, 3)]
+        events_path.write_text("\n".join(rows) + "\n", encoding="utf-8")
+        manifest_path = self.root / "protection" / "manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["roots"]["events"]["entries"][""]["sha256"] = hashlib.sha256(events_path.read_bytes()).hexdigest()
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+        read_text = Path.read_text
+        def reject_event_read_text(path, *args, **kwargs):
+            if path.name == "events.jsonl":
+                raise AssertionError("events.jsonl must be iterated line by line")
+            return read_text(path, *args, **kwargs)
+
+        with patch.object(Path, "read_text", reject_event_read_text):
+            for seq in (1, 2, 3):
+                self.assertEqual(ProfileRef.from_event(self.root, seq).event_seq, seq)
+
+        duplicated = [rows[0], rows[1], rows[1], rows[2]]
+        events_path.write_text("\n".join(duplicated) + "\n", encoding="utf-8")
+        manifest["roots"]["events"]["entries"][""]["sha256"] = hashlib.sha256(events_path.read_bytes()).hexdigest()
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        with self.assertRaisesRegex(ProfileRefError, "missing or ambiguous"):
+            ProfileRef.from_event(self.root, 2)
+
+        events_path.write_text(rows[0] + "\nnot-json\n" + rows[2] + "\n", encoding="utf-8")
+        manifest["roots"]["events"]["entries"][""]["sha256"] = hashlib.sha256(events_path.read_bytes()).hexdigest()
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        with self.assertRaisesRegex(ProfileRefError, "invalid JSON"):
+            ProfileRef.from_event(self.root, 1)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import json
 import math
 import re
@@ -8,13 +9,15 @@ from fractions import Fraction
 from typing import Any
 
 from ..profile import ProfileArchive
-from .common import DetailRecords, add_records, family_sources, jsonl_records, make_result, observation, utf8_lines
+from .common import DetailRecords, IssueSamples, add_records, family_sources, jsonl_records, make_result, observation, utf8_lines
 
 _HINTS = [("compiler_hints", ["perf_hints.log"], True)]
 _BUFFER_FAMILIES = [
     ("compiler_hints", ["perf_hints.log"], True),
     ("scope_statistics", ["scope_stats.jsonl"], True),
 ]
+_ALLOCATION_FAMILIES = [("allocation_artifact", ["*_after_AllocateMemoryAddr.py", "memory_after_AllocateMemoryAddr.txt"], False)]
+_TILE_MEMORY_SPACES = {"pl.Mem.Vec", "pl.Mem.Mat", "pl.Mem.Left", "pl.Mem.Right", "pl.Mem.Acc"}
 _HINT_PATTERN = re.compile(r"\[perf_hint\s+([^\]]+)\]")
 _LOCATION_PATTERN = re.compile(r"\bat\s+(.+?:\d+(?::\d+)?)\s*$")
 
@@ -40,7 +43,7 @@ def tile_access_check(
                         issues=["compiler hint file is not UTF-8"], source=source)
             continue
         seen = parsed = rejected = 0
-        issues = []
+        issues = IssueSamples()
         with lines:
             for line_number, line in enumerate(lines, 1):
                 line = line.removesuffix("\n")
@@ -51,13 +54,13 @@ def tile_access_check(
                     if "[perf_hint " in line:
                         seen += 1
                         rejected += 1
-                        issues.append(f"line {line_number}: malformed compiler hint record")
+                        issues.add(f"line {line_number}: malformed compiler hint record")
                     continue
                 seen += 1
                 hint = _parse_hint(match.group(1))
                 if hint is None:
                     rejected += 1
-                    issues.append(f"line {line_number}: compiler hint has no category")
+                    issues.add(f"line {line_number}: compiler hint has no category")
                     continue
                 parsed += 1
                 location = _LOCATION_PATTERN.search(line)
@@ -99,6 +102,7 @@ def buffer_pressure_check(
 ) -> dict[str, Any]:
     hint_sources = family_sources(archive, ["perf_hints.log"])
     scope_sources = family_sources(archive, ["scope_stats.jsonl"])
+    scope_sources_by_path = {source.path: source for source in scope_sources}
     stats: dict[str, dict[str, Any]] = {}
     details = DetailRecords(
         include_details, limit=detail_limit, after=detail_cursor,
@@ -117,7 +121,7 @@ def buffer_pressure_check(
                         issues=["compiler hint file is not UTF-8"], source=source)
             continue
         seen = parsed = rejected = 0
-        issues = []
+        issues = IssueSamples()
         with lines:
             for line_number, line in enumerate(lines, 1):
                 line = line.removesuffix("\n")
@@ -128,7 +132,7 @@ def buffer_pressure_check(
                 hint = _parse_hint(match.group(1)) if match else None
                 if hint is None:
                     rejected += 1
-                    issues.append(f"line {line_number}: malformed MemoryReuse hint")
+                    issues.add(f"line {line_number}: malformed MemoryReuse hint")
                     continue
                 parsed += 1
                 hint_counts[hint[1]] += 1
@@ -172,14 +176,14 @@ def buffer_pressure_check(
 
     category_counts = {}
     for path, fields in categorical_fields.items():
-        source = next((item for item in scope_sources if item.path == path), None)
+        source = scope_sources_by_path.get(path)
         if source is not None:
             category_counts[path] = _scope_category_counts(source, fields)
 
     for (path, field), values in sorted(field_values.items()):
         if not field or not values["count"]:
             continue
-        source = next((item for item in scope_sources if item.path == path), None)
+        source = scope_sources_by_path.get(path)
         if source is None:
             continue
         if values["categories"] is not None or values["mixed"]:
@@ -216,6 +220,142 @@ def buffer_pressure_check(
          "Scope fields retain their names, source-file scope, and recorded units; capacity and lifetime semantics are not inferred, so no pressure percentage is calculated."],
         records=stats, detail_records=details,
     )
+
+
+def tile_memory_allocation_summary(archive: ProfileArchive) -> dict[str, Any]:
+    sources = family_sources(archive, ["*_after_AllocateMemoryAddr.py", "memory_after_AllocateMemoryAddr.txt"])
+    stats: dict[str, dict[str, Any]] = {}
+    groups: dict[tuple[str, str | None, str, str], dict[str, Any]] = {}
+
+    class AllocationVisitor(ast.NodeVisitor):
+        def __init__(self, source: ArtifactRead) -> None:
+            self.source = source
+            self.functions: list[str] = []
+            self.seen = 0
+            self.parsed = 0
+            self.issues = IssueSamples()
+
+        def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+            self.functions.append(node.name)
+            self.generic_visit(node)
+            self.functions.pop()
+
+        visit_AsyncFunctionDef = visit_FunctionDef
+
+        def visit_ClassDef(self, node: ast.ClassDef) -> None:
+            self.functions.append(node.name)
+            self.generic_visit(node)
+            self.functions.pop()
+
+        def visit_Call(self, node: ast.Call) -> None:
+            call_name = ast.unparse(node.func)
+            if call_name not in {"pl.tile.alloc", "pld.tensor.alloc_window_buffer"}:
+                self.generic_visit(node)
+                return
+
+            self.seen += 1
+            allowed_keywords = {"pinned"} if call_name == "pl.tile.alloc" else set()
+            unsupported_keywords = [
+                keyword.arg for keyword in node.keywords
+                if keyword.arg not in allowed_keywords
+                or not isinstance(keyword.value, ast.Constant)
+                or type(keyword.value.value) is not bool
+            ]
+            if unsupported_keywords:
+                self.issues.add(f"line {node.lineno}: {call_name} has unsupported keyword arguments")
+                self.generic_visit(node)
+                return
+
+            if call_name == "pl.tile.alloc":
+                memory_space = ast.unparse(node.args[0]) if len(node.args) >= 1 else None
+                size_expr = node.args[1] if len(node.args) == 2 else None
+                if memory_space not in _TILE_MEMORY_SPACES or len(node.args) != 2:
+                    self.issues.add(f"line {node.lineno}: unsupported pl.tile.alloc memory space or arguments")
+                    self.generic_visit(node)
+                    return
+            else:
+                memory_space = "HCCL window buffer"
+                size_expr = node.args[0] if len(node.args) == 1 else None
+                if len(node.args) != 1:
+                    self.issues.add(f"line {node.lineno}: unsupported alloc_window_buffer arguments")
+                    self.generic_visit(node)
+                    return
+
+            size_bytes = _static_allocation_size(size_expr)
+            if size_bytes is None or size_bytes < 0:
+                self.issues.add(f"line {node.lineno}: {call_name} size is not a nonnegative integer literal")
+                self.generic_visit(node)
+                return
+
+            function_name = ".".join(self.functions) or None
+            group_key = (self.source.path, function_name, memory_space, call_name)
+            group = groups.setdefault(group_key, {"allocation_count": 0, "requested_bytes_sum": 0, "source_lines": []})
+            group["allocation_count"] += 1
+            group["requested_bytes_sum"] += size_bytes
+            group["source_lines"].append(node.lineno)
+            self.parsed += 1
+            self.generic_visit(node)
+
+    for source in sources:
+        if source.status != "present":
+            continue
+        if not source.path.endswith(".py"):
+            add_records(stats, "allocation_artifact", seen=1, rejected=1,
+                        issues=["AllocateMemoryAddr text report format is not supported; no fields were inferred"], source=source)
+            continue
+        try:
+            tree = ast.parse(source.data.decode("utf-8"), filename=source.path)
+        except (AttributeError, UnicodeDecodeError, SyntaxError) as exc:
+            add_records(stats, "allocation_artifact", seen=1, rejected=1,
+                        issues=[f"invalid AllocateMemoryAddr Python artifact: {type(exc).__name__}"], source=source)
+            continue
+        visitor = AllocationVisitor(source)
+        visitor.visit(tree)
+        add_records(stats, "allocation_artifact", seen=visitor.seen, parsed=visitor.parsed,
+                    rejected=visitor.issues.count, issues=visitor.issues, source=source)
+
+    observations = []
+    for (path, function_name, memory_space, allocation_op), totals in sorted(
+        groups.items(), key=lambda item: (item[0][0], item[0][1] or "", item[0][2], item[0][3])
+    ):
+        source = next(source for source in sources if source.path == path)
+        scope = f"artifact={path}; function={function_name or 'module'}; memory_space={memory_space}; op={allocation_op}"
+        group_fields = {"artifact_path": path, "function_name": function_name,
+                        "memory_space": memory_space, "allocation_op": allocation_op,
+                        "source_lines": sorted(set(totals["source_lines"]))}
+        observations.append(observation(
+            "allocation_count", totals["allocation_count"], "allocations", scope,
+            "count supported allocation calls in this artifact/function/memory-space/operation group",
+            totals["allocation_count"], [source], **group_fields,
+        ))
+        observations.append(observation(
+            "requested_bytes_sum", totals["requested_bytes_sum"], "bytes", scope,
+            "sum explicit static allocation request sizes in this group; per-rank for HCCL window buffers",
+            totals["allocation_count"], [source], **group_fields,
+        ))
+    return make_result(
+        archive, "Dataflow", "tile_memory_allocation_summary", _ALLOCATION_FAMILIES, observations,
+        ["Sizes are explicit compile-time allocation requests in bytes; HCCL window-buffer sizes are per rank.",
+         "Totals are kept separate by artifact, function, memory-space label, and operation; they do not describe runtime occupancy, peak use, lifetime overlap, capacity pressure, spill, or a performance bottleneck.",
+         "Only literal sizes and documented AllocateMemoryAddr call forms are summarized; unsupported reports or records remain in source coverage."],
+        records=stats,
+    )
+
+
+def _static_allocation_size(node: ast.AST | None) -> int | None:
+    if isinstance(node, ast.Constant) and type(node.value) is int:
+        return node.value
+    if (
+        isinstance(node, ast.Call)
+        and ast.unparse(node.func) == "pl.const"
+        and len(node.args) == 2
+        and not node.keywords
+        and isinstance(node.args[0], ast.Constant)
+        and type(node.args[0].value) is int
+        and ast.unparse(node.args[1]) == "pl.INT64"
+    ):
+        return node.args[0].value
+    return None
 
 
 def _parse_hint(contents: str) -> tuple[str, str] | None:

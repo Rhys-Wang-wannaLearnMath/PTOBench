@@ -1,12 +1,12 @@
 # PTOAnalyzer Stage 3：工具收敛与高基数明细访问
 
-> 状态：规划完成，尚未执行。本阶段只落地任务计划；不修改 PTOAnalyzer/PTOBench 代码，不运行 Profile、evaluate 或 Agent。
+> 状态：Stage 3 实现与离线验收已完成。结果见 [Stage 3 离线回放报告](../../reports/offline_replay_stage3_20261108.json)。
 
-Stage 3 处理 Stage 2 暴露的两件事：`pipeline_overlap_check` 目前不能计算 overlap，且没有明确的独立工具价值；分页接口允许很大的 `offset`，会为了返回一页而在内部保留大量前序明细。之后用真实归档、合成大数据 Fixture 和有门槛的 Agent 小试验证修缮效果。
+Stage 3 处理了 Stage 2 暴露的两件事：`pipeline_overlap_check` 缺少可配对的运行时区间，因此从当前接口撤下；高基数明细改用绑定 Profile 与工具身份的 Cursor 分页。实现通过 CPU 测试，并用既有 16 份归档完成离线回放；没有启动硬件或 Agent 试验。
 
 ## Stage 2 证据
 
-- 31 项 CPU-only 测试通过；Stage 2 回放覆盖 16 份 combined Profile，抽查单卡、双卡与 8 卡；新增硬件动作数为 0。详见 [Stage 2 任务清单](../stage2/TASK_CHECKLIST.md) 和 [离线回放报告](../../reports/offline_replay_stage2_20261108.json)。
+- Stage 2 的 31 项 CPU-only 测试通过；回放覆盖 16 份 combined Profile，抽查单卡、双卡与 8 卡；新增硬件动作数为 0。详见 [Stage 2 任务清单](../stage2/TASK_CHECKLIST.md) 和 [离线回放报告](../../reports/offline_replay_stage2_20261108.json)。
 - 16 份回放中，`pipeline_overlap_check` 都没有性能观测。现有 `pipeline_profile.json` 是编译 pass 耗时，尚无能按 Candidate、设备、时间基准与 task/block 身份关联的运行时 Compute/MTE 区间。
 - 当前最高明细量来自 `deepseek_v3_2.deepseek_v3_2_prefill_back`：依赖图明细 453,375 条；8 卡 `deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo` 的 gap/task 明细各 134,936 条。这里的数量说明离线访问规模，不代表瓶颈或性能结论。
 - 现有 `DetailRecords` 按 `offset + limit` 保存候选记录。请求远端页面时会保留大量不返回的前序记录；超出末页的请求也可能先保留所有记录。
@@ -74,3 +74,10 @@ Stage 3 默认将 `pipeline_overlap_check` 暂时从 Dataflow 的 `tool_specs`�
 - [实施 Prompt](IMPLEMENTATION_PROMPT.md)：可直接用于后续实现工作的任务说明。
 - [Stage 2 设计与验收](../stage2/README.md)：上一阶段背景。
 - [PTOAnalyzer 当前接口](../../README.md)：工具权限、角色和归档边界。
+
+## Stage 3 验收状态
+
+- 已完成八个只读 Tool 的角色收敛、Cursor 分页和离线回归；16 份 Profile、128 次摘要/分页调用均纳入回放。
+- 5,492 个索引产物在回放前后 SHA-256 一致；新增硬件动作数为 0。
+- Stage 2 报告没有保存全部 observation 名称和值，因此只核对其记录的 observation 数量与来源覆盖；不声称跨阶段逐值一致。`buffer_pressure_check` 的额外 Scope observations 及差异原因见 Stage 3 回放报告。
+- Basic Pi 和“原始 Profile 对比 PTOAnalyzer”的 Agent 效用试验均为可选后续工作，本阶段没有启动。

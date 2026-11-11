@@ -5,13 +5,60 @@ import csv
 import heapq
 import io
 import json
-from typing import Any, Callable, Iterable, Iterator
+from dataclasses import dataclass
+from typing import Any, Callable, Iterable
 
 from ..profile import ArtifactRead, ProfileArchive
 
 PAGE_SIZE_DEFAULT = 20
 PAGE_SIZE_MAX = 50
+ISSUE_EXAMPLE_LIMIT = 20
 _UNSET = object()
+
+
+class IssueSamples:
+    """Keep a bounded set of issue examples while counting every issue."""
+
+    def __init__(self, examples: Iterable[Any] = ()) -> None:
+        self.count = 0
+        self.examples: list[Any] = []
+        self.extend(examples)
+
+    def add(self, issue: Any) -> None:
+        self.count += 1
+        if len(self.examples) < ISSUE_EXAMPLE_LIMIT:
+            self.examples.append(issue)
+
+    append = add
+
+    def extend(self, issues: Iterable[Any]) -> None:
+        if isinstance(issues, IssueSamples):
+            self.count += issues.count
+            room = ISSUE_EXAMPLE_LIMIT - len(self.examples)
+            if room > 0:
+                self.examples.extend(issues.examples[:room])
+            return
+        for issue in issues:
+            self.add(issue)
+
+    def __bool__(self) -> bool:
+        return self.count > 0
+
+    def __iter__(self):
+        return iter(self.examples)
+
+    def __len__(self) -> int:
+        return self.count
+
+
+@dataclass(frozen=True)
+class CSVScan:
+    seen: int
+    parsed: int
+    rejected: int
+    issues: IssueSamples
+    missing_columns: bool = False
+    fatal_error: bool = False
 
 
 class DetailRecords:
@@ -24,6 +71,14 @@ class DetailRecords:
         self._last_key: tuple[Any, ...] | None = None
         self._key = key
         self._heap: list[tuple[_ReverseKey, dict[str, Any]]] = []
+
+    def fork(self) -> "DetailRecords":
+        result = object.__new__(type(self))
+        result.__dict__ = self.__dict__.copy()
+        if self.records is not None:
+            result.records = list(self.records)
+        result._heap = list(self._heap)
+        return result
 
     def append(
         self,
@@ -120,16 +175,16 @@ def source_coverage(
     result = []
     for family, patterns, required in families:
         sources = family_sources(archive, patterns)
-        issues = []
+        issues = IssueSamples()
         for source in sources:
             if source.status == "missing":
-                issues.append({"path": source.path, "problem": "expected source was not indexed"})
+                issues.add({"path": source.path, "problem": "expected source was not indexed"})
             elif source.status == "empty":
-                issues.append({"path": source.path, "problem": "file is empty"})
+                issues.add({"path": source.path, "problem": "file is empty"})
             elif source.status == "invalid_data":
-                issues.append({"path": source.path, "problem": source.error or "file is unreadable or failed integrity validation"})
+                issues.add({"path": source.path, "problem": source.error or "file is unreadable or failed integrity validation"})
         counts = records.get(family, {})
-        issues.extend(counts.get("issues", []))
+        issues.extend(counts.get("issues", ()))
         result.append({
             "source_family": family,
             "required": required,
@@ -140,7 +195,10 @@ def source_coverage(
             "records_seen": counts.get("records_seen", 0),
             "records_parsed": counts.get("records_parsed", 0),
             "records_rejected": counts.get("records_rejected", 0),
-            "issues": issues,
+            "issues": issues.examples,
+            "issue_count": issues.count,
+            "issue_examples_returned": len(issues.examples),
+            "issue_examples_omitted": issues.count - len(issues.examples),
             "source_refs": [source.source() for source in sources],
         })
     return result
@@ -275,14 +333,14 @@ def utf8_lines(data: bytes, *, newline: str | None = "\n") -> io.TextIOWrapper:
 def jsonl_records(
     source: ArtifactRead,
     consume: Callable[[int, dict[str, Any]], None],
-) -> tuple[int, int, list[str]]:
+) -> tuple[int, int, IssueSamples]:
     if source.status != "present" or source.data is None:
-        return 0, 0, [source.error or source.status]
+        return 0, 0, IssueSamples([source.error or source.status])
     try:
         lines = utf8_lines(source.data)
     except UnicodeDecodeError:
-        return 1, 0, ["file is not UTF-8"]
-    issues = []
+        return 1, 0, IssueSamples(["file is not UTF-8"])
+    issues = IssueSamples()
     seen = 0
     parsed = 0
     with lines:
@@ -293,10 +351,10 @@ def jsonl_records(
             try:
                 row = json.loads(line)
             except json.JSONDecodeError:
-                issues.append(f"line {line_number}: invalid JSON")
+                issues.add(f"line {line_number}: invalid JSON")
                 continue
             if not isinstance(row, dict):
-                issues.append(f"line {line_number}: JSONL record is not an object")
+                issues.add(f"line {line_number}: JSONL record is not an object")
                 continue
             parsed += 1
             consume(line_number, row)
@@ -306,40 +364,36 @@ def jsonl_records(
 def csv_records(
     source: ArtifactRead,
     required_columns: set[str],
-) -> tuple[Iterator[dict[str, str]], int, int, list[str], bool]:
+    consume: Callable[[int, dict[str, str]], None] | None = None,
+) -> CSVScan:
     if source.status != "present" or source.data is None:
-        return iter(()), 0, 0, [source.error or source.status], False
+        return CSVScan(0, 0, 1, IssueSamples([source.error or source.status]), fatal_error=True)
 
     try:
-        seen = parsed = 0
-        issues = []
-        with io.TextIOWrapper(io.BytesIO(source.data), encoding="utf-8", newline="") as text:
+        # Decode as the CSV reader consumes the stream.  A separate UTF-8
+        # validation pass would traverse every byte a second time before the
+        # actual CSV parse.
+        with io.TextIOWrapper(io.BytesIO(source.data), encoding="utf-8", errors="strict", newline="") as text:
             reader = csv.DictReader(text)
             if not reader.fieldnames:
-                return iter(()), seen, parsed, ["CSV header is missing"], False
+                return CSVScan(0, 0, 0, IssueSamples(["CSV header is missing"]))
             required_columns_missing = required_columns - set(reader.fieldnames)
+            seen = parsed = rejected = 0
+            issues = IssueSamples()
             for row in reader:
                 seen += 1
                 if None in row or any(value is None for value in row.values()):
-                    issues.append(f"row {seen}: CSV columns do not match the header")
+                    rejected += 1
+                    issues.add(f"row {seen}: CSV columns do not match the header")
                 else:
                     parsed += 1
-        missing_columns = bool(required_columns_missing)
-        if missing_columns:
-            return iter(()), seen, parsed, issues, True
-
-        def parsed_rows() -> Iterator[dict[str, str]]:
-            with io.TextIOWrapper(io.BytesIO(source.data), encoding="utf-8", newline="") as text:
-                reader = csv.DictReader(text)
-                if not reader.fieldnames:
-                    return
-                for row in reader:
-                    if None not in row and all(value is not None for value in row.values()):
-                        yield row
-
-        return parsed_rows(), seen, parsed, issues, False
+                    if not required_columns_missing and consume is not None:
+                        # Preserve the physical CSV record number even after
+                        # earlier structurally invalid rows.
+                        consume(seen, row)
+        return CSVScan(seen, parsed, rejected, issues, missing_columns=bool(required_columns_missing))
     except (UnicodeDecodeError, csv.Error):
-        return iter(()), 0, 0, ["invalid CSV"], False
+        return CSVScan(0, 0, 1, IssueSamples(["invalid CSV"]), fatal_error=True)
 
 
 def add_records(
@@ -349,15 +403,23 @@ def add_records(
     seen: int = 0,
     parsed: int = 0,
     rejected: int = 0,
-    issues: Iterable[str] = (),
+    issues: Iterable[str] | IssueSamples = (),
     source: ArtifactRead | None = None,
 ) -> None:
-    item = stats.setdefault(family, {"records_seen": 0, "records_parsed": 0, "records_rejected": 0, "issues": []})
+    item = stats.setdefault(family, {
+        "records_seen": 0, "records_parsed": 0, "records_rejected": 0, "issues": IssueSamples(),
+    })
     item["records_seen"] += seen
     item["records_parsed"] += parsed
     item["records_rejected"] += rejected
-    for issue in issues:
-        item["issues"].append({"path": source.path if source else None, "problem": issue})
+    if isinstance(issues, IssueSamples):
+        samples = IssueSamples()
+        samples.extend({"path": source.path if source else None, "problem": issue} for issue in issues.examples)
+        samples.count = issues.count
+        item["issues"].extend(samples)
+    else:
+        for issue in issues:
+            item["issues"].add({"path": source.path if source else None, "problem": issue})
 
 
 def family_sources(archive: ProfileArchive, patterns: list[str]) -> list[ArtifactRead]:

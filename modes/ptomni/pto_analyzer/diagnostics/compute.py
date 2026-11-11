@@ -5,7 +5,7 @@ from collections import defaultdict
 from typing import Any
 
 from ..profile import ArtifactRead, ProfileArchive
-from .common import DetailRecords, add_records, csv_records, family_sources, json_value, make_result, observation
+from .common import DetailRecords, IssueSamples, add_records, csv_records, family_sources, json_value, make_result, observation
 
 PMU_COUNTERS = {
     "pmu_total_cycles": "cycles",
@@ -164,17 +164,15 @@ def compute_unit_activity(
     for source in sources:
         if source.status != "present":
             continue
-        csv_rows, seen, parsed, csv_issues, missing_columns = csv_records(source, expected)
-        rejected_count = len(csv_issues)
-        issues = list(csv_issues)
-        if missing_columns:
-            issues.append("PMU CSV is missing one or more required identity or counter columns")
-            rejected_count += parsed
-            add_records(records, "pmu", seen=seen, rejected=rejected_count, issues=issues, source=source)
-            continue
-        parsed_count = 0
         build, rank, dispatch = _path_scope(source.path)
-        for index, row in enumerate(csv_rows, 1):
+        source_grouped: dict[tuple[str, str, str, str], dict[str, Any]] = {}
+        source_details = detail_records.fork()
+        source_issues = IssueSamples()
+        semantic_issues = IssueSamples()
+        parsed_count = 0
+
+        def consume(index: int, row: dict[str, str]) -> None:
+            nonlocal parsed_count
             try:
                 core_id = int(row["core_id"])
                 core_type = row["core_type"].strip()
@@ -182,12 +180,11 @@ def compute_unit_activity(
                 if core_id < 0 or not core_type or any(value < 0 for value in counters.values()):
                     raise ValueError
             except (KeyError, TypeError, ValueError):
-                rejected_count += 1
-                issues.append(f"row {index}: invalid core identity or nonnegative integer counter")
-                continue
+                semantic_issues.add(f"row {index}: invalid core identity or nonnegative integer counter")
+                return
             parsed_count += 1
             group_key = (build, rank, dispatch, core_type)
-            group = grouped.setdefault(group_key, {"records": 0, "sources": {}, "cores": {}})
+            group = source_grouped.setdefault(group_key, {"records": 0, "sources": {}, "cores": {}})
             group["records"] += 1
             group["sources"][source.path] = source
             core = group["cores"].setdefault(core_id, {"records": 0, "counters": dict.fromkeys(PMU_COUNTERS, 0)})
@@ -195,13 +192,38 @@ def compute_unit_activity(
             for name, value in counters.items():
                 core["counters"][name] += value
             if include_details:
-                detail_records.append(
+                source_details.append(
                     lambda: {"source_ref": source.source(), "record_index": index, "record": row},
                     sort_key=(source.path, row["core_id"], row["task_id"], row["func_id"], index),
                 )
             else:
-                detail_records.count_only()
-        add_records(records, "pmu", seen=seen, parsed=parsed_count, rejected=rejected_count, issues=issues, source=source)
+                source_details.count_only()
+
+        scan = csv_records(source, expected, consume)
+        if scan.fatal_error:
+            add_records(records, "pmu", rejected=scan.rejected, issues=scan.issues, source=source)
+            continue
+        source_issues.extend(scan.issues)
+        rejected_count = scan.rejected
+        if scan.missing_columns:
+            source_issues.add("PMU CSV is missing one or more required identity or counter columns")
+            rejected_count += scan.parsed
+            add_records(records, "pmu", seen=scan.seen, rejected=rejected_count, issues=source_issues, source=source)
+            continue
+        source_issues.extend(semantic_issues)
+        rejected_count += semantic_issues.count
+        add_records(records, "pmu", seen=scan.seen, parsed=parsed_count, rejected=rejected_count,
+                    issues=source_issues, source=source)
+        for group_key, source_group in source_grouped.items():
+            group = grouped.setdefault(group_key, {"records": 0, "sources": {}, "cores": {}})
+            group["records"] += source_group["records"]
+            group["sources"].update(source_group["sources"])
+            for core_id, source_core in source_group["cores"].items():
+                core = group["cores"].setdefault(core_id, {"records": 0, "counters": dict.fromkeys(PMU_COUNTERS, 0)})
+                core["records"] += source_core["records"]
+                for metric in PMU_COUNTERS:
+                    core["counters"][metric] += source_core["counters"][metric]
+        detail_records = source_details
 
     observations = []
     for (build, rank, dispatch, core_type), group in sorted(grouped.items()):
@@ -262,16 +284,6 @@ def compute_task_share(
         if pmu.status != "present":
             continue
         scope = _path_scope(pmu.path)
-        pmu_rows, pmu_seen, pmu_parsed, pmu_issues, missing_columns = csv_records(
-            pmu, {"task_id", "func_id", *PMU_COUNTERS},
-        )
-        pmu_rejected = len(pmu_issues)
-        if missing_columns:
-            issue = "PMU CSV is missing task identity or counter columns"
-            add_records(stats, "pmu", seen=pmu_seen, rejected=pmu_seen, issues=[issue], source=pmu)
-            coverage_rows.append({"source": pmu, "scope": scope, "joined": 0, "unjoined": pmu_seen, "reason": issue})
-            continue
-        add_records(stats, "pmu", seen=pmu_seen, parsed=pmu_parsed, rejected=pmu_rejected, issues=pmu_issues, source=pmu)
         deps = deps_by_scope.get(scope)
         swimlane = spans_by_scope.get(scope)
         name_matches = names_by_scope.get(scope, [])
@@ -279,10 +291,10 @@ def compute_task_share(
             reason = "missing or ambiguous same-build/rank/dispatch companion source"
             if not scope[1] or not scope[2]:
                 reason = "rank or dispatch identity is absent from the indexed artifact path"
-            coverage_rows.append({"source": pmu, "scope": scope, "joined": 0, "unjoined": pmu_parsed, "reason": reason})
-            add_records(stats, "runtime_swimlane", seen=0, issues=[reason], source=pmu)
-            add_records(stats, "dependency_graph", seen=0, issues=[reason], source=pmu)
-            add_records(stats, "callable_name_map", seen=0, issues=[reason], source=pmu)
+            if _record_unjoined_pmu_source(pmu, stats, coverage_rows, scope, reason):
+                add_records(stats, "runtime_swimlane", seen=0, issues=[reason], source=pmu)
+                add_records(stats, "dependency_graph", seen=0, issues=[reason], source=pmu)
+                add_records(stats, "callable_name_map", seen=0, issues=[reason], source=pmu)
             continue
         name_map = name_matches[0]
         graph, graph_seen, graph_error = json_value(deps)
@@ -307,7 +319,7 @@ def compute_task_share(
                         issues=[error] if error else (), source=source)
         if invalid_sources:
             reason = "; ".join(invalid_sources)
-            coverage_rows.append({"source": pmu, "scope": scope, "joined": 0, "unjoined": pmu_parsed, "reason": reason})
+            _record_unjoined_pmu_source(pmu, stats, coverage_rows, scope, reason)
             continue
 
         try:
@@ -333,10 +345,10 @@ def compute_task_share(
                 raise ValueError("callable name map contains an invalid entry")
         except (KeyError, TypeError, ValueError) as exc:
             reason = str(exc)
-            coverage_rows.append({"source": pmu, "scope": scope, "joined": 0, "unjoined": pmu_parsed, "reason": reason})
-            add_records(stats, "runtime_swimlane", issues=[reason], source=swimlane)
-            add_records(stats, "dependency_graph", issues=[reason], source=deps)
-            add_records(stats, "callable_name_map", issues=[reason], source=name_map)
+            if _record_unjoined_pmu_source(pmu, stats, coverage_rows, scope, reason):
+                add_records(stats, "runtime_swimlane", issues=[reason], source=swimlane)
+                add_records(stats, "dependency_graph", issues=[reason], source=deps)
+                add_records(stats, "callable_name_map", issues=[reason], source=name_map)
             continue
 
         grouped: dict[int, dict[str, Any]] = {}
@@ -344,7 +356,25 @@ def compute_task_share(
         unjoined = 0
         reasons: dict[str, int] = defaultdict(int)
         valid_rows = 0
-        for index, row in enumerate(pmu_rows, 1):
+        source_details = details.fork()
+
+        def record_unjoined_pmu_row(index: int, row: dict[str, str], reason: str) -> None:
+            nonlocal unjoined
+            unjoined += 1
+            reasons[reason] += 1
+            if include_details:
+                source_details.append(
+                    lambda reason=reason: {
+                        "record_type": "unjoined_pmu_row", "source_ref": pmu.source(),
+                        "record_index": index, "reason": reason, "record": row,
+                    },
+                    sort_key=("", "", "", str(index), "unjoined_pmu_row"),
+                )
+            else:
+                source_details.count_only()
+
+        def consume(index: int, row: dict[str, str]) -> None:
+            nonlocal unjoined, valid_rows
             try:
                 task_id = _normalize_task_id(row["task_id"])
                 function_id = int(row["func_id"])
@@ -373,35 +403,33 @@ def compute_task_share(
                 if any(value < 0 for value in counters.values()):
                     raise ValueError("negative PMU counter")
             except LookupError as exc:
-                unjoined += 1
-                reasons[str(exc)] += 1
-                if include_details:
-                    details.append(
-                        lambda: {"record_type": "unjoined_pmu_row", "source_ref": pmu.source(), "record_index": index,
-                                 "reason": str(exc), "record": row},
-                        sort_key=("", "", "", str(index), "unjoined_pmu_row"),
-                    )
-                else:
-                    details.count_only()
-                continue
+                record_unjoined_pmu_row(index, row, str(exc))
+                return
             except (KeyError, TypeError, ValueError):
-                unjoined += 1
-                reasons["invalid PMU task identity or counter"] += 1
-                if include_details:
-                    details.append(
-                        lambda: {"record_type": "unjoined_pmu_row", "source_ref": pmu.source(), "record_index": index,
-                                 "reason": "invalid PMU task identity or counter", "record": row},
-                        sort_key=("", "", "", str(index), "unjoined_pmu_row"),
-                    )
-                else:
-                    details.count_only()
-                continue
+                record_unjoined_pmu_row(index, row, "invalid PMU task identity or counter")
+                return
             valid_rows += 1
             task_item = grouped.setdefault(task_id, {"record_count": 0, "function_ids": set(), "counters": dict.fromkeys(PMU_COUNTERS, 0)})
             task_item["record_count"] += 1
             task_item["function_ids"].add(function_id)
             for metric, value in counters.items():
                 task_item["counters"][metric] += value
+
+        scan = csv_records(pmu, {"task_id", "func_id", *PMU_COUNTERS}, consume)
+        if scan.fatal_error:
+            add_records(stats, "pmu", rejected=scan.rejected, issues=scan.issues, source=pmu)
+            coverage_rows.append({"source": pmu, "scope": scope, "joined": 0, "unjoined": 0,
+                                  "reason_counts": {"invalid CSV": scan.rejected}})
+            continue
+        if scan.missing_columns:
+            issue = "PMU CSV is missing task identity or counter columns"
+            scan.issues.add(issue)
+            add_records(stats, "pmu", seen=scan.seen, rejected=scan.seen, issues=scan.issues, source=pmu)
+            coverage_rows.append({"source": pmu, "scope": scope, "joined": 0, "unjoined": scan.seen, "reason": issue})
+            continue
+        add_records(stats, "pmu", seen=scan.seen, parsed=scan.parsed, rejected=scan.rejected,
+                    issues=scan.issues, source=pmu)
+        details = source_details
         coverage_rows.append({"source": pmu, "scope": scope, "joined": valid_rows, "unjoined": unjoined, "reason_counts": dict(sorted(reasons.items()))})
         for task_id, item in sorted(grouped.items()):
             task_spans = spans[task_id]
@@ -427,7 +455,7 @@ def compute_task_share(
             ))
             observations.append(observation(
                 "joined_pmu_record_count", valid_rows, "records", "build/rank/dispatch",
-                "count PMU rows that passed the same-dispatch task/function join", pmu_seen, source_set,
+                "count PMU rows that passed the same-dispatch task/function join", scan.seen, source_set,
                 build_path=scope[0], rank=scope[1], dispatch=scope[2], unjoined_record_count=unjoined,
             ))
             for metric, unit in PMU_COUNTERS.items():
@@ -465,6 +493,34 @@ def _unjoined_observations(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                    "unjoined_records": row["unjoined"], "reason": row.get("reason"), "reason_counts": row.get("reason_counts", {})}
                   for row in rows],
     )]
+
+
+def _record_unjoined_pmu_source(
+    pmu: ArtifactRead,
+    stats: dict[str, dict[str, Any]],
+    coverage_rows: list[dict[str, Any]],
+    scope: tuple[str, str, str],
+    reason: str,
+) -> bool:
+    """Record one PMU source that cannot produce a verified task join.
+
+    A valid CSV is still counted as parsed and unjoined; malformed or missing
+    identity columns stop before companion-source diagnostics are duplicated.
+    """
+    scan = csv_records(pmu, {"task_id", "func_id", *PMU_COUNTERS})
+    if scan.fatal_error:
+        add_records(stats, "pmu", rejected=scan.rejected, issues=scan.issues, source=pmu)
+        return False
+    if scan.missing_columns:
+        issue = "PMU CSV is missing task identity or counter columns"
+        scan.issues.add(issue)
+        add_records(stats, "pmu", seen=scan.seen, rejected=scan.seen, issues=scan.issues, source=pmu)
+        coverage_rows.append({"source": pmu, "scope": scope, "joined": 0, "unjoined": scan.seen, "reason": issue})
+        return False
+    add_records(stats, "pmu", seen=scan.seen, parsed=scan.parsed, rejected=scan.rejected,
+                issues=scan.issues, source=pmu)
+    coverage_rows.append({"source": pmu, "scope": scope, "joined": 0, "unjoined": scan.parsed, "reason": reason})
+    return True
 
 
 def _path_scope(path: str) -> tuple[str, str, str]:

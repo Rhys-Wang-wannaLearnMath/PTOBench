@@ -1,6 +1,6 @@
 # PTOAnalyzer
 
-> 状态：Stage 3 已完成工具收敛与有界 Cursor 分页。当前对外提供八个只读 Tool（Compute 三个、Dataflow 两个、Schedule 三个），保持角色隔离、全量摘要和来源覆盖。Stage 3 离线回放覆盖 16 份既有 Profile，未新增硬件动作。PTOAnalyzer 是 PTOmni Guidance 的分析模块，不是新的 PTOBench Mode、Profiler 或 LLM Agent。
+> 状态：Stage 4 工具修缮与离线验收已完成。当前对外提供九个只读 Tool（Compute 三个、Dataflow 三个、Schedule 三个），保持角色隔离、全量摘要和来源覆盖。Stage 4 离线回放覆盖 16 份既有 Profile，未新增硬件动作。PTOAnalyzer 是 PTOmni Guidance 的分析模块，不是新的 PTOBench Mode、Profiler 或 LLM Agent。
 
 ## 1. 定位
 
@@ -34,9 +34,9 @@ PTOAnalyzer 的工具围绕具体问题组织证据，分别给出可追溯的�
 
 ## 3. PTOAnalyzer Tools
 
-Stage 3 前，PTOAnalyzer 曾按每个 Tuner 三个 Tool 的目标实现九项候选诊断。Stage 3 撤下了没有可计算 overlap 观测的 `pipeline_overlap_check`；当前暴露八个 Tool：Compute 三个、Dataflow 两个、Schedule 三个。Tool 对应一个可复核的问题，而不是一个原始文件或指标。一次 `combined` Profile 供所有工具共用；Tuner 不为每个 Tool 分别采集 Profile，也不必读取整份原始产物。工具按问题返回观测、来源和适用边界，不在内部调用 LLM，也不替 Tuner 决定修改方案。
+Stage 3 前，PTOAnalyzer 曾按每个 Tuner 三个 Tool 的目标实现九项候选诊断。Stage 3 撤下了没有可计算 overlap 观测的 `pipeline_overlap_check`；Stage 4 增加了基于真实 AllocateMemoryAddr 产物的 `tile_memory_allocation_summary`，当前暴露九个 Tool：Compute 三个、Dataflow 三个、Schedule 三个。Tool 对应一个可复核的问题，而不是一个原始文件或指标。一次 `combined` Profile 供所有工具共用；Tuner 不为每个 Tool 分别采集 Profile，也不必读取整份原始产物。工具按问题返回观测、来源和适用边界，不在内部调用 LLM，也不替 Tuner 决定修改方案。
 
-内部共享受保护归档读取与格式解析；对外只向被启用的 Tuner 提供角色专属工具。当前八项工具均为确定性、只读诊断，以观测、来源覆盖和解释边界呈现事实，不输出工具级性能判决。
+内部共享受保护归档读取与格式解析；对外只向被启用的 Tuner 提供角色专属工具。当前九项工具均为确定性、只读诊断，以观测、来源覆盖和解释边界呈现事实，不输出工具级性能判决。
 
 | Tuner | Tool | 诊断问题 |
 |---|---|---|
@@ -45,11 +45,12 @@ Stage 3 前，PTOAnalyzer 曾按每个 Tuner 三个 Tool 的目标实现九项�
 |  | `compute_task_share` | 哪些 task 的 PMU 计数能与依赖图、callable name 和 AICore span 在同一 dispatch 内可靠关联 |
 | **Dataflow** | `tile_access_check` | 编译器报告了哪些 Tile-access 提示 |
 |  | `buffer_pressure_check` | 是否有 MemoryReuse 编译提示，以及 Scope 统计中有哪些原始计数 |
+|  | `tile_memory_allocation_summary` | AllocateMemoryAddr 产物按函数、内存空间和分配操作记录了哪些静态分配数与请求字节数；不推断运行时占用 |
 | **Schedule** | `dependency_path_check` | 依赖图有多少 task、edge、图深度和端点缺失；该图不含 runtime 权重 |
 |  | `dispatch_gap_check` | 在完整 AICore/AICPU 覆盖的同一 rank/dispatch/core 内统计原始周期上的观测间隔，不归因调度开销 |
 |  | `task_distribution_check` | 按 rank/dispatch/core 汇总 AICore 物理记录、原始 task token 与区间周期；不推断忙碌时间或负载不均 |
 
-`ToolSession.initial_summary` 会运行当前 Tuner 获准的全部诊断并给出全量摘要，`call(name)` 可重复定向调用并分页读取高基数明细。Dataflow 当前摘要含两个工具；其他两个 Tuner 各含三个。缺失或不适用证据由来源覆盖与限制说明。分析完全离线，不产生新的硬件动作。
+`ToolSession.initial_summary` 会运行当前 Tuner 获准的全部诊断并给出全量摘要，`call(name)` 可重复定向调用并分页读取高基数明细。Dataflow 当前含三个工具，其中 `tile_memory_allocation_summary` 返回完整静态分组摘要而不分页；其余八个工具支持高基数明细分页。缺失或不适用证据由来源覆盖与限制说明。分析完全离线，不产生新的硬件动作。
 
 ## 3.1 已实现接口与边界
 
@@ -64,9 +65,9 @@ page = session.call("compute_unit_activity", {"limit": 20})
 session.call("compute_unit_activity", {"cursor": page["details"]["next_cursor"], "limit": 20})
 ```
 
-`ProfileRef.from_event` 绑定调用者指定的事件序号，不搜索最新 Profile。创建 Session 时会校验 session/event 身份、已完成的 combined Profile、Candidate digest、artifact index 和 PTOBench protection manifest；被索引文件在读取时再次核对哈希。越界路径、损坏归档或错误身份会拒绝分析，Tuner 不能通过参数传入文件路径。静态权限表仅开放 Compute 的三个、Dataflow 的两个、Schedule 的三个工具；Lead 无工具。高基数明细使用不透明、版本化的 Cursor，绑定 Tool、Tuner、Profile event 和 Candidate digest；Cursor 只表示稳定排序后的续读位置，不选择归档、文件路径或权限。每页默认 20 条、最多 50 条。结果包含 Profile 身份、全量观测、单位、来源覆盖、来源引用和解释限制；不使用混合数据采集状态与性能结论的单一状态字段。
+`ProfileRef.from_event` 绑定调用者指定的事件序号，不搜索最新 Profile。创建 Session 时会校验 session/event 身份、已完成的 combined Profile、Candidate digest、artifact index 和 PTOBench protection manifest；被索引文件在读取时再次核对哈希。越界路径、损坏归档或错误身份会拒绝分析，Tuner 不能通过参数传入文件路径。静态权限表仅开放 Compute 的三个、Dataflow 的三个、Schedule 的三个工具；Lead 无工具。高基数明细使用不透明、版本化的 Cursor，绑定 Tool、Tuner、Profile event 和 Candidate digest；Cursor 只表示稳定排序后的续读位置，不选择归档、文件路径或权限。每页默认 20 条、最多 50 条。结果包含 Profile 身份、全量观测、单位、来源覆盖、来源引用和解释限制；不使用混合数据采集状态与性能结论的单一状态字段。
 
-分页只把明细候选缓存限制在当前 `limit`，不限制 Parser 对输入文件的临时工作集。Stage 3 对最大单卡依赖图（453,375 条明细）的三页连续读取各耗时约 29 秒，`tracemalloc` 峰值约 0.87–0.95 GiB；双卡与 8 卡代表样本的依赖图页约 1.1 秒和 2.6 秒。该成本来自完整依赖图解析与汇总，不是 50 条候选缓存；是否需要 Session 内部缓存留待确认真实 Agent 按需查阅受阻后再评估。
+分页只把明细候选缓存限制在当前 `limit`，不限制 Parser 对输入文件的临时工作集。Stage 4 当前代码在最大单卡依赖图（453,375 条明细）上首屏约 20 秒、临时峰值约 509 MB；同一 Session 的后续页不再调用依赖图解析器，完整 9,068 页遍历返回 453,375 条记录。双卡和 8 卡样本也完成了全量遍历。输入文件解码和索引仍会随文件规模消耗资源；分页上限不等于整个分析流程恒定内存。
 
 ## 3.2 既有 Profile 回放结果
 
@@ -74,7 +75,7 @@ Stage 1 的历史回放报告保留在 [`reports/offline_replay_20261106.json`](
 
 Stage 2 回放确认 PMU 解析覆盖数按来源只计一次；`compute_task_share` 的关联成功/失败记录另行累计，PMU 行数不会因为后续 join 再加一次。PMU counters 按 build/rank/dispatch/core type 分组；关联任务的 AICore 区间周期与 PMU counters 保持不同单位。
 
-Stage 3 最新离线回放重新核验了 16 份归档、128 个工具摘要及分页调用；索引文件共 5,492 个，回放前后 SHA-256 一致，新增硬件动作为 0。摘要与第一页的 observations/source coverage、Stage 2 的来源覆盖和明细数均通过核验。`buffer_pressure_check` 的 observation 数相对 Stage 2 在 16 份 Profile 中均较多；差值随设备覆盖从 9 到 72 变化。Stage 2 报告只保留 observation 数量和来源覆盖，没有保存 observation 名称和值，因此无法逐项证明历史值完全一致；当前差异和限制记录在 Stage 3 报告中。
+Stage 4 最新离线回放重新核验了 16 份归档、九个工具权限、144 份工具摘要及分页首屏；索引文件共 5,492 个，回放前后 SHA-256 一致，新增硬件动作为 0。摘要与第一页的 observations/source coverage、Stage 2 的来源覆盖和明细数均通过核验。`buffer_pressure_check` 的 observation 数相对 Stage 2 在 16 份 Profile 中均较多；差值随设备覆盖从 9 到 72 变化。Stage 2 报告只保留 observation 数量和来源覆盖，没有保存 observation 名称和值，因此无法逐项证明历史值完全一致；当前差异和限制见 [Stage 4 回放报告](reports/offline_replay_stage4_20261112.json)。
 
 `dispatch_gap_check` 只对 Level 4 AICore 区间周期排序，并要求同一文件内 AICore 与 AICPU 记录按 core/register-task identity 一一覆盖；它输出同核相邻区间的正间隔，不解释原因。Stage 2 的九工具回放中，`pipeline_overlap_check` 没有 overlap 观测；Stage 3 检查了运行时轨迹、合并 trace、PMU 与编译器契约后将它从当前接口撤下。PMU 仅有 MTE busy-cycle 计数，Runtime/merged 轨迹没有可配对的 MTE 起止区间，编译 pipeline profile 记录的是编译 pass 时间。若未来需要恢复该 Tool，先由 PTOBench 提供同 Candidate、设备与采集窗口下、公共时间基准且可关联 task/block 的 Compute/MTE 起止区间。`compute_mapping_check` 仍不把 callable 名称映射到 Candidate 源码位置。Stage 3 验证与字段缺口记录见 [`reports/offline_replay_stage3_20261108.json`](reports/offline_replay_stage3_20261108.json)。
 
@@ -96,7 +97,7 @@ Tuner 专长不是原始数据类别：同一条证据可由多个小工具以�
 |---|---|---|
 | P0：样本盘点 | 从现有 16 个 combined Profile 中选 6–8 个代表 Case；检查 Candidate、Shape、设备和软件版本身份，并确认原始归档完整性。若已有可比的优化前后版本则纳入；没有就不补跑。 | 形成字段清单、来源关系和可比性记录 |
 | P1：数据审计与 Fixtures | 检查 Compiler、Runtime、PMU 的真实格式、字段单位、Task/依赖关联及缺失情形；将少量必要文件做只读 Fixtures，并另设缺失/部分采集样本。 | Parser 输入来自真实产物；Fixture 不改写原始归档 |
-| P2：离线工具 | Stage 2 实现九项候选诊断；Stage 3 根据实际证据暂缓无 overlap 观测的 Dataflow Tool，当前接口为八项。 | 当前权限表、摘要和文档一致；明细可完整分页，结果有来源且缺失语义正确 |
+| P2：离线工具 | Stage 2 实现九项候选诊断；Stage 3 根据实际证据暂缓无 overlap 观测的 Dataflow Tool，当前接口为九项。 | 当前权限表、摘要和文档一致；明细可完整分页，静态分配分组可独立复算，结果有来源且缺失语义正确 |
 | P3：人工复核 | 用 6–8 个 Case 检查每个工具结果与原始记录是否一致，验证它返回的信息确实对应该 Tuner 的职责。 | 无无来源数值、无把相关性写成确定根因的结论 |
 | P4：效用小试 | 从 Formal/Held-out 清单中选择少量代表性 Case，对比“Agent 直接查看原始 Profile”与“Agent 使用按角色开放的 PTOAnalyzer Tools”；固定模型、起始 Candidate、PTOBench 预算和其他 Guidance，只改变 Profiling 信息接口。两组复用相同 Profile 配置与采集次数。 | 按 Case 配对检查性能、有效优化所需硬件动作、无效/重复尝试、Token 与墙钟时间；确认小工具是否减少无效尝试 |
 
@@ -106,7 +107,7 @@ P4 是 PTOAnalyzer 的工程效用验证，不自动扩展论文主实验或新�
 
 ## 5. 首版范围
 
-- 当前 8 个离线只读诊断 Tools，按 Compute / Dataflow / Schedule 专长分配（3/2/3）；Lead 不持有 Analyzer Tools。共享归档读取和解析，不做重复的底层实现。
+- 当前 9 个离线只读诊断 Tools，按 Compute / Dataflow / Schedule 专长分配（3/3/3）；其中 8 个支持 Cursor 明细分页，分配摘要工具返回聚合结果；Lead 不持有 Analyzer Tools。共享归档读取和解析，不做重复的底层实现。
 - Parser 只规范化首批工具需要的字段；大型 IR、Timeline 默认按需读取相关片段，不整包塞给 Tuner。
 - 初期不做 Profile 自动选择器、动态规则引擎、学习型阈值、数据库、自动 Case Memory 写入或新的硬件采集器。
 - PyPTO 的 `critical_path`、`sched_overhead_analysis` 等既有工具，只有在确认当前环境版本、输入要求和离线可用性后才考虑复用。
@@ -157,6 +158,6 @@ ptomni/pto_analyzer/
 
 `ToolSession` 的测试面就是外部 Interface：用固定 Fixture 验证角色只能看到获准工具、输出可追溯到源文件、缺失与不支持证据不会坍缩为零、相同输入重复分析结果稳定、原始归档不变。测试在 CPU 上完成，不启动 NPU 或 PTOBench CLI。
 
-当前八项工具均为只读实现。Stage 2 的九工具历史回放见 [`reports/offline_replay_stage2_20261108.json`](reports/offline_replay_stage2_20261108.json)；Stage 3 的 Cursor、工具收敛、测试和离线回放见 [`reports/offline_replay_stage3_20261108.json`](reports/offline_replay_stage3_20261108.json) 与 [`planning/stage3/TASK_CHECKLIST.md`](planning/stage3/TASK_CHECKLIST.md)。
+当前九项工具均为只读实现。Stage 2 的九工具历史回放见 [`reports/offline_replay_stage2_20261108.json`](reports/offline_replay_stage2_20261108.json)；Stage 3 的 Cursor、工具收敛、测试和离线回放见 [`reports/offline_replay_stage3_20261108.json`](reports/offline_replay_stage3_20261108.json) 与 [`planning/stage3/TASK_CHECKLIST.md`](planning/stage3/TASK_CHECKLIST.md)；Stage 4 的资源修缮、静态分配复算和九工具回放见 [`reports/offline_replay_stage4_20261112.json`](reports/offline_replay_stage4_20261112.json) 与 [`planning/stage4/TASK_CHECKLIST.md`](planning/stage4/TASK_CHECKLIST.md)。
 
 当前架构依据：[PTOmni 架构设计（2026-11-08）](../../PTOmni/design_docs/PTOmni_架构设计_2026-11-03.md)。Lead 只消费已有共享状态并制定 RoundPlan；被启用的 Tuner 在计划许可范围内经 Runner 请求实验，PTOAnalyzer 只向 Tuner 提供专长诊断 Tools；Assembler 综合候选。PTOAnalyzer 不改变这些角色权限。

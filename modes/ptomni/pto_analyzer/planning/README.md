@@ -1,6 +1,6 @@
 # PTOAnalyzer Tool 与样本规划
 
-> Stage 1/2 的九项诊断是历史实现目标。Stage 3 后的当前接口有八个只读 Tool（Compute 3、Dataflow 2、Schedule 3）；`pipeline_overlap_check` 暂缓。Stage 3 的实测证据、分页实现和离线验收见 [Stage 3 报告](../reports/offline_replay_stage3_20261108.json)。
+> Stage 1/2 的九项诊断是历史实现目标。Stage 4 后的当前接口有九个只读 Tool（Compute 3、Dataflow 3、Schedule 3）；`pipeline_overlap_check` 仍暂缓，新增 `tile_memory_allocation_summary`。Stage 4 的实测证据、分页修缮和离线验收见 [Stage 4 报告](../reports/offline_replay_stage4_20261112.json)。
 
 可直接交给后续实现任务的材料：
 
@@ -9,11 +9,22 @@
 
 Stage 1 已完成初版实现与离线回放。Stage 2 修缮与离线验收也已完成；设计依据、执行清单和回放结果见 [Stage 2 总览](stage2/README.md)、[Stage 2 任务清单](stage2/TASK_CHECKLIST.md) 和 [Stage 2 回放报告](../reports/offline_replay_stage2_20261108.json)。原 [Stage 2 实施 Prompt](stage2/IMPLEMENTATION_PROMPT.md) 保留作历史实施范围记录。
 
-Stage 3 已完成工具收敛与 Cursor 分页改造：当前对外为八个只读 Tool（Compute 三个、Dataflow 两个、Schedule 三个）；`pipeline_overlap_check` 因现有采集字段不能提供配对的 Compute/MTE 区间而暂缓。高基数明细使用绑定 Profile event、Candidate、Tool 和 Tuner 的不透明 Cursor。2026-11-09 离线重放覆盖 16 份归档和 128 个摘要/分页调用，5,492 个索引文件哈希前后相同，硬件动作数为 0。Stage 2 报告未保留 observation 值，故跨阶段只能核对其存下的计数和来源覆盖；当前 `buffer_pressure_check` 有额外 Scope observations，细节见 [Stage 3 离线回放报告](../reports/offline_replay_stage3_20261108.json)。最大单卡依赖图每页约 29 秒且临时解析峰值约 0.87–0.95 GiB；页候选仍限制为 50 条，若该扫描成本实际阻碍 Agent 查阅再评估 Session 缓存。
+Stage 3 已完成工具收敛与 Cursor 分页改造；Stage 4 已完成大文件解析修缮和静态分配摘要：当前对外为九个只读 Tool（Compute 三个、Dataflow 三个、Schedule 三个），其中八个支持高基数明细分页，`tile_memory_allocation_summary` 返回完整聚合摘要。`pipeline_overlap_check` 因现有采集字段不能提供配对的 Compute/MTE 区间而暂缓。Stage 4 离线重放覆盖 16 份归档和 144 个工具摘要首屏校验，5,492 个索引文件哈希前后相同，硬件动作数为 0。Stage 2/3 报告未保留全部 observation 值，故跨阶段只能核对其存下的计数和来源覆盖；当前 `buffer_pressure_check` 的 Scope observations 差异及限制见 [Stage 4 离线回放报告](../reports/offline_replay_stage4_20261112.json)。最大单卡依赖图首屏临时解析峰值约 509 MB，后续 Cursor 页不再重复调用依赖图解析器。Stage 4 当前 CPU 回归为 51 项通过；PTOmni Host 接线、Basic Pi 和 Agent 配对试验尚未启动。
+
+## Stage 4 实施与验收状态
+
+Stage 4 已按清单完成 CPU-only 修缮和离线验收：
+
+- JSONL/CSV 错误示例最多保留 20 条，同时保留精确拒绝总数和省略数；PMU CSV 单遍解析，`events.jsonl` 逐行读取，Scope 来源按路径索引。
+- 依赖图使用受保护原文的轻量偏移索引；同一 `ToolSession` 的后续 Cursor 页不再重新解析完整图。最大单卡 453,375 条明细在 limit=50 时为 9,068 页，完整遍历无重无漏。
+- 16 份 Profile 均提供一个可验证的 `*_after_AllocateMemoryAddr.py` 产物。独立 AST 复算得到 4,166 个 `pl.tile.alloc`、70 个 `pld.tensor.alloc_window_buffer`，共 1,228 个分组，和 Tool 输出逐项一致。
+- 当前没有仓库内 PTOmni Host 调用 `ToolSession`，因此 Host 接线、Basic Pi 和 Agent 配对试验均未启动；它们属于后续阶段。
+
+完整摘要、首屏、分页计数、资源测量、独立复算和 5,492 个归档条目的前后 SHA-256 见 [Stage 4 回放报告](../reports/offline_replay_stage4_20261112.json)。
 
 ## 1. 目标与依据
 
-当前八个 Tool 复用已有真实 Profile；只有离线数据不能回答一个具体问题、且现有采集路径能产生缺失字段时，才增加 PTOBench Profile。Basic Pi 轨迹与 Agent 效用试验仍是有门槛的可选工作，不由本轮 Analyzer 修缮启动。
+当前九个 Tool 复用已有真实 Profile；只有离线数据不能回答一个具体问题、且现有采集路径能产生缺失字段时，才增加 PTOBench Profile。Basic Pi 轨迹与 Agent 效用试验仍是有门槛的可选工作，不由本轮 Analyzer 修缮启动。
 
 当前样本池是 [`post_baseline_combined_20261106`](../../../../manual_runs/post_baseline_combined_20261106/queue.json) 中的 16 个成功 `combined` Profile。索引核对结果：每个 Profile 都含 Compiler hint、Compiler pipeline profile、PMU、Runtime swimlane、依赖图和 scope statistics；多卡 Case 按 rank 保存 PMU、swimlane 和依赖文件。它们可以支撑首轮解析和证据组织，无需为开发 Parser 重跑。
 
@@ -30,29 +41,30 @@ Stage 3 已完成工具收敛与 Cursor 分页改造：当前对外为八个只�
 
 ## 2. 当前 Tool 与历史候选
 
-Tool 按 Tuner 的优化视角组织，同一份 `combined` Profile 共享底层数据。每个 Tool 返回可追溯事实和适用边界，不直接替 Tuner 下最终优化结论。Stage 2 曾实现九项候选；Stage 3 暂缓 `pipeline_overlap_check`，Dataflow 当前只暴露下面两个 Tool。
+Tool 按 Tuner 的优化视角组织，同一份 `combined` Profile 共享底层数据。每个 Tool 返回可追溯事实和适用边界，不直接替 Tuner 下最终优化结论。Stage 2 曾实现九项候选；Stage 3 暂缓 `pipeline_overlap_check`，Stage 4 增加静态分配摘要。下面是当前已实现的九个 Tool。
 
-| Tuner | Tool | 证据与初版行为 | 初版边界 |
+| Tuner | Tool | 当前输出 | 解释边界 |
 |---|---|---|---|
-| Compute | `compute_mapping_check` | 读取编译提示、可用 IR/源码映射及 PMU task/function 标识，列出能确认的计算路径或映射线索。 | 当前样本中的编译提示偏向 Tile/Memory；缺少可靠映射时返回 `insufficient_evidence`，不从编译 Pass 耗时推断运行瓶颈。 |
-| Compute | `compute_unit_activity` | 按 device/rank、core、task/function 摘要 PMU 的 Cube、Vector、Scalar 与 MTE 计数；仅在分母和单位确认后计算比例。 | 展示活动证据，不用未经校准的阈值判定 Compute-bound；单项低利用率也不等同于计算表达低效。 |
-| Compute | `compute_task_share` | 在 Task 身份和时间范围可关联时，统计可识别计算 Task 的 Runtime 时间占比，并列出对应 PMU 计数。 | 先验证 PMU、swimlane、DAG 的 Task ID 映射；不能关联时分别输出来源数据，不拼接、不计算占比。 |
-| Dataflow | `tile_access_check` | 解析 `perf_hints.log` 中 Tile 形状、访问粒度、搬运大小和编译器建议；初期优先覆盖已见的 `PH001`。 | 保留 hint 原文、位置和适用条件；只有源码快照身份可核实时才给源码行号。Hint 是线索，不是收益保证。 |
-| Dataflow | `buffer_pressure_check` | 汇总 `PH-MR-001` 等 Buffer/MemoryReuse 提示，并读取 scope statistics 中的 heap、task window、dep pool、TensorMap 统计。 | 当前无独立 Memory Report；只报告已采集的容量/占用事实和编译器观察，不推断全局内存瓶颈或未采集的容量。 |
-| Schedule | `dependency_path_check` | 从 `deps.json` 提取 Task/DAG 数量、依赖深度、扇入/扇出和结构性串行链。 | 没有经过验证的运行时权重时，只报告 DAG 结构；依赖链长不等于性能瓶颈。 |
-| Schedule | `dispatch_gap_check` | 从 swimlane 的 Task 时间戳和时钟锚点计算同一设备/执行流上的观测间隔，并保留时间单位与不确定度。 | 未区分的空白不能直接叫调度开销；跨卡比较仅在时钟归一化误差足够小时启用。 |
-| Schedule | `task_distribution_check` | 按 rank/device/core 汇总 Task 数、block 数和可用的持续时间分布，列出负载差异事实。 | 不用 Task 多、短或单卡时间较长直接判定负载不均；比较需限定在同一 Profile 和可比执行范围。 |
+| Compute | `compute_mapping_check` | 汇总归档中的 dispatch program、callable name map 与 kernel config 映射，并标出未经验证的 Candidate 源码关联。 | 没有 Candidate 源码清单连接时不猜源码位置；映射信息本身不是运行瓶颈。 |
+| Compute | `compute_unit_activity` | 按 build/rank/dispatch/core type 汇总 PMU 计数，并分页查看原始记录。 | PMU 是原始事件计数；没有校准的运行时分母，不据单项计数判定 Compute-bound。 |
+| Compute | `compute_task_share` | 仅在同一 dispatch 内 task、callable 和 AICore 关联校验通过时，按 task 汇总 PMU 计数；未关联行保留原因。 | 不把未验证的 ID 直接拼接，也不把 PMU 计数与 AICore 周期合并成时间占比。 |
+| Dataflow | `tile_access_check` | 统计编译器 Tile-access 提示类别，并保留提示原文、来源和位置明细。 | 编译提示只是线索；不保证收益，也不映射到未经验证的 Candidate 源码行。 |
+| Dataflow | `buffer_pressure_check` | 统计 MemoryReuse 提示与 Scope 中记录的原始字段及聚合值。 | 不是独立容量报告；不从静态 Scope 计数推断运行时内存压力或瓶颈。 |
+| Dataflow | `tile_memory_allocation_summary` | 按归档产物、函数、memory space 与操作汇总编译期分配请求数和显式字节数。 | 静态请求之和不表示运行时存活量、峰值占用、容量压力、spill 或瓶颈。 |
+| Schedule | `dependency_path_check` | 汇总依赖图 task、node、edge 等结构事实，并分页查看 task/edge 明细。 | 依赖图不含 runtime 权重；结构关系不直接代表延迟或瓶颈。 |
+| Schedule | `dispatch_gap_check` | 在身份覆盖通过的同核 AICore 区间间统计正向周期间隔。 | 间隔不直接归因于调度；没有完整 AICore/AICPU 配对覆盖时不生成该项观测。 |
+| Schedule | `task_distribution_check` | 按 rank/dispatch/core 汇总 AICore 物理记录、原始 task token 与区间周期。 | 不由 task 数量或区间总和推断忙碌时间或负载均衡。 |
 
 所有当前 Tool 使用同一事实结果契约：Profile 身份、观测与单位、来源覆盖、来源引用及解释限制。结果不使用 `finding` 等诊断状态，不输出统一严重度、根因置信分或预计加速比。高基数明细通过不透明 Cursor 逐页访问，保持摘要完整。
 
 Stage 2 的九项是历史诊断目标。`pipeline_overlap_check` 没有独立的 runtime overlap 观测：PMU 的 MTE busy-cycle 是汇总计数，Runtime 与 merged trace 不提供可配对的 MTE 起止区间，`pipeline_profile.json` 记录编译 Pass 时间。普通 task 起止区间不能代替 compute/MTE 阶段区间。现有 Case 不能补出采集器没有产生的字段；需 PTOBench 先定义共同时间基准和关联身份后再考虑恢复。
 
-## 3. 先用现有 Profile 检查当前八项
+## 3. 现有 Profile 的离线核验
 
-1. 核对 Profile 事件、Candidate 快照、设备、软件和编译配置身份，确定各工具可读取的确切归档。
-2. 从 16 份数据中挑选单卡、2 卡和 8 卡样本，运行当前八项离线诊断；记录字段覆盖率、解析稳定性、来源可追溯性、跨文件关联是否成立，以及结果是否能回答对应 Tuner 的问题。
-3. 对每项 Tool 标记 `可用`、`需关联验证`、`当前无证据`。用原始 Profile 人工核对输出，不把单个 Case 的数值设成通用阈值。
-4. 只有实际结果暴露出具体缺口后，才选择下一批 Case。离线解析、Fixture 和报告复核都不产生硬件动作。
+1. Stage 3/4 已核对 Profile event、Candidate digest、设备覆盖和归档身份，并在 16 份既有归档上运行当前工具集合。
+2. 回放记录了来源覆盖、分页数、摘要事实 digest 和哈希前后检查；单卡、2 卡和 8 卡样本用于检查高明细与多 rank 情况。
+3. `pipeline_overlap_check` 仍因缺少可关联的 Compute/MTE 起止区间而停用；`buffer_pressure_check` 相对 Stage 2 的 Scope observations 有变化，历史报告未保存观测名称和值，不能声称逐字段历史一致。
+4. Stage 4 CPU-only 回放不产生硬件动作。需要新 Profile 时，必须先确认现有采集器能产生具体缺失字段。
 
 ## 4. 根据结果选择下一批 Case
 
@@ -89,10 +101,10 @@ Basic Pi 每个 Case 至少保留起始 Candidate 的 Profile，并在有代表�
 
 若要验证 PTOAnalyzer 是否减少无效尝试，后续再做小规模配对：同一 Basic Pi、相同起始 Candidate、Case、模型和 PTOBench 预算，只改变 Agent 看到原始 Profile 还是角色化 Tool 结果；比较有效/无效尝试、硬件动作、最终 `evaluate`、Token 和墙钟时间。两组的 Profile 配置与次数保持一致。
 
-## 5. 进入 Tool 实现的条件
+## 5. 后续工具与采集变更门槛
 
-- 当前八项 Tool 的输入证据、来源引用和限制都有明确契约；已知的 Task ID、时钟、单位或窗口问题不会被隐藏。
-- 先实现字段与证据最可靠的诊断；其余 Tool 可以保留为有明确信息的 `insufficient_evidence`/`unsupported`，待目标 Case 补齐证据再启用。
+- 当前九项 Tool 均已实现；后续新增或重建诊断前，先明确输入证据、来源引用和限制，不隐藏已知的 Task ID、时钟、单位或窗口问题。
+- 优先使用已归档且语义可靠的字段；缺失证据应显式记录，不用零值或未经验证的跨源关联替代。
 - Parser 只规范化当前 Tool 实际需要的字段；大型 IR、Timeline 按需读取。原始 Profile 保持只读，Tool 不调用 PTOBench、不连接 NPU、不维护硬件账本。
 - Basic 或 PTOBench 的额外硬件运行必须由 Runner/PTOBench 正常执行并计数；离线 Analyzer 运行不产生硬件动作。
 
