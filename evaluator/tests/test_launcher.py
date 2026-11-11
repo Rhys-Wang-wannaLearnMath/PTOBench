@@ -19,14 +19,15 @@ from pathlib import Path
 if '--version' in sys.argv:
     print('fake-tool 1.0'); sys.exit()
 if '--help' in sys.argv:
-    print('--skip-git-repo-check --dangerously-bypass-approvals-and-sandbox --dangerously-skip-permissions --print --json --model --provider --thinking --mode --session-dir'); sys.exit()
-c=json.loads(Path(os.environ['S5_CONTROL']).read_text())
-root=Path(os.environ['PTOBENCH_SESSION_ROOT'])
-if (root/'method/README.md').is_file():
+    print('--skip-git-repo-check --dangerously-bypass-approvals-and-sandbox --dangerously-skip-permissions --print --json --model --provider --thinking --mode --session-dir --test-control-json'); sys.exit()
+c=(json.loads(sys.argv[sys.argv.index('--test-control-json')+1])
+   if '--test-control-json' in sys.argv else json.loads(Path(os.environ['S5_CONTROL']).read_text()))
+root=Path(os.environ['PTOBENCH_SESSION_ROOT']) if 'PTOBENCH_SESSION_ROOT' in os.environ else None
+if root is not None and (root/'method/README.md').is_file():
     assert str(root/'method/README.md') in sys.argv[-1]
     references=json.loads((root/'method/knowledge.json').read_text())
     assert (root/references['snapshot']/'README.md').read_text()
-backend=os.environ['PTOBENCH_AGENT_BACKEND']
+backend=os.environ.get('PTOBENCH_AGENT_BACKEND', 'pi' if '--session-dir' in sys.argv else 'codex')
 identity=str(uuid.uuid4())
 if backend in ('codex','pi') and not c.get('missing_session'):
     if backend=='codex':
@@ -39,9 +40,10 @@ if backend in ('codex','pi') and not c.get('missing_session'):
         print(json.dumps(header),flush=True)
     native.parent.mkdir(parents=True,exist_ok=True)
     native.write_text(json.dumps(header)+'\n'+json.dumps({'type':'message','message':{'role':'assistant','content':'native history','usage':{'input':12,'output':3}}})+'\n')
-Path(c['seen']).write_text(json.dumps({'argv':sys.argv,'cwd':os.getcwd(),
-    'environment':{k:v for k,v in os.environ.items() if k.startswith('PTOBENCH_')},
-    'cli':shutil.which('ptobench') if False else str(Path(os.environ['PATH'].split(os.pathsep)[0])/'ptobench')}))
+if c.get('seen'):
+    Path(c['seen']).write_text(json.dumps({'argv':sys.argv,'cwd':os.getcwd(),
+        'environment':{k:v for k,v in os.environ.items() if k.startswith('PTOBENCH_')},
+        'cli':shutil.which('ptobench') if False else str(Path(os.environ['PATH'].split(os.pathsep)[0])/'ptobench')}))
 print('optimizer stdout',flush=True); print('optimizer stderr',file=sys.stderr,flush=True)
 if c.get('huge'):
     os.write(1,b'O'*262144+b'\n'); os.write(2,b'E'*262144+b'\n')
@@ -148,6 +150,20 @@ class LauncherTests(ActionTestBase):
             'output':{'runs_root':'launcher_runs','snapshots_root':'launcher_snapshots'},
             'budget':{'max_hardware_actions':budget,'finish_actions':1}}))
 
+    def isolate_fake_agent(self):
+        import yaml
+        self.env['PTOBENCH_SANDBOX'] = '1'
+        control = json.loads(self.launcher_control.read_text())
+        for name in ('seen', 'ready', 'go', 'child', 'child_pid', 'worker_pid'):
+            control.pop(name, None)
+        profile_path = self.bench / 'modes/_shared/profiles/pi/default.yaml'
+        profile = yaml.safe_load(profile_path.read_text())
+        position = profile['argv'].index('{prompt}')
+        profile['argv'][position:position] = [
+            '--test-control-json', json.dumps(control, separators=(',', ':')),
+        ]
+        profile_path.write_text(yaml.safe_dump(profile))
+
     def launch(self, asynchronous=False):
         command = [self.python,str(self.bench / 'pto-launcher'),'run',str(self.config)]
         if asynchronous:
@@ -221,8 +237,8 @@ class LauncherTests(ActionTestBase):
         self.assertEqual(manifest['roots']['participant_knowledge']['group'], 'agent_archive')
         self.assertEqual(json.loads((root / 'method/knowledge.json').read_text()), {'enabled': True})
 
-    def test_four_adapters_real_cli_all_five_operations(self):
-        for backend in ('codex','claudecode','pi','opencode'):
+    def test_three_adapters_real_cli_all_five_operations(self):
+        for backend in ('codex','claudecode','opencode'):
             with self.subTest(backend=backend):
                 self.launcher_config(backend,mode='all')
                 p,value=self.launch()
@@ -246,65 +262,64 @@ class LauncherTests(ActionTestBase):
                 self.assertIn('optimizer stderr',(root/'process.log').read_text())
                 self.assertEqual(json.loads((root/'backend.json').read_text())['backend']['version'],'fake-tool 1.0')
 
-    def test_basic_codex_pi_profiles_baseline_and_native_history(self):
-        for backend in ('codex', 'pi'):
-            with self.subTest(backend=backend):
-                self.launcher_config(backend, mode='all', experiment_mode='basic')
-                p, value = self.launch()
-                self.assertEqual(p.returncode, 0, (value, p.stderr.decode()))
-                root, final = self.assert_final(value, 2)
-                record = session.read_session(root)
-                self.assertEqual(record['mode']['id'], 'basic')
-                self.assertEqual(record['profiling_modes'], ['combined'])
-                self.assertEqual(json.loads((root/'baseline.json').read_text())['fixtures']['fixture_000']['median_effective_us'], 1.0)
-                self.assertNotIn('First run ptobench evaluate', (root/'prompt.txt').read_text())
-                protection=json.loads((root/'protection/manifest.json').read_text())
-                self.assertNotIn('participant_reference_knowledge', protection['roots'])
-                self.assertFalse((root/'method/resources/raw_wiki').exists())
-                self.assertFalse((root/'method/README.md').exists())
-                self.assertFalse((root/'method/knowledge.json').exists())
-                self.assertNotIn('automatically selects', (root/'prompt.txt').read_text())
-                native = json.loads((root/'agent/session.json').read_text())
-                self.assertEqual(native['status'], 'recorded')
-                self.assertEqual(native['run_id'], root.name)
-                history = root/native['files'][0]['path']
-                self.assertIn('native history', history.read_text())
-                self.assertIn('"input": 12', history.read_text())
-                self.assertTrue((root/'agent/events.jsonl').is_file())
-                self.assertIn('python', json.loads((root/'environment.json').read_text()))
-                for worker in record['workspaces'].values():
-                    context = root/worker['path']/'.benchmark_context'
-                    self.assertFalse((context/'profiling_modes.json').exists())
-                    self.assertFalse((context/'fixture_catalog.json').exists())
-                    self.assertIn('ptobench profile .', (context/'README.md').read_text())
-                    self.assertFalse((root/worker['path']/'raw_wiki').exists())
-                env = {**self.env, 'PTOBENCH_SESSION_ROOT': str(root)}
-                help_result = subprocess.run([self.python, str(self.bench/'ptobench'), '--help'], env=env,
-                                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10)
-                self.assertEqual(help_result.returncode, 0)
-                self.assertIn('profile', help_result.stdout.decode())
-                events = [json.loads(line) for line in (root/'events.jsonl').read_text().splitlines()]
-                self.assertTrue(all(event['run_id'] == root.name for event in events))
-                measured = [event for event in events if event['hardware_action']]
-                self.assertEqual(len(measured), 3)  # evaluate, combined profile and finish
-                attempts = [event for event in events if event.get('attempt_id') is not None]
-                self.assertEqual([event['attempt_id'] for event in attempts], [1, 2, 3])
-                self.assertEqual(next(event for event in events if event['action'] == 'fork')['seq'], 2)
-                self.assertNotIn('attempt_id', next(event for event in events if event['action'] == 'fork'))
-                run = json.loads((root/'launcher_result.json').read_text())['run']
-                self.assertEqual((run['agent'], run['backend']), ('basic', backend))
-                self.assertEqual(run['counts'], {
-                    'attempts': 3, 'check_calls': 2, 'bench_calls': 2,
-                    'profile_calls': 1, 'fork_events': 1,
-                })
-                self.assertEqual(run['hardware_usage']['total_actions'], 3)
-                self.assertEqual(run['token_usage']['input_tokens'], 12)
-                self.assertEqual(run['token_usage']['output_tokens'], 3)
-                self.assertEqual(run['token_usage']['reported_total_tokens'], 15)
-                for event in measured:
-                    self.assertIn('started_at', event)
-                    index = json.loads((root/event['artifact_index']).read_text())
-                    self.assertTrue((root/index['candidate_snapshot']/'candidate/candidate.py').is_file())
+    def test_basic_codex_profiles_baseline_and_native_history(self):
+        backend = 'codex'
+        self.launcher_config(backend, mode='all', experiment_mode='basic')
+        p, value = self.launch()
+        self.assertEqual(p.returncode, 0, (value, p.stderr.decode()))
+        root, final = self.assert_final(value, 2)
+        record = session.read_session(root)
+        self.assertEqual(record['mode']['id'], 'basic')
+        self.assertEqual(record['profiling_modes'], ['combined'])
+        self.assertEqual(json.loads((root/'baseline.json').read_text())['fixtures']['fixture_000']['median_effective_us'], 1.0)
+        self.assertNotIn('First run ptobench evaluate', (root/'prompt.txt').read_text())
+        protection=json.loads((root/'protection/manifest.json').read_text())
+        self.assertNotIn('participant_reference_knowledge', protection['roots'])
+        self.assertFalse((root/'method/resources/raw_wiki').exists())
+        self.assertFalse((root/'method/README.md').exists())
+        self.assertFalse((root/'method/knowledge.json').exists())
+        self.assertNotIn('automatically selects', (root/'prompt.txt').read_text())
+        native = json.loads((root/'agent/session.json').read_text())
+        self.assertEqual(native['status'], 'recorded')
+        self.assertEqual(native['run_id'], root.name)
+        history = root/native['files'][0]['path']
+        self.assertIn('native history', history.read_text())
+        self.assertIn('"input": 12', history.read_text())
+        self.assertTrue((root/'agent/events.jsonl').is_file())
+        self.assertIn('python', json.loads((root/'environment.json').read_text()))
+        for worker in record['workspaces'].values():
+            context = root/worker['path']/'.benchmark_context'
+            self.assertFalse((context/'profiling_modes.json').exists())
+            self.assertFalse((context/'fixture_catalog.json').exists())
+            self.assertIn('ptobench profile .', (context/'README.md').read_text())
+            self.assertFalse((root/worker['path']/'raw_wiki').exists())
+        env = {**self.env, 'PTOBENCH_SESSION_ROOT': str(root)}
+        help_result = subprocess.run([self.python, str(self.bench/'ptobench'), '--help'], env=env,
+                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=10)
+        self.assertEqual(help_result.returncode, 0)
+        self.assertIn('profile', help_result.stdout.decode())
+        events = [json.loads(line) for line in (root/'events.jsonl').read_text().splitlines()]
+        self.assertTrue(all(event['run_id'] == root.name for event in events))
+        measured = [event for event in events if event['hardware_action']]
+        self.assertEqual(len(measured), 3)  # evaluate, combined profile and finish
+        attempts = [event for event in events if event.get('attempt_id') is not None]
+        self.assertEqual([event['attempt_id'] for event in attempts], [1, 2, 3])
+        self.assertEqual(next(event for event in events if event['action'] == 'fork')['seq'], 2)
+        self.assertNotIn('attempt_id', next(event for event in events if event['action'] == 'fork'))
+        run = json.loads((root/'launcher_result.json').read_text())['run']
+        self.assertEqual((run['agent'], run['backend']), ('basic', backend))
+        self.assertEqual(run['counts'], {
+            'attempts': 3, 'check_calls': 2, 'bench_calls': 2,
+            'profile_calls': 1, 'fork_events': 1,
+        })
+        self.assertEqual(run['hardware_usage']['total_actions'], 3)
+        self.assertEqual(run['token_usage']['input_tokens'], 12)
+        self.assertEqual(run['token_usage']['output_tokens'], 3)
+        self.assertEqual(run['token_usage']['reported_total_tokens'], 15)
+        for event in measured:
+            self.assertIn('started_at', event)
+            index = json.loads((root/event['artifact_index']).read_text())
+            self.assertTrue((root/index['candidate_snapshot']/'candidate/candidate.py').is_file())
 
     def test_reserved_methods_fail_before_creating_run(self):
         for mode in ('ours',):
@@ -313,24 +328,6 @@ class LauncherTests(ActionTestBase):
             self.assertEqual(p.returncode, 2)
             self.assertIn('not implemented', value['message'])
             self.assertFalse(self.runs.exists())
-
-    def test_basic_has_no_wiki_injection_and_uses_mode_provider(self):
-        self.launcher_config('pi', budget='unlimited', experiment_mode='basic')
-        process, result = self.launch()
-        self.assertEqual(process.returncode, 0, (result, process.stderr.decode()))
-        root, _ = self.assert_final(result)
-        self.assertFalse((root / 'method/resources/raw_wiki').exists())
-        self.assertFalse((root / 'method/README.md').exists())
-        self.assertFalse((root / 'method/knowledge.json').exists())
-        self.assertNotIn('participant_reference_knowledge',
-                         json.loads((root / 'protection/manifest.json').read_text())['roots'])
-        frozen = json.loads((root / 'profile.json').read_text())
-        self.assertEqual(frozen['model'], 'test-provider/test-model')
-        self.assertEqual(frozen['reasoning'], 'high')
-        self.assertNotIn('raw_wiki', (root / 'prompt.txt').read_text())
-        record = session.read_session(root)
-        self.assertEqual(record['budget']['max_hardware_actions'], 'unlimited')
-        self.assertEqual(record['budget']['finish_actions'], 1)
 
     def test_independent_method_runs_without_basic_instructions_or_known_backend(self):
         import yaml

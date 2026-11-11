@@ -6,14 +6,12 @@ import os
 from pathlib import Path
 import re
 import shutil
-import signal
 import socket
 import subprocess
 import sys
 import threading
 import tempfile
 import time
-from urllib.parse import urlsplit
 
 import common
 sys.path.insert(0, str(common.BENCHMARK_ROOT))
@@ -22,64 +20,6 @@ import isolation
 import session
 import workspace
 
-
-def model_api_endpoint(profile):
-    """Resolve the one external host the selected Agent needs for model calls."""
-    backend = profile['backend']
-    base_url = (profile.get('mode_provider') or {}).get('base_url')
-    if backend == 'codex':
-        from modes._shared import recording
-        settings = recording.host_settings(profile)
-        selected = recording.option(profile['argv'], '--profile') or recording.option(profile['argv'], '-p')
-        if selected:
-            settings = {**settings, **settings.get('profiles', {}).get(selected, {})}
-        provider_name = settings.get('model_provider', 'openai')
-        for index, argument in enumerate(profile['argv'][:-1]):
-            if argument in ('-c', '--config') and profile['argv'][index + 1].startswith('model_provider='):
-                provider_name = profile['argv'][index + 1].split('=', 1)[1].strip().strip('"\'')
-        base_url = settings.get('model_providers', {}).get(provider_name, {}).get('base_url')
-        if not base_url and provider_name == 'openai':
-            base_url = 'https://api.openai.com/v1'
-    elif backend == 'pi' and not base_url:
-        from modes._shared import recording
-        provider_name = recording.option(profile['argv'], '--provider')
-        selected_model = profile.get('model', '')
-        if not provider_name and '/' in selected_model:
-            provider_name = selected_model.split('/', 1)[0]
-        config_dir = recording.config_directory(profile)
-        try:
-            config = json.loads((config_dir / 'models.json').read_text())
-            providers = config.get('providers', {})
-            if not provider_name:
-                provider_name = json.loads((config_dir / 'settings.json').read_text()).get('defaultProvider')
-            base_url = providers.get(provider_name, {}).get('baseUrl')
-        except (OSError, ValueError):
-            pass
-        if (not base_url and '{repo_root}/benchmarks/mig_workflow/agent_provider/launch.py'
-                in profile['argv']):
-            config = json.loads((common.REPO_ROOT / 'benchmarks/mig_workflow/agent_provider/pi/models.json').read_text())
-            provider_name = provider_name or 'provider-default'
-            base_url = config['providers'][provider_name]['baseUrl']
-    elif backend == 'opencode' and not base_url:
-        config_path = profile.get('env', {}).get('OPENCODE_CONFIG')
-        if not config_path:
-            config_path = common.REPO_ROOT / 'benchmarks/mig_workflow/agent_provider/opencode.json'
-        try:
-            config = json.loads(Path(config_path).read_text())
-            base_url = next(iter(config['provider'].values()))['options']['baseURL']
-        except (OSError, ValueError, KeyError, StopIteration):
-            pass
-    elif backend == 'claudecode' and not base_url:
-        base_url = profile.get('env', {}).get('ANTHROPIC_BASE_URL') or 'https://api.anthropic.com'
-
-    try:
-        parsed = urlsplit(base_url or '')
-        if (parsed.scheme not in ('http', 'https') or not parsed.hostname
-                or parsed.username or parsed.password):
-            raise ValueError()
-        return parsed.hostname, parsed.port or (443 if parsed.scheme == 'https' else 80)
-    except ValueError as error:
-        raise RuntimeError('cannot resolve the configured Agent model API endpoint') from error
 
 
 def copy_tree(source, target):
@@ -301,125 +241,6 @@ class Broker:
                         pass
 
 
-def run_legacy(method_path, request_path):
-    request_path = Path(request_path)
-    request = json.loads(request_path.read_text())
-    root = Path(request['context']['session_root'])
-    private = common.BENCHMARK_ROOT / '.ptobench/isolation' / root.name
-    private.mkdir(parents=True, exist_ok=False, mode=0o700)
-    broker = Broker(root, private)
-    runtime = isolation.copy_runtime(private / 'runtime')
-    view = isolation.View(isolate_network=True).system().native_agent()
-    isolation.runtime_mounts(view, runtime)
-    # Only this run's public invocation records are visible, independently of
-    # canonical protected records and the host method configuration.
-    for name in ('method_request.json', 'prompt.txt', 'profile.json', 'mode.json'):
-        source = root / name
-        if source.exists():
-            target = broker.view / name
-            shutil.copyfile(source, target)
-            view.add(target, source)
-    for name in ('agent', 'method'):
-        copy_tree(root / name, broker.view / name)
-        (broker.view / name).mkdir(exist_ok=True)
-    view.add(broker.view / 'method', root / 'method')
-    for relative in ('agent', 'method/work', 'method/dispatches', 'method/tools', 'method/agent'):
-        target = broker.view / relative
-        target.mkdir(parents=True, exist_ok=True)
-        view.add(target, root / relative, write=True)
-    view.add(broker.exports, root / 'workspaces')
-    view.add(broker.candidates, '/ptobench/candidates', write=True)
-    view.add(broker.public, '/ptobench/public')
-    view.add(broker.sockpath, '/ptobench/cli.sock')
-    proxy_directory = tempfile.TemporaryDirectory(prefix='ptb-')
-    proxy_socket = Path(proxy_directory.name) / 'proxy.sock'
-    host, port = model_api_endpoint(request['preflight']['profile'])
-    view.network_allowlist = {'host': host, 'port': port}
-    view.add(proxy_socket.parent, '/ptobench/network')
-    client = private / 'ptobench-client'
-    shutil.copyfile(common.BENCHMARK_ROOT / 'evaluator/sandbox_client.py', client)
-    client.chmod(0o755)
-    view.add(client, common.BENCHMARK_ROOT / 'ptobench')
-    env = isolation.clean_environment(agent=True)
-    env.update(PTOBENCH_RPC_SOCKET='/ptobench/cli.sock', PTOBENCH_BWRAP=isolation.executable(),
-               PI_CODING_AGENT_DIR=str(root / 'agent/pi'),
-               CODEX_HOME=str(root / 'agent/codex'), PTOBENCH_PROVIDER_PREPARED='1',
-               HTTP_PROXY='http://127.0.0.1:18080', HTTPS_PROXY='http://127.0.0.1:18080',
-               http_proxy='http://127.0.0.1:18080', https_proxy='http://127.0.0.1:18080',
-               NO_PROXY='localhost,127.0.0.1,::1', no_proxy='localhost,127.0.0.1,::1',
-               NODE_OPTIONS='--use-env-proxy')
-    from modes._shared import provider, recording
-    profile = request['preflight']['profile']
-    for argument in profile['argv']:
-        p = Path(argument.replace('{repo_root}', str(common.REPO_ROOT)))
-        if p.is_absolute() and p.is_file():
-            view.add(p)
-    env.update(provider.credentials(profile))
-    if profile['backend'] == 'codex':
-        old = recording.config_directory(profile)
-        destination = broker.view / 'agent/codex'
-        destination.mkdir(exist_ok=True)
-        for filename in ('auth.json', 'config.toml'):
-            if (old / filename).is_file():
-                shutil.copyfile(old / filename, destination / filename)
-    (root / 'filesystem_isolation.json').write_text(json.dumps(view.manifest(), indent=2) + '\n')
-    proxy_environment = {'PATH': os.environ.get('PATH', '/usr/bin:/bin'), 'LANG': 'C.UTF-8'}
-    proxy = subprocess.Popen([sys.executable, str(common.BENCHMARK_ROOT / 'evaluator/network_proxy.py'),
-        'serve', '--socket', str(proxy_socket), '--host', host, '--port', str(port)],
-        cwd=private, env=proxy_environment, stdin=subprocess.DEVNULL,
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    for _ in range(100):
-        if proxy.poll() is not None:
-            raise RuntimeError('model API proxy did not start')
-        try:
-            probe = socket.socket(socket.AF_UNIX)
-            probe.connect(str(proxy_socket))
-            probe.close()
-            break
-        except OSError:
-            time.sleep(.02)
-    else:
-        proxy.terminate()
-        proxy.wait(timeout=5)
-        proxy_directory.cleanup()
-        raise RuntimeError('model API proxy did not become ready')
-    thread = threading.Thread(target=broker.serve, daemon=True)
-    thread.start()
-    bridge = common.BENCHMARK_ROOT / 'evaluator/network_proxy.py'
-    argv = view.argv([sys.executable, str(bridge), 'agent', '--socket', '/ptobench/network/proxy.sock', '--',
-                      sys.executable, method_path, 'run', request_path],
-                     cwd=request['context']['workspace'], environment=env)
-    process = None
-    def stop(signum, frame):
-        if process and process.poll() is None:
-            process.terminate()
-    previous = {sig: signal.signal(sig, stop) for sig in (signal.SIGTERM, signal.SIGINT)}
-    try:
-        process = subprocess.Popen(argv, stdin=subprocess.DEVNULL)
-        code = process.wait()
-    finally:
-        if process and process.poll() is None:
-            process.terminate()
-            process.wait()
-        broker.stop.set()
-        if broker.child and broker.child.poll() is None:
-            broker.child.terminate()
-        thread.join(timeout=5)
-        broker.server.close()
-        broker.ipc.cleanup()
-        proxy.terminate()
-        try:
-            proxy.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            proxy.kill()
-            proxy.wait()
-        proxy_directory.cleanup()
-        for relative in ('agent/native', 'agent/codex/sessions', 'method/work', 'method/dispatches', 'method/tools', 'method/agent'):
-            copy_tree(broker.view / relative, root / relative)
-        for sig, handler in previous.items():
-            signal.signal(sig, handler)
-    return code
-
 
 def wait_for_socket(process, path, name):
     for _ in range(100):
@@ -532,11 +353,8 @@ def run_private_pi(method_path, request_path, request):
 def run(method_path, request_path):
     request = json.loads(Path(request_path).read_text())
     profile = request.get('preflight', {}).get('profile', {})
-    if isolation.enabled() and profile.get('backend') == 'pi':
-        if not profile.get('mode_provider'):
-            raise RuntimeError('isolated Pi requires the mode-local model API gateway configuration')
-        return run_private_pi(method_path, request_path, request)
-    return run_legacy(method_path, request_path)
+    isolation.require_agent_isolation(profile)
+    return run_private_pi(method_path, request_path, request)
 
 
 if __name__ == '__main__':

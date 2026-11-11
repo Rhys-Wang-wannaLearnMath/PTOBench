@@ -84,7 +84,7 @@ class PortabilityTests(unittest.TestCase):
     def test_standalone_sessions_external_assets_and_backend_fallback(self):
         # Reuse the controlled CPU Case, but launch the real CLI from / after
         # moving the entire control tree to PTOBench and assets elsewhere.
-        fixture = launcher_tests.LauncherTests('test_four_adapters_real_cli_all_five_operations')
+        fixture = launcher_tests.LauncherTests('test_three_adapters_real_cli_all_five_operations')
         self.addCleanup(fixture.doCleanups)
         fixture.setUp()
         bench = fixture.repo / 'PTOBench'
@@ -117,7 +117,17 @@ class PortabilityTests(unittest.TestCase):
                 settings = yaml.safe_load(profile.read_text())
                 settings.pop('context_window', None)
                 settings.pop('max_output_tokens', None)
+                if backend == 'pi':
+                    for key in ('argv', 'version_argv', 'help_argv'):
+                        settings[key][0] = str(tools / backend)
                 profile.write_text(yaml.safe_dump(settings))
+                if backend == 'pi':
+                    (bench / 'modes/diagnostic_test/.env').write_text(
+                        'LLM_PROVIDER=test-provider\nLLM_BASE_URL=http://127.0.0.1:8765/v1\n'
+                        'LLM_API=openai-completions\nLLM_MODEL=test-model\nLLM_API_KEY=test-key\n')
+                    fixture.isolate_fake_agent()
+                else:
+                    fixture.env['PTOBENCH_SANDBOX'] = '0'
                 with mock.patch.dict(os.environ, {'PTOBENCH_SEALED_ROOT': str(assets)}):
                     process, value = fixture.launch()
                     self.assertEqual(process.returncode, 0, (value, process.stderr.decode()))
@@ -126,8 +136,12 @@ class PortabilityTests(unittest.TestCase):
                     record = json.loads((root / 'session.json').read_text())
                     self.assertEqual(Path(record['sealed_dir']).parents[1], assets)
                     actual = json.loads((root / 'profile.json').read_text())
-                    self.assertEqual(actual['argv'][0], backend)
-                    self.assertNotIn('model', actual)
+                    if backend == 'pi':
+                        self.assertEqual(actual['argv'][0], str(tools / backend))
+                        self.assertEqual(actual['model'], 'test-provider/test-model')
+                    else:
+                        self.assertEqual(actual['argv'][0], backend)
+                        self.assertNotIn('model', actual)
 
 
 if __name__ == '__main__':

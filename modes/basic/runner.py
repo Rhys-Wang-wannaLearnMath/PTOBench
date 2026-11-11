@@ -61,11 +61,14 @@ def run(request):
     prompt = (run_root / 'prompt.txt').read_text()
     argv, additions = render(profile, context['workspace'], run_root, prompt)
     environment = {**os.environ, **additions, **provider.credentials(profile)}
-    if profile['backend'] == 'pi' and profile.get('mode_provider') and isolation.enabled():
+    if profile.get('backend') == 'pi' or isolation.enabled():
+        isolation.require_agent_isolation(profile)
         argv, environment = isolation.agent_command(
             argv, cwd=context['workspace'], environment=environment,
             workspace=context['workspace'], session_root=run_root,
         )
+        import agent_launch
+        return agent_launch.run_process(argv, cwd=context['workspace'], environment=environment)
     os.execvpe(argv[0], argv, environment)
 
 
@@ -86,6 +89,8 @@ def main():
         operation, filename = sys.argv[1:]
         request = json.loads(Path(filename).read_text())
         result = {'preflight': preflight, 'prepare': prepare, 'run': run, 'collect': collect}[operation](request)
+        if operation == 'run':
+            return result if type(result) is int else 0
         print(json.dumps(result, ensure_ascii=False, allow_nan=False))
         return 0
     except Exception as error:

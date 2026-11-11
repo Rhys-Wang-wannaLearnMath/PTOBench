@@ -1,7 +1,7 @@
 """OS-enforced, default-deny filesystem views shared by every mode and Case.
 
-PTOBENCH_SANDBOX=0 is a trusted harness/maintenance escape hatch, never forwarded
-from an Agent request. Production Launcher and evaluation default to isolation.
+PTOBENCH_SANDBOX=0 is a trusted non-Pi harness escape hatch, never forwarded from
+an Agent request. Pi Agent launch paths always require isolation.
 """
 from __future__ import annotations
 
@@ -11,7 +11,6 @@ import grp
 import json
 import os
 from pathlib import Path
-import pwd
 import shutil
 import stat
 import subprocess
@@ -27,6 +26,7 @@ POLICY_VERSION = 2
 RUNTIME_MODE_DIRS = common.MODE_SOURCE_DIRS
 LOCAL_MODEL_KEY = 'ptobench-local-model-gateway'
 _EMPTY_RUNTIME = tempfile.TemporaryDirectory(prefix='ptobench-empty-')
+Path(_EMPTY_RUNTIME.name).chmod(0o711)
 (Path(_EMPTY_RUNTIME.name) / 'include').mkdir()
 (Path(_EMPTY_RUNTIME.name) / 'pkg_inc').mkdir()
 (Path(_EMPTY_RUNTIME.name) / 'passwd').write_text(
@@ -38,19 +38,20 @@ def enabled():
     return os.environ.get('PTOBENCH_SANDBOX', '1') != '0'
 
 
+def require_agent_isolation(profile):
+    if not isinstance(profile, dict) or profile.get('backend') != 'pi':
+        raise RuntimeError('only Pi Agent is supported by the isolated launcher')
+    if not enabled():
+        raise RuntimeError('Pi Agent requires filesystem isolation')
+    if not profile.get('mode_provider'):
+        raise RuntimeError('isolated Pi requires the mode-local model API gateway configuration')
+
+
 def executable():
-    candidates = [os.environ.get('PTOBENCH_BWRAP'), shutil.which('bwrap')]
-    architecture = 'arm64' if os.uname().machine == 'aarch64' else 'x64'
-    triple = 'aarch64' if architecture == 'arm64' else 'x86_64'
-    candidates.append(Path.home() / ('.local/npm/lib/node_modules/@openai/codex/node_modules/'
-        f'@openai/codex-linux-{architecture}/vendor/{triple}-unknown-linux-musl/codex-resources/bwrap'))
-    # An installed native Agent may ship a standalone bwrap. No Agent config,
-    # authentication, skills or HOME directories are mounted with this binary.
-    candidates += list(Path.home().glob(
-        '.local/npm/lib/node_modules/@openai/codex/node_modules/*/vendor/*/codex-resources/bwrap'))
-    for value in candidates:
-        if value and Path(value).is_file() and os.access(value, os.X_OK):
-            return str(Path(value).resolve())
+    import agent_launch
+    value = agent_launch._system_binary('bwrap')
+    if value:
+        return value
     raise RuntimeError('filesystem isolation requires bubblewrap; refusing unsandboxed execution')
 
 
@@ -95,11 +96,14 @@ def sandbox_launcher_environment(environment):
     return {key: environment[key] for key in ('PATH',) if key in environment}
 
 
-def _agent_shared_directory(path, mode=0o2770):
+def _agent_shared_directory(path, mode=0o2770, group_id=None):
     path = Path(path)
     metadata = path.stat()
-    if metadata.st_uid != os.getuid() or metadata.st_gid != os.getgid():
+    expected_gid = os.getgid() if group_id is None else group_id
+    if metadata.st_uid != os.getuid():
         raise RuntimeError(f'Agent shared directory must be owned by the Broker UID/GID: {path}')
+    if metadata.st_gid != expected_gid:
+        os.chown(path, -1, expected_gid)
     path.chmod(mode)
     return path
 
@@ -109,10 +113,12 @@ def _agent_shared_socket(path):
     metadata = path.lstat()
     if not stat.S_ISSOCK(metadata.st_mode) or metadata.st_uid != os.getuid():
         raise RuntimeError(f'Agent Broker endpoint must be a Broker-owned Unix socket: {path}')
-    if metadata.st_gid != os.getgid():
-        os.chown(path, -1, os.getgid())
+    import grp
+    share_gid = grp.getgrnam('ptobench-share').gr_gid
+    if metadata.st_gid != share_gid:
+        os.chown(path, -1, share_gid)
     path.chmod(0o660)
-    _agent_shared_directory(path.parent, 0o710)
+    _agent_shared_directory(path.parent, 0o710, group_id=share_gid)
     return path
 
 
@@ -160,56 +166,23 @@ def _candidate_location(view, workspace, candidate_pool):
     return resolved, guest_path
 
 
-def _prepare_candidate_startup_probe(candidate, guest_candidate):
-    account = pwd.getpwuid(os.getuid()).pw_name
-    denied_groups = {gid for gid in os.getgroups() if gid != os.getgid()}
-    denied_groups.update(group.gr_gid for group in grp.getgrall()
-                         if account in group.gr_mem and group.gr_gid != os.getgid())
-    if not denied_groups:
-        denied_groups.add(next((group.gr_gid for group in grp.getgrall()
-                               if group.gr_gid not in (0, os.getgid())), os.getgid() + 1))
-    token = uuid.uuid4().hex
-    read_canary = candidate / f'.ptobench-agent-startup-read-{token}'
-    denied_canary = candidate / f'.ptobench-agent-startup-dac-{token}'
-    marker = f'ptobench-agent-startup-{token}'
+def _exported_workspace(workspace, workspace_root, exported_workspaces):
+    """Map a Session workspace path to the Broker's exported workspace tree."""
     try:
-        for path, content, mode in ((read_canary, marker, 0o660),
-                                    (denied_canary, 'unreadable', 0o600)):
-            descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
-            try:
-                os.write(descriptor, content.encode())
-                os.fchmod(descriptor, mode)
-            finally:
-                os.close(descriptor)
-        setfacl = shutil.which('setfacl')
-        if not setfacl or not Path(setfacl).is_file() or not os.access(setfacl, os.X_OK):
-            raise RuntimeError('Candidate permission check requires the host setfacl utility')
-        acl = ','.join(f'g:{group_id}:r--' for group_id in sorted(denied_groups))
-        result = subprocess.run([setfacl, '-m', acl, str(denied_canary)],
-                                capture_output=True, text=True, timeout=5,
-                                env={'PATH': os.defpath})
-        if result.returncode:
-            raise RuntimeError(f'cannot create the Candidate DAC canary: {result.stderr.strip()}')
-    except Exception as error:
-        read_canary.unlink(missing_ok=True)
-        denied_canary.unlink(missing_ok=True)
-        if isinstance(error, RuntimeError):
-            raise
-        raise RuntimeError(f'Candidate permission check failed while creating canaries: {error}') from error
-    return {
-        'PTOBENCH_AGENT_STARTUP_CANDIDATE': guest_candidate,
-        'PTOBENCH_AGENT_STARTUP_READ_CANARY': str(Path(guest_candidate) / read_canary.name),
-        'PTOBENCH_AGENT_STARTUP_DAC_CANARY': str(Path(guest_candidate) / denied_canary.name),
-        'PTOBENCH_AGENT_STARTUP_MARKER': marker,
-        'PTOBENCH_AGENT_STARTUP_GROUPS': ','.join(map(str, sorted(denied_groups))),
-    }
+        relative = Path(workspace).resolve().relative_to(Path(workspace_root).resolve())
+    except ValueError as error:
+        raise RuntimeError('Agent workspace is outside registered Session workspaces') from error
+    if not relative.parts:
+        raise RuntimeError('Agent workspace must be a registered Session workspace')
+    return Path(exported_workspaces) / relative
 
 
 def install_pi_private_tools(directory):
     """Install trusted Pi guards in its private configuration directory."""
+    import grp
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True, mode=0o2770)
-    _agent_shared_directory(directory)
+    _agent_shared_directory(directory, group_id=grp.getgrnam('ptobench-share').gr_gid)
     for source_name, target_name in (
             ('pi_file_guard.mjs', 'ptobench-file-guard.mjs'),
             ('pi_shell_wrapper.py', 'ptobench-shell')):
@@ -234,6 +207,8 @@ def install_pi_private_tools(directory):
 def agent_command(command, *, cwd, environment, workspace, session_root,
                   cann_bot_extension=None, cann_bot_socket=None):
     """Build the verified host launcher and Bubblewrap command for an Agent."""
+    if not enabled():
+        raise RuntimeError('Pi Agent requires filesystem isolation')
     view = View(isolate_network=True).system().native_agent()
     workspace_root = Path(session_root) / 'workspaces'
     exported_workspaces = Path(environment.get('PTOBENCH_AGENT_WORKSPACE_ROOT', workspace_root))
@@ -244,9 +219,11 @@ def agent_command(command, *, cwd, environment, workspace, session_root,
     # Workspace roots remain read-only, so their Broker-owned links cannot move.
     view.add(exported_workspaces, workspace_root)
     view.add(candidate_pool, '/ptobench/candidates', write=True)
-    candidate_host, candidate_guest = _candidate_location(view, workspace, candidate_pool)
-    startup_environment = _prepare_candidate_startup_probe(candidate_host, candidate_guest)
+    agent_workspace = _exported_workspace(workspace, workspace_root, exported_workspaces)
+    _candidate_location(view, agent_workspace, candidate_pool)
     private_pi = Path(session_root) / 'agent/pi'
+    import agent_launch
+    agent_launch.ensure_request_directories(Path(session_root))
     install_pi_private_tools(private_pi)
     view.add(private_pi, '/ptobench/pi-private', write=True)
     public = environment.get('PTOBENCH_PUBLIC_DIR')
@@ -269,7 +246,8 @@ def agent_command(command, *, cwd, environment, workspace, session_root,
     # It deletes its temporary source before starting the Agent process.
     bridge_dir = Path(session_root) / 'agent/.runtime' / uuid.uuid4().hex
     bridge_dir.mkdir(parents=True, mode=0o2770)
-    _agent_shared_directory(bridge_dir)
+    import grp
+    _agent_shared_directory(bridge_dir, group_id=grp.getgrnam('ptobench-share').gr_gid)
     bridge = bridge_dir / 'network_proxy.py'
     shutil.copyfile(Path(__file__).with_name('network_proxy.py'), bridge)
     bridge.chmod(0o440)
@@ -295,7 +273,7 @@ def agent_command(command, *, cwd, environment, workspace, session_root,
             if not session_directory.is_absolute():
                 session_directory = Path(cwd) / session_directory
             session_directory.mkdir(parents=True, exist_ok=True, mode=0o2770)
-            _agent_shared_directory(session_directory)
+            _agent_shared_directory(session_directory, group_id=grp.getgrnam('ptobench-share').gr_gid)
             view.add(session_directory, '/ptobench/agent-sessions', write=True)
             command[index + 1] = '/ptobench/agent-sessions'
             session_directory_mounted = True
@@ -304,14 +282,14 @@ def agent_command(command, *, cwd, environment, workspace, session_root,
             if not session_directory.is_absolute():
                 session_directory = Path(cwd) / session_directory
             session_directory.mkdir(parents=True, exist_ok=True, mode=0o2770)
-            _agent_shared_directory(session_directory)
+            _agent_shared_directory(session_directory, group_id=grp.getgrnam('ptobench-share').gr_gid)
             view.add(session_directory, '/ptobench/agent-sessions', write=True)
             command[index] = '--session-dir=/ptobench/agent-sessions'
             session_directory_mounted = True
     if not session_directory_mounted:
         native_sessions = Path(session_root) / 'agent/native'
         native_sessions.mkdir(parents=True, exist_ok=True, mode=0o2770)
-        _agent_shared_directory(native_sessions)
+        _agent_shared_directory(native_sessions, group_id=grp.getgrnam('ptobench-share').gr_gid)
         view.add(native_sessions, '/ptobench/agent-sessions', write=True)
 
     is_pi = (Path(command[0]).name == 'pi'
@@ -341,7 +319,6 @@ def agent_command(command, *, cwd, environment, workspace, session_root,
         view.add(cann_bot_socket, '/ptobench/cannbot.sock')
 
     cleaned = agent_environment(environment)
-    cleaned.update(startup_environment)
     cleaned['PTOBENCH_RPC_SOCKET'] = '/ptobench/cli.sock'
     cleaned['PI_CODING_AGENT_DIR'] = '/ptobench/pi-private'
     cleaned['PTOBENCH_AGENT_SESSION_DIR'] = '/ptobench/agent-sessions'
@@ -351,19 +328,8 @@ def agent_command(command, *, cwd, environment, workspace, session_root,
     (Path(session_root) / 'filesystem_isolation.json').write_text(
         json.dumps(view.manifest(), indent=2) + '\n')
     bubblewrap = view.argv(command, cwd=cwd, environment=cleaned)
-    import agent_launch
-    launcher_path = (environment.get('PTOBENCH_AGENT_LAUNCH_PATH')
-                     or os.environ.get('PTOBENCH_AGENT_LAUNCH_PATH')
-                     or shutil.which('ptobench-agent-launch') or '')
-    try:
-        return agent_launch.prepare(
-            bubblewrap, cwd, Path(session_root) / 'agent/launcher', path=launcher_path)
-    except Exception:
-        for name in ('PTOBENCH_AGENT_STARTUP_READ_CANARY',
-                     'PTOBENCH_AGENT_STARTUP_DAC_CANARY'):
-            canary = Path(candidate_guest) / cleaned[name].rsplit('/', 1)[-1]
-            (candidate_host / canary.name).unlink(missing_ok=True)
-        raise
+    return agent_launch.prepare(
+        bubblewrap, cwd, Path(session_root) / 'agent/launcher')
 
 
 def device_mapping(runtime):
@@ -482,7 +448,7 @@ class View:
         argv = [executable(), '--die-with-parent', '--unshare-user', '--unshare-pid',
                 '--unshare-ipc', '--unshare-uts', '--cap-drop', 'ALL',
                 '--proc', '/proc', '--dev', '/dev', '--tmpfs', '/tmp',
-                '--dir', '/home/ptobench', '--dir', '/ascend/log', '--dir', '/ptobench', '--clearenv']
+                '--dir', '/home/ptobench', '--dir', '/ascend/log', '--dir', '/ptobench']
         if self.isolate_network:
             argv.insert(1, '--unshare-net')
         # Bind ancestors before their explicit children so restrictive overlays win.
@@ -537,6 +503,8 @@ def runtime_mounts(view, runtime):
 
 def check_available():
     view = View().system()
-    subprocess.run(view.argv(['/usr/bin/true'], cwd='/tmp', environment=clean_environment()),
-                   check=True, timeout=15, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    environment = clean_environment()
+    subprocess.run(view.argv(['/usr/bin/true'], cwd='/tmp', environment=environment),
+                   check=True, timeout=15, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                   env=sandbox_launcher_environment(environment))
     return view.manifest()

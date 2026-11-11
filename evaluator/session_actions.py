@@ -162,6 +162,12 @@ def _stop_recovered_group(root, identity):
     except Exception:
         session.fail_session(root, 'active_process_recovery_failed')
         raise
+    try:
+        import agent_launch
+        agent_launch.cleanup_stale_requests(root)
+    except Exception:
+        session.fail_session(root, 'agent_request_recovery_failed')
+        raise
 
 
 def _recover_unmarked_action(root):

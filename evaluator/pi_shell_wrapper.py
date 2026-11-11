@@ -23,7 +23,7 @@ def main():
         '--dev', '/dev', '--tmpfs', '/tmp', '--tmpfs', '/home/ptobench',
         '--bind', '/ptobench/candidates', '/ptobench/candidates',
         '--tmpfs', '/ptobench/pi-private',
-        '--tmpfs', '/ptobench/agent-sessions', '--clearenv',
+        '--tmpfs', '/ptobench/agent-sessions',
     ]
     environment = {key: value for key, value in os.environ.items()
                    if key in ALLOWED_NAMES or key.startswith(('ASCEND_', 'HCCL_'))}
@@ -32,7 +32,7 @@ def main():
     for key, value in sorted(environment.items()):
         argv.extend(['--setenv', key, value])
     argv.extend(['--chdir', os.getcwd(), '--', '/bin/bash', *sys.argv[1:]])
-    os.execv(bwrap, argv)
+    os.execve(bwrap, argv, {'PATH': os.defpath})
 
 
 if __name__ == '__main__':

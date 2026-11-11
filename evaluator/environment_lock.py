@@ -11,6 +11,7 @@ import importlib.metadata
 import json
 import os
 from pathlib import Path
+import stat
 import subprocess
 import sys
 
@@ -147,3 +148,20 @@ def validate(profile: dict, environment: dict[str, str] | None = None) -> None:
 
 def lock_path() -> Path:
     return LOCK_PATH
+
+
+def locked_python_executable() -> Path:
+    """Return the canonical executable recorded in LOCK.json."""
+    lock = _load()
+    try:
+        value = lock["python"]["executable"]
+        path = Path(value)
+        if not path.is_absolute():
+            raise ValueError("Python executable path must be absolute")
+        resolved = path.resolve(strict=True)
+        metadata = resolved.stat()
+        if not stat.S_ISREG(metadata.st_mode) or not os.access(resolved, os.X_OK):
+            raise ValueError("Python executable must be an executable regular file")
+        return resolved
+    except (KeyError, OSError, TypeError, ValueError) as error:
+        raise EnvironmentMismatch(f"invalid locked Python executable: {error}") from error

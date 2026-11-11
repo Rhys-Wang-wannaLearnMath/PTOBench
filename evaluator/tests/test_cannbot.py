@@ -7,12 +7,17 @@ import shutil
 import signal
 import subprocess
 import sys
+import tempfile
 import time
 import unittest
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from action_test_support import ActionTestBase, SOURCE_BENCHMARK
+import agent_launch
 import session
 import test_launcher as launcher_support
+from modes.cannbot import runtime as cann_bot_runtime
 
 
 FAKE_NATIVE = r'''
@@ -247,6 +252,48 @@ class CANNBotTests(ActionTestBase):
 
     def dispatches(self, root):
         return [json.loads(path.read_text()) for path in (root / 'method/dispatches').glob('*/dispatch.json')]
+
+    def test_agent_request_cleanup_waits_for_cannbot_child_exit(self):
+        cleanup = getattr(cann_bot_runtime, '_cleanup_agent_request', None)
+        self.assertTrue(callable(cleanup), 'CANNBot Agent request cleanup is missing')
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary) / 'agent' / 'launcher'
+            directory.mkdir(parents=True, mode=0o2710)
+            directory.parent.chmod(0o2710)
+            directory.chmod(0o2710)
+            request = directory / ('34' * 16 + '.json')
+            request.write_text('{}\n')
+            request.chmod(0o640)
+            environment = {agent_launch.REQUEST_ENV: str(request)}
+            with patch.object(agent_launch.grp, 'getgrnam',
+                              return_value=SimpleNamespace(gr_gid=os.getgid())):
+                cleanup(environment, SimpleNamespace(poll=lambda: None))
+                self.assertTrue(request.exists())
+                cleanup(environment, SimpleNamespace(poll=lambda: 0))
+            self.assertFalse(request.exists())
+
+    def test_pi_dispatch_fails_closed_when_sandbox_is_disabled(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            session_root, workspace, upstream = (root / name for name in ('session', 'workspace', 'upstream'))
+            session_root.mkdir()
+            workspace.mkdir()
+            upstream.mkdir()
+            role = upstream / 'role.md'
+            role.write_text('role')
+            profile = {'backend': 'pi', 'argv': ['pi', '{prompt}'], 'env': {},
+                       'mode_provider': {'base_url': 'https://example.invalid'}}
+            config = {'profile': profile, 'run_root': str(session_root), 'workspace': str(workspace),
+                      'upstream': str(upstream), 'roles': {'pypto-op-orchestrator': 'role.md'},
+                      'skills': {}, 'python': sys.executable, 'agent_extension': None,
+                      'hardware_budget': 1}
+            with patch.dict(os.environ, {'PTOBENCH_SANDBOX': '0'}), \
+                 patch.object(cann_bot_runtime.subprocess, 'Popen',
+                              side_effect=AssertionError('unisolated Pi process was started')) as spawn:
+                with self.assertRaisesRegex(RuntimeError, 'Pi Agent requires filesystem isolation'):
+                    cann_bot_runtime.run_dispatch(
+                        config, 'pypto-op-orchestrator', 'task', parent=None, tool_call_id=None)
+            spawn.assert_not_called()
 
     def test_codex_mcp_fresh_sessions_same_budget_and_original_resources(self):
         self.check_native('codex')

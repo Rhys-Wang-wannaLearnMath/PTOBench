@@ -60,6 +60,23 @@ class BasicModeTests(unittest.TestCase):
         self.assertNotIn('reference_knowledge', result['archives'])
         self.assertFalse((root / 'method/resources/raw_wiki').exists())
 
+    def test_pi_run_fails_closed_when_sandbox_is_disabled(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            profile = {'backend': 'pi', 'mode_provider': {'base_url': 'https://example.invalid'},
+                       'argv': ['pi', '{prompt}']}
+            (root / 'profile.json').write_text(__import__('json').dumps(profile))
+            (root / 'prompt.txt').write_text('prompt')
+            request = {'context': {'session_root': str(root), 'workspace': str(root)},
+                       'preflight': {'profile': profile}}
+            with mock.patch.dict('os.environ', {'PTOBENCH_SANDBOX': '0'}), \
+                 mock.patch.object(runner, 'render', return_value=(['pi'], {})), \
+                 mock.patch.object(runner.provider, 'credentials', return_value={}), \
+                 mock.patch.object(runner.os, 'execvpe') as execute:
+                with self.assertRaisesRegex(RuntimeError, 'Pi Agent requires filesystem isolation'):
+                    runner.run(request)
+                execute.assert_not_called()
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,0 +1,7 @@
+# PTOBench Plan 01: fixed Broker -> dedicated Agent dispatcher entry.
+# Render this path-specific example only on the checkout and host whose
+# environment lock resolves to the executable below. Install as root with
+# mode 0440 after validating it with visudo -cf.
+Cmnd_Alias PTOBENCH_AGENT_DISPATCH = /data1/home/ziruiwang/.local/share/uv/python/cpython-3.10.20-linux-aarch64-gnu/bin/python3.10 -I -S /data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/evaluator/agent_dispatch.py
+Defaults!PTOBENCH_AGENT_DISPATCH env_keep = "PTOBENCH_AGENT_LAUNCH_REQUEST"
+ziruiwang ALL = (ptobench-agent:ptobench-share) NOPASSWD: NOSETENV: PTOBENCH_AGENT_DISPATCH

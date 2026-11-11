@@ -168,7 +168,14 @@ def stop_tree(identities, sig):
                 pass
 
 
+def _cleanup_agent_request(environment, process):
+    import agent_launch
+    agent_launch.cleanup_request_after_process(environment, process)
+
+
 def run_dispatch(config, role, task, *, parent, tool_call_id, forward=False, cancel=None, task_input=None):
+    if config['profile'].get('backend') == 'pi' or isolation.enabled():
+        isolation.require_agent_isolation(config['profile'])
     if role not in config['roles']:
         raise ValueError('Unknown upstream role: ' + str(role))
     directory = Path(config['run_root']) / 'method/dispatches' / uuid.uuid4().hex
@@ -187,6 +194,7 @@ def run_dispatch(config, role, task, *, parent, tool_call_id, forward=False, can
     cancelled = False
     exit_code, answer, error = None, None, None
     process = None
+    environment = None
     tool_server = None
     tool_socket_directory = None
     try:
@@ -210,8 +218,7 @@ def run_dispatch(config, role, task, *, parent, tool_call_id, forward=False, can
         save(directory / 'dispatch.json', state)
         if cancel is not None and cancel.is_set():
             raise InterruptedError('Task cancelled before native process start')
-        if (config['profile']['backend'] == 'pi' and config['profile'].get('mode_provider')
-                and isolation.enabled()):
+        if config['profile']['backend'] == 'pi':
             from modes.cannbot.tools import ToolServer
             tool_socket_directory = tempfile.TemporaryDirectory(prefix='ptb-cannbot-')
             tool_socket = Path(tool_socket_directory.name) / 'tools.sock'
@@ -270,6 +277,11 @@ def run_dispatch(config, role, task, *, parent, tool_call_id, forward=False, can
         error = {'type': type(failure).__name__, 'message': str(failure)}
         cancelled = isinstance(failure, InterruptedError)
     finally:
+        try:
+            _cleanup_agent_request(environment, process)
+        except Exception as failure:
+            if error is None:
+                error = {'type': type(failure).__name__, 'message': str(failure)}
         if tool_server is not None:
             tool_server.close()
         if tool_socket_directory is not None:

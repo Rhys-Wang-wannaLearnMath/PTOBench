@@ -122,6 +122,8 @@ class ActionTestBase(SessionTestBase):
         # Copy only the public layer; real canonical Case assets are never copied.
         for path in (SOURCE_BENCHMARK / 'evaluator').glob('*.py'):
             shutil.copyfile(path, self.bench / 'evaluator' / path.name)
+        with (self.bench / 'evaluator/agent_launch.py').open('a') as stream:
+            stream.write('''\n\n# These tests exercise Bubblewrap views; host sudo and dispatcher behavior is tested separately.\ndef prepare(command, cwd, request_directory):\n    return command, {"PATH": os.defpath}\n''')
         shutil.copyfile(SOURCE_BENCHMARK / 'evaluator/pi_file_guard.mjs',
                         self.bench / 'evaluator/pi_file_guard.mjs')
         shutil.rmtree(self.bench / 'modes')

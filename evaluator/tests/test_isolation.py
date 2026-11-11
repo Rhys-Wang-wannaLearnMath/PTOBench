@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import shutil
 import socket
+import stat
 import subprocess
 import sys
 import tempfile
@@ -12,12 +13,42 @@ import threading
 import signal
 import time
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import isolation
 import sandbox_supervisor
+import agent_launch
 
 TEST_PYTHON = str(Path(sys.prefix) / 'bin/python')
+
+
+class TrustedBubblewrapResolutionTests(unittest.TestCase):
+    def test_broker_runtime_stubs_are_traversable_but_not_listable_by_agent(self):
+        runtime = Path(isolation._EMPTY_RUNTIME.name)
+        self.assertEqual(stat.S_IMODE(runtime.stat().st_mode), 0o711)
+        for name in ('passwd', 'group'):
+            self.assertTrue((runtime / name).is_file())
+            self.assertTrue((runtime / name).stat().st_mode & stat.S_IROTH)
+
+    def test_bubblewrap_uses_verified_system_binary_not_overrides_or_home(self):
+        with patch.dict(os.environ, {'PTOBENCH_BWRAP': '/usr/bin/bwrap'}), \
+             patch.object(agent_launch, '_system_binary', return_value='/usr/bin/bwrap') as system_binary:
+            self.assertEqual(isolation.executable(), '/usr/bin/bwrap')
+        system_binary.assert_called_once_with('bwrap')
+
+    def test_bubblewrap_does_not_inherit_host_variables_without_clearenv(self):
+        with patch.dict(os.environ, {'UNAUTHORIZED_ENV': 'hidden'}):
+            launcher_environment = isolation.sandbox_launcher_environment(os.environ)
+            result = subprocess.run(
+                isolation.View().system().argv(
+                    ['/usr/bin/python3', '-c',
+                     'import os; assert "UNAUTHORIZED_ENV" not in os.environ'],
+                    cwd='/tmp', environment={},
+                ),
+                env=launcher_environment, capture_output=True, text=True, timeout=20,
+            )
+        self.assertEqual(result.returncode, 0, result.stderr)
 
 
 class FilesystemBoundaryTests(unittest.TestCase):
@@ -61,8 +92,10 @@ assert subprocess.run(['/usr/bin/mount','--bind','/tmp','/public'],capture_outpu
 assert '0000000000000000' in pathlib.Path('/proc/self/status').read_text().split('CapEff:')[1].splitlines()[0]
 '''
             program = 'SECRET='+repr(str(secret))+'\nHOSTPID='+repr(str(os.getpid()))+'\n'+program
+            environment = isolation.clean_environment()
             result = subprocess.run(view.argv([TEST_PYTHON, '-c', program], cwd='/work',
-                environment=isolation.clean_environment()), capture_output=True, text=True, timeout=20)
+                environment=environment), env=isolation.sandbox_launcher_environment(environment),
+                capture_output=True, text=True, timeout=20)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(secret.read_text(), 'UNAUTHORIZED_CANARY')
             self.assertEqual((public / 'contract').read_text(), 'contract')
@@ -74,8 +107,10 @@ assert '0000000000000000' in pathlib.Path('/proc/self/status').read_text().split
                        'assert not (p/"docs").exists(); assert not (p/".git").exists(); '
                        'assert not (p/"tests").exists()')
             view = isolation.View().system()
+            environment = isolation.clean_environment()
             result = subprocess.run(view.argv([TEST_PYTHON, '-c', program], cwd='/tmp',
-                environment=isolation.clean_environment()), capture_output=True, text=True, timeout=20)
+                environment=environment), env=isolation.sandbox_launcher_environment(environment),
+                capture_output=True, text=True, timeout=20)
             self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_runtime_copy_ignores_unselected_mode_directories(self):
@@ -229,7 +264,8 @@ assert "PTOBENCH_AGENT_SESSION_DIR" not in os.environ'
             result = subprocess.run(
                 view.argv(['/ptobench/pi-private/ptobench-shell', '-c', script],
                           cwd='/workspace', environment=environment),
-                cwd='/', capture_output=True, text=True, timeout=30)
+                cwd='/', env=isolation.sandbox_launcher_environment(environment),
+                capture_output=True, text=True, timeout=30)
             response_thread.join(5)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(request['argv'], ['check'])
@@ -248,8 +284,11 @@ assert "PTOBENCH_AGENT_SESSION_DIR" not in os.environ'
                    f's=socket.create_connection(("127.0.0.1",{listener.getsockname()[1]}),3); '
                    'assert s.recv(100)==b"network allowed"')
         with patch.dict(os.environ, {'UNAUTHORIZED_ENV': 'private'}):
+            environment = isolation.clean_environment()
             result = subprocess.run(isolation.View().system().argv([TEST_PYTHON, '-c', program],
-                cwd='/tmp', environment=isolation.clean_environment()), capture_output=True, text=True, timeout=20)
+                cwd='/tmp', environment=environment),
+                env=isolation.sandbox_launcher_environment(environment),
+                capture_output=True, text=True, timeout=20)
         self.assertEqual(result.returncode, 0, result.stderr)
         thread.join(5)
 
@@ -310,7 +349,8 @@ denied.close()
             agent = [TEST_PYTHON, '/ptobench/network_proxy.py',
                 'agent', '--socket', '/ptobench/network/proxy.sock', '--', TEST_PYTHON, '-c', program]
             result = subprocess.run(view.argv(agent, cwd='/tmp', environment=environment),
-                cwd='/tmp', capture_output=True, text=True, timeout=20)
+                cwd='/tmp', env=isolation.sandbox_launcher_environment(environment),
+                capture_output=True, text=True, timeout=20)
             self.assertEqual(result.returncode, 0, result.stderr)
             proxy.terminate()
             proxy.wait(timeout=5)
@@ -345,20 +385,26 @@ denied.close()
         with tempfile.TemporaryDirectory(prefix='agent-gateway-') as temporary:
             root = Path(temporary) / 'run'
             workspace = root / 'workspaces/initial'
+            broker_view = root / 'broker-view'
+            exported_workspaces = broker_view / 'workspaces'
+            exported_workspace = exported_workspaces / 'initial'
             public = Path(temporary) / 'public'
-            candidates = root / 'candidates'
+            candidates = broker_view / 'candidates'
             untrusted_candidates = Path(temporary) / 'untrusted-candidates'
             initial_candidate = candidates / 'initial'
             workspace.mkdir(parents=True)
+            (workspace / 'candidate').mkdir()
+            (workspace / 'candidate/candidate.py').write_text('original source\n')
+            exported_workspace.mkdir(parents=True)
             initial_candidate.mkdir(parents=True)
             (untrusted_candidates / 'initial').mkdir(parents=True)
             (untrusted_candidates / 'initial/candidate.py').write_text('candidate = False\n')
             (public / 'initial/.benchmark_outputs/combined').mkdir(parents=True)
             (public / 'initial/README.md').write_text('public contract')
             (public / 'initial/.benchmark_outputs/combined/latest_result.json').write_text('{"run": 1}\n')
-            (workspace / 'candidate').symlink_to('/ptobench/candidates/initial')
-            (workspace / '.benchmark_context').symlink_to('/ptobench/public/initial')
-            (workspace / '.benchmark_outputs').symlink_to('/ptobench/public/initial/.benchmark_outputs')
+            (exported_workspace / 'candidate').symlink_to('/ptobench/candidates/initial')
+            (exported_workspace / '.benchmark_context').symlink_to('/ptobench/public/initial')
+            (exported_workspace / '.benchmark_outputs').symlink_to('/ptobench/public/initial/.benchmark_outputs')
             (initial_candidate / 'candidate.py').write_text('candidate = True\n')
             (initial_candidate / 'tuning.json').write_text('{"memory_planner":"PYPTO"}\n')
             initial_candidate.chmod(0o2770)
@@ -366,6 +412,10 @@ denied.close()
             (initial_candidate / 'tuning.json').chmod(0o660)
             (root / 'agent/pi').mkdir(parents=True)
             (root / 'agent/native').mkdir(parents=True)
+            agent_directory = root / 'agent'
+            os.chown(agent_directory, os.getuid(),
+                     agent_launch.grp.getgrnam(agent_launch.SHARE_GROUP).gr_gid)
+            agent_directory.chmod(0o2710)
             client = Path(temporary) / 'sandbox-client'
             client.write_text('untrusted-side CLI transport\n')
             client.chmod(0o755)
@@ -440,6 +490,7 @@ for hidden in ({str(common.BENCHMARK_ROOT / "evaluator/agent_cli.py")!r},
 assert os.environ["PYPTO_PROVIDER_API_KEY"] == "ptobench-local-model-gateway"
 assert os.environ["PTOBENCH_RPC_SOCKET"] == "/ptobench/cli.sock"
 assert "PTOBENCH_API_PROXY_SOCKET" not in os.environ
+assert "PTOBENCH_AGENT_LAUNCH_REQUEST" not in os.environ
 for process_environment in pathlib.Path("/proc").glob("[0-9]*/environ"):
     try:
         environment = process_environment.read_bytes()
@@ -472,12 +523,16 @@ assert not pathlib.Path("/ptobench/runtime/network_proxy.py").exists()
                 'PTOBENCH_PUBLIC_DIR': str(public),
                 'PTOBENCH_CLIENT_PATH': str(client),
                 'PTOBENCH_API_PROXY_SOCKET': str(gateway_socket),
+                'PTOBENCH_AGENT_WORKSPACE_ROOT': str(exported_workspaces),
                 'PTOBENCH_AGENT_CANDIDATES_ROOT': str(untrusted_candidates),
                 'PYPTO_PROVIDER_API_KEY': 'must-be-replaced',
             }
-            argv, launch_environment = isolation.agent_command(
-                [TEST_PYTHON, '-c', code], cwd=workspace, environment=environment,
-                workspace=workspace, session_root=root)
+            with patch.object(agent_launch, 'prepare',
+                              side_effect=lambda command, cwd, request_directory:
+                              (command, {'PATH': os.defpath})) as prepare:
+                argv, launch_environment = isolation.agent_command(
+                    [TEST_PYTHON, '-c', code], cwd=workspace, environment=environment,
+                    workspace=workspace, session_root=root)
             result = subprocess.run(argv, cwd='/', env=launch_environment, capture_output=True,
                                     text=True, timeout=30)
             self.assertEqual(result.returncode, 0, result.stderr)
@@ -490,95 +545,12 @@ assert not pathlib.Path("/ptobench/runtime/network_proxy.py").exists()
                 if path.is_file():
                     self.assertNotIn(b'TEST_UPSTREAM_SECRET', path.read_bytes(), str(path))
             manifest = json.loads((root / 'filesystem_isolation.json').read_text())
+            self.assertEqual(prepare.call_args.args[0][0], isolation.executable())
+            self.assertNotIn(agent_launch.REQUEST_ENV, launch_environment)
             self.assertEqual(manifest['network'], 'model_api_only')
             self.assertFalse(any('/evaluator' in item['destination'] or '/launcher' in item['destination']
                                  or '/modes' in item['destination'] for item in manifest['mounts']))
             self.assertFalse(list((root / 'agent/.runtime').glob('*/network_proxy.py')))
-
-    def test_agent_launcher_fails_closed_when_unavailable(self):
-        import agent_launch
-
-        with tempfile.TemporaryDirectory(prefix='agent-launch-fail-closed-') as temporary:
-            root = Path(temporary) / 'run'
-            workspace = root / 'workspaces/initial'
-            candidates = root / 'candidates/initial'
-            public = Path(temporary) / 'public/initial'
-            client = Path(temporary) / 'sandbox-client'
-            rpc = Path(temporary) / 'rpc.sock'
-            gateway = Path(temporary) / 'gateway/api.sock'
-            workspace.mkdir(parents=True)
-            candidates.mkdir(parents=True)
-            public.mkdir(parents=True)
-            client.write_text('test client')
-            client.chmod(0o755)
-            rpc_server = socket.socket(socket.AF_UNIX)
-            rpc_server.bind(str(rpc))
-            rpc_server.listen(1)
-            self.addCleanup(rpc_server.close)
-            gateway.parent.mkdir()
-            gateway_server = socket.socket(socket.AF_UNIX)
-            gateway_server.bind(str(gateway))
-            gateway_server.listen(1)
-            self.addCleanup(gateway_server.close)
-            environment = {
-                'PATH': os.defpath,
-                'PTOBENCH_PUBLIC_DIR': str(public.parent),
-                'PTOBENCH_CLIENT_PATH': str(client),
-                'PTOBENCH_API_PROXY_SOCKET': str(gateway),
-                'PTOBENCH_RPC_SOCKET': str(rpc),
-                'PTOBENCH_AGENT_LAUNCH_PATH': '/opt/ptobench-agent-launch',
-            }
-            with patch.object(agent_launch, '_host_credentials', return_value={
-                    'uid': os.getuid(), 'gid': os.getgid(), 'groups': [10], 'cap_eff': 0,
-                    'no_new_privs': False}), \
-                 patch.object(agent_launch, '_setpriv_clears_groups', return_value=False), \
-                 patch.object(agent_launch, '_trusted_launcher', return_value=None):
-                with self.assertRaisesRegex(RuntimeError, 'supplementary groups'):
-                    isolation.agent_command(
-                        ['/bin/true'], cwd=workspace, environment=environment,
-                        workspace=workspace, session_root=root)
-
-    def test_agent_startup_refuses_candidate_without_group_write_access(self):
-        with tempfile.TemporaryDirectory(prefix='agent-candidate-preflight-') as temporary:
-            root = Path(temporary) / 'run'
-            workspace = root / 'workspaces/initial'
-            candidate = root / 'candidates/initial'
-            for directory in (candidate, workspace, workspace / '.benchmark_context',
-                              workspace / '.benchmark_outputs'):
-                directory.mkdir(parents=True, exist_ok=True)
-            (workspace / 'candidate').symlink_to('/ptobench/candidates/initial')
-            candidate.chmod(0o750)
-            public = Path(temporary) / 'public/initial'
-            public.mkdir(parents=True)
-            client = Path(temporary) / 'sandbox-client'
-            client.write_text('test client')
-            client.chmod(0o755)
-            rpc = Path(temporary) / 'rpc.sock'
-            rpc_socket = socket.socket(socket.AF_UNIX)
-            rpc_socket.bind(str(rpc))
-            rpc_socket.listen(1)
-            self.addCleanup(rpc_socket.close)
-            gateway = Path(temporary) / 'gateway/api.sock'
-            gateway.parent.mkdir()
-            gateway_socket = socket.socket(socket.AF_UNIX)
-            gateway_socket.bind(str(gateway))
-            gateway_socket.listen(1)
-            self.addCleanup(gateway_socket.close)
-            environment = {
-                'PATH': os.defpath,
-                'PTOBENCH_PUBLIC_DIR': str(public.parent),
-                'PTOBENCH_CLIENT_PATH': str(client),
-                'PTOBENCH_API_PROXY_SOCKET': str(gateway),
-                'PTOBENCH_RPC_SOCKET': str(rpc),
-            }
-
-            command, launch_environment = isolation.agent_command(
-                ['/bin/true'], cwd=workspace, environment=environment,
-                workspace=workspace, session_root=root)
-            result = subprocess.run(command, cwd=workspace, env=launch_environment,
-                                    capture_output=True, text=True, timeout=45)
-            self.assertEqual(result.returncode, 126, result.stderr)
-            self.assertIn('Candidate permission check failed', result.stderr)
 
     def test_broker_refreshes_feedback_in_place_under_the_readonly_public_mount(self):
         with tempfile.TemporaryDirectory(prefix='broker-feedback-') as temporary:
@@ -720,18 +692,55 @@ assert not pathlib.Path("/ptobench/runtime/network_proxy.py").exists()
                 's=TensorSpec("y",[2],torch.float32); s.direction="out"; '
                 '\nwith bridge("fixture_000"): r._validate([s],{"y":torch.tensor([1.,2.])},{},0,0,{})')
             result = subprocess.run(view.argv([TEST_PYTHON,'-c',program],cwd='/tmp',environment=env),
+                                    env=isolation.sandbox_launcher_environment(env),
                                     capture_output=True,text=True,timeout=30)
             self.assertEqual(result.returncode,0,result.stderr)
             self.assertEqual(validation.validated,{'fixture_000'})
             self.assertFalse(validation.failed)
             bad = program.replace('torch.tensor([1.,2.])','torch.tensor([9.,9.])')
             result = subprocess.run(view.argv([TEST_PYTHON,'-c',bad],cwd='/tmp',environment=env),
+                                    env=isolation.sandbox_launcher_environment(env),
                                     capture_output=True,text=True,timeout=30)
             self.assertNotEqual(result.returncode,0)
             self.assertTrue(validation.failed)
 
 
 class IsolatedLauncherTests(unittest.TestCase):
+    def test_generic_participant_entrypoint_refuses_unsandboxed_pi(self):
+        from launcher import methods
+        with tempfile.TemporaryDirectory(prefix='participant-fail-closed-') as temporary:
+            root = Path(temporary)
+            request_path = root / 'request.json'
+            request_path.write_text(json.dumps({'preflight': {'profile': {'backend': 'pi'}}}))
+            process = SimpleNamespace(pid=os.getpid())
+            with patch.dict(os.environ, {'PTOBENCH_SANDBOX': '0'}), \
+                 patch.object(methods.subprocess, 'Popen', return_value=process) as spawn:
+                with self.assertRaisesRegex(RuntimeError, 'Pi Agent requires filesystem isolation'):
+                    methods.start({'path': 'unused.py'}, str(request_path), str(root), {})
+                spawn.assert_not_called()
+
+    def test_supervisor_fails_closed_without_supported_pi_isolation(self):
+        with tempfile.TemporaryDirectory(prefix='supervisor-fail-closed-') as temporary:
+            root = Path(temporary)
+            request_path = root / 'request.json'
+            request = {'context': {'session_root': str(root)},
+                       'preflight': {'profile': {'backend': 'pi',
+                                                 'mode_provider': {'base_url': 'https://example.invalid'}}}}
+            request_path.write_text(json.dumps(request))
+            with patch.dict(os.environ, {'PTOBENCH_SANDBOX': '0'}), \
+                 patch.object(sandbox_supervisor, 'run_private_pi') as isolated:
+                with self.assertRaisesRegex(RuntimeError, 'Pi Agent requires filesystem isolation'):
+                    sandbox_supervisor.run('method.py', str(request_path))
+                isolated.assert_not_called()
+
+            request['preflight']['profile']['backend'] = 'codex'
+            request_path.write_text(json.dumps(request))
+            with patch.dict(os.environ, {'PTOBENCH_SANDBOX': '1'}), \
+                 patch.object(sandbox_supervisor, 'run_private_pi') as isolated:
+                with self.assertRaisesRegex(RuntimeError, 'only Pi Agent is supported'):
+                    sandbox_supervisor.run('method.py', str(request_path))
+                isolated.assert_not_called()
+
     def test_basic_pi_cli_budget_finish_and_native_history(self):
         from test_launcher import LauncherTests
         case = LauncherTests(next(name for name in dir(LauncherTests) if name.startswith('test_')))
@@ -764,50 +773,48 @@ r=subprocess.run(['ptobench','evaluate','.'],capture_output=True,text=True);asse
         self.assertEqual(result['agent_recording']['status'],'recorded')
         self.assertTrue((root/'filesystem_isolation.json').exists())
 
-    def test_cannbot_pi_and_codex_children_profiles_and_fork(self):
+    def test_cannbot_pi_children_profiles_and_fork(self):
         from test_cannbot import CANNBotTests, FAKE_NATIVE
-        for backend in ('pi', 'codex'):
-            with self.subTest(backend=backend):
-                case = CANNBotTests('test_codex_mcp_fresh_sessions_same_budget_and_original_resources')
-                case.setUp()
-                try:
-                    case.cannbot_config(backend=backend, budget=5, fork_child=True)
-                    # Control belongs to the trusted test harness; embed only
-                    # public fake-Agent instructions, never mount its host dir.
-                    native = FAKE_NATIVE.replace(
-                        "control=json.loads(Path(os.environ['S5_CONTROL']).read_text())",
-                        'control='+repr({'node':case.node, 'fork_child':True}))
-                    native = native.replace("root=Path(config['run_root'])", """root=Path(config['run_root'])
+        case = CANNBotTests('test_codex_mcp_fresh_sessions_same_budget_and_original_resources')
+        case.setUp()
+        try:
+            case.cannbot_config(backend='pi', budget=5, fork_child=True)
+            # Control belongs to the trusted test harness; embed only public
+            # fake-Agent instructions, never mount its host dir.
+            native = FAKE_NATIVE.replace(
+                "control=json.loads(Path(os.environ['S5_CONTROL']).read_text())",
+                'control='+repr({'node':case.node, 'fork_child':True}))
+            native = native.replace("root=Path(config['run_root'])", """root=Path(config['run_root'])
 assert not Path('/data1/home/ziruiwang/pypto-lib/pto_wiki').exists()
 capabilities=json.loads(Path('.benchmark_context/tuning_capabilities.json').read_text())
 assert capabilities['baseline']==json.loads(Path('candidate/tuning.json').read_text())
 assert capabilities['default_configuration_validation']['other_values_verified'] is False
 assert 'complete defaults vary by Case' in Path('.benchmark_context/README.md').read_text()
 """)
-                    case.tool.write_text('#!'+case.python+'\n'+native)
-                    case.env['PTOBENCH_SANDBOX']='1'
-                    process, value = case.launch()
-                    root = Path(value['session_root'])
-                    self.assertEqual(process.returncode, 0,
-                        (value, process.stderr.decode(), (root/'stderr.log').read_text()))
-                    final = json.loads((root/'final_result.json').read_text())
-                    self.assertEqual(final['hardware_actions_used'], 2)
-                    self.assertEqual(final['finish_actions_used'], 1)
-                    self.assertEqual(final['final_verified_correctness'], 'passed')
-                    self.assertEqual(value['agent_recording']['status'], 'recorded')
-                    self.assertEqual(len(case.dispatches(root)), 3)
-                    for dispatch in case.dispatches(root):
-                        prompt = (root/'method/dispatches'/dispatch['id']/'prompt.txt').read_text()
-                        self.assertIn('.benchmark_context/tuning_capabilities.json', prompt)
-                        self.assertIn('complete defaults vary by Case', prompt)
-                        self.assertIn('PYPTO + false', prompt)
-                        self.assertIn('candidate/tuning.json', prompt)
-                        self.assertNotIn('workspace-root tuning.json', prompt)
-                        self.assertIn('ptobench evaluate .', prompt)
-                    import session
-                    self.assertEqual(len(session.read_session(root)['workspaces']), 2)
-                finally:
-                    case.doCleanups()
+            case.tool.write_text('#!'+case.python+'\n'+native)
+            case.env['PTOBENCH_SANDBOX']='1'
+            process, value = case.launch()
+            root = Path(value['session_root'])
+            self.assertEqual(process.returncode, 0,
+                (value, process.stderr.decode(), (root/'stderr.log').read_text()))
+            final = json.loads((root/'final_result.json').read_text())
+            self.assertEqual(final['hardware_actions_used'], 2)
+            self.assertEqual(final['finish_actions_used'], 1)
+            self.assertEqual(final['final_verified_correctness'], 'passed')
+            self.assertEqual(value['agent_recording']['status'], 'recorded')
+            self.assertEqual(len(case.dispatches(root)), 3)
+            for dispatch in case.dispatches(root):
+                prompt = (root/'method/dispatches'/dispatch['id']/'prompt.txt').read_text()
+                self.assertIn('.benchmark_context/tuning_capabilities.json', prompt)
+                self.assertIn('complete defaults vary by Case', prompt)
+                self.assertIn('PYPTO + false', prompt)
+                self.assertIn('candidate/tuning.json', prompt)
+                self.assertNotIn('workspace-root tuning.json', prompt)
+                self.assertIn('ptobench evaluate .', prompt)
+            import session
+            self.assertEqual(len(session.read_session(root)['workspaces']), 2)
+        finally:
+            case.doCleanups()
 
     def test_interrupt_stops_namespace_descendants_and_finalizes(self):
         from test_launcher import LauncherTests

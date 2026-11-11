@@ -78,8 +78,14 @@ def start(method, request, workspace, environment):
     """Launch any participant in an owned group; Basic may exec its native tool."""
     import session
     import isolation
-    argv = ([sys.executable, str(common.BENCHMARK_ROOT / 'evaluator/sandbox_supervisor.py'),
-             method['path'], str(request)] if isolation.enabled() else command(method, 'run', request))
+    if isolation.enabled():
+        argv = [sys.executable, str(common.BENCHMARK_ROOT / 'evaluator/sandbox_supervisor.py'),
+                method['path'], str(request)]
+    else:
+        profile = json.loads(Path(request).read_text()).get('preflight', {}).get('profile', {})
+        if isinstance(profile, dict) and profile.get('backend') == 'pi':
+            isolation.require_agent_isolation(profile)
+        argv = command(method, 'run', request)
     process = subprocess.Popen(argv, cwd=workspace,
                                env={**environment, 'PYTHONDONTWRITEBYTECODE': '1'}, shell=False,
                                stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,

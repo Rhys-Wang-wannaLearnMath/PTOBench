@@ -468,8 +468,11 @@ def isolated_evaluate(arguments):
             candidate, case['fixture_ids'][0], result)
         with _open_worker_log(diagnostics / 'worker_stdout.log') as stdout, \
                 _open_worker_log(diagnostics / 'worker_stderr.log') as stderr:
-            completed = subprocess.run(view.argv(argv, cwd=candidate, environment=env),
-                                       stdout=stdout, stderr=stderr)
+            completed = subprocess.run(
+                view.argv(argv, cwd=candidate, environment=env),
+                stdout=stdout, stderr=stderr,
+                env=isolation.sandbox_launcher_environment(env),
+            )
         device_identity_after = collect_device_identity(devices)
         worker_record, _ = _retain_worker_diagnostics(
             case['fixture_ids'][0], completed.returncode, result, diagnostics)

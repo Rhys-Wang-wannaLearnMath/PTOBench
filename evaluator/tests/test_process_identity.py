@@ -1,6 +1,7 @@
 """A /proc entry may disappear after opening it but before reading stat."""
 import errno
 from pathlib import Path
+import subprocess
 import sys
 import unittest
 from unittest import mock
@@ -21,6 +22,21 @@ class ProcessIdentityRaceTests(unittest.TestCase):
         with mock.patch.object(Path, 'read_text', side_effect=PermissionError(errno.EACCES, 'cannot inspect')):
             with self.assertRaises(integrity.InfrastructureError):
                 session.process_identity(12345)
+
+    def test_live_worker_process_identity_is_pinned_to_its_birth_and_group(self):
+        child = subprocess.Popen(
+            [sys.executable, '-c', 'import time; time.sleep(5)'],
+            start_new_session=True,
+        )
+        try:
+            identity = session.process_identity(child.pid)
+            self.assertEqual(identity['pid'], child.pid)
+            self.assertGreater(identity['start_ticks'], 0)
+            self.assertEqual(identity['pgid'], child.pid)
+        finally:
+            child.terminate()
+            child.wait(timeout=5)
+        self.assertIsNone(session.process_identity(child.pid))
 
 
 if __name__ == '__main__':

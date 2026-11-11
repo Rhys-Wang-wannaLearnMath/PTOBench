@@ -15,6 +15,20 @@ import workspace
 
 
 class SessionActionsTest(ActionTestBase):
+    def test_recovery_cleans_stale_agent_requests_after_stopping_children(self):
+        import agent_launch
+
+        stopped = []
+        root = self.handle.session_root
+        identity = {'pid': 101, 'pgid': 101, 'start_ticks': 1}
+        with mock.patch.object(session_actions, '_stop_group',
+                               side_effect=lambda _identity: stopped.append('children')), \
+             mock.patch.object(agent_launch, 'cleanup_stale_requests', create=True,
+                               side_effect=lambda _root: stopped.append('requests')):
+            session_actions._stop_recovered_group(root, identity)
+
+        self.assertEqual(stopped, ['children', 'requests'])
+
     def test_worker_diagnostics_are_archived_and_linked_from_attempt(self):
         self.configure(worker_logs=True)
         process, result = self.cli(['evaluate'])

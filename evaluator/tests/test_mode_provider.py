@@ -201,10 +201,9 @@ if '--version' not in sys.argv and '--help' not in sys.argv:
     provider_models=json.loads((provider_dir/'models.json').read_text())['providers']
     if os.environ.get('PTOBENCH_CANNBOT_SOCKET'):
         expected_url='http://127.0.0.1:18081/v1'
-        expected_key='ptobench-local-model-gateway'
     else:
-        expected_url='http://127.0.0.1:8765/v1'
-        expected_key='local-provider-test-key'
+        expected_url='http://127.0.0.1:18081/v1'
+    expected_key='ptobench-local-model-gateway'
     assert provider_models['test-provider']['baseUrl']==expected_url
     assert provider_models['test-provider']['api']=='openai-completions'
     assert os.environ['PYPTO_PROVIDER_API_KEY']==expected_key
@@ -215,7 +214,7 @@ if '--version' not in sys.argv and '--help' not in sys.argv:
 
 class ProviderLauncherTests(unittest.TestCase):
     def setUp(self):
-        self.fixture = test_launcher.LauncherTests('test_four_adapters_real_cli_all_five_operations')
+        self.fixture = test_launcher.LauncherTests('test_three_adapters_real_cli_all_five_operations')
         self.addCleanup(self.fixture.doCleanups)
         self.fixture.setUp()
 
@@ -236,6 +235,7 @@ class ProviderLauncherTests(unittest.TestCase):
         (fixture.bench / 'modes/basic/.env').write_text(ENV)
         fixture.tool.write_text('#!' + fixture.python + '\n' + test_launcher.FAKE_TOOL.replace(
             "if '--version' in sys.argv:", CHECK_NATIVE + "\nif '--version' in sys.argv:", 1))
+        fixture.isolate_fake_agent()
         process, result = fixture.launch()
         self.assertEqual(process.returncode, 0, (result, process.stderr.decode()))
         root, _ = fixture.assert_final(result, 1)
