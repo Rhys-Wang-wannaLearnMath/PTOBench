@@ -1,0 +1,59 @@
+{
+  "applicability": [
+    "Choosing tile shapes and offsets that must satisfy UB, L1, L0A, L0B, or L0C alignment.",
+    "A GM-to-L1 or L1-to-L0 transfer is inefficient or raises a hardware exception.",
+    "Multiple cores access the same GM address or a scalar write needs cache maintenance.",
+    "Choosing between half and float for a Cube or vector reduction."
+  ],
+  "directions": [
+    "For a ReluPre FixPipe operand, align the FBUF base and chosen offsets to the 64-byte address unit used by FPC[7:0].",
+    "For QuantPre, Quant_PRE, dequant scale, or C2PIPE2GM FBUF data, align the base, padded extent, and transfer count to 128 bytes; do not infer a 32-byte QuantPre rule from the generic debug helper.",
+    "Keep UB and L1 tiles at 32-byte alignment, L0A/L0B transfers at 512 bytes, and L0C/Bias accesses at 64 bytes.",
+    "Choose the innermost moved dimension so a BF16 transfer is a multiple of 256 elements, FP32 of 128, and INT8 of 512, corresponding to 512 bytes; keep L1-to-L0 movement fractal-aligned.",
+    "Stagger multi-core GM accesses and avoid all cores touching the same address; publish and invalidate caches around cross-core scalar or GM handoffs."
+  ],
+  "domain": "compute",
+  "effects": [
+    "Padding to alignment increases memory footprint but avoids slow paths and faults.",
+    "Larger GM transfers improve bandwidth but can raise latency and reduce overlap for small work.",
+    "Staggering addresses reduces bank conflicts but complicates tile assignment and indexing.",
+    "Using fp32 for a reduction doubles bytes but can be faster and more accurate than half on this architecture."
+  ],
+  "evidence_status": "documented",
+  "id": "hardware_alignment_and_bank_constraints",
+  "invariants": [
+    "ReluPre and QuantPre are different FPC fields with different address units on local CANN 9.0.0: 64 bytes versus 128 bytes.",
+    "The 128-byte QuantPre rule applies to the local 910B4/C220 implementation and must be rechecked when the CANN release or operand changes.",
+    "A vector access from UB must be 32-byte aligned.",
+    "An L1-to-L0 move that leaves less than one fractal in L1 can fault at hardware execution.",
+    "CrossCoreSetFlag and CrossCoreWaitFlag must be used in matched pairs, the same flag ID cannot be set consecutively, and a counter has a finite limit; the architecture chapter documents a maximum of 15 sets for one flag ID.",
+    "The Ascend C framework's automatic synchronization does not cover arbitrary PTO ISA or PyPTO extern code.",
+    "Cube float throughput is one quarter of half; a half-data vector reduce can be slower than float because writeback alignment; int32-to-bfloat16 channel quantization is not supported on the Cube."
+  ],
+  "principle": "On 220x, each AI Core contains an AIC for Cube computation and an AIV for Vector computation, each with its own Scalar Unit and code segment. Data between AIV and AIC moves through global memory. Vector data from UB must be 32-byte aligned. The Cube accesses L0A for the left operand, L0B for the right, and L0C for products and intermediate results. Recommended fractal layouts are L0A `FRACTAL_ZZ`, L0B `FRACTAL_ZN`, L0C `FRACTAL_NZ`, and L1 `FRACTAL_NZ`; the Unified Buffer has no required data format. UB and L1 accesses use 32-byte granularity, L0A/L0B transfers use 512-byte granularity, and L0C/Bias accesses use 64-byte granularity. FixPipe is operand-specific in the local CANN 9.0.0 source: `ReluPreAddr` is encoded in FPC[7:0] after shifting by 6 (64-byte address units), while `QuantPreAddr` is encoded in FPC[15:8] after shifting by 7 (128-byte address units). The Quant_PRE helper rounds dequant data up to 128 bytes and uses 128-byte CBUF-to-FBUF bursts. The separate 64-byte/128-byte values in the architecture and constraints material therefore describe different fields or transfer contexts rather than a single contradiction. A generic temporary-FBUF offset check in CPU debug accepts 32-byte alignment, but that API check does not relax the 128-byte unit required when the address is encoded as QuantPre. DMA to UB is aligned to the data block size; DMA to other units is aligned to fractal requirements. Moving NZ data from L1 to L0A requires ZZ conversion, and if the remaining L1 size is less than one fractal, hardware execution can fault. UB bank conflicts occur when multiple operations access the same bank or bank group at once; staggering addresses can reduce read/write and write/write queues. GM accesses to the same address by multiple cores are serialized by hardware, so multi-core access should be staggered and a tiling policy should let the first load populate L2. Moving more than 16 KiB at a time generally improves bandwidth utilization, but the best size is chip-dependent. GM-to-L1 `DataCopy` has a source-block gap limit of 65535 data blocks of 32 bytes; a larger gap requires splitting the instruction. Data movement is split into 128-, 256-, or 512-byte chunks and non-aligned lengths are rounded up, so aligning the inner axis pays. MTE1/MMAD instruction queues are 32 deep; Load3D can move a block in one instruction where many Load2D instructions would fill the queue. iCache and DCache are each 32 KiB; multiple cores fetching the same iCache address serialize, so small-shape cases should reduce started cores. Scalar writes to GM are cached in DCache and hardware does not ensure DCache/GM consistency; use `DataCacheCleanAndInvalid` or the PyPTO cache-publication sequence. Cross-core flag counters have a limit and must be used in matched pairs; PyPTO/PTO extern code is not automatically synchronized by the Ascend C framework's LocalTensor rules. The constraints chapter also warns that Cube float throughput is one quarter of half, half-data vector reductions can lose to float because UB writeback is not 32-byte aligned, and int32-to-bfloat16 channel quantization is unsupported on the Cube; use an AIV int32-to-float-to-bfloat16 path or an AIC float-to-bfloat16 path.",
+  "questions": [
+    "Whether other FixPipe instructions or non-C220 CANN releases expose additional operand-specific units.",
+    "Whether the public PyPTO API in a future release exposes raw FixPipe operands with the same field contract."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Treating 64 bytes as a universal FixPipe alignment, or applying the 128-byte QuantPre rule to the ReluPre field.",
+    "Treating the generic 32-byte temporary-FBUF offset assertion as proof that QuantPre accepts a 32-byte address unit.",
+    "Assuming a 512-byte L2 cache line is the same as every on-chip alignment; L0A/L0B are 512, L0C/Bias are 64, and UB/L1 are 32.",
+    "Letting several cores read the same iCache or GM address and expecting independent bandwidth.",
+    "Relying on a barrier to make GM writes visible without cache publication and invalidation.",
+    "Assuming a narrower dtype is always faster; Cube float is one quarter of half and half reduce can lose to float."
+  ],
+  "source_features": [
+    "FRACTAL_ZZ",
+    "FRACTAL_ZN",
+    "FRACTAL_NZ",
+    "ReluPreAddr",
+    "QuantPreAddr",
+    "DataCopy",
+    "DataCacheCleanAndInvalid"
+  ],
+  "summary": "On the local CANN 9.0.0 implementation for 910B4/C220, FixPipe has operand-specific address units: ReluPre uses a 64-byte FPC field while QuantPre/dequant FBUF uses a 128-byte FPC field and transfer unit. Do not collapse these into one universal FixPipe alignment rule.",
+  "title": "Ascend 220x Alignment, Cache, and Unit Constraints"
+}

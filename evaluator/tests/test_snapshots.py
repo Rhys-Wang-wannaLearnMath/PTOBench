@@ -9,6 +9,18 @@ import workspace
 
 
 class SnapshotTest(ActionTestBase):
+    def test_new_python_helper_is_included_in_successful_snapshot(self):
+        helper = self.handle.initial_workspace / 'candidate/new_helper.py'
+        helper.write_text('NEW_VALUE = 42\n')
+
+        process, result = self.cli(['evaluate'])
+
+        self.assertEqual(process.returncode, 0, result)
+        snapshot = self.snapshot(result)
+        self.assertEqual((snapshot / 'source/candidate/new_helper.py').read_text(), 'NEW_VALUE = 42\n')
+        manifest = workspace.source_manifest(snapshot / 'source')
+        self.assertIn('new_helper.py', {item['path'] for item in manifest['files']})
+
     def test_authority_or_snapshot_registration_failure_never_publishes_success(self):
         for fault in ('authority','snapshot'):
             with self.subTest(fault=fault):
@@ -58,7 +70,7 @@ class SnapshotTest(ActionTestBase):
             self.assertEqual(metadata['session_id'],session.read_session(self.handle.session_root)['session_id'])
             self.assertEqual(metadata['case_id'],self.case_id)
             self.assertEqual(metadata['observation']['latency_us'],result['latency_us'])
-            self.assertEqual((snap/'source/helper.py').stat().st_mode & 0o777,0o444)
+            self.assertEqual((snap/'source/candidate/helper.py').stat().st_mode & 0o777,0o444)
             self.assertEqual((snap/'source').stat().st_mode & 0o777,0o555)
             self.assertFalse((snap/'source/.benchmark_context').exists())
             self.assertFalse((snap/'source/.benchmark_outputs').exists())
@@ -68,11 +80,11 @@ class SnapshotTest(ActionTestBase):
     def test_snapshot_and_authority_tampering_restored_before_next_action(self):
         _,result=self.cli(['evaluate'])
         snap=self.snapshot(result)
-        source=snap/'source/helper.py'; source.chmod(0o600); source.write_text('rogue')
+        source=snap/'source/candidate/helper.py'; source.chmod(0o600); source.write_text('rogue')
         metadata=snap/'metadata.json'; metadata.chmod(0o600); metadata.write_text('{}')
         authority=self.handle.session_root/'staging/action_000001/authority_result.json'
         authority.write_text('{}')
-        process,next_result=self.cli(['profile','compiler'])
+        process,next_result=self.cli(['profile'])
         self.assertEqual(process.returncode,0,next_result)
         self.assertEqual(source.read_text(),'VALUE = 1\n')
         self.assertEqual(common.read_json(metadata)['snapshot_id'],result['snapshot_id'])

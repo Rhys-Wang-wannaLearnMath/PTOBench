@@ -1,0 +1,60 @@
+{
+  "applicability": [
+    "A Cube matmul and its vector epilogue should run in one mixed kernel.",
+    "A vector phase must be sharded across both AIV lanes or deliberately kept full-width.",
+    "A cross-rank notify or a GM handoff between AIC and AIV must be ordered correctly."
+  ],
+  "directions": [
+    "Place a Cube matmul and its vector epilogue in one `pl.at(level=pl.Level.CORE_GROUP)` with a split optimization when buffers fit; use `pl.cluster()` when the group must be a separate Group function.",
+    "Write one `for ... in pl.split_aiv(2, mode=...)` region per vector phase, with `pl.aiv_shard` at entry for C2V values and `pl.aic_gather` before returning a V2C value.",
+    "Shard a once-only notify as `for owner in pl.range(aiv_id, NUM_PEERS, 2):`, or guard it with `if aiv_id == 0:` only when lane 0 wrote the released data.",
+    "Use the full cache-publication, `fence`, `syncall`, cache-invalidation sequence for a multi-line GM handoff; use `syncall(mode=pl.SyncAllMode.SOFT, core_type=pl.KernelType.MIX, gm_workspace=sync_ws, used_cores=...)` when a barrier is required."
+  ],
+  "domain": "scheduling",
+  "effects": [
+    "A mixed kernel removes a hand-off and lets Cube and Vector overlap, but manual split mode restricts where vector and cube work may live.",
+    "Data-parallel split halves per-lane work but requires halving/rejoining crossings; `NONE` preserves shapes but forbids differing lane values at a gather.",
+    "A soft GM-polling barrier works at partial occupancy; a hard FFTS barrier requires full-core occupancy.",
+    "Sharding a notify preserves correctness at the cost of more control logic per lane."
+  ],
+  "evidence_status": "documented",
+  "id": "mixed_kernels_split_aiv_cross_core_sync",
+  "invariants": [
+    "`pl.split_aiv` accepts only `n=2`; `mode` is required.",
+    "A region that contains cube compute is rejected; Cube work stays outside every region.",
+    "Authoring `split_aiv` directly in an `InCore` function is rejected; write it in a plain `@pl.jit` or Opaque body. The region is a structural node and is nestable in loops or conditionals, but all crossings in one function must agree on split-versus-no-split; use separate `pl.at` scopes to give phases separate pipes.",
+    "Only a lane-uniform value may be gathered out of a `mode=NONE` region; the compiler does not diagnose a violation. If the lanes must contribute different data, route through GM and order it or use a data-parallel region.",
+    "The compiler keeps region comm ops off the Cube lane, but it does not check whether both AIV lanes ran the same notify. A lane-0 guard is safe only when lane 0 wrote all data the signal releases; otherwise shard the notify or order both lanes.",
+    "`syncall` aligns arrival, not data visibility; cache publication and invalidation are separate. The tensor-region cacheinvalid overload covers only the cache line containing the view base; use the whole-GM form for multi-line buffers.",
+    "`ExpandMixedKernel` automatically handles only one narrow C->V case: a unique cube `tile.store` producer whose same-origin vector `tile.load` is in the same or a nested body. Every other GM handoff remains manual."
+  ],
+  "principle": "`pl.at(level=pl.Level.CORE_GROUP)` lowers to an InCore kernel, and a mixed region can contain Cube and Vector work. `pl.cluster()` groups AIC and AIV kernels so they are co-scheduled on one physical cluster, producing a `Group` function. `for aiv_id in pl.split_aiv(2, mode=...)` opens a structural AIV-split region. `mode=pl.SplitMode.UP_DOWN` or `LEFT_RIGHT` halves every tile along rows or columns, so each lane works on half. `mode=pl.SplitMode.NONE` keeps the full body on both lanes; the author dispatches disjoint work with `aiv_id`. Opening even one region changes the contract for the whole function: vector compute must live inside a region, Cube ops and barriers stay outside, and every tile crossing a region edge must be named. A cube-produced value read on the vector lane uses `pl.aiv_shard`; a vector-produced value read on the cube lane uses `pl.aic_gather`. An unnamed crossing is rejected even though codegen could emit the same transfer; the point is that the boundary was chosen. In `mode=NONE` both ops preserve shape; in a data-parallel mode they halve or rejoin along the split axis. `pl.aiv_shard` of a value already produced on the vector lane is rejected because there is no AIC-to-AIV crossing. All `aiv_shard`/`aic_gather` calls in one function ride one logical cross-core pipe, and the pipe is fixed as split or no-split for its lifetime. A `NONE` region that crosses cannot sit beside an `UP_DOWN`/`LEFT_RIGHT` region that crosses; two different split axes are fine because only split-versus-no-split belongs to the pipe. A value gathered out of a `NONE` region must be lane-uniform: both AIV lanes push to one slot with no per-lane offset, and if they hold different values the Cube receives an unspecified one. A `mode=NONE` body runs on both AIV lanes, so a once-only side effect such as `pld.system.notify` must be sharded by `aiv_id` or guarded to one lane. `pld.system.notify` with `NotifyOp.AtomicAdd` accumulates; two notifies for one peer make a rank's counter read two for one arrival and can release a `pld.system.wait` early. This is not diagnosed. GM traffic is outside the tile-crossing rules: if one lane writes a GM buffer and another reads it, publish producer cache lines and fence, place a cross-core barrier, then invalidate the consumer cache before reading. `pl.system.syncall` synchronizes arrival only. A conservative sequence is `pl.system.cacheinvalid(); pl.system.fence(); pl.system.syncall(mode=pl.SyncAllMode.SOFT, core_type=pl.KernelType.MIX, gm_workspace=sync_ws, used_cores=participant_count); pl.system.cacheinvalid()`, where `sync_ws` is an exclusive zero-initialized 16-element INT32 GM tensor. For a single event, `pl.system.sync_set` and `pl.system.sync_wait` may pin `core_type=pl.KernelType.AIC` or `.AIV` in a mixed kernel; an explicitly typed AIC/AIV kernel already knows its lane and omits it.",
+  "questions": [
+    "The distributed `pld` APIs are not part of the registered installed API extracts; their exact local surface should be checked before writing a cross-rank program."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Sending two notifies to one peer from both AIV lanes, making its counter read two for one arrival.",
+    "Guarding a notify to lane 0 while lane 1 writes part of the released data; the signal may publish before lane 1's bytes land.",
+    "Mixing `mode=NONE` and a split mode in regions that both cross the AIC/AIV boundary.",
+    "Assuming a `syncall` alone makes a GM buffer visible; publish and invalidate caches around it.",
+    "Using a tensor-region cacheinvalid for a buffer spanning multiple cache lines."
+  ],
+  "source_features": [
+    "pl.at(level=pl.Level.CORE_GROUP)",
+    "pl.cluster()",
+    "Group",
+    "for aiv_id in pl.split_aiv(2, mode=...)",
+    "mode=pl.SplitMode.UP_DOWN",
+    "LEFT_RIGHT",
+    "mode=pl.SplitMode.NONE",
+    "aiv_id",
+    "pl.aiv_shard",
+    "pl.aic_gather",
+    "mode=NONE",
+    "aiv_shard"
+  ],
+  "summary": "A cluster co-schedules one Cube core and two Vector lanes. `pl.split_aiv` makes vector placement manual, `pl.aiv_shard`/`pl.aic_gather` name tile crossings, and all crossings in one function must agree on split-versus-no-split. GM handoffs, notifications, and cache coherence remain author responsibilities.",
+  "title": "Mixed Kernels, AIV Split Regions, and Cross-Core Synchronization"
+}

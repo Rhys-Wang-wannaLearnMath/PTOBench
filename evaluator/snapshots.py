@@ -132,7 +132,7 @@ def create_snapshot(session_root, frozen_source, event):
                 raise integrity.InfrastructureError('Snapshot ID already exists')
         with file_tree.open_directory(temporary, create=True):
             pass
-        manifest = workspace.copy_candidate_tree(frozen_source, temporary / 'source')
+        manifest = workspace.copy_candidate_tree(frozen_source, temporary / 'source' / 'candidate')
         if manifest['content_sha256'] != event['content_sha256']:
             raise integrity.InfrastructureError('Snapshot source differs from accepted frozen source')
         metadata = {

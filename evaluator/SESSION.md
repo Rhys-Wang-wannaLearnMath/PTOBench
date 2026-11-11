@@ -54,6 +54,8 @@ public profile availability (`runtime`, `pmu`, `compiler`), optimizer metadata,
 command/version, paths, asset hash summaries, registry, state and usage.
 Session records and `events.jsonl` use S1's independent backups and atomic
 `commit_records`. `final_result.json` starts as protected expected absence.
+On finalization, `final_result.json` records `elapsed_seconds` from the Session's
+`created_at` through its terminal `completed_at`, including the final verification run.
 
 Status readers only take `.session.lock` and inspect/repair the `records` group;
 they never wait for the global execution lock or restore shared assets/context.

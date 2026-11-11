@@ -1,0 +1,18 @@
+{
+  "card_ids": [
+    "cube_matmul_forms_and_accumulation",
+    "gather_scatter_and_sort_contracts",
+    "hardware_alignment_and_bank_constraints",
+    "precision_rounding_and_dtype_alignment",
+    "reduction_and_broadcast_contracts",
+    "types_shapes_directions_and_layouts"
+  ],
+  "id": "compute_pack",
+  "keywords": [
+    "compute",
+    "PyPTO",
+    "source optimization"
+  ],
+  "summary": "PyPTO source-level mechanisms, conditions, and risks for the compute domain.",
+  "title": "Compute source optimization knowledge"
+}

@@ -5,36 +5,370 @@
   "iterations": 10,
   "compiler_tuning": {
     "memory_planner": "PYPTO",
-    "analyze_auto_scopes_for_deps": false
+    "analyze_auto_scopes_for_deps": false,
+    "ring_task_window": 16384,
+    "aicpu_thread_num": 4
   },
   "fixtures": {
     "fixture_000": {
+      "execution_contract": {
+        "timing_policy": {
+          "version": "ptobench-execution-boundary-20261108-v3",
+          "input_upload": "outside_execution_window",
+          "initial_state_restore": "outside_execution_window",
+          "final_validation_readback": "outside_execution_window",
+          "required_execution_communication": "inside_execution_window"
+        },
+        "logical_workers": 1,
+        "rank_layout": "case-defined",
+        "fixture_input_identity_sha256": "91bf94cbfbccc9c132b11a0dac26e2ab98f87cf3dd85f4d6bf8ac919fe156d2f",
+        "initial_state_names": [
+          "kv_cache"
+        ],
+        "restore_before_each_launch": true,
+        "tensors": [
+          {
+            "name": "x_hc",
+            "shape": [
+              128,
+              4,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "hc_attn_fn",
+            "shape": [
+              24,
+              16384
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "hc_attn_scale",
+            "shape": [
+              3
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "hc_attn_base",
+            "shape": [
+              24
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "attn_norm_w",
+            "shape": [
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wq_a",
+            "shape": [
+              4096,
+              1024
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wq_b",
+            "shape": [
+              1024,
+              32768
+            ],
+            "dtype": "torch.int8",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wq_b_scale",
+            "shape": [
+              32768
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wkv",
+            "shape": [
+              4096,
+              512
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "gamma_cq",
+            "shape": [
+              1024
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "gamma_ckv",
+            "shape": [
+              512
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "freqs_cos",
+            "shape": [
+              4096,
+              64
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "freqs_sin",
+            "shape": [
+              4096,
+              64
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "kv_cache",
+            "shape": [
+              1,
+              128,
+              1,
+              512
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "block_table",
+            "shape": [
+              1
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "ori_slot_mapping",
+            "shape": [
+              128
+            ],
+            "dtype": "torch.int64",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "cmp_sparse_indices",
+            "shape": [
+              128,
+              640
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "cmp_sparse_lens",
+            "shape": [
+              128
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "position_ids",
+            "shape": [
+              128
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "attn_sink",
+            "shape": [
+              64
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wo_a",
+            "shape": [
+              8,
+              1024,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wo_b",
+            "shape": [
+              4096,
+              8192
+            ],
+            "dtype": "torch.int8",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wo_b_scale",
+            "shape": [
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "x_out",
+            "shape": [
+              128,
+              4,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "out"
+          }
+        ],
+        "sha256": "d95a79491af3e229ad3a70f3413b56836e4fa5e27d30a23f77b6a49b1610960d"
+      },
       "raw_samples_effective_us": [
-        1574.019,
-        1614.139,
-        1601.62,
-        1607.299,
-        1606.939,
-        1616.059,
-        1605.719,
-        1591.32,
-        1616.34,
-        1581.42
+        1625.399,
+        1653.74,
+        1582.36,
+        1622.36,
+        1623.04,
+        1633.499,
+        1589.021,
+        1603.661,
+        1640.6,
+        1601.22
       ],
       "samples_effective_us": [
-        1574.019,
-        1614.139,
-        1601.62,
-        1607.299,
-        1606.939,
-        1616.059,
-        1605.719,
-        1591.32,
-        1616.34,
-        1581.42
+        1625.399,
+        1653.74,
+        1582.36,
+        1622.36,
+        1623.04,
+        1633.499,
+        1589.021,
+        1603.661,
+        1640.6,
+        1601.22
       ],
-      "median_effective_us": 1606.3290000000002,
-      "mean_effective_us": 1601.4874
+      "median_effective_us": 1622.6999999999998,
+      "mean_effective_us": 1617.49
+    }
+  },
+  "timing_policy": {
+    "version": "ptobench-execution-boundary-20261108-v3",
+    "input_upload": "outside_execution_window",
+    "initial_state_restore": "outside_execution_window",
+    "final_validation_readback": "outside_execution_window",
+    "required_execution_communication": "inside_execution_window"
+  },
+  "tuning_identity": {
+    "source_sha256": "4a8c5bf787a81b10daafcd01cef5a8e0c898ac6f0f6758dd3132d25fe7240417",
+    "case_sha256": "5ec8332edee8b11c8f60a82026b35145482a1724ba500872ad5d87b4f1d7cfdb",
+    "config_sha256": "e92baed894dad9e99a503d23803cdf3fc748567e6033d92bf45c293e59dcf1b7",
+    "comparator_sha256": "f13ec1a2ace7bf7c569a307ffce9dcb4c4519592b81e55d5fbfa549c27545fc0",
+    "environment_sha256": "12769f86e1ac3012fd9dea35d72fe9003bd1c163c81e00531e2fb72e11392bbe",
+    "tuning_policy_sha256": "189298cdda8be8f8b90aef7f0d40122ac939b5074813d666230437faa7598461"
+  },
+  "tuning_evidence": "runs/all_case_boundary_repair_20261108/case_results/deepseek_v4__prefill_attention_swa_demo.json",
+  "resolved_tuning": {
+    "requested": {
+      "memory_planner": "PYPTO",
+      "analyze_auto_scopes_for_deps": false,
+      "ring_task_window": 16384,
+      "aicpu_thread_num": 4
+    },
+    "resolved_run_config": {
+      "memory_planner": "PYPTO",
+      "analyze_auto_scopes_for_deps": false,
+      "strategy": "Default",
+      "ring_task_window": 16384,
+      "ring_heap": null,
+      "ring_dep_pool": null,
+      "aicpu_thread_num": 4
+    },
+    "unresolved_runtime_defaults": [
+      "ring_heap",
+      "ring_dep_pool"
+    ],
+    "diagnostics": {
+      "dump_passes": false,
+      "dump_ptoas_passes": false,
+      "compile_profiling": false,
+      "enable_pmu": 0,
+      "enable_chip_swimlane": 0,
+      "enable_dep_gen": false,
+      "enable_scope_stats": false,
+      "enable_dump_args": 0
+    }
+  },
+  "resolved_tuning_by_fixture": {
+    "fixture_000": {
+      "requested": {
+        "memory_planner": "PYPTO",
+        "analyze_auto_scopes_for_deps": false,
+        "ring_task_window": 16384,
+        "aicpu_thread_num": 4
+      },
+      "resolved_run_config": {
+        "memory_planner": "PYPTO",
+        "analyze_auto_scopes_for_deps": false,
+        "strategy": "Default",
+        "ring_task_window": 16384,
+        "ring_heap": null,
+        "ring_dep_pool": null,
+        "aicpu_thread_num": 4
+      },
+      "unresolved_runtime_defaults": [
+        "ring_heap",
+        "ring_dep_pool"
+      ],
+      "diagnostics": {
+        "dump_passes": false,
+        "dump_ptoas_passes": false,
+        "compile_profiling": false,
+        "enable_pmu": 0,
+        "enable_chip_swimlane": 0,
+        "enable_dep_gen": false,
+        "enable_scope_stats": false,
+        "enable_dump_args": 0
+      }
     }
   }
 }

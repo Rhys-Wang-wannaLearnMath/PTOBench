@@ -5,36 +5,868 @@
   "iterations": 10,
   "compiler_tuning": {
     "memory_planner": "PYPTO",
-    "analyze_auto_scopes_for_deps": false
+    "analyze_auto_scopes_for_deps": false,
+    "ring_task_window": 16384
   },
   "fixtures": {
     "fixture_000": {
+      "execution_contract": {
+        "timing_policy": {
+          "version": "ptobench-execution-boundary-20261108-v3",
+          "input_upload": "outside_execution_window",
+          "initial_state_restore": "outside_execution_window",
+          "final_validation_readback": "outside_execution_window",
+          "required_execution_communication": "inside_execution_window"
+        },
+        "logical_workers": 8,
+        "rank_layout": "case-defined",
+        "fixture_input_identity_sha256": "703f266d265d6bd9656ed028cd3e6ed1d25a0b16a06113d9a3e9c6d4e4115d8d",
+        "initial_state_names": [
+          "cmp_kv",
+          "compress_state",
+          "idx_kv_cache",
+          "idx_kv_scale",
+          "inner_compress_state",
+          "kv_cache"
+        ],
+        "restore_before_each_launch": true,
+        "tensors": [
+          {
+            "name": "x_hc",
+            "shape": [
+              8,
+              2,
+              2,
+              128,
+              4,
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "hc_attn_fn",
+            "shape": [
+              24,
+              16384
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "hc_attn_scale",
+            "shape": [
+              3
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "hc_attn_base",
+            "shape": [
+              24
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "attn_norm_w",
+            "shape": [
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wq_a",
+            "shape": [
+              4096,
+              1024
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wq_b",
+            "shape": [
+              1024,
+              32768
+            ],
+            "dtype": "torch.int8",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wq_b_scale",
+            "shape": [
+              32768
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wkv",
+            "shape": [
+              4096,
+              512
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "gamma_cq",
+            "shape": [
+              1024
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "gamma_ckv",
+            "shape": [
+              512
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "freqs_cos",
+            "shape": [
+              16384,
+              64
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "freqs_sin",
+            "shape": [
+              16384,
+              64
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "cmp_wkv",
+            "shape": [
+              1024,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "cmp_wgate",
+            "shape": [
+              1024,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "cmp_ape",
+            "shape": [
+              4,
+              1024
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "cmp_norm_w",
+            "shape": [
+              512
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "hadamard_idx",
+            "shape": [
+              128,
+              128
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "idx_wq_b",
+            "shape": [
+              1024,
+              8192
+            ],
+            "dtype": "torch.int8",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "idx_wq_b_scale",
+            "shape": [
+              8192
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "idx_weights_proj",
+            "shape": [
+              4096,
+              64
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "inner_wkv",
+            "shape": [
+              256,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "inner_wgate",
+            "shape": [
+              256,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "inner_ape",
+            "shape": [
+              4,
+              256
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "inner_norm_w",
+            "shape": [
+              128
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "attn_sink",
+            "shape": [
+              64
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wo_a",
+            "shape": [
+              8,
+              1024,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wo_b",
+            "shape": [
+              4096,
+              8192
+            ],
+            "dtype": "torch.int8",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wo_b_scale",
+            "shape": [
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "compress_state",
+            "shape": [
+              8,
+              65,
+              4,
+              2048
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "compress_state_block_table",
+            "shape": [
+              8,
+              4096
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "inner_compress_state",
+            "shape": [
+              8,
+              65,
+              4,
+              512
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "inner_compress_state_block_table",
+            "shape": [
+              8,
+              4096
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "kv_cache",
+            "shape": [
+              8,
+              128,
+              128,
+              1,
+              512
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "cmp_kv",
+            "shape": [
+              8,
+              32,
+              128,
+              1,
+              512
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "cmp_block_table",
+            "shape": [
+              8,
+              32
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "idx_kv_cache",
+            "shape": [
+              8,
+              64,
+              128,
+              1,
+              128
+            ],
+            "dtype": "torch.int8",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "idx_kv_scale",
+            "shape": [
+              8,
+              64,
+              128,
+              1,
+              1
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "idx_block_table",
+            "shape": [
+              8,
+              64
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "segment_starts_t",
+            "shape": [
+              16
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "segment_lengths_t",
+            "shape": [
+              16
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "segment_active_lengths",
+            "shape": [
+              8,
+              2
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "owner_segments_t",
+            "shape": [
+              8,
+              2
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "predecessor_segments",
+            "shape": [
+              8,
+              2
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "query_positions",
+            "shape": [
+              8,
+              2,
+              2,
+              128
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "query_requests",
+            "shape": [
+              8,
+              2,
+              2,
+              128
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "overlay_positions",
+            "shape": [
+              8,
+              2,
+              2,
+              256
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "overlay_requests",
+            "shape": [
+              8,
+              2,
+              2,
+              256
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "overlay_active_lengths",
+            "shape": [
+              8,
+              2,
+              2,
+              2
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "swa_indices",
+            "shape": [
+              8,
+              2,
+              2,
+              128,
+              128
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "final_segment_t",
+            "shape": [
+              1
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "reverse_index",
+            "shape": [
+              16
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "owner_rank_table",
+            "shape": [
+              16
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "final_win_seg_src",
+            "shape": [
+              128
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "final_win_row_src",
+            "shape": [
+              128
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "final_slot_mapping",
+            "shape": [
+              128
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "leaf_positions_input",
+            "shape": [
+              8,
+              2,
+              3,
+              128
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "leaf_main_slots_input",
+            "shape": [
+              8,
+              2,
+              3,
+              128
+            ],
+            "dtype": "torch.int64",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "leaf_idx_slots_input",
+            "shape": [
+              8,
+              2,
+              3,
+              128
+            ],
+            "dtype": "torch.int64",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "leaf_main_state_slots_input",
+            "shape": [
+              8,
+              2,
+              3,
+              128
+            ],
+            "dtype": "torch.int64",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "leaf_inner_state_slots_input",
+            "shape": [
+              8,
+              2,
+              3,
+              128
+            ],
+            "dtype": "torch.int64",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "leaf_num_tokens_input",
+            "shape": [
+              8,
+              2,
+              3
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "effective_x_workspace",
+            "shape": [
+              8,
+              768,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "main_state_workspace0",
+            "shape": [
+              8,
+              65,
+              4,
+              2048
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "inner_state_workspace0",
+            "shape": [
+              8,
+              65,
+              4,
+              512
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "main_state_workspace1",
+            "shape": [
+              8,
+              65,
+              4,
+              2048
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "inner_state_workspace1",
+            "shape": [
+              8,
+              65,
+              4,
+              512
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "x_out",
+            "shape": [
+              8,
+              2,
+              2,
+              128,
+              4,
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "out"
+          }
+        ],
+        "sha256": "0a2c22e10bed609a242a8317c5fbed096fa8020f79a0cca61602c5539dfb6ec4"
+      },
       "raw_samples_effective_us": [
-        16667.539,
-        16565.46,
-        16672.48,
-        16783.18,
-        16849.3,
-        16672.24,
-        16607.54,
-        16526.68,
-        16652.699,
-        16725.48
+        16509.939,
+        17347.78,
+        16461.099,
+        16664.939,
+        16829.421,
+        16868.22,
+        16804.818,
+        16702.678,
+        16718.9,
+        16652.18
       ],
       "samples_effective_us": [
-        16667.539,
-        16565.46,
-        16672.48,
-        16783.18,
-        16849.3,
-        16672.24,
-        16607.54,
-        16526.68,
-        16652.699,
-        16725.48
+        16509.939,
+        17347.78,
+        16461.099,
+        16664.939,
+        16829.421,
+        16868.22,
+        16804.818,
+        16702.678,
+        16718.9,
+        16652.18
       ],
-      "median_effective_us": 16669.8895,
-      "mean_effective_us": 16672.2598
+      "median_effective_us": 16710.789,
+      "mean_effective_us": 16755.9974
+    }
+  },
+  "timing_policy": {
+    "version": "ptobench-execution-boundary-20261108-v3",
+    "input_upload": "outside_execution_window",
+    "initial_state_restore": "outside_execution_window",
+    "final_validation_readback": "outside_execution_window",
+    "required_execution_communication": "inside_execution_window"
+  },
+  "tuning_identity": {
+    "source_sha256": "0962871439e72af6354da070f8325263ebc6f08a24564fef086fac3b48b26c70",
+    "case_sha256": "69819a94c177c44dd88637b434c3d4f675510a34e11889293d641bd77c4b69e0",
+    "config_sha256": "52bef6b05bcc6c395911e55e73b82dea67212d0816dfbd3614be425e05234eed",
+    "comparator_sha256": "6f46ee968bf9ecb6e4904c6d14f9bd261bc1a798abf84c111be0a53c2fb2d453",
+    "environment_sha256": "6c59661cf909f722b1a489e7a34520287aae475017a8f466d1fed366dd82a57d",
+    "tuning_policy_sha256": "16b5e923e043d0d0257bf710ed6679ef20cefc07c341e3884dbc645a52ba889f"
+  },
+  "tuning_evidence": "runs/boundary_resident_recertification_20261108/case_results/deepseek_v4_flash_mtp__prefill_cp_csa_cp8_flash.json",
+  "resolved_tuning": {
+    "requested": {
+      "memory_planner": "PYPTO",
+      "analyze_auto_scopes_for_deps": false,
+      "ring_task_window": 16384
+    },
+    "resolved_run_config": {
+      "memory_planner": "PYPTO",
+      "analyze_auto_scopes_for_deps": false,
+      "strategy": "Default",
+      "ring_task_window": 16384,
+      "ring_heap": [
+        0,
+        536870912,
+        536870912,
+        0
+      ],
+      "ring_dep_pool": null,
+      "aicpu_thread_num": null
+    },
+    "unresolved_runtime_defaults": [
+      "ring_dep_pool",
+      "aicpu_thread_num"
+    ],
+    "diagnostics": {
+      "dump_passes": false,
+      "dump_ptoas_passes": false,
+      "compile_profiling": false,
+      "enable_pmu": 0,
+      "enable_chip_swimlane": 0,
+      "enable_dep_gen": false,
+      "enable_scope_stats": false,
+      "enable_dump_args": 0
+    }
+  },
+  "resolved_tuning_by_fixture": {
+    "fixture_000": {
+      "requested": {
+        "memory_planner": "PYPTO",
+        "analyze_auto_scopes_for_deps": false,
+        "ring_task_window": 16384
+      },
+      "resolved_run_config": {
+        "memory_planner": "PYPTO",
+        "analyze_auto_scopes_for_deps": false,
+        "strategy": "Default",
+        "ring_task_window": 16384,
+        "ring_heap": [
+          0,
+          536870912,
+          536870912,
+          0
+        ],
+        "ring_dep_pool": null,
+        "aicpu_thread_num": null
+      },
+      "unresolved_runtime_defaults": [
+        "ring_dep_pool",
+        "aicpu_thread_num"
+      ],
+      "diagnostics": {
+        "dump_passes": false,
+        "dump_ptoas_passes": false,
+        "compile_profiling": false,
+        "enable_pmu": 0,
+        "enable_chip_swimlane": 0,
+        "enable_dep_gen": false,
+        "enable_scope_stats": false,
+        "enable_dump_args": 0
+      }
     }
   }
 }

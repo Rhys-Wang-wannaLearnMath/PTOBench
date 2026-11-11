@@ -1,0 +1,63 @@
+{
+  "applicability": [
+    "Implementing RMSNorm, softmax, or other row/column reductions.",
+    "A tile reduction rejects a missing or wrong scratch tile.",
+    "Choosing between tensor and tile reduction APIs.",
+    "Using `high_precision` on `rsqrt`, `div`, `log`, or `recip`."
+  ],
+  "directions": [
+    "Use tensor reductions when the compiler should own scratch; use tile reductions only when already working with tile values and provide the required scratch tile.",
+    "For a Tile row reduction, allocate scratch with the same dtype and rank and dimensions at least as large as the input; for arg reductions, use exactly the input shape and dtype.",
+    "For a `col_sum` that needs binary-tree depth or precision, pass the matching scratch tile; otherwise omit it for the sequential path.",
+    "Use `row_expand_*` or `col_expand_*` instead of reshape-based broadcasting for RMSNorm, softmax, and attention scaling.",
+    "If half reduction throughput is the bottleneck, reduce in fp32 and cast afterward."
+  ],
+  "domain": "compute",
+  "effects": [
+    "Explicit tile scratch enables on-chip reduction but consumes UB and must match strict shape rules.",
+    "`col_sum` binary-tree reduction can improve depth and precision but costs scratch and changes rounding.",
+    "fp32 reduction can be faster and more accurate than half but doubles bytes.",
+    "Hardware row/column expansion saves reshape and elementwise work but requires compatible vector shapes."
+  ],
+  "evidence_status": "documented",
+  "id": "reduction_and_broadcast_contracts",
+  "invariants": [
+    "Row reductions collapse the last axis with keepdim; column reductions collapse axis `-2` with keepdim. `row_argmax`/`row_argmin` return INT32 indices; `col_argmax`/`col_argmin` do too.",
+    "Tensor reductions take no user scratch tile; passing `tmp_tile` raises. Tile `row_max`, `row_sum`, `row_min`, and `row_prod` require a scratch tile with the same dtype and rank and every dimension at least as large as the input.",
+    "Tile `row_argmax`/`row_argmin` require a scratch tile with exactly the same shape and dtype. Tile `col_argmax`/`col_argmin` also require exact shape/dtype scratch, unlike `col_max`/`col_min`.",
+    "Tile `col_sum` accepts an optional scratch tile that selects the binary-tree reduction path; omitting it uses the sequential path. Tensor `col_sum` omits scratch and uses the sequential path.",
+    "`pl.rsqrt` exposes `high_precision` only on Tensor inputs; the tile path selects high precision by passing `tmp`. `pl.div` high precision is only for tensor/tensor or tile/tile, not a scalar divisor. `pl.log` and `pl.recip` also expose precision modes.",
+    "`row_expand_*` and `col_expand_*` map to hardware broadcast operations; use them instead of relying on reshape-based broadcast. `pl.cmp`/`cmps` produce a packed predicate mask, and `pl.sel`/`sels` require a scratch tile.",
+    "Some vector reductions are faster in fp32 than half because half writeback can be misaligned."
+  ],
+  "principle": "Reductions are direction-specific. `row_max`, `row_min`, `row_sum`, and `row_prod` reduce the last axis and keep the dimension, so an `[M, N]` input gives `[M, 1]`. `col_max`, `col_min`, `col_sum`, and `col_prod` reduce axis `-2`, so the same input gives `[1, N]`. The tensor and tile APIs share names but differ in scratch ownership. A tensor reduction allocates its own scratch during tensor-to-tile lowering, so the user must omit `tmp_tile`. A tile reduction sees only tile values and therefore requires caller scratch where the hardware needs it: row reductions require the same dtype and rank with dimensions at least as large as the input, while arg reductions require exactly the same shape and dtype. `col_sum` is special: passing `tmp_tile` selects a binary-tree reduction with logarithmic depth and different rounding; omitting it keeps the sequential path. Broadcast operations such as `row_expand_mul`, `row_expand_add`, `col_expand_mul`, and `col_expand_div` are single hardware operations and should be preferred to manually reshaping a vector and relying on elementwise broadcast. Comparison operations return a packed predicate mask; materializing selected values requires `sel` or `sels` with its scratch tile. Precision controls are operation-specific. `rsqrt` takes `high_precision` on the Tensor API and a `tmp` tile on the Tile API; `div` has a high-precision form only for tensor/tensor or tile/tile; `log` and `recip` expose their own high-precision flags. On this hardware a half-data vector reduction can be slower than fp32 because the half writeback is not 32-byte aligned, so use fp32 when the reduction itself is the bottleneck and cast the result only where needed.",
+  "questions": [
+    "The best reduction path for a concrete shape and dtype depends on the build and device; no local reduction benchmark was run."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Passing a scratch tile to a Tensor reduction instead of letting lowering allocate it.",
+    "Omitting the required Tile scratch tile, or giving an arg-reduction a merely oversized scratch instead of the exact shape and dtype.",
+    "Assuming `col_sum`'s optional scratch is free; it changes the reduction path and precision.",
+    "Using a reshape to broadcast a row or column where `row_expand_*`/`col_expand_*` is the hardware operation.",
+    "Passing `high_precision=True` to a scalar-divisor division or to a Tile `rsqrt` instead of its `tmp` form.",
+    "Assuming half-data reductions are always faster than fp32."
+  ],
+  "source_features": [
+    "row_max",
+    "row_min",
+    "row_sum",
+    "row_prod",
+    "[M, N]",
+    "[M, 1]",
+    "col_max",
+    "col_min",
+    "col_sum",
+    "col_prod",
+    "-2",
+    "[1, N]"
+  ],
+  "summary": "Row and column reductions collapse different axes and have different scratch-tile contracts on tensor versus tile APIs. Broadcast expansions are single hardware ops, comparison masks need `sel` scratch, and precision flags are operation-specific.",
+  "title": "Reduction and Broadcast Operation Contracts"
+}

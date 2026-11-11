@@ -1,0 +1,55 @@
+{
+  "applicability": [
+    "A run fails with `HEAP_RING_DEADLOCK`, `SCOPE_DEADLOCK`, `FLOW_CONTROL_DEADLOCK`, or `DEP_POOL_OVERFLOW`.",
+    "Choosing between placing more scopes and enlarging a ring.",
+    "Confirming that a `RunConfig` ring override actually reached the runtime."
+  ],
+  "directions": [
+    "Add `--enable-scope-stats` to the entry and pass `RunConfig(enable_scope_stats=True, save_kernels=True)`.",
+    "Read line 1 to confirm the effective capacities before interpreting any peak.",
+    "Pair begin/end records per ring and per site; use `scope_high_water`, `real_occupancy`, and `scope_alloc` to choose between scope placement, shrinking intermediates, splitting a scope, and ring sizing.",
+    "Use `python -m simpler_setup.tools.scope_stats_plot` rather than a runtime-relative script path that may not exist in a checkout."
+  ],
+  "domain": "memory",
+  "effects": [
+    "Scope stats reveal per-site peaks and effective capacities, but require an actual run and add DFX records.",
+    "Enlarging a ring is immediate but treats the symptom; splitting a scope or shrinking intermediates reduces the peak structurally.",
+    "High-frequency scope samples attribute pressure precisely but can perturb the schedule and produce dropped records."
+  ],
+  "evidence_status": "documented",
+  "id": "scope_stats_and_ring_deadlocks",
+  "invariants": [
+    "`--compile-only` never reaches the runtime and records no scope stats.",
+    "Collector drops make reported peaks lower bounds; re-run with less concurrency before trusting them.",
+    "Reclaim happens only when the allocator has to wait, so an oversized ring may never reclaim and a scoped program can report the same frontier as an unscoped one.",
+    "Oversizing task window, dependency pool, or heap increases the static arena and can fail before kernel launch."
+  ],
+  "principle": "`scope_stats` writes one sample at every scope boundary: task-window, heap, dependency-pool head/tail, and tensormap usage. It works on both L2 and L3 paths; L2 writes under `dfx_outputs/scope_stats/`, L3 per rank and dispatch under `dfx_outputs/rank<N>/d<K>/scope_stats/`. Line 1 is run metadata carrying schema version, `fatal`, `dropped`, and the effective capacities `task_window_max`, `heap_max`, and `dep_pool_max` as arrays indexed by ring, plus `tensormap_max`. Every later line is a `begin` or `end` sample with a source `site`, depth, ring, and head/tail counters. In schema version 6 heap counters are monotonic cumulative bytes. Pair a begin with its end to compute `scope_high_water = end.head - begin.tail`, an upper bound on pressure reached; `real_occupancy = end.head - end.tail`, what is still held at exit; and `scope_alloc = end.head - begin.head`, allocation throughput independent of reclaim. A ring near capacity while others are near zero indicates auto-scope collapse or all work at one depth. High high-water with low live occupancy means the scope streams and reclaim keeps up. High live occupancy at exit means a long-lived allocation is pinned in that ring. Only begin records at the file tail indicate the run wedged inside that scope; the last open site is where the ring filled. `dropped > 0` means collector back-pressure and makes peaks lower bounds. `fatal: true` means a fatal was latched and later records are diagnostic only. `enable_scope_stats` requires an actual execution; `--compile-only` records nothing. Any DFX flag forces `save_kernels=True` so the work directory survives. Render with `python -m simpler_setup.tools.scope_stats_plot <scope_stats.jsonl>` or pair records directly. Deadlock codes are reported through a generic host ACL error; the real cause is the `orch_error_code` line: 1 `SCOPE_DEADLOCK`, 2 `HEAP_RING_DEADLOCK`, 3 `FLOW_CONTROL_DEADLOCK` often from nesting on the same ring, 4 `DEP_POOL_OVERFLOW`, and 11 `TENSORMAP_OVERFLOW`. Oversizing all rings can instead fail with `rtMalloc 207001` before execution.",
+  "questions": [
+    "The local runtime's effective ring capacities and whether `_apply_ring_overrides` is reached on both L2 and L3 dispatch paths were not exercised."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Treating the metadata line as a scope sample and pairing it with a begin record.",
+    "Assuming a peak is exact when `dropped > 0`.",
+    "Reading only the generic `507018 ACL_ERROR_RT_AICPU_EXCEPTION` and missing the `orch_error_code` that identifies the ring resource.",
+    "Using a runtime/tools path that is absent from a pypto-lib checkout instead of the `simpler_setup.tools` module form."
+  ],
+  "source_features": [
+    "scope_stats",
+    "dfx_outputs/scope_stats/",
+    "dfx_outputs/rank<N>/d<K>/scope_stats/",
+    "fatal",
+    "dropped",
+    "task_window_max",
+    "heap_max",
+    "dep_pool_max",
+    "tensormap_max",
+    "begin",
+    "end",
+    "site"
+  ],
+  "summary": "`enable_scope_stats` records task-window, heap, dependency-pool, and tensormap usage at every scope boundary. The first JSONL line proves effective ring capacities; paired begin/end samples show high-water, live occupancy, and allocation throughput, while `orch_error_code` names the resource that wedged.",
+  "title": "Scope Stats and Ring Deadlock Diagnosis"
+}

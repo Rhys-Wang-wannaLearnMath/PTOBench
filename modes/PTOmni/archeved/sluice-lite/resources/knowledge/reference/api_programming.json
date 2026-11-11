@@ -1,0 +1,9 @@
+{
+  "applicability": [
+    "When reasoning about PyPTO source semantics in the programming domain"
+  ],
+  "body": "This reference indexes the public source-level semantics for the programming domain.\n\n- JIT Authoring, Specialization, and Compile Checks: Decorators parse source rather than execute it. `@pl.jit` discovers device sub-functions, `@pl.function`/`@pl.program` spell the IR one-to-one, and `specialize`, `lower`, and `compile` stop at different stages, so only a full compile validates code generation.\n- L2 Prefetch and Weight Residency: A fixed weight set reread every layer can be evicted by an unrelated large stage. A cache warm may hide the reload behind existing compute, but its concrete `pl.prefetch` method surface is not present in the registered API extracts, and a benchmark that replays warm weights cannot prove a cold-cache benefit.\n- Loop Semantics, Carried State, and Legal Placement: `pl.range`, `pl.unroll`, `pl.parallel`, `pl.pipeline`, and `pl.spmd` share syntax but carry different compiler promises. The IR is SSA, so values crossing a loop or branch are carried explicitly or through parser-inserted `pl.yield_`.\n- PyPTO Levels, Planes, and Source-Order Limits: PyPTO separates what to compute, where it runs, and when it runs: Python builds IR, function type and level select the control or execution plane, and the runtime schedules a derived task graph. Source adjacency is not an ordering guarantee.\n- Software Pipelining, Buffer Slots, and the Two Lowerings: `pl.pipeline(N, stage=F)` asks for ping-pong buffering. The default path replicates the body F times; under `memory_planner=PTOAS`, `LowerPipelineToSlots` may rotate one body through F slots of one allocation. Both paths have capacity and eligibility constraints, and explicit `pl.MemRef(..., slots=N)` is the hand-managed alternative.",
+  "id": "api_programming",
+  "requires": [],
+  "title": "Programming API and mechanism index"
+}

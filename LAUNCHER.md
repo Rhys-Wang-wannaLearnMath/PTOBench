@@ -61,6 +61,10 @@ absence of retired entries. It performs no Ref preparation or measurement.
 exits or the Session is interrupted; status and action results report
 `remaining_hardware_actions: null`.
 
+Optional `method_options` is a mapping passed unchanged to the selected method;
+only methods that declare options consume it. Basic has no `raw_wiki` option and
+does not inject that reference bundle.
+
 Native profiles belong to the execution side, in `modes/_shared/profiles/<backend>/<name>.yaml`. Basic also reads existing custom profiles at the old `launcher/profiles/` location. They contain string
 arrays `argv` and `version_argv`, optional `help_argv`, `model`, and `reasoning`, and a string
 mapping `env`. `{prompt}` must occur as one separate argv element;
@@ -71,6 +75,14 @@ settings and overrides of managed PATH/Session variables. Keep credentials in
 the tool's existing host authentication. The default model is the tool's own
 model; settings not exposed by the native tool remain unspecified in metadata.
 Basic prepares Codex/Pi profiles and native recording before capability checks; the generic Launcher does not implement backend-specific settings.
+
+Pi profiles additionally accept `context_window: <positive integer>` and
+`max_output_tokens: <positive integer | unlimited>`. These override inherited
+host model caps through the mode-local provider configuration; a configured
+mode `.env` is required when either field is present. `unlimited` omits the
+client output-token cap from Responses/Completions requests; service/model
+limits and defaults still apply; omission does not guarantee the model maximum.
+The shipped Pi profiles explicitly request each model’s official maximum. See [Pi profile settings](modes/_shared/profiles/pi/README.md).
 
 The Launcher validates the explicit method entrypoint and calls its `preflight`,
 then creates one fresh Session and `worker_000`. It passes public Case/Run context

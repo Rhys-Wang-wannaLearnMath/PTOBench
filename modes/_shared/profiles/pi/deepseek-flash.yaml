@@ -3,3 +3,5 @@ version_argv: [pi, --version]
 help_argv: [pi, --help]
 env: {}
 model: provider-default/deepseek-flash
+context_window: 1048576
+max_output_tokens: 393216  # Official model maximum; omitted API field may use a smaller default.

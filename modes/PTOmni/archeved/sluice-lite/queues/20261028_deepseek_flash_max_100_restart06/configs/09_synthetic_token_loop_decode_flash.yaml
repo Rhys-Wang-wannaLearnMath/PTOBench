@@ -1,0 +1,12 @@
+case: deepseek_v4.synthetic_token_loop_decode_flash
+mode: sluice-lite
+optimizer:
+  id: sluice_lite_deepseek_flash_max
+  backend: pi
+  profile: deepseek-flash-max
+output:
+  runs_root: ../../../../../runs/sluice-lite/20261028_deepseek_flash_max_100_restart06/deepseek_v4.synthetic_token_loop_decode_flash
+  snapshots_root: ../../../../../snapshots/sluice-lite/20261028_deepseek_flash_max_100_restart06/deepseek_v4.synthetic_token_loop_decode_flash
+budget:
+  max_hardware_actions: 100
+  finish_actions: 1

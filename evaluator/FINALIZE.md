@@ -70,7 +70,8 @@ and `final_result.json`. Failure raw bytes are diagnostic evidence and cannot
 supply verified values. No final exploration Snapshot is created. The final
 result includes identity/close reason, selected event/hash, policy/reason and
 complete observation provenance, both usage counters, finish event sequence,
-error and verified metrics. Official comparison reads only completed results
+error and verified metrics. `elapsed_seconds` is the wall time from Session
+creation through final verification; it is not the NPU execution metric. Official comparison reads only completed results
 with `final_integrity_passed=true`, finite positive `final_verified_latency_us`
 and `final_verified_speedup`; failure verified fields are null.
 

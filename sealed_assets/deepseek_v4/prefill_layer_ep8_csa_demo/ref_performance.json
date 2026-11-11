@@ -5,36 +5,1058 @@
   "iterations": 10,
   "compiler_tuning": {
     "memory_planner": "PYPTO",
-    "analyze_auto_scopes_for_deps": false
+    "analyze_auto_scopes_for_deps": false,
+    "ring_task_window": 16384
   },
   "fixtures": {
     "fixture_000": {
+      "execution_contract": {
+        "timing_policy": {
+          "version": "ptobench-execution-boundary-20261108-v3",
+          "input_upload": "outside_execution_window",
+          "initial_state_restore": "outside_execution_window",
+          "final_validation_readback": "outside_execution_window",
+          "required_execution_communication": "inside_execution_window"
+        },
+        "logical_workers": 8,
+        "rank_layout": "case-defined",
+        "fixture_input_identity_sha256": "939bf847c208e47079cfb8602f2b2cfc869fafbef6be9ddb3f314aed3860a415",
+        "initial_state_names": [
+          "cmp_kv",
+          "csa_cmp_kv_state",
+          "csa_cmp_score_state",
+          "csa_inner_kv_state",
+          "csa_inner_score_state",
+          "hca_cmp_kv_state",
+          "hca_cmp_score_state",
+          "idx_kv_cache",
+          "idx_kv_scale",
+          "kv_cache"
+        ],
+        "restore_before_each_launch": true,
+        "tensors": [
+          {
+            "name": "x_hc",
+            "shape": [
+              8,
+              384,
+              4,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "seq_lens",
+            "shape": [
+              8,
+              2
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "chunk_lens",
+            "shape": [
+              8,
+              2
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "chunk_offsets",
+            "shape": [
+              8,
+              2
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "chunk_tile_offsets",
+            "shape": [
+              8,
+              2
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "hc_attn_fn",
+            "shape": [
+              8,
+              24,
+              16384
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "hc_attn_scale",
+            "shape": [
+              8,
+              3
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "hc_attn_base",
+            "shape": [
+              8,
+              24
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "attn_norm_w",
+            "shape": [
+              8,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "wq_a",
+            "shape": [
+              8,
+              4096,
+              1024
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "wq_b",
+            "shape": [
+              8,
+              1024,
+              32768
+            ],
+            "dtype": "torch.int8",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "wq_b_scale",
+            "shape": [
+              8,
+              32768
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "wkv",
+            "shape": [
+              8,
+              4096,
+              512
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "gamma_cq",
+            "shape": [
+              8,
+              1024
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "gamma_ckv",
+            "shape": [
+              8,
+              512
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "freqs_cos",
+            "shape": [
+              8,
+              4096,
+              64
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "freqs_sin",
+            "shape": [
+              8,
+              4096,
+              64
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "hca_cmp_wkv",
+            "shape": [
+              8,
+              512,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "hca_cmp_wgate",
+            "shape": [
+              8,
+              512,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "hca_cmp_ape",
+            "shape": [
+              8,
+              128,
+              512
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "hca_cmp_norm_w",
+            "shape": [
+              8,
+              512
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "hca_cmp_kv_state",
+            "shape": [
+              8,
+              1024,
+              8,
+              512
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "hca_cmp_score_state",
+            "shape": [
+              8,
+              1024,
+              8,
+              512
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "hca_compress_state_block_table",
+            "shape": [
+              8,
+              1024
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "csa_cmp_wkv",
+            "shape": [
+              8,
+              1024,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "csa_cmp_wgate",
+            "shape": [
+              8,
+              1024,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "csa_cmp_ape",
+            "shape": [
+              8,
+              4,
+              1024
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "csa_cmp_norm_w",
+            "shape": [
+              8,
+              512
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "csa_cmp_kv_state",
+            "shape": [
+              8,
+              2048,
+              4,
+              1024
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "csa_cmp_score_state",
+            "shape": [
+              8,
+              2048,
+              4,
+              1024
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "csa_compress_state_block_table",
+            "shape": [
+              8,
+              2048
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "csa_hadamard_idx",
+            "shape": [
+              8,
+              128,
+              128
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "csa_idx_wq_b",
+            "shape": [
+              8,
+              1024,
+              8192
+            ],
+            "dtype": "torch.int8",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "csa_idx_wq_b_scale",
+            "shape": [
+              8,
+              8192
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "csa_weights_proj",
+            "shape": [
+              8,
+              4096,
+              64
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "csa_inner_wkv",
+            "shape": [
+              8,
+              256,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "csa_inner_wgate",
+            "shape": [
+              8,
+              256,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "csa_inner_ape",
+            "shape": [
+              8,
+              4,
+              256
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "csa_inner_norm_w",
+            "shape": [
+              8,
+              128
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "csa_inner_kv_state",
+            "shape": [
+              8,
+              2048,
+              4,
+              256
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "csa_inner_score_state",
+            "shape": [
+              8,
+              2048,
+              4,
+              256
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "csa_inner_compress_state_block_table",
+            "shape": [
+              8,
+              2048
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "kv_cache",
+            "shape": [
+              8,
+              2,
+              128,
+              1,
+              512
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "ori_block_table",
+            "shape": [
+              8,
+              2
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "ori_slot_mapping",
+            "shape": [
+              8,
+              384
+            ],
+            "dtype": "torch.int64",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "cmp_kv",
+            "shape": [
+              8,
+              512,
+              128,
+              1,
+              512
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "cmp_block_table",
+            "shape": [
+              8,
+              64
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "cmp_sparse_indices",
+            "shape": [
+              8,
+              384,
+              640
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "cmp_sparse_lens",
+            "shape": [
+              8,
+              384
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "idx_kv_cache",
+            "shape": [
+              8,
+              1024,
+              128,
+              1,
+              128
+            ],
+            "dtype": "torch.int8",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "idx_kv_scale",
+            "shape": [
+              8,
+              1024,
+              128,
+              1,
+              1
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "inout"
+          },
+          {
+            "name": "idx_block_table",
+            "shape": [
+              8,
+              128
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "position_ids",
+            "shape": [
+              8,
+              384
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "hca_cmp_slot_mapping",
+            "shape": [
+              8,
+              384
+            ],
+            "dtype": "torch.int64",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "hca_state_slot_mapping",
+            "shape": [
+              8,
+              384
+            ],
+            "dtype": "torch.int64",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "csa_cmp_slot_mapping",
+            "shape": [
+              8,
+              384
+            ],
+            "dtype": "torch.int64",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "csa_idx_slot_mapping",
+            "shape": [
+              8,
+              384
+            ],
+            "dtype": "torch.int64",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "csa_state_slot_mapping",
+            "shape": [
+              8,
+              384
+            ],
+            "dtype": "torch.int64",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "csa_inner_state_slot_mapping",
+            "shape": [
+              8,
+              384
+            ],
+            "dtype": "torch.int64",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "attn_sink",
+            "shape": [
+              8,
+              64
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "wo_a",
+            "shape": [
+              8,
+              8,
+              1024,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "wo_b",
+            "shape": [
+              8,
+              4096,
+              8192
+            ],
+            "dtype": "torch.int8",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "wo_b_scale",
+            "shape": [
+              8,
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "hc_ffn_fn",
+            "shape": [
+              8,
+              24,
+              16384
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "hc_ffn_scale",
+            "shape": [
+              8,
+              3
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "hc_ffn_base",
+            "shape": [
+              8,
+              24
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "norm_w",
+            "shape": [
+              8,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "gate_w",
+            "shape": [
+              8,
+              16,
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "gate_bias",
+            "shape": [
+              8,
+              16
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "tid2eid",
+            "shape": [
+              8,
+              129280,
+              2
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "input_ids",
+            "shape": [
+              8,
+              384
+            ],
+            "dtype": "torch.int64",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "routed_w1",
+            "shape": [
+              8,
+              2,
+              4096,
+              4096
+            ],
+            "dtype": "torch.int8",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "routed_w1_scale",
+            "shape": [
+              8,
+              2,
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "routed_w3",
+            "shape": [
+              8,
+              2,
+              4096,
+              4096
+            ],
+            "dtype": "torch.int8",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "routed_w3_scale",
+            "shape": [
+              8,
+              2,
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "routed_w2",
+            "shape": [
+              8,
+              2,
+              4096,
+              4096
+            ],
+            "dtype": "torch.int8",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "routed_w2_scale",
+            "shape": [
+              8,
+              2,
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "shared_w1",
+            "shape": [
+              8,
+              4096,
+              4096
+            ],
+            "dtype": "torch.int8",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "shared_w1_scale",
+            "shape": [
+              8,
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "shared_w3",
+            "shape": [
+              8,
+              4096,
+              4096
+            ],
+            "dtype": "torch.int8",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "shared_w3_scale",
+            "shape": [
+              8,
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "shared_w2",
+            "shape": [
+              8,
+              4096,
+              4096
+            ],
+            "dtype": "torch.int8",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "shared_w2_scale",
+            "shape": [
+              8,
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "x_next",
+            "shape": [
+              8,
+              384,
+              4,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "out"
+          }
+        ],
+        "sha256": "be936ffd73e696717172d70b19aab60c2d9d7b242e62d6baf6fa5ead988dfc07"
+      },
       "raw_samples_effective_us": [
-        127290.441,
-        133289.459,
-        126296.06,
-        130603.08,
-        116263.08,
-        119353.04,
-        119195.54,
-        134726.52,
-        125190.66,
-        117703.84
+        136398.28,
+        132494.079,
+        131609.46,
+        136232.22,
+        139141.38,
+        163850.18,
+        125849.34,
+        153094.5,
+        126323.32,
+        131573.401
       ],
       "samples_effective_us": [
-        127290.441,
-        133289.459,
-        126296.06,
-        130603.08,
-        116263.08,
-        119353.04,
-        119195.54,
-        134726.52,
-        125190.66,
-        117703.84
+        136398.28,
+        132494.079,
+        131609.46,
+        136232.22,
+        139141.38,
+        163850.18,
+        125849.34,
+        153094.5,
+        126323.32,
+        131573.401
       ],
-      "median_effective_us": 125743.36,
-      "mean_effective_us": 124991.17199999999
+      "median_effective_us": 134363.1495,
+      "mean_effective_us": 137656.61599999998
+    }
+  },
+  "timing_policy": {
+    "version": "ptobench-execution-boundary-20261108-v3",
+    "input_upload": "outside_execution_window",
+    "initial_state_restore": "outside_execution_window",
+    "final_validation_readback": "outside_execution_window",
+    "required_execution_communication": "inside_execution_window"
+  },
+  "tuning_identity": {
+    "source_sha256": "adc34726780a5621aa97924b19f6a63bc9719659efae10dfdb4a52fc30bbba0d",
+    "case_sha256": "72cfae932384685748a411f91c6329f263ce2d15462fc2c260a6812a56bc90be",
+    "config_sha256": "8f93a138ebe241d9cc90c21a99032cfebc9990b5f14de295663a3ba679f046ba",
+    "comparator_sha256": "83b5840f1e1e0e783dde898334c6d566a3a2a00f6355b020707438b23764b8f4",
+    "environment_sha256": "6c59661cf909f722b1a489e7a34520287aae475017a8f466d1fed366dd82a57d",
+    "tuning_policy_sha256": "8f0dca299814e3c6364e535f6debc36a86d92fba72afcb157e93bb8bb507d862"
+  },
+  "tuning_evidence": "runs/boundary_resident_recertification_20261108/case_results/deepseek_v4__prefill_layer_ep8_csa_demo.json",
+  "resolved_tuning": {
+    "requested": {
+      "memory_planner": "PYPTO",
+      "analyze_auto_scopes_for_deps": false,
+      "ring_task_window": 16384
+    },
+    "resolved_run_config": {
+      "memory_planner": "PYPTO",
+      "analyze_auto_scopes_for_deps": false,
+      "strategy": "Default",
+      "ring_task_window": 16384,
+      "ring_heap": [
+        0,
+        0,
+        0,
+        536870912
+      ],
+      "ring_dep_pool": null,
+      "aicpu_thread_num": null
+    },
+    "unresolved_runtime_defaults": [
+      "ring_dep_pool",
+      "aicpu_thread_num"
+    ],
+    "diagnostics": {
+      "dump_passes": false,
+      "dump_ptoas_passes": false,
+      "compile_profiling": false,
+      "enable_pmu": 0,
+      "enable_chip_swimlane": 0,
+      "enable_dep_gen": false,
+      "enable_scope_stats": false,
+      "enable_dump_args": 0
+    }
+  },
+  "resolved_tuning_by_fixture": {
+    "fixture_000": {
+      "requested": {
+        "memory_planner": "PYPTO",
+        "analyze_auto_scopes_for_deps": false,
+        "ring_task_window": 16384
+      },
+      "resolved_run_config": {
+        "memory_planner": "PYPTO",
+        "analyze_auto_scopes_for_deps": false,
+        "strategy": "Default",
+        "ring_task_window": 16384,
+        "ring_heap": [
+          0,
+          0,
+          0,
+          536870912
+        ],
+        "ring_dep_pool": null,
+        "aicpu_thread_num": null
+      },
+      "unresolved_runtime_defaults": [
+        "ring_dep_pool",
+        "aicpu_thread_num"
+      ],
+      "diagnostics": {
+        "dump_passes": false,
+        "dump_ptoas_passes": false,
+        "compile_profiling": false,
+        "enable_pmu": 0,
+        "enable_chip_swimlane": 0,
+        "enable_dep_gen": false,
+        "enable_scope_stats": false,
+        "enable_dump_args": 0
+      }
     }
   }
 }

@@ -1,0 +1,57 @@
+{
+  "applicability": [
+    "A K loop alternates load and compute and the core stalls on every transfer.",
+    "A pipeline loop requests stage 4 but only two buffers fit.",
+    "A hand-managed double buffer should rotate through slots without unrolling.",
+    "Choosing between replication and slot rotation under the two planner paths."
+  ],
+  "directions": [
+    "Use `for kb in pl.pipeline(0, K // K_STEP, stage=2):` for a matmul K loop, or `stage=4` only when the buffers fit.",
+    "When a hand-managed rotation is required, write the `pl.MemRef('ub', slots=2)[i % 2]` declaration inline in the tile annotation, not through a Python variable holding the declaration.",
+    "Under PTOAS, design each iteration to have one slot live at a time and keep `step == 1` with a start divisible by the stage.",
+    "On `PH-MR-001`, shrink the per-stage tile to the stated byte budget or lower `stage=` instead of assuming the requested depth was achieved."
+  ],
+  "domain": "programming",
+  "effects": [
+    "Replication is the general path and handles nested, matmul-L0, and unusual loops, but increases code and can force a lower effective stage depth.",
+    "Slots preserve one body and need no remainder dispatch, but are planner-gated, require affine slot indices, and pin memory.",
+    "Deeper stages hide more transfer latency but multiply buffer footprint and can cause an overflow or a capacity-forced serialization."
+  ],
+  "evidence_status": "documented",
+  "id": "software_pipeline_and_slots",
+  "invariants": [
+    "`pl.pipeline` is InCore-only and requires `stage=N`; `stage=1` is a no-op marker that leaves the loop intact for IO canonicalization.",
+    "Replication costs F copies of code and the staged buffers; slots cost F pinned slots of one allocation.",
+    "Declaring a `pl.MemRef` allocation inside a `pl.pipeline(stage=2)` body is rejected because cloned stages would make a tile co-live with itself.",
+    "PTOAS multi-slot regions reject two co-live slots in one iteration. A single-buffer author-declared isolation allocation is documented as rejected under PTOAS; the multi-slot rotation form is planner-specific, so compile the exact form and keep one slot live per iteration.",
+    "A dynamic trip count under replication needs a remainder chain; slots leave start/stop/step and `iter_args` untouched."
+  ],
+  "principle": "`pl.pipeline(N, stage=F)` has the same positional shape as `pl.range` and requires a positive `stage`, typically 2 or 4. The default `LowerPipelineLoops` path replicates the body F times per outer iteration, advances the outer loop by `F * step`, and handles a remainder with a static tail or a dynamic cascaded `if`. Each clone gets fresh SSA def-vars, and tile-producing calls are tagged with `pipeline_membership(group, stage)` so `MemoryReuse` does not collapse concurrently live stage buffers. Only load buffers generally need per-stage privacy; giving every intermediate F copies overflows real kernels. The capacity gate chooses an affordable effective depth `F_g = min(depth_g, floor(C_s / slot_g))` and may shed groups. A `PH-MR-001` perf hint names the requested versus achieved depth and recommends shrinking the per-stage tile or lowering `stage=`. Under `memory_planner=PTOAS`, `LowerPipelineToSlots` runs before `LowerPipelineLoops` and can demote a safe loop to `pl.range` with one body whose load result is bound to `pl.MemRef('pipe_x', slots=F)[iv % F]`. This avoids a remainder dispatch and preserves one body. It is gated to F in [2,16], memory space Vec/Mat/Acc, a static valid shape, a tile not carried through a phi or view/in-place result, `step == 1`, `start % F == 0`, slots that fit the space, and no declined enclosing pipeline. The slot index must be literally `iv % F`; ptoas matches that affine form to derive per-slot synchronization. The declared slots are pinned, so the pass is accountable for their bytes and declines when the region would overflow. Explicit slots use `pl.MemRef('ub', slots=2)[i % 2]` inline in a tile annotation. Under the default PYPTO planner, two slots may co-live in one iteration; under PTOAS, two co-live slots in one iteration are rejected because only the first `multi_tile_get` is guarded. One slot live per iteration is the portable shape to write.",
+  "questions": [
+    "Which `memory_planner` value the local compiler configuration selects, and therefore whether `LowerPipelineToSlots` or replication is active, was not exposed in the snapshot."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Assuming `stage=4` always yields four live stages; read `PH-MR-001` for the achieved depth.",
+    "Using an arbitrary byte offset or a folded expression as the slot index; ptoas loses the per-slot analysis.",
+    "Writing two explicit slots co-live in one iteration and expecting PTOAS codegen to accept it.",
+    "Treating `pl.pipeline` and explicit `pl.MemRef(slots=N)` as layered; they are alternative ways to manage a level."
+  ],
+  "source_features": [
+    "pl.pipeline(N, stage=F)",
+    "pl.range",
+    "stage",
+    "LowerPipelineLoops",
+    "F * step",
+    "if",
+    "pipeline_membership(group, stage)",
+    "MemoryReuse",
+    "F_g = min(depth_g, floor(C_s / slot_g))",
+    "PH-MR-001",
+    "stage=",
+    "memory_planner=PTOAS"
+  ],
+  "summary": "`pl.pipeline(N, stage=F)` asks for ping-pong buffering. The default path replicates the body F times; under `memory_planner=PTOAS`, `LowerPipelineToSlots` may rotate one body through F slots of one allocation. Both paths have capacity and eligibility constraints, and explicit `pl.MemRef(..., slots=N)` is the hand-managed alternative.",
+  "title": "Software Pipelining, Buffer Slots, and the Two Lowerings"
+}

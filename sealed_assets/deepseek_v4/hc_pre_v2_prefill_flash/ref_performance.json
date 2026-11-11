@@ -5,36 +5,204 @@
   "iterations": 10,
   "compiler_tuning": {
     "memory_planner": "PYPTO",
-    "analyze_auto_scopes_for_deps": false
+    "analyze_auto_scopes_for_deps": false,
+    "ring_task_window": 16384,
+    "aicpu_thread_num": 4
   },
   "fixtures": {
     "fixture_000": {
+      "execution_contract": {
+        "timing_policy": {
+          "version": "ptobench-execution-boundary-20261108-v3",
+          "input_upload": "outside_execution_window",
+          "initial_state_restore": "outside_execution_window",
+          "final_validation_readback": "outside_execution_window",
+          "required_execution_communication": "inside_execution_window"
+        },
+        "logical_workers": 1,
+        "rank_layout": "case-defined",
+        "fixture_input_identity_sha256": "579ef8529e8ae8ee6f378c6ec5333fd848ae11109fa06665a36c823a09efdf82",
+        "initial_state_names": [],
+        "restore_before_each_launch": false,
+        "tensors": [
+          {
+            "name": "x",
+            "shape": [
+              128,
+              4,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "hc_fn",
+            "shape": [
+              24,
+              16384
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "hc_scale",
+            "shape": [
+              3
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "hc_base",
+            "shape": [
+              24
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "x_mixed",
+            "shape": [
+              128,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "out"
+          },
+          {
+            "name": "post",
+            "shape": [
+              128,
+              4
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "out"
+          },
+          {
+            "name": "comb",
+            "shape": [
+              128,
+              16
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "out"
+          }
+        ],
+        "sha256": "bc69a9e7efbbb267629116695dead8c04361725ec85348ee3b24e5b9cbd574fb"
+      },
       "raw_samples_effective_us": [
-        95.42,
-        94.88,
-        90.32,
-        90.06,
-        96.24,
-        93.219,
-        92.221,
-        97.92,
-        93.959,
-        92.76
+        91.16,
+        92.1,
+        93.74,
+        101.28,
+        93.801,
+        91.44,
+        90.539,
+        95.499,
+        87.3,
+        97.18
       ],
       "samples_effective_us": [
-        95.42,
-        94.88,
-        90.32,
-        90.06,
-        96.24,
-        93.219,
-        92.221,
-        97.92,
-        93.959,
-        92.76
+        91.16,
+        92.1,
+        93.74,
+        101.28,
+        93.801,
+        91.44,
+        90.539,
+        95.499,
+        87.3,
+        97.18
       ],
-      "median_effective_us": 93.589,
-      "mean_effective_us": 93.6999
+      "median_effective_us": 92.91999999999999,
+      "mean_effective_us": 93.4039
+    }
+  },
+  "timing_policy": {
+    "version": "ptobench-execution-boundary-20261108-v3",
+    "input_upload": "outside_execution_window",
+    "initial_state_restore": "outside_execution_window",
+    "final_validation_readback": "outside_execution_window",
+    "required_execution_communication": "inside_execution_window"
+  },
+  "tuning_identity": {
+    "source_sha256": "32aff91a65ae393c16e0a640bec4ecdef9e6550d7eade937f980548d081cd1b6",
+    "case_sha256": "57352f38ed2feadd24cf28bfb09f19e34f93a58d8afc3fa02aecae3bc7ad1e2c",
+    "config_sha256": "7a92a616af2c343e7dc35feec1861207f097977ebff86c767444e2af9d16c2e5",
+    "comparator_sha256": "e7ccf990904c1ea95d896d95b6faa5c65a9e578732a6b88f8b4781b8faa41e4e",
+    "environment_sha256": "12769f86e1ac3012fd9dea35d72fe9003bd1c163c81e00531e2fb72e11392bbe",
+    "tuning_policy_sha256": "460ec80f61ef69b7820c6f00efe9b38f29089888eb31e1674a0343f12b4a76e2"
+  },
+  "tuning_evidence": "runs/all_case_boundary_repair_20261108/case_results/deepseek_v4__hc_pre_v2_prefill_flash.json",
+  "resolved_tuning": {
+    "requested": {
+      "memory_planner": "PYPTO",
+      "analyze_auto_scopes_for_deps": false,
+      "ring_task_window": 16384,
+      "aicpu_thread_num": 4
+    },
+    "resolved_run_config": {
+      "memory_planner": "PYPTO",
+      "analyze_auto_scopes_for_deps": false,
+      "strategy": "Default",
+      "ring_task_window": 16384,
+      "ring_heap": null,
+      "ring_dep_pool": null,
+      "aicpu_thread_num": 4
+    },
+    "unresolved_runtime_defaults": [
+      "ring_heap",
+      "ring_dep_pool"
+    ],
+    "diagnostics": {
+      "dump_passes": false,
+      "dump_ptoas_passes": false,
+      "compile_profiling": false,
+      "enable_pmu": 0,
+      "enable_chip_swimlane": 0,
+      "enable_dep_gen": true,
+      "enable_scope_stats": false,
+      "enable_dump_args": 0
+    }
+  },
+  "resolved_tuning_by_fixture": {
+    "fixture_000": {
+      "requested": {
+        "memory_planner": "PYPTO",
+        "analyze_auto_scopes_for_deps": false,
+        "ring_task_window": 16384,
+        "aicpu_thread_num": 4
+      },
+      "resolved_run_config": {
+        "memory_planner": "PYPTO",
+        "analyze_auto_scopes_for_deps": false,
+        "strategy": "Default",
+        "ring_task_window": 16384,
+        "ring_heap": null,
+        "ring_dep_pool": null,
+        "aicpu_thread_num": 4
+      },
+      "unresolved_runtime_defaults": [
+        "ring_heap",
+        "ring_dep_pool"
+      ],
+      "diagnostics": {
+        "dump_passes": false,
+        "dump_ptoas_passes": false,
+        "compile_profiling": false,
+        "enable_pmu": 0,
+        "enable_chip_swimlane": 0,
+        "enable_dep_gen": true,
+        "enable_scope_stats": false,
+        "enable_dump_args": 0
+      }
     }
   }
 }

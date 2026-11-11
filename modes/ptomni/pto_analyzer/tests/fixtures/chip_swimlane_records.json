@@ -1,0 +1,1 @@
+{"chip_swimlane_level":4,"metadata":{"clock_freq_hz":50000000,"num_cores":2,"core_types":["aic","aiv"]},"aicore_tasks":[[0,4294967297,1,100,120,2],[1,4294967298,1,100,150,2]],"aicpu_tasks":[],"aicpu_scheduler_phases":[],"aicpu_orchestrator_phases":[]}

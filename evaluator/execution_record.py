@@ -35,7 +35,16 @@ def observe_runtime(runtime=None):
         distributed = getattr(runtime, 'distributed_config', None)
         if distributed is not None:
             target['device_ids'] = list(distributed.device_ids)
+        mapping = getattr(runtime, '_ptobench_device_mapping', None)
+        if mapping:
+            target['sandbox_logical_device'] = target['device']
+            target['device'] = mapping['configured'][0]
+            target['physical_device_ids'] = mapping['physical']
+            if distributed is not None:
+                target['sandbox_logical_device_ids'] = target['device_ids']
+                target['device_ids'] = mapping['configured']
         record['effective_target'] = target
+        record['tuning'] = getattr(runtime, '_ptobench_tuning_record', None)
         write(Path(path), record)
     import golden.runner as runner
     originals = {}
@@ -44,6 +53,25 @@ def observe_runtime(runtime=None):
         record['events'].append({'time': now(), 'stage': stage, **fields})
         write(Path(path), record)
     try:
+        stage_type = getattr(runner, '_Stage', None)
+        if stage_type is not None:
+            original_enter, original_exit = stage_type.__enter__, stage_type.__exit__
+
+            def observed_enter(stage):
+                value = original_enter(stage)
+                update(stage._name, event_type='stage', status='started')
+                return value
+
+            def observed_exit(stage, exc_type, error, traceback):
+                update(stage._name, event_type='stage', status='failed' if exc_type is not None else 'passed',
+                       exception_type=exc_type.__name__ if exc_type else None,
+                       message=str(error) if error else None)
+                return original_exit(stage, exc_type, error, traceback)
+
+            originals['_Stage.__enter__'] = original_enter
+            originals['_Stage.__exit__'] = original_exit
+            stage_type.__enter__ = observed_enter
+            stage_type.__exit__ = observed_exit
         for name in ('_dispatch', '_run_l3_resident'):
             original = getattr(runner, name)
             originals[name] = original
@@ -63,4 +91,9 @@ def observe_runtime(runtime=None):
         yield
     finally:
         for name, original in originals.items():
-            setattr(runner, name, original)
+            if name == '_Stage.__enter__':
+                runner._Stage.__enter__ = original
+            elif name == '_Stage.__exit__':
+                runner._Stage.__exit__ = original
+            else:
+                setattr(runner, name, original)

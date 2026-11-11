@@ -1,0 +1,70 @@
+{
+  "queue": "20261027_deepseek_flash_max_100",
+  "mode": "sluice-lite",
+  "backend": "pi",
+  "profile": "deepseek-flash-max",
+  "reasoning": "max",
+  "hardware_actions_per_case": 100,
+  "finish_actions_per_case": 1,
+  "execution": "serial",
+  "cases": [
+    {
+      "case": "deepseek_v4.prefill_layer_ep2_csa_pro",
+      "config": "configs/01_prefill_layer_ep2_csa_pro.yaml",
+      "status": "failed",
+      "started_at": "2026-10-27T14:17:05+00:00",
+      "log": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/modes/sluice-lite/queues/20261027_deepseek_flash_max_100/logs/deepseek_v4_prefill_layer_ep2_csa_pro.log",
+      "return_code": 5,
+      "finished_at": "2026-10-27T14:48:47+00:00"
+    },
+    {
+      "case": "deepseek_v4.prefill_layer_ep2_csa_flash",
+      "config": "configs/02_prefill_layer_ep2_csa_flash.yaml",
+      "status": "failed",
+      "started_at": "2026-10-27T14:48:47+00:00",
+      "log": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/modes/sluice-lite/queues/20261027_deepseek_flash_max_100/logs/deepseek_v4_prefill_layer_ep2_csa_flash.log",
+      "return_code": 5,
+      "finished_at": "2026-10-27T14:54:56+00:00"
+    },
+    {
+      "case": "deepseek_v4.prefill_layer_ep2_hca_flash",
+      "config": "configs/03_prefill_layer_ep2_hca_flash.yaml",
+      "status": "running",
+      "started_at": "2026-10-27T14:54:56+00:00",
+      "log": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/modes/sluice-lite/queues/20261027_deepseek_flash_max_100/logs/deepseek_v4_prefill_layer_ep2_hca_flash.log"
+    },
+    {
+      "case": "deepseek_v4.moe_ep2_pro",
+      "config": "configs/04_moe_ep2_pro.yaml",
+      "status": "pending"
+    },
+    {
+      "case": "deepseek_v4.moe_ep2_flash",
+      "config": "configs/05_moe_ep2_flash.yaml",
+      "status": "pending"
+    },
+    {
+      "case": "deepseek_v4.synthetic_token_loop_prefill_flash",
+      "config": "configs/06_synthetic_token_loop_prefill_flash.yaml",
+      "status": "pending"
+    },
+    {
+      "case": "deepseek_v4.synthetic_token_loop_decode_flash",
+      "config": "configs/07_synthetic_token_loop_decode_flash.yaml",
+      "status": "pending"
+    },
+    {
+      "case": "deepseek_v4.synthetic_token_loop_prefill_pro",
+      "config": "configs/08_synthetic_token_loop_prefill_pro.yaml",
+      "status": "pending"
+    },
+    {
+      "case": "deepseek_v4.synthetic_token_loop_decode_pro",
+      "config": "configs/09_synthetic_token_loop_decode_pro.yaml",
+      "status": "pending"
+    }
+  ],
+  "status": "running",
+  "created_at": "2026-10-27T14:17:05+00:00",
+  "started_at": "2026-10-27T14:17:05+00:00"
+}

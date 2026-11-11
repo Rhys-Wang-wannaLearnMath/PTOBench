@@ -1,0 +1,52 @@
+{
+  "applicability": [
+    "Choosing whether a computation belongs at tensor, tile, or block level.",
+    "Diagnosing a tensor op rejected in an orchestration body or a tensor allocation rejected in a device kernel.",
+    "Reasoning about why two dispatches overlap even though they are written sequentially."
+  ],
+  "directions": [
+    "Use `@pl.jit` for an orchestration entry and `@pl.jit.incore` for a device kernel; use `with pl.at(level=pl.Level.CORE_GROUP):` for an inline device region.",
+    "Use tensor-level operators when the compiler should choose placement; use `pl.load`/`pl.move`/`pl.store` when the tile buffer and movement are the point.",
+    "Name a reusable core group with `pl.cluster()` and a multi-block launch with `pl.spmd(n)` rather than relying on statement order or repeated small scopes."
+  ],
+  "domain": "programming",
+  "effects": [
+    "Tensor level is shorter and easier to change; tile level buys control over residency, tiling, and movement but exposes buffer lifetime and layout constraints.",
+    "Splitting into named `.incore` functions improves reuse and code clarity; inline `pl.at` reduces boilerplate but can hide a large kernel body.",
+    "Explicit placement can avoid compiler conservatism, but every placement choice becomes an invariant the author must maintain."
+  ],
+  "evidence_status": "documented",
+  "id": "programming_model_levels_and_planes",
+  "invariants": [
+    "An orchestration body cannot contain device operators directly; place them in an InCore function or `pl.at(level=pl.Level.CORE_GROUP)` scope.",
+    "`pl.create_tensor` is control-plane allocation; inside a `pl.at` or `pl.spmd` body the allocation becomes a tile, not a GM tensor.",
+    "The compiler parses source; it does not execute Python control flow. Runtime values that drive ordering must be represented as buffers, scalars, predicates, or TaskIds.",
+    "A mixed Cube+Vector region remains one task, not several, and an SPMD launch remains one task with multiple logical blocks."
+  ],
+  "principle": "A PyPTO program is authored in Python, but Python is not the execution engine. Decorators parse source into an immutable SSA IR; passes lower it; code generation emits device kernels plus host orchestration; the runtime builds tasks and schedules whatever is ready. Tensor level names whole DDR arrays and lets the compiler choose placement and data movement. Tile level names on-chip buffers and explicit `pl.load`, `pl.move`, and `pl.store`. Block level names core groups with `pl.at`, `pl.spmd`, or `pl.cluster`. Orchestration is the control plane: it allocates tensors and dispatches work, but never touches tile memory. InCore is the execution plane: it loads, computes, and stores, but does not allocate orchestration tensors or dispatch work. `Opaque` has no committed plane until used, and `Inline` leaves no function because it is spliced into callers. `pl.at(level=pl.Level.CORE_GROUP)` outlines a region into an InCore kernel; `@pl.jit.incore` names such a kernel directly. The hardware cluster is one Cube core and two Vector cores, which is why mixed kernels and cross-core pipelines exist. Because the runtime derives dependencies from buffers and declared edges, two dispatches are ordered only when something establishes an edge; writing one after another in source establishes nothing.",
+  "questions": [
+    "The exact local behavior of every mixed-plane construct is established only by compiling the candidate program program; the corpus does not provide a complete plane-by-plane runtime test."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Assuming source order orders two dispatches: the runtime may overlap them, producing an intermittent race.",
+    "Using whole-tensor operations in a `@pl.jit` body: they are misplaced control-plane/execution-plane operations and are rejected.",
+    "Allocating a tensor inside a device kernel instead of taking it as an output parameter or allocating it in orchestration.",
+    "Calling a tile-level `pl.matmul` with operands that are not in `Left` or `Right`; the matmul path requires explicit staging."
+  ],
+  "source_features": [
+    "pl.load",
+    "pl.move",
+    "pl.store",
+    "pl.at",
+    "pl.spmd",
+    "pl.cluster",
+    "Opaque",
+    "Inline",
+    "pl.at(level=pl.Level.CORE_GROUP)",
+    "@pl.jit.incore"
+  ],
+  "summary": "PyPTO separates what to compute, where it runs, and when it runs: Python builds IR, function type and level select the control or execution plane, and the runtime schedules a derived task graph. Source adjacency is not an ordering guarantee.",
+  "title": "PyPTO Levels, Planes, and Source-Order Limits"
+}

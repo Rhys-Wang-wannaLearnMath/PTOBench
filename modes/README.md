@@ -3,22 +3,28 @@
 `mode` 是实验方法，`optimizer.backend` 是执行工具。同一 Basic 方法可以使用
 Pi 或 Codex，CANNBot/Ours 也按同一独立入口接入。
 
+PTOmni 当前是设计中的新方法，尚无可执行 mode。旧 SLUICE 实现仅保存在
+[`PTOmni/`](PTOmni/ARTIFACT.md) 的只读 artifact 中，不会被 launcher 加载或复制到 runtime。
+旧的单 Pi 设计与分阶段计划已移至 `PTOmni/design_docs/legacy_single_session/`；当前架构以
+[`PTOmni 架构设计`](PTOmni/design_docs/PTOmni_架构设计_2026-11-03.md) 为准。
+PTOmni 的 Profiling 诊断工具规划见 [`PTOAnalyzer`](ptomni/pto_analyzer/README.md)；它是 PTOmni 的只读组件，不是单独的可执行实验 mode。
+
+代码命名约定：展示名为 `PTOmni`；未来可执行 mode 的目录名、`mode.yaml` ID 和实验配置值统一使用小写 `ptomni`。当前大写 `PTOmni/` 目录仅存放文档与历史资料，不作为代码包导入。
+
 ## 每个 mode 的 Pi provider 配置
 
-Basic 和 CANNBot 的 Pi 实验分别读取 `basic/.env`、`cannbot/.env`，可以从
-同目录的 `.env.example` 复制。修改 `LLM_BASE_URL`、`LLM_API_KEY`、`LLM_MODEL`
-即可切换网关和模型；`LLM_API` 为 Pi 协议名，例如 `openai-responses` 或
-`openai-completions`，`LLM_REASONING` 控制 thinking level。
-这些值优先于实验 `optimizer.profile` 中的 provider/model/reasoning。
+Basic、CANNBot 和未来 PTOmni 分别读取自己的 `.env`，并保持三份配置一致；
+同目录的 `.env.example` 是无密钥模板。Pi 使用 `LLM_BASE_URL`、`LLM_API_KEY`、
+`LLM_MODEL`、`LLM_API` 和 `LLM_REASONING` 配置 provider、模型和 reasoning。
+当前目标配置为 `deepseek-flash` / `high`，并覆盖 Pi profile 中的模型选择。
 `LLM_PROVIDER=provider-default` 是 Pi 中这组服务配置的标识，用于关联
 `models.json` 的 provider 条目和 `--provider` 参数；留空也默认使用此标识。
 它可以自定义，不代表具体厂商；实际服务由 `LLM_BASE_URL`、`LLM_API` 和
 `LLM_MODEL` 决定，认证使用 `LLM_API_KEY`。
 `.env` 支持注释、引号和 `export KEY=value`，值不执行 shell 命令、不展开变量。
 
-`LLM_API_KEY` 留空时先使用进程环境的 `PYPTO_PROVIDER_API_KEY`，再使用原有
-`benchmarks/mig_workflow/profiles_codex/glm-5.3-flash-max/auth.json` 的认证。
-独立部署或切换到其他认证时，在 `.env` 中填写对应 key 即可。
+`LLM_API_KEY` 留空时使用进程环境的 `PYPTO_PROVIDER_API_KEY`，然后尝试已有的
+provider 认证。`.env` 被 Git 忽略，不写入 Run 记录。
 
 每个 Run 在 `agent/pi/` 生成自己的 `models.json` 和 `settings.json`，
 通过 `PI_CODING_AGENT_DIR` 交给 Pi；该目录允许 Pi 写入原生缓存，
@@ -27,8 +33,16 @@ provider、地址、协议、模型及已有的模型限制/compatibility 在 pr
 key 在启动时读取并仅通过进程环境传递。`.env` 被 Git 和配置保护备份排除，
 Run 只归档不包含 key 的有效配置。修改 `.env` 对随后启动的实验生效。
 
-没有 `.env`（或文件为空）时沿用原来的 profile/主机配置；其他 backend 继续
-使用自己的原生配置，不读取这份 Pi provider `.env`。
+未指定 profile token 限制且没有 `.env`（或文件为空）时沿用原来的 profile/主机配置；
+指定限制时要求有效的 mode `.env`，否则明确报错。其他 backend 使用自己的原生配置。
+
+Pi YAML 可直接设置 `context_window: 1048576` 和 `max_output_tokens: unlimited`，
+也可将后者设为正整数。它们覆盖宿主模型的旧上限，与模型选择优先级独立；
+`unlimited` 表示请求中不发送客户端输出上限，服务端及模型仍有自身限制；
+省略参数不保证默认取最大值。当前五个 Pi profiles 因此显式设置官方最大输出，
+DeepSeek 为 393216、GLM 为 131072。
+Responses 使用原生 compat 开关；Completions 使用 Run 内小型请求扩展删除输出上限字段，
+不修改 Pi 安装。现有 Pi profiles 的规格及来源见 [说明](_shared/profiles/pi/README.md)。
 
 ```text
 modes/
@@ -36,14 +50,13 @@ modes/
 │   ├── mode.yaml          # 方法身份与入口
 │   ├── runner.py          # Basic 的准备、执行、原生会话收集
 │   ├── prompt.py          # Basic 自己组装任务说明
-│   ├── knowledge/         # 固定原始资料与版本 pin
 │   └── instructions.md
 ├── _shared/
 │   ├── adapters.py        # 方法侧共用的 native readiness
 │   ├── config.py          # 方法侧 profile 解析与参数生成
 │   ├── profiles/          # Pi/Codex 等默认与命名 profile
 │   ├── provenance.py      # Agent 配置/instructions 冻结
-│   ├── knowledge.py       # 方法侧知识库校验和只读复制
+│   ├── knowledge.py       # 保留的只读知识库工具
 │   └── recording.py       # 原生参数与完整会话收集
 ├── cannbot/
 │   ├── mode.yaml          # 已实现：Pi / Codex
@@ -53,8 +66,16 @@ modes/
 │   ├── bridge/pi_task.ts  # Pi 的局部扩展
 │   ├── upstream/          # 固定版本原文
 │   ├── upstream.lock.json # 来源、范围与内容 hash
-│   ├── knowledge/         # 与 Basic 相同的固定原始资料
 │   └── README.md
+├── PTOmni/                # 当前设计与只读历史 artifact，不是可执行 mode
+│   ├── ARTIFACT.md
+│   └── design_docs/
+│       ├── PTOmni_架构设计_2026-11-03.md
+│       ├── legacy_single_session/
+│       └── references/    # 只读设计参考
+├── ptomni/                # 未来的小写 mode ID；当前仅含设计文档
+│   └── pto_analyzer/
+│       └── README.md
 ├── ours/
 │   └── mode.yaml          # 临时名称，未实现
 └── PROTOCOL.md            # 所有方法共用的入口与归档协议
@@ -64,18 +85,18 @@ Basic 已接入独立方法入口。它自行准备普通任务说明、固定�
 启动一次 Pi/Codex 等原生会话，并收集工作记录；Agent 自行选择优化方向，
 不要求 hypothesis、PHK 或 replanning 表格。
 
-Basic 和 CANNBot 各自保存 `knowledge/raw_wiki/` 与版本 pin，内容完全一致。
-两种方法复用 `modes/_shared/knowledge.py` 自行校验、独立复制并设置只读权限，
-在 session 中提供 `method/resources/raw_wiki/` 和简短的 `method/README.md`。
-PTOBench 仅按既有通用附件协议保护这些资料，不导入知识库实现或解释内容。
-公共 Case/CLI/结果说明由 `.benchmark_context/README.md` 提供；方法提示指向
-这份导览，CANNBot 每个阶段还独立获得知识库入口。
+Basic 和 CANNBot 不校验、复制或注入 `raw_wiki`。公共 Case/CLI/结果说明由
+`.benchmark_context/README.md` 提供，正常可见的项目资料仍在工作区中。
+PTOmni 使用其独立的完整知识库。Pi Agent 在网络隔离环境运行，只通过
+受限代理访问当前模型 API；所有 Agent backend 均应用相同限制。PTOBench CLI broker
+与 Candidate Worker 保持原有执行路径，以保留 NPU Runtime/HCCL 通信行为。
 
 PTOBench evaluator 只负责固定 Case、correctness、clean timing、原始 profile、
 预算、源码档案和最终验证，不导入方法代码，不读取方法 instructions。
 `session.json.mode` 和 workspace 的 `mode.json` 只包含方法 ID。
 方法身份不会改变评测/预算规则，所有方法使用相同的公开 profile 权限。
-Basic 开放 evaluate、fork 和全部三个 profile：runtime、pmu、compiler。
+Basic 默认开放 evaluate、fork 和一次 combined profile（runtime、pmu、compiler）；
+需要分次采集时，method 可在 `mode.yaml` 显式设置 `profile_strategy: split`。
 
 通用 Launcher 只调用方法声明的 `preflight / prepare / run / collect`，
 传入公开 Run context，管理整个考生进程，保存原始输出和方法声明的附件。
@@ -92,6 +113,7 @@ id: basic
 implemented: true
 description: General coding agent with clean evaluation and profiling feedback.
 entrypoint: runner.py
+profile_strategy: combined
 ```
 
 新方法实现自己的 runner 和业务，遵守 [入口协议](PROTOCOL.md) 后声明 entrypoint。

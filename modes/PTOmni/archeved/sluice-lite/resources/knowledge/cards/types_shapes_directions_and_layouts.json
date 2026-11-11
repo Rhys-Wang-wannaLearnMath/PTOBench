@@ -1,0 +1,59 @@
+{
+  "applicability": [
+    "Declaring kernel signatures, scratch tensors, tiles, scalars, arrays, and tuple returns.",
+    "Choosing static versus `pl.dynamic` shapes for changing batch or sequence length.",
+    "Selecting row-major, transposed, or pre-fractal matmul operands and avoiding an unsupported layout annotation.",
+    "Writing a `@pl.jit` kernel whose tensor parameter is bare `pl.Tensor` and may need runtime-bound dimensions."
+  ],
+  "directions": [
+    "Annotate static shapes as `pl.Tensor[[M, 128], pl.FP16]`; use `M = pl.dynamic('M')` only when the axis truly varies across launches.",
+    "Declare read-write parameters as `pl.InOut[pl.Tensor[...]]` and write-only parameters as `pl.Out[pl.Tensor[...]]`; do not write `pl.In[...]` in the local snapshot.",
+    "Insert explicit `pl.cast(x, target_type=..., mode=...)` wherever dtype width changes.",
+    "For a preformatted NZ weight, write `pl.Tensor[[N, K], pl.FP16, pl.NZ]` only when the static shape satisfies the fractal alignment constraints; otherwise load ordinary ND and let the compiler convert."
+  ],
+  "domain": "compute",
+  "effects": [
+    "Static shapes enable tiling, unrolling, and compile-time bounds but force specialization and recompilation when extents change.",
+    "Dynamic shapes reduce recompiles but hide loop bounds and may force chunking or dynamic addressing.",
+    "NZ weights save an online layout conversion and improve matmul feeding, but require exact physical storage and alignment.",
+    "`TensorView` makes strided windows explicit and safe but adds metadata the compiler and runtime must carry."
+  ],
+  "evidence_status": "documented",
+  "id": "types_shapes_directions_and_layouts",
+  "invariants": [
+    "Static shapes are needed for many planning and tiling decisions; a dynamic axis cannot be used by orchestration-level work that requires a constant dimension.",
+    "`pl.NZ` requires a statically shaped, fractal-aligned tensor with a whole-byte dtype, `shape[-2] % 16 == 0`, and `shape[-1] % (256 / dtype_bits) == 0`; unsupported cases are rejected.",
+    "Packed 4-bit dtypes use logical nibble shapes in PyPTO IR. Physical byte size is `ceil(logical_elements / 2)`, not `logical_elements * get_byte()`. A 4-bit slice origin must be byte-aligned.",
+    "FP4 execution is backend-gated: Ascend950 supports `pl.FP4`, while local Ascend910B/A2A3 rejects 4-bit in-core execution. `INT4`, `UINT4`, and `HF4` remain storage-accounted but are not universal compute types.",
+    "Two separate `pl.dynamic('M')` calls denote different dimensions unless the same object is reused. For a bare `pl.Tensor`, `bind_dynamic(dim, M)` marks the runtime dimension; a fully shaped annotation is preferred.",
+    "`pl.TensorView` requires an explicit `layout=` whenever `stride`, `valid_shape`, or padding metadata is supplied. An MX `pl.load` must target `pl.Mem.Mat` explicitly."
+  ],
+  "principle": "`pl.Tensor` lives in DDR, `pl.Tile` is an on-chip buffer, `pl.Scalar` is a register-width value, `pl.Array` is a core-local array, and `pl.Tuple` is an annotation for multi-value returns. Dtypes are explicit hardware formats; PyPTO has no implicit promotion, so every width change needs `pl.cast`. Shapes are static and checked at parse time. `pl.dynamic(name)` marks an axis whose extent is bound per launch; dynamic dimensions collapse to `None` in the JIT cache key, so one compiled program serves multiple extents, at the cost of compile-time shape knowledge. Reuse the same `DynVar` object when two annotations mean the same axis. Parameter direction is part of the signature. A bare `pl.Tensor[...]` is the default input direction; `pl.Out[...]` promises the kernel does not read prior contents and takes part in write-after-write ordering; `pl.InOut[...]` reads and writes and orders against everything touching the buffer. War anti-dependencies are not inferred; the dependency card covers that separately. The local API snapshot does not expose a standalone `pl.In` wrapper; use the bare annotation for inputs. Layout has two distinct ideas. `pl.ND` is ordinary row-major and never needs writing. `pl.NZ` asserts that the bytes in GM are already stored in PTO-native NZ fractal order, allowing a matmul weight load to skip online ND-to-NZ conversion; it is an assertion about existing bytes, not a request to transform them. `pl.Tensor[..., pl.DN]` is rejected, so derive a transposed view with `pl.transpose(x, -2, -1)` or pass `a_trans`/`b_trans` to `pl.matmul`. `pl.TensorView` makes strides, valid shape, and padding explicit for a window into a larger buffer. `pl.MX_A_ZZ` and `pl.MX_B_NN` tag GM scale tensors for MX operands on Ascend950; ordinary MX subviews are restricted.",
+  "questions": [
+    "The exact 4-bit and MX layout support on future or non-local backends is documented conditionally; local 910B4 behavior should be established by compiling a concrete candidate program."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Writing a byte count as an element count, especially for 4-bit buffers; the resulting under-allocation corrupts data past the intended elements.",
+    "Declaring a buffer `Out` when the kernel reads prior contents: the runtime may remove a real read dependency, producing an intermittent race rather than a type error.",
+    "Using the DN layout shorthand on a tensor annotation; it raises a parser type error.",
+    "Treating `pl.FP4` or other 4-bit types as available on local 910B4 because they appear in the type list; the local backend rejects them for in-core code."
+  ],
+  "source_features": [
+    "pl.Tensor",
+    "pl.Tile",
+    "pl.Scalar",
+    "pl.Array",
+    "pl.Tuple",
+    "pl.cast",
+    "pl.dynamic(name)",
+    "None",
+    "DynVar",
+    "pl.Tensor[...]",
+    "pl.Out[...]",
+    "pl.InOut[...]"
+  ],
+  "summary": "A PyPTO type says where a value lives, how wide its elements are, and how callers may touch it. Shapes are static by default; dynamic axes trade planning information for reuse. Parameter direction and layout are semantic inputs to dependency inference and matmul lowering, not documentation.",
+  "title": "Types, Dynamic Shapes, Directions, and Layout Contracts"
+}

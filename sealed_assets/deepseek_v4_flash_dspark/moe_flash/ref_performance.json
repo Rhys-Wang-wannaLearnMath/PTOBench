@@ -5,36 +5,373 @@
   "iterations": 10,
   "compiler_tuning": {
     "memory_planner": "PYPTO",
-    "analyze_auto_scopes_for_deps": false
+    "analyze_auto_scopes_for_deps": false,
+    "ring_task_window": 16384
   },
   "fixtures": {
     "fixture_000": {
+      "execution_contract": {
+        "timing_policy": {
+          "version": "ptobench-execution-boundary-20261108-v3",
+          "input_upload": "outside_execution_window",
+          "initial_state_restore": "outside_execution_window",
+          "final_validation_readback": "outside_execution_window",
+          "required_execution_communication": "inside_execution_window"
+        },
+        "logical_workers": 2,
+        "rank_layout": "case-defined",
+        "fixture_input_identity_sha256": "0d2e7172b8275eb45f2e57301bb71c16777e67bacdea500e7679b2fa6940edf4",
+        "initial_state_names": [],
+        "restore_before_each_launch": false,
+        "tensors": [
+          {
+            "name": "x_hc",
+            "shape": [
+              2,
+              32,
+              4,
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "hc_ffn_fn",
+            "shape": [
+              2,
+              24,
+              16384
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "hc_ffn_scale",
+            "shape": [
+              2,
+              3
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "hc_ffn_base",
+            "shape": [
+              2,
+              24
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "norm_w",
+            "shape": [
+              2,
+              4096
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "gate_w",
+            "shape": [
+              2,
+              32,
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "gate_bias",
+            "shape": [
+              2,
+              32
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "tid2eid",
+            "shape": [
+              2,
+              129280,
+              6
+            ],
+            "dtype": "torch.int32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "input_ids",
+            "shape": [
+              2,
+              32
+            ],
+            "dtype": "torch.int64",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "routed_w1",
+            "shape": [
+              2,
+              16,
+              2048,
+              4096
+            ],
+            "dtype": "torch.int8",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "routed_w1_scale",
+            "shape": [
+              2,
+              16,
+              2048
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "routed_w3",
+            "shape": [
+              2,
+              16,
+              2048,
+              4096
+            ],
+            "dtype": "torch.int8",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "routed_w3_scale",
+            "shape": [
+              2,
+              16,
+              2048
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "routed_w2",
+            "shape": [
+              2,
+              16,
+              4096,
+              2048
+            ],
+            "dtype": "torch.int8",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "routed_w2_scale",
+            "shape": [
+              2,
+              16,
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "shared_w1",
+            "shape": [
+              2,
+              2048,
+              4096
+            ],
+            "dtype": "torch.int8",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "shared_w1_scale",
+            "shape": [
+              2,
+              2048
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "shared_w3",
+            "shape": [
+              2,
+              2048,
+              4096
+            ],
+            "dtype": "torch.int8",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "shared_w3_scale",
+            "shape": [
+              2,
+              2048
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "shared_w2",
+            "shape": [
+              2,
+              4096,
+              2048
+            ],
+            "dtype": "torch.int8",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "shared_w2_scale",
+            "shape": [
+              2,
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "x_next",
+            "shape": [
+              2,
+              32,
+              4,
+              4096
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "out"
+          }
+        ],
+        "sha256": "42721974508b2915eac21e819e16b0da308eacdf15175418b71da67288c1e6c0"
+      },
       "raw_samples_effective_us": [
-        1687.481,
-        1590.02,
-        1618.041,
-        1618.42,
-        1617.24,
-        1601.039,
-        1617.621,
-        1659.061,
-        1597.46,
-        1586.66
+        1624.28,
+        1592.199,
+        1548.86,
+        1576.48,
+        1538.58,
+        1957.52,
+        1638.439,
+        1462.139,
+        1421.52,
+        1469.38
       ],
       "samples_effective_us": [
-        1687.481,
-        1590.02,
-        1618.041,
-        1618.42,
-        1617.24,
-        1601.039,
-        1617.621,
-        1659.061,
-        1597.46,
-        1586.66
+        1624.28,
+        1592.199,
+        1548.86,
+        1576.48,
+        1538.58,
+        1957.52,
+        1638.439,
+        1462.139,
+        1421.52,
+        1469.38
       ],
-      "median_effective_us": 1617.4305,
-      "mean_effective_us": 1619.3043
+      "median_effective_us": 1562.67,
+      "mean_effective_us": 1582.9397000000001
+    }
+  },
+  "timing_policy": {
+    "version": "ptobench-execution-boundary-20261108-v3",
+    "input_upload": "outside_execution_window",
+    "initial_state_restore": "outside_execution_window",
+    "final_validation_readback": "outside_execution_window",
+    "required_execution_communication": "inside_execution_window"
+  },
+  "tuning_identity": {
+    "source_sha256": "a01c6dd4def9397e2187f20f497e8e26efabe32f6ed26ca00d836f985596861c",
+    "case_sha256": "1b9f64180516e67c719ea42e3fc78c113ec99891eeadb78604854b7de1779cad",
+    "config_sha256": "89b57858f46e530ddc19bf5f519025b5c48347ed0251ba032096ddfb3cd90fd3",
+    "comparator_sha256": "82a71d06d1107cfcd1f243c5e8468f62d196511d19edb8403e3d21994850d486",
+    "environment_sha256": "8426ae39f3df0c9dfd252184cad94cf6f081de8ecc7662359da778c266b93fa0",
+    "tuning_policy_sha256": "65b2199f80f0429abd7c7d29ea7368d66e63a9117e9c0aa1da5b31698308f035"
+  },
+  "tuning_evidence": "runs/all_case_boundary_repair_20261108/case_results/deepseek_v4_flash_dspark__moe_flash.json",
+  "resolved_tuning": {
+    "requested": {
+      "memory_planner": "PYPTO",
+      "analyze_auto_scopes_for_deps": false,
+      "ring_task_window": 16384
+    },
+    "resolved_run_config": {
+      "memory_planner": "PYPTO",
+      "analyze_auto_scopes_for_deps": false,
+      "strategy": "Default",
+      "ring_task_window": 16384,
+      "ring_heap": null,
+      "ring_dep_pool": null,
+      "aicpu_thread_num": null
+    },
+    "unresolved_runtime_defaults": [
+      "ring_heap",
+      "ring_dep_pool",
+      "aicpu_thread_num"
+    ],
+    "diagnostics": {
+      "dump_passes": false,
+      "dump_ptoas_passes": false,
+      "compile_profiling": false,
+      "enable_pmu": 0,
+      "enable_chip_swimlane": 0,
+      "enable_dep_gen": false,
+      "enable_scope_stats": false,
+      "enable_dump_args": 0
+    }
+  },
+  "resolved_tuning_by_fixture": {
+    "fixture_000": {
+      "requested": {
+        "memory_planner": "PYPTO",
+        "analyze_auto_scopes_for_deps": false,
+        "ring_task_window": 16384
+      },
+      "resolved_run_config": {
+        "memory_planner": "PYPTO",
+        "analyze_auto_scopes_for_deps": false,
+        "strategy": "Default",
+        "ring_task_window": 16384,
+        "ring_heap": null,
+        "ring_dep_pool": null,
+        "aicpu_thread_num": null
+      },
+      "unresolved_runtime_defaults": [
+        "ring_heap",
+        "ring_dep_pool",
+        "aicpu_thread_num"
+      ],
+      "diagnostics": {
+        "dump_passes": false,
+        "dump_ptoas_passes": false,
+        "compile_profiling": false,
+        "enable_pmu": 0,
+        "enable_chip_swimlane": 0,
+        "enable_dep_gen": false,
+        "enable_scope_stats": false,
+        "enable_dump_args": 0
+      }
     }
   }
 }

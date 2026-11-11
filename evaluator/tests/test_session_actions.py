@@ -15,6 +15,87 @@ import workspace
 
 
 class SessionActionsTest(ActionTestBase):
+    def test_worker_diagnostics_are_archived_and_linked_from_attempt(self):
+        self.configure(worker_logs=True)
+        process, result = self.cli(['evaluate'])
+        self.assertEqual(process.returncode, 0, result)
+        event = self.events()[-1]
+        self.assertEqual(event['worker_status'], 'result_written')
+        self.assertEqual(len(event['worker_log_paths']), 2)
+        stderr_path = next(path for path in event['worker_log_paths'] if path.endswith('worker_stderr.log'))
+        archived_stderr = self.handle.session_root / stderr_path
+        self.assertEqual(archived_stderr.read_text(), 'isolated worker stderr\n')
+
+    def test_attempt_metadata_distinguishes_incomplete_compile_from_later_stages(self):
+        action = self.repo / 'action'
+        action.mkdir()
+        diagnostics = action / 'worker_diagnostics/fixture_000'
+        diagnostics.mkdir(parents=True)
+        common.write_json(action / 'execution.json', {
+            'schema_version': 1, 'exception_type': 'RuntimeError', 'message': 'compiler stopped',
+            'events': [{'stage': 'compile', 'event_type': 'stage', 'status': 'started'}],
+        })
+        common.write_json(diagnostics / 'worker_process.json', {
+            'schema_version': 1, 'exit_code': 1, 'summary_present': False,
+            'execution_status': 'available',
+        })
+        metadata = session_actions._attempt_metadata(
+            action, 'evaluate', 'action_failed', None, None, 'artifacts/index.json')
+        self.assertEqual(metadata['compile_status'], 'error')
+        self.assertEqual(metadata['runtime_status'], 'not_run')
+        self.assertEqual(metadata['correctness_status'], 'not_run')
+        self.assertEqual(metadata['bench_status'], 'not_run')
+        self.assertEqual(metadata['failure_stage'], 'compile')
+        self.assertEqual(metadata['worker_status'], 'missing_result')
+
+    def test_attempt_metadata_marks_missing_worker_stage_data_unavailable(self):
+        action = self.repo / 'action'
+        action.mkdir()
+        diagnostics = action / 'worker_diagnostics/fixture_000'
+        diagnostics.mkdir(parents=True)
+        common.write_json(diagnostics / 'worker_process.json', {
+            'schema_version': 1, 'exit_code': 1, 'summary_present': False,
+            'execution_status': 'unavailable',
+        })
+        metadata = session_actions._attempt_metadata(
+            action, 'evaluate', 'action_failed', None, None, 'artifacts/index.json')
+        self.assertEqual(metadata['compile_status'], 'unavailable')
+        self.assertEqual(metadata['correctness_status'], 'unavailable')
+        self.assertEqual(metadata['failure_stage'], 'worker')
+
+    def test_modes_changes_are_logged_but_do_not_interrupt_or_restore(self):
+        mode_file = self.bench / 'modes/basic/runner.py'
+        mode_file.write_text(mode_file.read_text() + '\n# operator edit\n')
+
+        process, result = self.cli(['evaluate'])
+
+        self.assertEqual(process.returncode, 0, result)
+        self.assertEqual(mode_file.read_text().splitlines()[-1], '# operator edit')
+        self.assertTrue(result['snapshot_id'])
+        event = self.events()[-1]
+        self.assertEqual(event['attempt_id'], 1)
+        self.assertEqual(event['run_id'], self.handle.session_root.name)
+        self.assertEqual(event['compile_config'], common.read_tuning(self.handle.initial_workspace))
+        frozen = self.handle.session_root / event['source_snapshot']
+        self.assertEqual((frozen / 'candidate/candidate.py').read_text(), 'from helper import VALUE\n')
+        self.assertTrue(event['integrity_passed'])
+        self.assertIn('public_modes_basic/runner.py', event['observed_mode_changes'])
+        self.assertFalse(any(path.endswith('/basic/runner.py') for path in event['repaired_paths']))
+
+    def test_single_input_identity_is_required_and_cannot_be_forged(self):
+        for config in ({},{'missing_input_identity':True},{'wrong_input_identity':True}):
+            with self.subTest(config=config):
+                self.configure(**config)
+                process,result=self.cli(['evaluate'])
+                if config:
+                    self.assertEqual(process.returncode,1,result)
+                    self.assertEqual(result['error_code'],'action_failed')
+                    self.assertIsNone(result['snapshot_id'])
+                else:
+                    self.assertEqual(process.returncode,0,result)
+                    self.assertIsNotNone(result['snapshot_id'])
+        self.assertEqual(len(self.calls()),3)
+
     def test_invalid_results_and_exceptions_charge_once_never_snapshot(self):
         for config in ({'fail':True},{'crash':True},{'missing':True},{'bad_case':True},{'bad_fixture':True},
                        {'bad_phase':True},{'missing_speedup':True},{'latency':'nan'},{'latency':'zero'},{'nonzero':True}):
@@ -52,14 +133,14 @@ class SessionActionsTest(ActionTestBase):
         self.configure(pause=True,ready=str(ready),release=str(release))
         process=self.start_cli(['evaluate'])
         self.wait_file(ready,process)
-        (self.handle.initial_workspace/'helper.py').write_text('VALUE = 500\n')
+        (self.handle.initial_workspace/'candidate/helper.py').write_text('VALUE = 500\n')
         release.write_text('release')
         output,error=process.communicate(timeout=30)
         self.assertEqual(process.returncode,0,error.decode())
         result=json.loads(output.decode().splitlines()[-1])
         snapshot=self.snapshot(result)
-        self.assertEqual((snapshot/'source/helper.py').read_text(),'VALUE = 1\n')
-        self.assertEqual((self.handle.initial_workspace/'helper.py').read_text(),'VALUE = 500\n')
+        self.assertEqual((snapshot/'source/candidate/helper.py').read_text(),'VALUE = 1\n')
+        self.assertEqual((self.handle.initial_workspace/'candidate/helper.py').read_text(),'VALUE = 500\n')
         manifest=workspace.source_manifest(snapshot/'source')
         self.assertEqual(manifest['content_sha256'],self.events()[-1]['content_sha256'])
         self.assertEqual(manifest['content_sha256'],common.read_json(snapshot/'metadata.json')['content_sha256'])
@@ -142,6 +223,26 @@ class SessionActionsTest(ActionTestBase):
         self.assertTrue(common.read_json(output/'latest_session_result.json')['integrity_passed'])
         self.assertEqual(session.read_session(self.handle.session_root)['usage']['hardware_actions'],2)
         self.assertTrue(Path(self.calls()[0]['candidate']).exists(), 'staging remains for build/report references')
+        first_event, second_event = self.events()
+        self.assertEqual([first_event['attempt_id'], second_event['attempt_id']], [1, 2])
+        self.assertEqual(first_event['content_sha256'], second_event['content_sha256'])
+        self.assertEqual(first_event['compile_config'], second_event['compile_config'])
+
+    def test_same_source_with_different_compile_options_is_recorded_separately(self):
+        first_process, first_result = self.cli(['evaluate'])
+        self.assertEqual(first_process.returncode, 0, first_result)
+        tuning = self.handle.initial_workspace / 'candidate' / 'tuning.json'
+        tuning.write_text(json.dumps({'memory_planner': 'PTOAS'}) + '\n')
+        second_process, second_result = self.cli(['evaluate'])
+        self.assertEqual(second_process.returncode, 0, second_result)
+
+        first, second = self.events()
+        first_source = self.handle.session_root / first['source_snapshot']
+        second_source = self.handle.session_root / second['source_snapshot']
+        self.assertEqual((first_source / 'candidate/candidate.py').read_text(),
+                         (second_source / 'candidate/candidate.py').read_text())
+        self.assertNotEqual(first['compile_config'], second['compile_config'])
+        self.assertEqual(second['compile_config']['memory_planner'], 'PTOAS')
 
     def test_output_root_or_mode_link_inserted_after_freeze_never_writes_external(self):
         for location in ('root','mode'):

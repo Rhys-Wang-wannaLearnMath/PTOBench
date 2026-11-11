@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import sys
 from pathlib import Path
 
 import common
@@ -33,7 +34,7 @@ def main() -> int:
     parser.add_argument("--platform")
     parser.add_argument("--phase", choices=("correctness", "performance", "all"), default="all")
     parser.add_argument(
-        "--profile-mode", choices=("clean", "runtime", "hardware", "compile"),
+        "--profile-mode", choices=("clean", "runtime", "hardware", "compile", "combined"),
         default="clean",
     )
     parser.add_argument(
@@ -44,11 +45,13 @@ def main() -> int:
     parser.add_argument("--skip-correctness", action="store_true",
                         help="Internal Agent profile policy; not valid for clean evaluation.")
     args = parser.parse_args()
+    sys.path.insert(0, str(common.BENCHMARK_ROOT))
     if args.skip_correctness and (args.profile_mode == "clean" or args.phase != "correctness"):
         parser.error("--skip-correctness requires a one-shot profiling mode")
     # The ordinary evaluator is always clean unless the profiling command
     # explicitly requests the fixed runtime mode.
     os.environ["PYPTO_BENCH_PROFILE"] = args.profile_mode
+    os.environ['PTOBENCH_SKIP_CORRECTNESS'] = '1' if args.skip_correctness else '0'
 
     case_dir, sealed, case = common.resolve_case(args.case)
     common.bootstrap_environment(case)
@@ -57,13 +60,14 @@ def main() -> int:
         case = {**case, "benchmark": {"warmup": 2, "rounds": 3}}
     workspace = (args.candidate or case_dir / case["workspace"]).resolve()
     artifacts, result_path = prepare_run(workspace, args.profile_mode, args.result)
-    tuning = common.read_tuning(workspace)
+    tuning = common.read_tuning(workspace, case)
     execution_path = result_path.parent / 'execution.json'
     os.environ['PTOBENCH_EXECUTION_RECORD'] = str(execution_path)
     lifecycle = {'schema_version': 1, 'started_at': execution_record.now(),
                  'platform': args.platform or common._environment_profile(case)['platform'],
                  'device': common._environment_profile(case).get('device'),
                  'phase': args.phase, 'profiling_mode': args.profile_mode,
+                 'skip_correctness': args.skip_correctness,
                  'events': []}
     execution_record.write(execution_path, lifecycle)
     try:
@@ -82,9 +86,20 @@ def main() -> int:
         lifecycle['ended_at'] = execution_record.now()
         execution_record.write(execution_path, lifecycle)
         os.environ.pop('PTOBENCH_EXECUTION_RECORD', None)
-    build_dir = None
+    build_manifest = []
     for run in runs:
-        build_dir = run.pop("_build_dir", build_dir)
+        selected = run.pop('_build_dir', None)
+        if selected:
+            build_manifest.append({'fixture_id': run['fixture_id'], 'invocation': 0, 'build_dir': selected})
+    builds = sorted({item['build_dir'] for item in build_manifest})
+    build_dir = builds[0] if len(builds) == 1 else None
+    capture_health = []
+    if args.profile_mode != "clean" and all(run["passed"] for run in runs):
+        import profile_modes
+        if not builds:
+            raise RuntimeError('diagnostic action produced no build')
+        for build in builds:
+            capture_health.append(profile_modes.validate_artifacts(build, args.profile_mode))
     if args.profile_mode != "clean":
         for run in runs:
             run.pop("ref_median_effective_us", None)
@@ -97,6 +112,7 @@ def main() -> int:
         "candidate": str(workspace),
         "artifact_dir": str(artifacts),
         "build_dir": build_dir,
+        "build_manifest": build_manifest,
         "phase": args.phase,
         "profiling_mode": args.profile_mode,
         "effective_tuning": tuning,
@@ -104,6 +120,7 @@ def main() -> int:
         "diagnostic_only": args.profile_mode != "clean",
         "verdict": "PASS" if all(run["passed"] for run in runs) else "FAIL",
         "runs": runs,
+        "capture_health": capture_health,
     }
     common.write_json(result_path, summary)
     print(f"{summary['case_id']}: {summary['verdict']}")

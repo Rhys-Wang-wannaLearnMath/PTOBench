@@ -84,7 +84,8 @@ def load_profile(backend, name='default', root=None):
         root = legacy if (legacy / backend / f'{name}.yaml').is_file() else common.BENCHMARK_ROOT / 'modes/_shared/profiles'
     root = Path(root)
     path = root / backend / f'{name}.yaml'
-    value = dict(mapping(read_yaml(path), ('argv', 'version_argv', 'help_argv', 'env', 'model', 'reasoning'), ('argv', 'version_argv', 'env')))
+    value = dict(mapping(read_yaml(path), ('argv', 'version_argv', 'help_argv', 'env', 'model', 'reasoning',
+                                          'context_window', 'max_output_tokens'), ('argv', 'version_argv', 'env')))
     # The monorepo profiles may use its provider launcher.  A standalone
     # PTOBench checkout does not contain that integration layer; in that case
     # run the backend directly while preserving the nested behavior.
@@ -118,6 +119,17 @@ def load_profile(backend, name='default', root=None):
         raise ConfigError('model must be text')
     if 'reasoning' in value and (not isinstance(value['reasoning'], str) or not value['reasoning']):
         raise ConfigError('reasoning must be text')
+    for key in ('context_window', 'max_output_tokens'):
+        if key not in value:
+            continue
+        limit = value[key]
+        if backend != 'pi':
+            raise ConfigError('token limits are supported by Pi profiles only')
+        if key == 'max_output_tokens' and limit == 'unlimited':
+            continue
+        if type(limit) is not int or limit <= 0:
+            raise ConfigError(f'{key} must be a positive integer' +
+                              (" or 'unlimited'" if key == 'max_output_tokens' else ''))
     encoded = (json.dumps(value, sort_keys=True, ensure_ascii=False, allow_nan=False, indent=2) + '\n').encode('utf-8')
     return {**value, 'backend': backend, 'name': name, 'sha256': hashlib.sha256(encoded).hexdigest(), 'path': str(path)}
 

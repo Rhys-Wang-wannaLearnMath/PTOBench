@@ -1,5 +1,13 @@
 # Benchmark Environments
 
+The authoritative current lock is [`LOCK.json`](LOCK.json). It fixes the
+Python, PyPTO/simpler, compiler, ISA, runtime-library and Case-profile set.
+The evaluator checks it before a Case or Agent touches the NPU; it never
+upgrades or silently selects another environment.
+
+`.venv-official` 的当前配置、固定版本和复现步骤见
+[venv-official.md](venv-official.md)（2026-11-02），包含实际安装文件 hash 和完整 Python 包清单。
+
 当前本机版本、安装来源、工具链路径和已知兼容性问题见
 [当前软件栈与运行环境](../ENVIRONMENT.md)。
 [2026-10-05 版本快照](inventory/20261005.json) 是环境盘点记录，不是 Case runtime profile。
@@ -60,3 +68,10 @@ runtime, benchmark.warmup, benchmark.rounds
 
 Case-only RunConfig values belong in `case.json.runtime`. Validate them against
 the `pypto.runtime.RunConfig` signature from the profile's Python interpreter.
+# Environment records
+
+[`LOCK.json`](LOCK.json) is the authoritative lock for the current PTOBench
+Python, PyPTO/simpler, compiler, ISA, runtime-library and Case-profile set.
+Read it together with [`../ENVIRONMENT.md`](../ENVIRONMENT.md). The evaluator
+checks the lock before a Case or Agent touches the NPU; it never upgrades or
+silently selects another environment.

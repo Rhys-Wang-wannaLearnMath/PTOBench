@@ -20,18 +20,21 @@ class MethodError(ValueError):
 
 def load_method(name):
     import yaml
-    if not isinstance(name, str) or not re.fullmatch(r'[a-z][a-z0-9_]*', name):
+    if not isinstance(name, str) or not re.fullmatch(r'[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*', name):
         raise MethodError('invalid experiment mode')
     directory = common.BENCHMARK_ROOT / 'modes' / name
     try:
         with file_tree.open_file(directory / 'mode.yaml') as fd, os.fdopen(os.dup(fd), 'rb') as stream:
             raw = stream.read()
         value = yaml.safe_load(raw)
-        if (not isinstance(value, dict) or set(value) != {'schema_version', 'id', 'implemented', 'description', 'entrypoint'}
+        if (not isinstance(value, dict) or set(value) - {'schema_version', 'id', 'implemented', 'description', 'entrypoint', 'profile_strategy'}
                 or type(value['schema_version']) is not int or value['schema_version'] != 2
                 or value['id'] != name or type(value['implemented']) is not bool
                 or not isinstance(value['description'], str)):
             raise MethodError('invalid experiment method definition')
+        strategy = value.get('profile_strategy', 'combined')
+        if strategy not in ('split', 'combined'):
+            raise MethodError('invalid profile strategy')
         if not value['implemented']:
             raise MethodError(f'experiment mode {name} is not implemented yet')
         entry = value['entrypoint']
@@ -39,7 +42,7 @@ def load_method(name):
             raise MethodError('invalid method entrypoint')
         with file_tree.open_file(directory / entry) as fd, os.fdopen(os.dup(fd), 'rb') as stream:
             source = stream.read()
-        return {**value, 'path': str(directory / entry), 'files': {
+        return {**value, 'profile_strategy': strategy, 'path': str(directory / entry), 'files': {
             'mode.yaml': hashlib.sha256(raw).hexdigest(), entry: hashlib.sha256(source).hexdigest()}}
     except (OSError, yaml.YAMLError, UnicodeError, file_tree.UnsafeTreeError) as error:
         raise MethodError(f'experiment mode {name} is unavailable') from error
@@ -74,7 +77,10 @@ def call(method, operation, payload, *, environment=None):
 def start(method, request, workspace, environment):
     """Launch any participant in an owned group; Basic may exec its native tool."""
     import session
-    process = subprocess.Popen(command(method, 'run', request), cwd=workspace,
+    import isolation
+    argv = ([sys.executable, str(common.BENCHMARK_ROOT / 'evaluator/sandbox_supervisor.py'),
+             method['path'], str(request)] if isolation.enabled() else command(method, 'run', request))
+    process = subprocess.Popen(argv, cwd=workspace,
                                env={**environment, 'PYTHONDONTWRITEBYTECODE': '1'}, shell=False,
                                stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                start_new_session=True)

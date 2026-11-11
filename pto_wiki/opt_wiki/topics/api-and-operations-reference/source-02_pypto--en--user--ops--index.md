@@ -1,0 +1,35 @@
+> **Local reading edition:** 910B4 / CANN 9.0.0 / pinned PyPTO 747e1e4b / PTOAS 0.60. See [environment and applicability](../setup-and-first-kernels/source-BASELINE.md).
+
+# Operations
+
+Which namespace an operator lives in, how to choose between them, and what the operator
+surface contains.
+
+> **Prerequisites:** [Types](../kernel-authoring-and-tutorials/source-02_pypto--en--user--language--00-types.md).
+
+## What this chapter is
+
+Two pages, deliberately thin:
+
+| Page | What it covers |
+| ---- | -------------- |
+| [Choosing a Namespace](source-02_pypto--en--user--ops--00-dispatch.md) | The rule for picking `pl.*` versus `pl.tensor.*` versus `pl.tile.*`, and when the unified form cannot be used |
+| [Catalog](source-02_pypto--en--user--ops--01-catalog.md) | Every operator family, one line each, with the namespace it is reachable from |
+
+**Signatures are not duplicated here.** Nearly every operator in `pl.__all__` carries a
+docstring, and that docstring is the reference — a hand-maintained signature table would
+drift from it within a release. The [API Reference](source-02_pypto--en--api--index.md) renders those
+docstrings, and every name in the catalog links straight into it. So the catalog answers
+"what is there, and what is it called"; the API reference answers "what are its
+arguments".
+
+For "how do I use this operator to do something useful", the answer is a worked example,
+not a table — see [Tutorials](../kernel-authoring-and-tutorials/source-02_pypto--en--user--tutorials--index.md), or `examples/beginner/` and
+`examples/intermediate/` in the repository.
+
+## See Also
+
+- [Language Guide](../kernel-authoring-and-tutorials/source-02_pypto--en--user--language--index.md) — the constructs these operators appear inside.
+- [Memory and Data Movement](../kernel-authoring-and-tutorials/source-02_pypto--en--user--language--03-memory.md) — the movement operators in context.
+- [IR Operators](../compiler-and-ir-internals/source-02_pypto--en--dev--ir--05-operators.md) — the operator registry these names resolve to.
+- [PTOAS Operator Status](../compiler-and-ir-internals/source-02_pypto--en--dev--ptoas-op-status.md) — backend support per operator.

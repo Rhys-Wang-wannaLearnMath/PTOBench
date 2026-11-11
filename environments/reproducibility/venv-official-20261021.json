@@ -1,0 +1,2195 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-10-21T06:12:27.807802+00:00",
+  "python": {
+    "executable": "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+    "version": "3.10.20 (main, Apr 14 2026, 14:26:21) [Clang 22.1.3 ]",
+    "pyvenv_cfg": "home = /data1/home/ziruiwang/.local/share/uv/python/cpython-3.10-linux-aarch64-gnu/bin\nimplementation = CPython\nuv = 0.11.8\nversion_info = 3.10.20\ninclude-system-site-packages = false\n"
+  },
+  "host": {
+    "machine": "aarch64",
+    "release": "5.10.0-136.12.0.86.r1526_92.hce2.aarch64"
+  },
+  "packages": {
+    "pypto": {
+      "version": "0.1.0",
+      "direct_url": {
+        "url": "file:///data1/home/ziruiwang/pypto-official-747e1e4b",
+        "dir_info": {}
+      },
+      "source_checkout": "/data1/home/ziruiwang/pypto-official-747e1e4b",
+      "source_commit": "747e1e4ba99f13dea1a609d893ac7512e85a5897",
+      "installed_files_sha256": {
+        "../../../bin/pypto-ir-trace": "sha256:dfa6549b0bb2570342e24f028d4494ca2fdbbd112e94c884723e2916b4fa0d68",
+        "pypto-0.1.0.dist-info/INSTALLER": "sha256:e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+        "pypto-0.1.0.dist-info/METADATA": "sha256:58d67028e5048ec9fbe6a14b1a6af58073befde0c2742133d29bded6e687f0bb",
+        "pypto-0.1.0.dist-info/RECORD": "sha256:eea3d9a04bce2babc5d97c4d00e608acd020eef7c035279aaed03bf697324020",
+        "pypto-0.1.0.dist-info/REQUESTED": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "pypto-0.1.0.dist-info/WHEEL": "sha256:7443b22e8e8ed947afd6f8edf83c5745b7ea9da19469d98484733cc66532eb9c",
+        "pypto-0.1.0.dist-info/direct_url.json": "sha256:1f38165988d260208926b5093fb71777539f33ddf68cec99298c62588debef97",
+        "pypto-0.1.0.dist-info/entry_points.txt": "sha256:f0ad6358f6d6bc21975c451a342d22904983c80120d1923834519e70de39405c",
+        "pypto-0.1.0.dist-info/licenses/LICENSE": "sha256:89b1c114df62cfd183004f38d18d07f186436c3b37203dd69c3e84becf9d2282",
+        "pypto-0.1.0.dist-info/uv_build.json": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "pypto-0.1.0.dist-info/uv_cache.json": "sha256:6f55d685a02e29445010a8c2babb1f06bbb3cc3b80acdd6a53557f8c6904c1c5",
+        "pypto/__init__.py": "sha256:c2001e1969ebc4b2c3d5f476f962155386cede53083e01a25fe722208dab67c9",
+        "pypto/_environment.json": "sha256:aeed0ab090bccdd93800e170e950c76db0c6fbe21c5d2982212fccc414d9c086",
+        "pypto/_external_source.py": "sha256:33e7245bfe1cb4e56c5970b1d40d9e2e7dd90f3567df8a3d78bc71cc12b48137",
+        "pypto/_function_attrs.py": "sha256:28fe4ae3ce0c94536c706705c1f66d6fcda8a2b3527427cc96b2cc60e4f666aa",
+        "pypto/_identity.py": "sha256:251bde40307759bf726bf2b61dc9b61dd8574d171ba02f7fa686e318de7a9b3d",
+        "pypto/arith/__init__.py": "sha256:555f7bed11db3ce330c35bdc6a3d6131f819e626a451bdf4f2e02b5d300ef0d4",
+        "pypto/backend/__init__.py": "sha256:4940506f2bfef4cccc2bda8dd4e63faf9acd6dfb158d0d9680fcdfc674e95c2d",
+        "pypto/backend/_ptoas_locate.py": "sha256:33bfdf5b64ae5032e850fc6ad037aeef1ccbc462b5442e26c607409b905110a5",
+        "pypto/backend/_ptoas_preprocess.py": "sha256:322a1c0d1281b85ab3c727a6376cea6080c27a1136a06399cc89dc5e1fefe942",
+        "pypto/backend/pto_backend.py": "sha256:c21746fbad95fd0f75c3f77ea18e4e8fe44b858aff435eac7b63650020ece487",
+        "pypto/compile_profiling.py": "sha256:b15e97c1f2789aba7dcbc8864cb449cfa3d8b36b5a2e0b50f81c4d1b238866ca",
+        "pypto/debug/__init__.py": "sha256:ec64b2264e583fe2730fa5eedc932c051d8dc513fde922607fc4079906edb3fa",
+        "pypto/debug/torch_codegen.py": "sha256:47d6760134c44d3f53491b7d85003fd2b9e19ceb9c7b5f99a97ad70c565bef2b",
+        "pypto/ir/__init__.py": "sha256:2c99bdaf507ead2c67c29aa69519efe69d55a197e0c7278eb46d4cb4dc5399ee",
+        "pypto/ir/__init__.pyi": "sha256:93d717414f6e8e5880b7a3ef6bb07f3e77d30e55e19e3cc4cccaed282faaba3c",
+        "pypto/ir/builder.py": "sha256:e275f87878054c543c55971aa123d1fc9ee390f19d6af55200c2ed2f98c06047",
+        "pypto/ir/compile.py": "sha256:768732fe6ea3b3643d86a0f3f41349b3f6b3fab3b3944690980783d6d9e20099",
+        "pypto/ir/compiled_program.py": "sha256:40de2b4fdca1c9eb2f603ca991196962c87c5bae7dcfd0bda5983a11af0d69e0",
+        "pypto/ir/directions.py": "sha256:09ce824d394298e0cc9240d77a046770449e1ff7ef71dab117840e706affcb47",
+        "pypto/ir/distributed_compiled_program.py": "sha256:94d646744be07676bb368f9989d328a5a2dcc4a4981ac5881c961cabdc264f4e",
+        "pypto/ir/formatter.py": "sha256:0677848580e8623c336f3714feca07232928b19caffe87ec381efa67e000b9cb",
+        "pypto/ir/instruments.py": "sha256:4b625e7b0afe60c8ee275c3fe9be7120ba6caec9016b11400e452155782a468a",
+        "pypto/ir/op/__init__.py": "sha256:886004986aca48818e2ba4fb1aaac121fe87f23a721e6a51cf5d3af38ab36407",
+        "pypto/ir/op/_pad_value.py": "sha256:9ae07e72083c3a2d14229e0fd9407112e3c902cb619861c7bf8c7aa0fbde1e19",
+        "pypto/ir/op/array_ops.py": "sha256:de67984c04542cd3ff3e32f114b0ba158216445a1478e2c83e06d215aa0ea765",
+        "pypto/ir/op/distributed/__init__.py": "sha256:09f330ebf346c44854398425d6d1eedba08e5530aa746ad1eb843f544c8c5ed5",
+        "pypto/ir/op/distributed/system_ops.py": "sha256:f62957c7d74d74557dc7fed201ec2e726c92bda41783bc1a4009ce87d8d0496d",
+        "pypto/ir/op/distributed/tensor_ops.py": "sha256:e44c17cd44d473c56d4221be18644a551b86fa77c02844303c234c34294bf959",
+        "pypto/ir/op/distributed/tile_ops.py": "sha256:0360ade52691b010bde420e747820d97ec7d0e23d587a260ac787f761d8413a0",
+        "pypto/ir/op/prefetch_ops.py": "sha256:1cf52c8c58f61e8e797741da293234b9d78533d8ef36b81c8cb8532be49e17ad",
+        "pypto/ir/op/system_ops.py": "sha256:083c9f6894997a9e70b17a9beb4d843439a440bf9d52f3febe2e54328a93f4d0",
+        "pypto/ir/op/tensor_ops.py": "sha256:e0cb97caa2e205049ed6689865173779915c8a1c564fcf24b0e31cabfef44006",
+        "pypto/ir/op/tile_ops.py": "sha256:cc5d19c47e58d14d8efa21847ca9aaf38e062e085cbc7462104d34c3b1b05396",
+        "pypto/ir/op_conversion.py": "sha256:b32a37524cfccafc09b1931d94fd5344a3b8e4ec1cb22b523bc05712aa1252bd",
+        "pypto/ir/operators.py": "sha256:a2a86b11412f0aff80487058fbda4546ccd4ce8cde2f67b3f06b8967bafefe62",
+        "pypto/ir/param_info.py": "sha256:5c199a802eb9279c812bf1cda3af650b3315d97660bac24482cd78904dcccaca",
+        "pypto/ir/pass_manager.py": "sha256:f684d2785a763419ebc10aa88fd437490fafd656759a2ccf4a5136634636a9c5",
+        "pypto/ir/printer.py": "sha256:46a1b20c95bbe6ad71ff4e8a4c3ad7f01965e0d502e01f78ce67cbaa5c483970",
+        "pypto/ir/type.py": "sha256:0131019f42c314d79ac449017357a4776919620fef90bd143c9564b7c60af967",
+        "pypto/ir/utils.py": "sha256:fab74e5bbee0a586a7b96d220be92b018d27fda544dec78e65581d9d2711a8f7",
+        "pypto/jit/__init__.py": "sha256:c12b57435391025f74da8054dcc4055dfea68ad9b1219734ca39d7ed0a899245",
+        "pypto/jit/_source.py": "sha256:4f9d5354ba8317da7016136e4973f6c26b2f72501c6d4dc0a9d4728137e8425c",
+        "pypto/jit/cache.py": "sha256:5fcc83cfac0971327e4b9a3c1b0ff12d349d300c3b368a26a47601d59c215b72",
+        "pypto/jit/decorator.py": "sha256:43f984d62249dd0e496226cc87c4131e1e53235c57a3aff579008e59f512eef1",
+        "pypto/jit/specializer.py": "sha256:2eb5691a4a8ebdbff88a07aa5444e16f47c86c94dc62fa2b3270e9210dbe4a88",
+        "pypto/language/__init__.py": "sha256:b8873b52b18d69f6bc02bae9decc35ce4fc608bb84bb04a1b6348f31a3436171",
+        "pypto/language/arg_direction.py": "sha256:2e2e150581458cd1cbbbc22a989fc3ab8474bec55fa1d5503633c766989bf195",
+        "pypto/language/distributed/__init__.py": "sha256:f52264dad476d0466dd4c6b691e32bf9be30f07993787dd3fc9c089f4aa863b6",
+        "pypto/language/distributed/op/__init__.py": "sha256:24fe6b30e534a8d276a35258a2ea4c3b3f319df94116b28ca002a88efa7a3510",
+        "pypto/language/distributed/op/_utils.py": "sha256:e47c0b143cbb95f628be8ef27aafd6b3269c3a52a21888fc99847ded3389043a",
+        "pypto/language/distributed/op/system_ops.py": "sha256:e4eb1dc1183b123d20f591b6e24e7ed77467138d40aab8a2e8af11ed4d2d12a8",
+        "pypto/language/distributed/op/tensor_ops.py": "sha256:ab0b8015d223a58c342bbd458dd36e7febe3d71b5490d2465573a11091f870af",
+        "pypto/language/distributed/op/tile_ops.py": "sha256:b5b4c8b123f8021f1169dce49c2274c3b0913c060cf2b2af947965f65a830b04",
+        "pypto/language/distributed/op/unified_ops.py": "sha256:d40026c5b05c166f10b3abdc76f0a4c5903fc5f2343685a7c0354bc393b73aa1",
+        "pypto/language/distributed/typing/__init__.py": "sha256:6908881e554ac17c1c7d180ae5048df95509b6420b4167d3e1dedf75bc1b8395",
+        "pypto/language/distributed/typing/comm_ctx.py": "sha256:e1371419181b2cf78032ce8685a856aeeabf8abc3306fb11a8bd5175cc89109c",
+        "pypto/language/distributed/typing/distributed_tensor.py": "sha256:e60be82054e9dfe4baff424825e2dd71c70ff8328d81ce8798153059f7c76da1",
+        "pypto/language/dsl_api.py": "sha256:e7f173c0d2218596561e4539fc07a240b90ae93a693353ac81ea0c9a388a00c8",
+        "pypto/language/op/__init__.py": "sha256:e5384113f38dc04875ba1a1f801e7d1d9c5c85d04e72a2f8b8f1caffbe8349ba",
+        "pypto/language/op/array_ops.py": "sha256:a645d6e04baf20ca509551def8eb240379aeccb62db961ebff74a864623483fe",
+        "pypto/language/op/prefetch_ops.py": "sha256:8f584ddeb18943d926129cdd4155239d7d5ca398e0041748d7a194ce566062c9",
+        "pypto/language/op/system_ops.py": "sha256:88571fd095a93dab09584d0d4e19914195da80244aadc93d5a2ada7e0f8a968d",
+        "pypto/language/op/tensor_ops.py": "sha256:84b2c10d4b7e2919ef50521e2f49928a1dca2c1d019bb9946e3d8ff80c0465bb",
+        "pypto/language/op/tile_ops.py": "sha256:5ecaa89a3528a669c129ca7bcc8ef47dbbf8e2ab55b49bb8ba8251dc97949e30",
+        "pypto/language/op/unified_ops.py": "sha256:0a9f838009764cc7dc3a9c48577008a1ed6f78df92287f90d06a16b499a79c07",
+        "pypto/language/optimizations.py": "sha256:9341e9f15fadbc0be89578f1754a0caa4a5c0fdde7568fc9ffa939be86ded00e",
+        "pypto/language/parser/README.md": "sha256:f944b5ed2388f38f201a314a67c01921069c140fabe1bf7967fa8e67296b5b25",
+        "pypto/language/parser/__init__.py": "sha256:731cee6f9aedc387e0bcb5175b8909c57692039f38e8428520b442c1276848a2",
+        "pypto/language/parser/_dsl_invoker.py": "sha256:8836e5b4dfd96531c71291a883c87bfe344f039766f5dc4d5d9751fa3827a12f",
+        "pypto/language/parser/ast_parser.py": "sha256:63e01fdbaa2cddb6e7594701c47c84dc13362ef4cece0fd674a5c7d18fecdf21",
+        "pypto/language/parser/comment_extractor.py": "sha256:db44614cdbd962c14419c8887e53821634ad25a02ba2b69b98e12b30bf93fdad",
+        "pypto/language/parser/decorator.py": "sha256:e28a3aa5d7c2ebbee32b6af48ebb14c07e023b71198cd727e247397f35f77981",
+        "pypto/language/parser/decorator.pyi": "sha256:4cf746007c13c910d8ded931a9757e8b09123c4923c6c6277c69b7ec58ca5f9b",
+        "pypto/language/parser/diagnostics/__init__.py": "sha256:1a938a19050ea53e8abbae049991e7d03e211c39f121f476955d8a5907c60227",
+        "pypto/language/parser/diagnostics/error_codes.py": "sha256:8343142b28ba5af9ad5c6935c6ef3177a9ba3eaf631ca4f794eac9f460c9f0e8",
+        "pypto/language/parser/diagnostics/exceptions.py": "sha256:8e674bc7cce9eedae345485a97e7a692e2f24e54a1af71ea7fe0a95e8a59bcb9",
+        "pypto/language/parser/diagnostics/renderer.py": "sha256:7dabdf394fa6d00447e050347ee132f91defdb13d3ebca7f3e8e4a424b252c01",
+        "pypto/language/parser/enum_utils.py": "sha256:9cc53f0d305a78775404c24c2ecd6aa3375fa33befe3b7cc651c029e4bfe8c9c",
+        "pypto/language/parser/expr_evaluator.py": "sha256:b1c81c5eca9afa831fc853fe575b3058aa6312069c6c6343aa51c38ff3b3b4a7",
+        "pypto/language/parser/scope_manager.py": "sha256:d25c08d337740248a21b1199f0dde6385736dc3375de7a0b43f2c78116ae9eaf",
+        "pypto/language/parser/source_lookup.py": "sha256:fe8e0be6bf67a4dedcd123c69646e8a7caf6788739b7fd6d2009ca6261adc7d9",
+        "pypto/language/parser/span_tracker.py": "sha256:cdf322cb485e5c9c584a4a98ab4b62ad7690975b3fed39e9475640dffa1fd5fb",
+        "pypto/language/parser/text_parser.py": "sha256:27ee17a6ecf0b6dc1cc580ec4a44115c08c7005943a65aa73188404f9f9e18ba",
+        "pypto/language/parser/type_resolver.py": "sha256:f962de0ebf9deb6c2216ced78430de049bc8bf51a1794e4bd801cc814aa77228",
+        "pypto/language/scope.py": "sha256:7f17eff5ba1d5665b918683aac2a291eda31c1b9112eceea11032b28a8c97e71",
+        "pypto/language/typing/__init__.py": "sha256:29e6eecb5a39ae8557c1686aca0035f70368b75bb876820e91c4eba726f14cdb",
+        "pypto/language/typing/array.py": "sha256:e33a0147a1f10852ae3248d9538d58350bab8d4a503cb8dc8da51b224bbd8674",
+        "pypto/language/typing/direction.py": "sha256:0b4bdee49a5653921d2da73889edf1988b34b6f0a03a1d6902891730df003a9a",
+        "pypto/language/typing/dynamic.py": "sha256:ef15a40c37aded1ed0d77f98ebd4934acf31c04f1debda95bb612551361c1925",
+        "pypto/language/typing/memref.py": "sha256:3bfb16b5f52ae8e4ae05be6189a0b94ec94c58a420f282e808641ee1783dc086",
+        "pypto/language/typing/prefetch_handle.py": "sha256:cd7a2845ec7ab00e5e4c63e7891e44210152e3a7acc2876e506b70801242c3a3",
+        "pypto/language/typing/ptr.py": "sha256:1f92e6ef3d4118477981f59950e5f650bed056c8fb3cb93842f2e31f12bbd1de",
+        "pypto/language/typing/scalar.py": "sha256:9819ada9ebb8389a759d7a517124c33afe723d5d0890cd37035b380d139e0bc4",
+        "pypto/language/typing/tensor.py": "sha256:1ab1bf03c861d87049c994b7aef180ad71c0703baf73e21f2c53d3a34948019b",
+        "pypto/language/typing/tile.py": "sha256:836d417a07feccebb392a6b12a99606f8ee8e45ae25b5252b16839b31e264025",
+        "pypto/language/typing/tuple.py": "sha256:3f91a66bc5568b4e63cc6bd10c4321cdbb314df7b8e88ad5e1781f3629dbc559",
+        "pypto/pypto_core.cpython-310-aarch64-linux-gnu.so": "sha256:fe95f3ae5812faa9e7e0a6fca003c68c6376f08238eb210ebe91174df359e663",
+        "pypto/pypto_core/__init__.pyi": "sha256:528aef3c183b54ed0df2134a98bb5810fee773211d9147ab98e8b086848960b2",
+        "pypto/pypto_core/arith.pyi": "sha256:fab8913ae3b064c0a52b52d095c80c532e68a54d76fdb294435e0f322e221f4e",
+        "pypto/pypto_core/backend.pyi": "sha256:0315b12d891ce6a462547d404919007b4136cb91bd6a0368039a1bce083b93a3",
+        "pypto/pypto_core/codegen.pyi": "sha256:edc8d2dacb809dd1632d0d2171346a25f5b5f41a287ca7502d87cae795e044b5",
+        "pypto/pypto_core/ir.pyi": "sha256:bf5673e2a52e53f5b45e15928f77a1b52f6579aaa4d70c6982b2d4d63b6ce3ea",
+        "pypto/pypto_core/logging.pyi": "sha256:fc40726a173c98c548f54c6e020e1edda254979f528e5c922c212fa189b1d58b",
+        "pypto/pypto_core/passes.pyi": "sha256:23b731fccda3c6f889b8a656eb760702e654b46bcfe8ac350cb66d91ce3fc31b",
+        "pypto/pypto_core/testing.pyi": "sha256:350009a1661eb0b7b85fc83fc5345394ea5338519ed5d435224c6b12d47cba04",
+        "pypto/runtime/__init__.py": "sha256:93c715a833c98c752597c6609fdff9f0e243abbf89a27b00b25c281c6946306a",
+        "pypto/runtime/_binary_cache.py": "sha256:e109480adb0dfcccf3cf1ad0881b0e1210b9d0792f2dcdc068907c0fe77363f4",
+        "pypto/runtime/_dep_gen_capture.py": "sha256:26c093ef3a78cacc115621ff4f3131254888fb03be87b9fa273ae9122f0a70e2",
+        "pypto/runtime/bench.py": "sha256:27136eddcc7308cb33fc123084f1ae0bef9c220c426b96af7ab10d7e199f07b6",
+        "pypto/runtime/builtins/__init__.py": "sha256:3c184f738aedeaafdd403840ccddee504f1e7800a1849da7ede9162c12e6e9a0",
+        "pypto/runtime/builtins/collectives/__init__.py": "sha256:da4c45c6d822ed826d56c03986e2c01ade71d9108b23e0dbb73189e514fbdf56",
+        "pypto/runtime/builtins/collectives/all_to_all/__init__.py": "sha256:512673ac7b388952feaf889219642269b0d2c9db362bcdc65bbeeeb46daa9a8f",
+        "pypto/runtime/builtins/collectives/all_to_all/templates/entry.cpp.in": "sha256:7e65b24c5ff2d3ac49bfcc29874ef129160615760c6c4a8bd28e16735035971c",
+        "pypto/runtime/builtins/collectives/all_to_all/templates/kernel.cpp.in": "sha256:1b056aac9d5d49aec17f0b2698d68ebdddc435aaf01d6196f942c87d81d6f27e",
+        "pypto/runtime/builtins/collectives/all_to_all/templates/kernel_config.py.in": "sha256:c1e710f6128c39aa668274600040dec42b1e1c47c88c04ccf81b2ccad0bd737c",
+        "pypto/runtime/builtins/collectives/all_to_all_v/__init__.py": "sha256:fe546f39891c6c187aa8ca29066d7cf0b9c451716726c393c3c2d5f772fec3ec",
+        "pypto/runtime/builtins/collectives/all_to_all_v/templates/entry.cpp.in": "sha256:d26fce9e4f285e3378fd7c7ab028cfd4b713a309f0816d1491de862370c5914f",
+        "pypto/runtime/builtins/collectives/all_to_all_v/templates/kernel.cpp.in": "sha256:7f5c22e29601a546d9b8460a640824230b5e5221cc5f5eac6e72b3e70d372657",
+        "pypto/runtime/builtins/collectives/all_to_all_v/templates/kernel_config.py.in": "sha256:43e07715b4369259f80bb55ecf16da20d4b6f27cf31c51dda0b562c939989408",
+        "pypto/runtime/builtins/collectives/allgather/__init__.py": "sha256:cdfe0f2cb1bcae76a406fa6fb527e6e3a20d97c0e4498ad73bacdb2cf7d1dc63",
+        "pypto/runtime/builtins/collectives/allgather/templates/entry.cpp.in": "sha256:32718ad6c893ec492fcc29f307466724f9b20c69bed5e7ecd28d368e5737c2e8",
+        "pypto/runtime/builtins/collectives/allgather/templates/kernel.cpp.in": "sha256:5a74e4800b9ad31456cdaf6091dd7aaa5d487a0fa90bd56c73237c7f76dddef8",
+        "pypto/runtime/builtins/collectives/allgather/templates/kernel_config.py.in": "sha256:c1e710f6128c39aa668274600040dec42b1e1c47c88c04ccf81b2ccad0bd737c",
+        "pypto/runtime/builtins/collectives/allreduce/__init__.py": "sha256:6b3087f35f9614e9a2292be82402368ce0edb9b7aea023f2ec1211058dbad37b",
+        "pypto/runtime/builtins/collectives/allreduce/templates/entry.cpp.in": "sha256:8391f90a81e05003f2f65d93652d974ea621b3e269932899380fe752c1ab9340",
+        "pypto/runtime/builtins/collectives/allreduce/templates/kernel.cpp.in": "sha256:b8e8bce3403f628327b1d56f32f00acfdba2155163ad02864539d4bfe74894d9",
+        "pypto/runtime/builtins/collectives/allreduce/templates/kernel_config.py.in": "sha256:fee137428d8f96566b5bc4c8895bd06a9c01363807c5b1ab065fb3a7f8079d55",
+        "pypto/runtime/builtins/collectives/allreduce_ring/__init__.py": "sha256:0a260264343e6d9beb56d2c72929c8b1ccd334242591bc415cbce34620becfa6",
+        "pypto/runtime/builtins/collectives/allreduce_ring/templates/entry.cpp.in": "sha256:f070680b207b673414f494b824c93f314a2400099c40bc10137efb6c1cc69d07",
+        "pypto/runtime/builtins/collectives/allreduce_ring/templates/kernel.cpp.in": "sha256:f9e90bdccd2a2692c0bbd41761921879f9615c5ec2149c7f53af2e7fcae7b247",
+        "pypto/runtime/builtins/collectives/allreduce_ring/templates/kernel_config.py.in": "sha256:35a698d0afb9706e49931a724db2a9aa606e5328ba2c86ed32edbd37c78abe8b",
+        "pypto/runtime/builtins/collectives/barrier/__init__.py": "sha256:4df250d8c442439eb843dde630b1f078144bb1c3aa4efdb6251e8e38a1c9df93",
+        "pypto/runtime/builtins/collectives/barrier/templates/entry.cpp.in": "sha256:8e22d4428b0e304fa8619859b96e5c6748e0ca0e1b6d8649d34554991913db13",
+        "pypto/runtime/builtins/collectives/barrier/templates/kernel.cpp.in": "sha256:10b209fc141c5e5519d326aca01c0f4e23096a36d8a4e0be000472077124fd47",
+        "pypto/runtime/builtins/collectives/barrier/templates/kernel_config.py.in": "sha256:5d58194d5695bc117d4e94819de94e73e8b3d55fc0e486dad45fac250449d2d2",
+        "pypto/runtime/builtins/collectives/broadcast/__init__.py": "sha256:6e2825d390c99d226b47b99fcb6bf20f85ec8ffeb4a9957fc3d7265822f485e6",
+        "pypto/runtime/builtins/collectives/broadcast/templates/entry.cpp.in": "sha256:b6f636b01dd2d0edf3fd99084db2b7210ed3b14b526638c1dbb29f72d8f2a1e2",
+        "pypto/runtime/builtins/collectives/broadcast/templates/kernel.cpp.in": "sha256:2f8ca5beec7d7874741f3564ddde2467aec8302c59731da01fdf6e306072dbd8",
+        "pypto/runtime/builtins/collectives/broadcast/templates/kernel_config.py.in": "sha256:fee137428d8f96566b5bc4c8895bd06a9c01363807c5b1ab065fb3a7f8079d55",
+        "pypto/runtime/builtins/collectives/reduce_scatter/__init__.py": "sha256:f82f91c8308577297ed05978e3e5318827211f31cec49248962353fc38b9e77c",
+        "pypto/runtime/builtins/collectives/reduce_scatter/templates/entry.cpp.in": "sha256:e2ae07e571e568a2128ef80591e2185c7de9e41ca754a0524262ba4a507d1093",
+        "pypto/runtime/builtins/collectives/reduce_scatter/templates/kernel.cpp.in": "sha256:30cddc93e7f16de9ee736cd8b3295ad7cf773278228081d138f8029f4deac77f",
+        "pypto/runtime/builtins/collectives/reduce_scatter/templates/kernel_config.py.in": "sha256:fee137428d8f96566b5bc4c8895bd06a9c01363807c5b1ab065fb3a7f8079d55",
+        "pypto/runtime/debug/__init__.py": "sha256:ab610fdd55c9bd5dd4df8e078927ec70848e14052c0396132dcb25cfdf3a46c7",
+        "pypto/runtime/debug/pto_rebuild.py": "sha256:c4373657af23290e83f35736f4fbe42106947b6b40a76a58ada1859a9bf7cca3",
+        "pypto/runtime/debug/replay.py": "sha256:217b85589a2365c7cb193e431466ab5117fec7020483a1f900dd9be098e66535",
+        "pypto/runtime/debug/run_script_writer.py": "sha256:c0dfa6183fbcfacc28fb2fa0ad36a7f6421fdd5f225541323f164e3b418e2676",
+        "pypto/runtime/device_runner.py": "sha256:9c519770ea9cb4473a04a82a5b87538066013faf6f88551f9f47ecf39db3ce61",
+        "pypto/runtime/device_tensor.py": "sha256:d58600474c1bdc6dacd6c8123a5a7c59bbbc34274e19d3a53a1ce81483a50a05",
+        "pypto/runtime/distributed_runner.py": "sha256:34faa628bb2830c02b6f7adb0f82eb8daedee276765fa8c1392b26b56f35bbc1",
+        "pypto/runtime/elf_parser.py": "sha256:6c99eb3661e15526e05a5dab28722f692179c5329d2dfa1effd345ae15801736",
+        "pypto/runtime/execute_artifact.py": "sha256:2bae2d331820d98d1b43d70768afddab37e443858072639d3ccb84a05eeb9640",
+        "pypto/runtime/golden_writer.py": "sha256:2ce541ae1bd48a14fa63e1f4c5266b8a5d410ffdc5199ba07f572707af402c9c",
+        "pypto/runtime/kernel_compiler.py": "sha256:55eaf368ba027f6e205280a7a8836328da1d432a59718e6c2d41a12ef3029e1f",
+        "pypto/runtime/log_config.py": "sha256:0d563700a8d717d9628d7dc90fcfcc4524480b0d388fc9380e611a240329c314",
+        "pypto/runtime/pto_isa.py": "sha256:eedf38b0219f85524eea10f13511705baefb514a8d23b8445bf7b18eb8c494f8",
+        "pypto/runtime/runner.py": "sha256:3ef60508a756d409c2550a21aaec7de9e2064f85a9490aa4800164d467486ebb",
+        "pypto/runtime/runtime_base.py": "sha256:c88d47b67f4eaa789d56330d756409c87038a020e9276c1e4946be33fa6dcd1c",
+        "pypto/runtime/task_interface.py": "sha256:e6329ed6a2cc63e8b2ea138f00ee89f0d63fbe55e00f4bc36a209aef09bdc762",
+        "pypto/runtime/tensor_arg.py": "sha256:1714847e325c8ccc791c8ece684621ca9891e330f55564535d233c8ed205b053",
+        "pypto/runtime/tensor_spec.py": "sha256:2fec7ae3f893efd9a583a29a0d6630a2831ec84988cd5256bf6024c3e4b08590",
+        "pypto/runtime/worker.py": "sha256:a9d4110de088fe1b585d025dd3f97f6b7c9620f883677ea1f047b6655286dac0",
+        "pypto/tools/__init__.py": "sha256:83b863aa4c2779127df7019541741680cbda3922dfbdaaf63d02cd4853d5c812",
+        "pypto/tools/clean_sim_trace.py": "sha256:1691779c594b374c31aaf908dfecdc137d071c86ea992c8354fe2e956342eb82",
+        "pypto/tools/ir_trace/__init__.py": "sha256:9213ffc667ba6049622d1156b1dfd59d6f37d3a8178abc2ce8b85c9837c6e130",
+        "pypto/tools/ir_trace/__main__.py": "sha256:943ef1b7b158f54da2be44521077bf9119e9ee32ea1cc17fef0d9fc21ea83080",
+        "pypto/tools/ir_trace/cli.py": "sha256:83cf624d7026227a6b4f571de959f14026f752fade2bdaf727a7ec796b1ea703",
+        "pypto/tools/ir_trace/diff.py": "sha256:59385460f85ce94ec4c29c9a814bfb4e60feca975816a9a5d42d16f2d8e3c41a",
+        "pypto/tools/ir_trace/discovery.py": "sha256:bb405280c7d8a84a7775fe610a58c8481a7972f0dc4a5c118a66e1049cd85aaa",
+        "pypto/tools/ir_trace/html.py": "sha256:02b451b2731172665e711162c35cc53120db7a846908c033e02d2e9039e4f0ce",
+        "pypto/tools/ir_trace/model.py": "sha256:ca8c8f56d90342b790cc2e560fe24a4579a12f9ee9cda0ecc8abcf4b72988cd3",
+        "pypto/tools/memory_map.py": "sha256:ba333d472cbde1202bce213977a8c890d501e047429ba005a1c461349d7eec5e",
+        "pypto/tools/templates/memory_map.html": "sha256:363abaf54631d05d901a0b4a7ff15a763658f8c385227131018e922e16af5690"
+      },
+      "source_comparison": [
+        {
+          "installed": "pypto/__init__.py",
+          "source": "python/pypto/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/_environment.json",
+          "source": "python/pypto/_environment.json",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/_external_source.py",
+          "source": "python/pypto/_external_source.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/_function_attrs.py",
+          "source": "python/pypto/_function_attrs.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/_identity.py",
+          "source": "python/pypto/_identity.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/arith/__init__.py",
+          "source": "python/pypto/arith/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/backend/__init__.py",
+          "source": "python/pypto/backend/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/backend/_ptoas_locate.py",
+          "source": "python/pypto/backend/_ptoas_locate.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/backend/_ptoas_preprocess.py",
+          "source": "python/pypto/backend/_ptoas_preprocess.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/backend/pto_backend.py",
+          "source": "python/pypto/backend/pto_backend.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/compile_profiling.py",
+          "source": "python/pypto/compile_profiling.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/debug/__init__.py",
+          "source": "python/pypto/debug/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/debug/torch_codegen.py",
+          "source": "python/pypto/debug/torch_codegen.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/__init__.py",
+          "source": "python/pypto/ir/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/builder.py",
+          "source": "python/pypto/ir/builder.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/compile.py",
+          "source": "python/pypto/ir/compile.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/compiled_program.py",
+          "source": "python/pypto/ir/compiled_program.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/directions.py",
+          "source": "python/pypto/ir/directions.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/distributed_compiled_program.py",
+          "source": "python/pypto/ir/distributed_compiled_program.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/formatter.py",
+          "source": "python/pypto/ir/formatter.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/instruments.py",
+          "source": "python/pypto/ir/instruments.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/op/__init__.py",
+          "source": "python/pypto/ir/op/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/op/_pad_value.py",
+          "source": "python/pypto/ir/op/_pad_value.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/op/array_ops.py",
+          "source": "python/pypto/ir/op/array_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/op/distributed/__init__.py",
+          "source": "python/pypto/ir/op/distributed/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/op/distributed/system_ops.py",
+          "source": "python/pypto/ir/op/distributed/system_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/op/distributed/tensor_ops.py",
+          "source": "python/pypto/ir/op/distributed/tensor_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/op/distributed/tile_ops.py",
+          "source": "python/pypto/ir/op/distributed/tile_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/op/prefetch_ops.py",
+          "source": "python/pypto/ir/op/prefetch_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/op/system_ops.py",
+          "source": "python/pypto/ir/op/system_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/op/tensor_ops.py",
+          "source": "python/pypto/ir/op/tensor_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/op/tile_ops.py",
+          "source": "python/pypto/ir/op/tile_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/op_conversion.py",
+          "source": "python/pypto/ir/op_conversion.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/operators.py",
+          "source": "python/pypto/ir/operators.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/param_info.py",
+          "source": "python/pypto/ir/param_info.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/pass_manager.py",
+          "source": "python/pypto/ir/pass_manager.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/printer.py",
+          "source": "python/pypto/ir/printer.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/type.py",
+          "source": "python/pypto/ir/type.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/ir/utils.py",
+          "source": "python/pypto/ir/utils.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/jit/__init__.py",
+          "source": "python/pypto/jit/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/jit/_source.py",
+          "source": "python/pypto/jit/_source.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/jit/cache.py",
+          "source": "python/pypto/jit/cache.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/jit/decorator.py",
+          "source": "python/pypto/jit/decorator.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/jit/specializer.py",
+          "source": "python/pypto/jit/specializer.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/__init__.py",
+          "source": "python/pypto/language/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/arg_direction.py",
+          "source": "python/pypto/language/arg_direction.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/distributed/__init__.py",
+          "source": "python/pypto/language/distributed/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/distributed/op/__init__.py",
+          "source": "python/pypto/language/distributed/op/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/distributed/op/_utils.py",
+          "source": "python/pypto/language/distributed/op/_utils.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/distributed/op/system_ops.py",
+          "source": "python/pypto/language/distributed/op/system_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/distributed/op/tensor_ops.py",
+          "source": "python/pypto/language/distributed/op/tensor_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/distributed/op/tile_ops.py",
+          "source": "python/pypto/language/distributed/op/tile_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/distributed/op/unified_ops.py",
+          "source": "python/pypto/language/distributed/op/unified_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/distributed/typing/__init__.py",
+          "source": "python/pypto/language/distributed/typing/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/distributed/typing/comm_ctx.py",
+          "source": "python/pypto/language/distributed/typing/comm_ctx.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/distributed/typing/distributed_tensor.py",
+          "source": "python/pypto/language/distributed/typing/distributed_tensor.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/dsl_api.py",
+          "source": "python/pypto/language/dsl_api.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/op/__init__.py",
+          "source": "python/pypto/language/op/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/op/array_ops.py",
+          "source": "python/pypto/language/op/array_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/op/prefetch_ops.py",
+          "source": "python/pypto/language/op/prefetch_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/op/system_ops.py",
+          "source": "python/pypto/language/op/system_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/op/tensor_ops.py",
+          "source": "python/pypto/language/op/tensor_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/op/tile_ops.py",
+          "source": "python/pypto/language/op/tile_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/op/unified_ops.py",
+          "source": "python/pypto/language/op/unified_ops.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/optimizations.py",
+          "source": "python/pypto/language/optimizations.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/parser/__init__.py",
+          "source": "python/pypto/language/parser/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/parser/_dsl_invoker.py",
+          "source": "python/pypto/language/parser/_dsl_invoker.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/parser/ast_parser.py",
+          "source": "python/pypto/language/parser/ast_parser.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/parser/comment_extractor.py",
+          "source": "python/pypto/language/parser/comment_extractor.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/parser/decorator.py",
+          "source": "python/pypto/language/parser/decorator.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/parser/diagnostics/__init__.py",
+          "source": "python/pypto/language/parser/diagnostics/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/parser/diagnostics/error_codes.py",
+          "source": "python/pypto/language/parser/diagnostics/error_codes.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/parser/diagnostics/exceptions.py",
+          "source": "python/pypto/language/parser/diagnostics/exceptions.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/parser/diagnostics/renderer.py",
+          "source": "python/pypto/language/parser/diagnostics/renderer.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/parser/enum_utils.py",
+          "source": "python/pypto/language/parser/enum_utils.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/parser/expr_evaluator.py",
+          "source": "python/pypto/language/parser/expr_evaluator.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/parser/scope_manager.py",
+          "source": "python/pypto/language/parser/scope_manager.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/parser/source_lookup.py",
+          "source": "python/pypto/language/parser/source_lookup.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/parser/span_tracker.py",
+          "source": "python/pypto/language/parser/span_tracker.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/parser/text_parser.py",
+          "source": "python/pypto/language/parser/text_parser.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/parser/type_resolver.py",
+          "source": "python/pypto/language/parser/type_resolver.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/scope.py",
+          "source": "python/pypto/language/scope.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/typing/__init__.py",
+          "source": "python/pypto/language/typing/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/typing/array.py",
+          "source": "python/pypto/language/typing/array.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/typing/direction.py",
+          "source": "python/pypto/language/typing/direction.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/typing/dynamic.py",
+          "source": "python/pypto/language/typing/dynamic.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/typing/memref.py",
+          "source": "python/pypto/language/typing/memref.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/typing/prefetch_handle.py",
+          "source": "python/pypto/language/typing/prefetch_handle.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/typing/ptr.py",
+          "source": "python/pypto/language/typing/ptr.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/typing/scalar.py",
+          "source": "python/pypto/language/typing/scalar.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/typing/tensor.py",
+          "source": "python/pypto/language/typing/tensor.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/typing/tile.py",
+          "source": "python/pypto/language/typing/tile.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/language/typing/tuple.py",
+          "source": "python/pypto/language/typing/tuple.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/__init__.py",
+          "source": "python/pypto/runtime/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/_binary_cache.py",
+          "source": "python/pypto/runtime/_binary_cache.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/_dep_gen_capture.py",
+          "source": "python/pypto/runtime/_dep_gen_capture.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/bench.py",
+          "source": "python/pypto/runtime/bench.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/builtins/__init__.py",
+          "source": "python/pypto/runtime/builtins/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/builtins/collectives/__init__.py",
+          "source": "python/pypto/runtime/builtins/collectives/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/builtins/collectives/all_to_all/__init__.py",
+          "source": "python/pypto/runtime/builtins/collectives/all_to_all/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/builtins/collectives/all_to_all_v/__init__.py",
+          "source": "python/pypto/runtime/builtins/collectives/all_to_all_v/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/builtins/collectives/allgather/__init__.py",
+          "source": "python/pypto/runtime/builtins/collectives/allgather/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/builtins/collectives/allreduce/__init__.py",
+          "source": "python/pypto/runtime/builtins/collectives/allreduce/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/builtins/collectives/allreduce_ring/__init__.py",
+          "source": "python/pypto/runtime/builtins/collectives/allreduce_ring/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/builtins/collectives/barrier/__init__.py",
+          "source": "python/pypto/runtime/builtins/collectives/barrier/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/builtins/collectives/broadcast/__init__.py",
+          "source": "python/pypto/runtime/builtins/collectives/broadcast/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/builtins/collectives/reduce_scatter/__init__.py",
+          "source": "python/pypto/runtime/builtins/collectives/reduce_scatter/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/debug/__init__.py",
+          "source": "python/pypto/runtime/debug/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/debug/pto_rebuild.py",
+          "source": "python/pypto/runtime/debug/pto_rebuild.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/debug/replay.py",
+          "source": "python/pypto/runtime/debug/replay.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/debug/run_script_writer.py",
+          "source": "python/pypto/runtime/debug/run_script_writer.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/device_runner.py",
+          "source": "python/pypto/runtime/device_runner.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/device_tensor.py",
+          "source": "python/pypto/runtime/device_tensor.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/distributed_runner.py",
+          "source": "python/pypto/runtime/distributed_runner.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/elf_parser.py",
+          "source": "python/pypto/runtime/elf_parser.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/execute_artifact.py",
+          "source": "python/pypto/runtime/execute_artifact.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/golden_writer.py",
+          "source": "python/pypto/runtime/golden_writer.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/kernel_compiler.py",
+          "source": "python/pypto/runtime/kernel_compiler.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/log_config.py",
+          "source": "python/pypto/runtime/log_config.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/pto_isa.py",
+          "source": "python/pypto/runtime/pto_isa.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/runner.py",
+          "source": "python/pypto/runtime/runner.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/runtime_base.py",
+          "source": "python/pypto/runtime/runtime_base.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/task_interface.py",
+          "source": "python/pypto/runtime/task_interface.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/tensor_arg.py",
+          "source": "python/pypto/runtime/tensor_arg.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/tensor_spec.py",
+          "source": "python/pypto/runtime/tensor_spec.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/runtime/worker.py",
+          "source": "python/pypto/runtime/worker.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/tools/__init__.py",
+          "source": "python/pypto/tools/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/tools/clean_sim_trace.py",
+          "source": "python/pypto/tools/clean_sim_trace.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/tools/ir_trace/__init__.py",
+          "source": "python/pypto/tools/ir_trace/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/tools/ir_trace/__main__.py",
+          "source": "python/pypto/tools/ir_trace/__main__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/tools/ir_trace/cli.py",
+          "source": "python/pypto/tools/ir_trace/cli.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/tools/ir_trace/diff.py",
+          "source": "python/pypto/tools/ir_trace/diff.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/tools/ir_trace/discovery.py",
+          "source": "python/pypto/tools/ir_trace/discovery.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/tools/ir_trace/html.py",
+          "source": "python/pypto/tools/ir_trace/html.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/tools/ir_trace/model.py",
+          "source": "python/pypto/tools/ir_trace/model.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "pypto/tools/memory_map.py",
+          "source": "python/pypto/tools/memory_map.py",
+          "matches_commit": true
+        }
+      ]
+    },
+    "simpler": {
+      "version": "0.1.0",
+      "direct_url": {
+        "url": "file:///data1/home/ziruiwang/pypto-official-747e1e4b/runtime",
+        "dir_info": {}
+      },
+      "source_checkout": "/data1/home/ziruiwang/pypto-official-747e1e4b/runtime",
+      "source_commit": "4e4d3a4ad1e54c1db3d50e72decc025a9075bfa0",
+      "installed_files_sha256": {
+        "../../../bin/simpler-remote-l3-session": "sha256:282404d72def42244a002bce422e41b24182675709c77ad48bcb4395376d3724",
+        "../../../bin/simpler-remote-worker": "sha256:2ceadc5079b1aacae2c0ee3f40d2ac7e22ebb3cdf44859b4181a319a45efda66",
+        "_task_interface.cpython-310-aarch64-linux-gnu.so": "sha256:87cb80e8e77fbaeb422f69532a7409e80066552719f190ef6d8bb725db520f86",
+        "simpler-0.1.0.dist-info/INSTALLER": "sha256:e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+        "simpler-0.1.0.dist-info/METADATA": "sha256:fec2331440aa87382fd02bc649c50f48602a2c503e047d6f429f1a8c3f947784",
+        "simpler-0.1.0.dist-info/RECORD": "sha256:0bf76513ac861044b88c4ee63370e766d5eb36f458705badcbbf3733324a951d",
+        "simpler-0.1.0.dist-info/REQUESTED": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "simpler-0.1.0.dist-info/WHEEL": "sha256:7443b22e8e8ed947afd6f8edf83c5745b7ea9da19469d98484733cc66532eb9c",
+        "simpler-0.1.0.dist-info/direct_url.json": "sha256:95c548f5e71bf0bebb0635571a99b6bdabe8ce45a27d62882f56e17273196c4e",
+        "simpler-0.1.0.dist-info/entry_points.txt": "sha256:5be9209e748a99ecc9714e63a99a0a68f68e9df80ee16b64db3fc0a0a45549b9",
+        "simpler-0.1.0.dist-info/licenses/LICENSE": "sha256:1da223da275e2e92a5866501c22289a23abebf3df588ca3e9946287969c16bb7",
+        "simpler-0.1.0.dist-info/uv_build.json": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "simpler-0.1.0.dist-info/uv_cache.json": "sha256:4882d29e63e7c86ee8fd6c53466f143b4dfc7c0526710c646efde61028cca9b3",
+        "simpler/__init__.py": "sha256:b4ea1e2223708a3d9fdaa980bd642bc31edecfaad86c8164bce23f06bec2b5d6",
+        "simpler/_log.py": "sha256:8837e613b6ce58e207ca66b3305cc1810fc94b134e7d1b802f9941d5d0365100",
+        "simpler/buffer.py": "sha256:4c56cfb040baecddccbf0efecd55c25f5e3f61599e67f0bed07c6c87ff976e1a",
+        "simpler/callable_identity.py": "sha256:5beb0a2018f5e46de7dd446a94b5ff44907a8d28a655af2643c1d2a700c30ca2",
+        "simpler/comm_endpoints.py": "sha256:947ea37624ed99a10237a173ef9ce876979742289f01be6298485e8f6886edd6",
+        "simpler/comm_provider.py": "sha256:0197fe37fdd2308f20bc7bb94ee50e0ddf40218581c43951e549f0aaa8f42102",
+        "simpler/comm_provider_control.py": "sha256:28bcde311674156d9eed30e98c51a87803798b108aa7bf8e294ce6cac6dbed3d",
+        "simpler/comm_region.py": "sha256:4901be78f484f6c5d502befc9cc6fbeb16e6dc661e39b5750fc22d00bfd664aa",
+        "simpler/env_manager.py": "sha256:01f7b3783321711ceb4f733c74d394c4fa83ddf70a87265dc682aedf4d561690",
+        "simpler/global_comm_domain.py": "sha256:0eeee2eca02e4b6fe5ae8dced8ec0c279a1b485cbb59fc65ef5c1fd354a30a0c",
+        "simpler/mpi_group_mailbox.py": "sha256:a9ceb79ad55b108ce16ac60f8cd72058486a048192e2e4964b80a76331aff985",
+        "simpler/mpi_l3_session.py": "sha256:c83bc4bfe08e512563f6515c7c71496b7d860093c5f4ac98a9f8c7c76fecb7b3",
+        "simpler/orchestrator.py": "sha256:81db3ea8bc7f9c7a064f30a300a6de62bc3ab96dc63c8f23fefe32591dbfdf8b",
+        "simpler/remote_l3_protocol.py": "sha256:0aa31381652c04f48eabb7555235f7402de8d7e5f407ac2cc1ca797a41302578",
+        "simpler/remote_l3_session.py": "sha256:93af20102dc0e70e47738dfdc36a7415cbe8908a47d81f6d14f71a4f9f9c3c13",
+        "simpler/remote_l3_worker.py": "sha256:64ca6e2ce5297503cdaca2081956d34668d3b79646826e02698a149024abae10",
+        "simpler/task_interface.py": "sha256:24e7a519dd8701400ad297fec9031996651fe68cbcca0139b67dc76016292849",
+        "simpler/worker.py": "sha256:202682e5d29579ea2564fab580c3d7a52444cea9008f4dcc0d9bc7d079cfe2e3",
+        "simpler/worker_chip_message_queue.py": "sha256:d52b341536cf92e8d38e3126465f30921352a12acf5b986ebd86f7c669ebf803",
+        "simpler/worker_chip_orch_comm.py": "sha256:7321b1495f076e5151b74a4d4ee7dea6cd5cb7ba478bd415e6027270e73dc31f",
+        "simpler/worker_level.py": "sha256:f982bb748d464b06914f3479a3cf80da5a312f6d8282280650000dfdef7626ba",
+        "simpler_setup/__init__.py": "sha256:819d24177982aa76e7d2f4b0749553bd12e67c13af9aafc56b193666b9e24c22",
+        "simpler_setup/_assets/build/lib/.pto_isa_build.lock": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "simpler_setup/_assets/build/lib/a2a3/dispatcher/libsimpler_aicpu_dispatcher.so": "sha256:fa2e5f5e8b3c029ad8ce9e9bc14342b4bdf7940af69b775877fde2852c1ea4a8",
+        "simpler_setup/_assets/build/lib/a2a3/onboard/host_build_graph/aicore_kernel.o": "sha256:06977ab218c25e7c8ae690dd75369eb49b4996d324de906162198dbe7906d27e",
+        "simpler_setup/_assets/build/lib/a2a3/onboard/host_build_graph/libaicpu_kernel.so": "sha256:b1bac71226ea65bf9a2b3a5731bc07aae2fbd80b2781acebee32b95ac2a4c6f6",
+        "simpler_setup/_assets/build/lib/a2a3/onboard/host_build_graph/libhost_runtime.so": "sha256:295ff0fcf208d654866e35f4e0edc470c1bd35b57481e4a3fcd300044316832b",
+        "simpler_setup/_assets/build/lib/a2a3/onboard/tensormap_and_ringbuffer/aicore_kernel.o": "sha256:698b20d963559dbbf256b326ea8431257ef8624f666c9c5344515e1b380cfae9",
+        "simpler_setup/_assets/build/lib/a2a3/onboard/tensormap_and_ringbuffer/libaicpu_kernel.so": "sha256:3becc8415f84966c71fcf6d12d6579efcf713cd45116ba5a82dcffa65ca303e9",
+        "simpler_setup/_assets/build/lib/a2a3/onboard/tensormap_and_ringbuffer/libhost_runtime.so": "sha256:2c9605230bb35a363e94f90aeb79cd21f93072922410972a1713035436828dce",
+        "simpler_setup/_assets/build/lib/a2a3/sdma_warmup/sdma_warmup_kernel.o": "sha256:463c97c4e8f0bad9d887001b5bfa5c21f55b104da741d963ac55a2238d12aeee",
+        "simpler_setup/_assets/build/lib/a2a3/sim/host_build_graph/libaicore_kernel.so": "sha256:520f64a9d0ed047c6df0dfd9ca4c9e65ec4c130d39195280d387539aab1ed924",
+        "simpler_setup/_assets/build/lib/a2a3/sim/host_build_graph/libaicpu_kernel.so": "sha256:929f1b623959e9653942ba92f39e3653500febadd62705e7a79253e844606bf7",
+        "simpler_setup/_assets/build/lib/a2a3/sim/host_build_graph/libhost_runtime.so": "sha256:b9dafd9c5c85a2d9ee82d122536ad145c6a4dc0664507a39ddaaa2dd4119512f",
+        "simpler_setup/_assets/build/lib/a2a3/sim/tensormap_and_ringbuffer/libaicore_kernel.so": "sha256:d1e40448283a04015e7440c48f920fe67d0fb6a7bcfe5ea5aaeb2afd7f2989cc",
+        "simpler_setup/_assets/build/lib/a2a3/sim/tensormap_and_ringbuffer/libaicpu_kernel.so": "sha256:1276e004710f315b8bad87375e62ba1d5544cd0c9044abd8e56b87deb00df6ee",
+        "simpler_setup/_assets/build/lib/a2a3/sim/tensormap_and_ringbuffer/libhost_runtime.so": "sha256:40ab639ea6a416f49630a56c1653fbfcd8fef0b7b1fb1e6b0ad9a6f12286ce94",
+        "simpler_setup/_assets/build/lib/a5/dispatcher/libsimpler_aicpu_dispatcher.so": "sha256:dc6e457f5f7b032a0c55d7dff2e1ea1fc16de2bb40caed743aaa56fd9a8c9b10",
+        "simpler_setup/_assets/build/lib/a5/onboard/host_build_graph/aicore_kernel.o": "sha256:88fe365ea21300476f653b2a5cbf1133cc76c980981550a92715320365494059",
+        "simpler_setup/_assets/build/lib/a5/onboard/host_build_graph/aicpu_cpu_topo_fallback.json": "sha256:3164966203c2313d14b4ffdd2510ccd6ecc845a9b66b713e5c052154c0ff2aaa",
+        "simpler_setup/_assets/build/lib/a5/onboard/host_build_graph/libaicpu_kernel.so": "sha256:230642c0b13eb0a12b4f7bf87a8306de109c8ef14df0885e7711c8390ed8eeea",
+        "simpler_setup/_assets/build/lib/a5/onboard/host_build_graph/libhost_runtime.so": "sha256:8ad46593fe72eeb1495de73a214f39dd8f51929a6e0d230784229c65228c50ff",
+        "simpler_setup/_assets/build/lib/a5/onboard/tensormap_and_ringbuffer/aicore_kernel.o": "sha256:8f01322de7fe7bf56307bfb3f6b70ac94903fd21ace4e6764bb11fcda95813b1",
+        "simpler_setup/_assets/build/lib/a5/onboard/tensormap_and_ringbuffer/aicpu_cpu_topo_fallback.json": "sha256:3164966203c2313d14b4ffdd2510ccd6ecc845a9b66b713e5c052154c0ff2aaa",
+        "simpler_setup/_assets/build/lib/a5/onboard/tensormap_and_ringbuffer/libaicpu_kernel.so": "sha256:5f42ebe0605d896df542917cf481a72c7ff64f5e5eae080d6ec126ec621926e8",
+        "simpler_setup/_assets/build/lib/a5/onboard/tensormap_and_ringbuffer/libhost_runtime.so": "sha256:afa92a7af2bc43341c7a0985b60b8857d69f17a87fbbcf58178c71a68a9509db",
+        "simpler_setup/_assets/build/lib/a5/sim/host_build_graph/libaicore_kernel.so": "sha256:c962bc731e391b7e296f4e8a950234fe218a52893efd9bba12f7a872b7b51eca",
+        "simpler_setup/_assets/build/lib/a5/sim/host_build_graph/libaicpu_kernel.so": "sha256:07c24b23f906e28f07770a8bfb688801631e48b086a7b5a71e16b0a67f9acd15",
+        "simpler_setup/_assets/build/lib/a5/sim/host_build_graph/libhost_runtime.so": "sha256:be4a48120831126c791806ba384bc9a5c15483848579e12026ecd7cd0957c377",
+        "simpler_setup/_assets/build/lib/a5/sim/tensormap_and_ringbuffer/libaicore_kernel.so": "sha256:41ef0b10ee3016e63f869f74451e322946f661a22c0fcc833b126bdee23b4e1e",
+        "simpler_setup/_assets/build/lib/a5/sim/tensormap_and_ringbuffer/libaicpu_kernel.so": "sha256:7e94f3ae06be2b9a7f811d4bf19ce34abd7125a6ace7477584decf31761fb271",
+        "simpler_setup/_assets/build/lib/a5/sim/tensormap_and_ringbuffer/libhost_runtime.so": "sha256:9db095d2ede1d36ebf0b07e3d15c473ec220747d8621a9939b38d95bc7bf70b3",
+        "simpler_setup/_assets/build/lib/libcpu_sim_context.so": "sha256:349de596174ad7a245ad7a3ebe9be23e277d44d370dc7b5f07296c6cc2c91dda",
+        "simpler_setup/_assets/build/lib/pto_isa_build.json": "sha256:c055eb5725dcf089aaf3dfaa8236dfdf355da7b4602e5b02a5e0a7343f3b42ab",
+        "simpler_setup/_assets/cmake/host_log_sources.cmake": "sha256:4a35b438fe2339df3f031bacfebc126ebbd73f4843a337da9708791a19308976",
+        "simpler_setup/_assets/cmake/profiling_build_config.h.in": "sha256:9136022b4856532c16a169e1202060c9d43b227ce6b6ee8d37ed5df207ba6d12",
+        "simpler_setup/_assets/cmake/profiling_config.cmake": "sha256:6f5ba58c53c33fb2bd95e592b5e7d7dd1a93adc4f1723c90e0a518d7d9466cd4",
+        "simpler_setup/_assets/cmake/sanitizers.cmake": "sha256:8e424c04941955abcbe95d596805cfb2052f34fdaa8503da7177f64a1cf1e3f0",
+        "simpler_setup/_assets/pto_isa.pin": "sha256:a602e0aa01a728fbc42463d32ab0ba7517637294d6dceb192988e7ffa509bfdd",
+        "simpler_setup/_assets/src/a2a3/docs/hardware.md": "sha256:88732963b0a264a355aad8f34e4da7b9390daa053025120d134477bf592bb0eb",
+        "simpler_setup/_assets/src/a2a3/docs/platform.md": "sha256:b4b3427c5294f65ad73c461ea08e210d306159e89ba49e8d73806c0f620fd867",
+        "simpler_setup/_assets/src/a2a3/docs/runtimes.md": "sha256:05dedb0e466a1d40fa3d1368c3a1d9b52c647b9e02bde7a4f4193f8812db364a",
+        "simpler_setup/_assets/src/a2a3/platform/docs/tpush-tpop-sim.md": "sha256:84c1eec2e8f2a095a255e4cdb672c09fe8b5b2b1e07e39a8c8e1524396671842",
+        "simpler_setup/_assets/src/a2a3/platform/include/aicore/aicore_profiling_state.h": "sha256:55c044ce4793af47d0c695e2de5a742502c7594fcd2da30cf9e183a556dd85db",
+        "simpler_setup/_assets/src/a2a3/platform/include/aicore/pmu_collector_aicore.h": "sha256:1419291c4b4c207abc515f1a8c733f464881e006de38b9e2fdd2acae63d3cca5",
+        "simpler_setup/_assets/src/a2a3/platform/include/aicpu/platform_regs.h": "sha256:148176a499721cf335232e9ba17fdf5b06678dde54fe27f042bee0191654389e",
+        "simpler_setup/_assets/src/a2a3/platform/include/aicpu/pmu_collector_aicpu.h": "sha256:6974b276d9587dc7f77a6e7cb8717326c855d340dd1ed304111e70e1015cf7a8",
+        "simpler_setup/_assets/src/a2a3/platform/include/common/kernel_args.h": "sha256:718fdab386dab142cc9b413c22a0b665439077a2db839388cce61ce9611b04fd",
+        "simpler_setup/_assets/src/a2a3/platform/include/common/platform_config.h": "sha256:ff53dc15eaf85dceada8d18c16cb97e9263db83e5cf08eec2f588e77ac9fd20a",
+        "simpler_setup/_assets/src/a2a3/platform/include/common/pmu_profiling.h": "sha256:552a290719076540855fcd066a93580c5869fd8f480ebf319e8b4a0f028347ed",
+        "simpler_setup/_assets/src/a2a3/platform/include/host/host_regs.h": "sha256:b8cef4211ad81792a746a603b6f8d875b63b78d37e0616fc1fdeacf48e5f1aea",
+        "simpler_setup/_assets/src/a2a3/platform/include/host/pmu_collector.h": "sha256:e4a7b934006f1b689399367a9415dffc082181cf0b9d73bf2251283531c73c4a",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/aicore/CMakeLists.txt": "sha256:5f4418012f9f2690bd37c6301daf961d8f66f535c2df0fbb492569e6e4633529",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/aicore/inner_kernel.h": "sha256:bd363c1f261e272b8f13034e4e28506bf3d5b3968f5c87657dd86eee0827ca5f",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/aicore/kernel.cpp": "sha256:2e0fb961a7de35009b889e96d5508ced8c897d8f57f4f996df9979705a3fcc11",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/aicore/sdma_warmup_kernel.cpp": "sha256:8732138cbbc14a1a22943d5576b84777eaee2832d401d4c071e5fb61d034e289",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/aicpu/CMakeLists.txt": "sha256:aff59a22b5555b028b0f12eda275a213b4d8e853a16ba279f80558562f06a044",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/aicpu/inner_platform_regs.cpp": "sha256:5edf29ea741a9d2072216a6d3533eae13bf58802ee8da380baeb6a2e0b517ade",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/aicpu/kernel.cpp": "sha256:7b7a1337e86b3d4db7767564d1e3a1ab329260c4488a374cf3deb8520f7fadf9",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/compile_commands.json": "sha256:d4594b5b10ab6745b4440c772732f5729fe3d1c92f4b8634897034fb3b885edb",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/host/CMakeLists.txt": "sha256:d50e1be2bebcbfafaa0e003d86eec93bfe2ad1ac6fcc826fec25c082ba95751c",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/host/aicpu_topology_probe.cpp": "sha256:18c9d3979068353c0c94d5d4de81e8a6b1f2ab019eba5efa9bd8c4220b007bcb",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/host/aicpu_topology_probe.h": "sha256:85f309a07445a74bc6a79c71a58d0a8583aeb1136a83856b8ac0143ec0f660ac",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/host/comm_hccl.cpp": "sha256:94c13410bdf16ca3220afadd603613a61381231f8812c8bb2d0ac884fde586f7",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/host/device_runner.cpp": "sha256:617d3e1d2d55c2a07eb4ec45d3caec26eb2afa52e89a8eb478f08a7a9526ba89",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/host/device_runner.h": "sha256:3e267058ed9f8729b24b2c89653633ec5a03a94df6b7439db2f33fcf169b0b82",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/host/host_regs.cpp": "sha256:2beb640f2c1acec1644e608a3796f2eb1afa8ca774d8a6f367501e76a6ca0576",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/host/memory_allocator.cpp": "sha256:38ef8c005669eff363576ab44f4d3328533d66b7517e28d334f93d6400273ebc",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/host/profiling_copy.cpp": "sha256:e8acd35652cd0f245ed773a5e411b52836e0639aa2a343332b7c0ca679b70287",
+        "simpler_setup/_assets/src/a2a3/platform/onboard/host/runtime_c_api.cpp": "sha256:c1ce428ca47733b5713d10d8fa78f93e6f1d6ce277b13e6cb5a78d40e54a9540",
+        "simpler_setup/_assets/src/a2a3/platform/shared/aicpu/platform_regs.cpp": "sha256:0ff33837533e81030c9e8160c7474e5e0d88f804513126015224df2ddbbcfb63",
+        "simpler_setup/_assets/src/a2a3/platform/shared/aicpu/pmu_collector_aicpu.cpp": "sha256:5f6eef833cc907d467a55bd95b92098c2dcb3ff1b37e378db24e5c90c9f3e3e9",
+        "simpler_setup/_assets/src/a2a3/platform/shared/host/pmu_collector.cpp": "sha256:9eda5543c9120825101583488394197a3f09169040e534fd29c9513791084b8a",
+        "simpler_setup/_assets/src/a2a3/platform/sim/CMakeLists.txt": "sha256:02b74fa27ec0aff280b5cd944de7428d61cf6411afccf80f20185e04a14c577b",
+        "simpler_setup/_assets/src/a2a3/platform/sim/aicore/CMakeLists.txt": "sha256:8c8c4673f5b66178075b61b408f0001ca93cb80f2e030c3231cea9b3cef77a6a",
+        "simpler_setup/_assets/src/a2a3/platform/sim/aicore/inner_kernel.h": "sha256:fbae685a24231ecb1cec2dbc61a2f00bdfaa96b1833b23dad5b7e607402512bc",
+        "simpler_setup/_assets/src/a2a3/platform/sim/aicore/kernel.cpp": "sha256:34784b863648a423085ccc417b34c2906961b2aea557ab00e507ea7d9356dc23",
+        "simpler_setup/_assets/src/a2a3/platform/sim/aicpu/CMakeLists.txt": "sha256:53127b52c69ac4ae3659df661f7f76d8ce231a9cffd7137986b4969aeb13eeb1",
+        "simpler_setup/_assets/src/a2a3/platform/sim/aicpu/inner_platform_regs.cpp": "sha256:5e01ff49f7d801db4f27f6a844f43640778ee0b894fbd9d6d59ae23bd48c2a55",
+        "simpler_setup/_assets/src/a2a3/platform/sim/compile_commands.json": "sha256:c9b7bf5c9e522f6588f4dbbdef51d86e57c758bf3ffad4f0d4aaef823eb603a8",
+        "simpler_setup/_assets/src/a2a3/platform/sim/host/CMakeLists.txt": "sha256:4450bd212b20e34bc318c7677b4909af53fad9a33796951fd66104ba3ac72a95",
+        "simpler_setup/_assets/src/a2a3/platform/sim/host/device_runner.cpp": "sha256:da03415e7be4edc02a47455bd5d2f9f6c28e88bf74f72c9af3d1b5b011f4e135",
+        "simpler_setup/_assets/src/a2a3/platform/sim/host/device_runner.h": "sha256:c6f810699e4604e9a34c33aaec273bca6c584812e8a7e0c0f9278bf3c22da6d8",
+        "simpler_setup/_assets/src/a2a3/platform/sim/host/profiling_copy.cpp": "sha256:5b03e5b99db3af18629fc031927ce1157c7639d6f80675a652934d69d4733609",
+        "simpler_setup/_assets/src/a2a3/platform/sim/host/runtime_c_api.cpp": "sha256:11b55495250efd05a24748b384528251385441495204195cb5d33da1276100e3",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/aicore/aicore_executor.cpp": "sha256:62034728afac815310eb0e801389991942fd265905c7625555d02d6412783a36",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/aicpu/aicpu_executor.cpp": "sha256:f9d651750d830bd63c579f308581e13a5a9c7500019dcb3c2f04f10aa3d07a58",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/build_config.py": "sha256:d4a474cbd8af0fddcf4eca864bca5f84329aa813fc8910a250d1ff0216931437",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/common/intrinsic.h": "sha256:c03b29dd79e208d84dac2956d55ce7c3c874398264d3014acf82f8c8bbd1f04a",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/compile_commands.json": "sha256:9c8675798b3a624dc5db99174d49e65227ccb4e4db8cae180007f00b0692c631",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/docs/GRAPH_EXECUTION.md": "sha256:8403e429c6ea474718ec1879cb96dc7eab2bb998102298ead6dbb9da81243144",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/docs/RUNTIME_LOGIC.md": "sha256:d47baf24ff48c50f4e6d322e33a2a264c89abf8e95af6b3245084f390c0ce302",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/docs/SCALAR_DATA_ACCESS.md": "sha256:eb9ffd073ba5bef23adb2004cb13b9bdd5f35342da4d7d79ad47cc7172688976",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/docs/SUBMIT_BY_CLUSTER.md": "sha256:cf18f57a0cd3cebb567e904f5b4889b6b12adc2847eefed3ea98e404f2346681",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/docs/device_log_profiling.md": "sha256:471edd3b3c98b74c62941aec208a46638378aedb4db38bc15795762c1cbf37df",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/docs/profiling_levels.md": "sha256:5fd57bcb5ec6ca86fb5892b571ef04b51fd1e26fbe90d4f1576b86f352c3bfd2",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/host/runtime_compile_info.cpp": "sha256:799048ced86290bdfa71a559b7d54885a35fb8942b4b1ee48e2cab144527170d",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/host/runtime_maker.cpp": "sha256:5d5e314d13d68b66978f8dda1cbfff4b42f6f81c3c9ded165a9c3b92fe34772b",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/orchestration/arg_with_deps.h": "sha256:7ee432467e53aa8290124a25ab93ed0d8980c64b0321b3a2a9812a502546ad18",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/orchestration/common.cpp": "sha256:450cdfb408b36f7f1f0e828787d6b074f664fd01b3762b4acad674c424dcff5f",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/orchestration/orchestration_api.h": "sha256:2d6abdd6e709390ded21b9b5a09f765792342a1741412a6f24ecd55d062878cb",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/runtime/aicore_completion_mailbox.h": "sha256:ad7e67f4e2e5b5414a0776527c5b73f5970a36dfe7d8c67dc95873496c3f1f65",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/runtime/aicore_completion_mailbox_types.h": "sha256:a972ba2332010d67e04a882bc7dff643fdec3c20183762058f16e3ca4e81c682",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/runtime/async_kernel_api.h": "sha256:0b60672b193e6700034d666c7303d91efb3104540bb9d7ee9353911af4550e24",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/runtime/async_wait.h": "sha256:25863338cc3d018a333e215f628c89c49d337aec923156a917efc0e4fdaa3407",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/runtime/backend/sdma/sdma_completion_kernel.h": "sha256:e9ac5ea50f8453e5b632b20d3abaa88df826a9ffaebbbe25567c2a3c481473a7",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/runtime/backend/sdma/sdma_completion_scheduler.h": "sha256:1bfb7c93a3cb4c45c711997af68377de75852dfc6e26a0ee9d6d07d34416afcf",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/runtime/dispatch_payload.h": "sha256:259ec9be2450bb64b39b33f0a4cd46322aa65ad21555db398a22a4e71187cfc9",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/runtime/scheduler/scheduler.cpp": "sha256:214bcd90c871ae5ceefacb66f9c63fd3097335651a7454d8c68b0aa096afc9d4",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/runtime/scheduler/scheduler.h": "sha256:5c8049c730bb34140d56173c6799135b946cd093d924bf5a6c65dce4d52b2457",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/runtime/scheduler/scheduler_cold_path.cpp": "sha256:4bdaffb29e0f05b9dd0801e8ba9ead8d73683bb7ba939f9b2b6b075bdcbc675a",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/runtime/scheduler/scheduler_completion.cpp": "sha256:dca8387a1a3555119c148778f52e8916b06cf2e91f62782a37149743f7c15071",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/runtime/scheduler/scheduler_context.h": "sha256:66cc7be9db4d58c4df0bd14a70b72fb69bfbac6ba5c147cd1a8ac30e9b46d252",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/runtime/scheduler/scheduler_dispatch.cpp": "sha256:fce0b914c817197b9f6b0387f567a5129be174007d14642f4dfba91bb480ef8f",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/runtime/scheduler/scheduler_types.h": "sha256:29a8b888af37ada0dc0ef28ec79a75a72c73390cf04677fa178a94e044664bc1",
+        "simpler_setup/_assets/src/a2a3/runtime/host_build_graph/runtime/tensor.h": "sha256:8dcd808289e2c3beb2f0df513a8e034f79b914c489b0e2fc6e8b999a26fe0c99",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/aicore/aicore_executor.cpp": "sha256:f6163fb48d676b713b873441a7e5f3f19b783e8b149c896a1956f72cf06ddbcd",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/aicpu/aicpu_executor.cpp": "sha256:6856d34fe726db552628cbfad4df4926f402f0ed4d6ce742873c0f896a3b211f",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/build_config.py": "sha256:d1d4c4461979ea8464844f107a7c3ef16bacc4834cbdebac242240e8cb5da021",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/common/intrinsic.h": "sha256:7002435c66c4e362d2477e2a76bfc33b03efda6eb8c03fbf2b89544a63ebe524",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/common/runtime_status.h": "sha256:575137b68b0996a12a90d509455040169a90b794e24fa4f2102e74ba046c9bce",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/compile_commands.json": "sha256:d4594b5b10ab6745b4440c772732f5729fe3d1c92f4b8634897034fb3b885edb",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/docs/MULTI_RING.md": "sha256:cb1059fb0fa0ff2556b877ef70cf4448e5288288d0083d94236c951b0c2caf4d",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/docs/RUNTIME_LOGIC.md": "sha256:3745321f0206793ccbc6d9f404655965dbc313b83d8ce877cc9f76aef46ab3eb",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/docs/SCALAR_DATA_ACCESS.md": "sha256:657f254bd69992eee09240e0961a1389fe1c8339c2f48514659093f818bb7bd2",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/docs/SUBMIT_BY_CLUSTER.md": "sha256:be65c780c732f08851f2d066c6d23105145db4836c66019819f01cd7ab9385e7",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/docs/device_log_profiling.md": "sha256:808c9787ec9b7eca92776a88da990d065d335909cd81c5ce9b0ccddba9e03094",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/docs/profiling_levels.md": "sha256:c21e3706d8b79e93e04d04499610b61791153c441ffb1b6ebd31a6f33fc89544",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/host/dep_gen_replay.cpp": "sha256:2959f3ef616e3b949fbb90b5ca0c8a056f3197613cce9ad4860c5688cf0a3055",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/host/dep_gen_replay.h": "sha256:ac2c940930a701f17450d9695f6103b55ffe82b49c043f8ff78fbda9e55351fe",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/host/runtime_compile_info.cpp": "sha256:799048ced86290bdfa71a559b7d54885a35fb8942b4b1ee48e2cab144527170d",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/host/runtime_maker.cpp": "sha256:ca7714a901e23262094e28f5846682f853fc096cf823160a0fdc4fdf3060ad8e",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/orchestration/arg_with_deps.h": "sha256:7d3fc95d99051917662530ea556331fdeb9292ddd79ea2d4b19963270b2fc4fb",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/orchestration/common.cpp": "sha256:fbafaae5969745de7f5e35fd452fe1bf67bfb6bf5c0904adde57505084ae148c",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/orchestration/orchestration_api.h": "sha256:81dac68e45c75d226aef4e921187e1ac764fde94fb4b53f7b5fdda81fb2c2930",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/aicore_completion_mailbox.h": "sha256:b385ee9dcfa8f4dc3bf2ec502cb5a6fd85d69b1180908183952d5ba0ee804e24",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/aicore_completion_mailbox_types.h": "sha256:e4b672345e9705ae56aca070f489790eeb513e7bde47de942099fbcd19df66f0",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/async_kernel_api.h": "sha256:b7622a98d3d2db49455bc00f007a055cab966e40e81d6d831b7fcf54e19eaf01",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/async_wait.h": "sha256:86cd165854d8f13fa3640c74773e25b3de9ff74873b5d5480abd206d8317c92b",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/backend/sdma/sdma_completion_kernel.h": "sha256:60b317b28fb638cf5afb1fd0f9402e6f7172ead857370eca48928f872be9ec19",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/backend/sdma/sdma_completion_scheduler.h": "sha256:0befed6ecc3bd5746a6c84f5c0027d747edbd31bc08aa7455e4ab22cc16ac4fe",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/common.h": "sha256:e12cc955cdf8a50e008230e97ca222bc0cf6f687ef401aee55d3b2547fd0f8ce",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/completion_token.h": "sha256:a71574127d12174267a3e743546829afdbd4330ce6dec8545e667155548c5596",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/constants.h": "sha256:59a87f928658772ab49c795c82d4cf994bfbd88ee9862eb81ab3939262253375",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/dep_compute.h": "sha256:9c6e2cd35558b577d834d18f913712a212fb5b18a1753557b23e5e486546ff01",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/dispatch_payload.h": "sha256:27e03e8bbf457c68c4bd89e742977725a8e7ece0c6e2c19a9233ab5a6f74abdd",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/orchestrator.cpp": "sha256:c9e4c4c06857f6918adeee9f364ce95a2e3bf729f6465ad3c3d3d02d12eda48b",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/orchestrator.h": "sha256:8ff9836d3ca637a53600e290297b08a9a19def762130f81fa03c32bdd31f4bac",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/ring_buffer.cpp": "sha256:7a867388e50ad2b3c273c2bfc859ea6bdd2231eb26967ce1083c7fd65f097353",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/ring_buffer.h": "sha256:f215fb6fbb99362e20717cd6621d00a0ddeb230446cbcc8d84ef4872e6898b00",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/runtime.h": "sha256:b9a11534ca2a9cd6313229364027a5b469dc48f32456e76c8555ea6866af2bef",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/runtime_core.cpp": "sha256:9a7636c25ac0dc6431780e8688b90c479d393226a90054411e29afd9ce53e0d6",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/runtime_core.h": "sha256:b61494e861f6409e65ea48ffcbdd609fd2b24b50680b4e9322e4039cdeae7bb1",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/runtime_types.h": "sha256:fcc60b6f7729cfa03c73e6a9f0d6990db458336247190f55c9f0592ce6518bbd",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/scheduler/scheduler.cpp": "sha256:415cfe997172f4ee2562b42c29026474e9b3deb1b6eb4d935bfbcc28e2a88ec9",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/scheduler/scheduler.h": "sha256:5479e2113fa79435be452ce422653f2252953893f055f025f711dcd78559deaa",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/scheduler/scheduler_cold_path.cpp": "sha256:8d490d1e2225ea34eb646e9e1efbe3f19db234bbfdf60541bfdf4b30029c0d99",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/scheduler/scheduler_completion.cpp": "sha256:8a2ade375609c9fdc402da7c973e8fb5b0a14bd311087c171c65b4ab58dc5590",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/scheduler/scheduler_context.h": "sha256:bf857713ef50bdaa3be47fc581853f435b527fa4554913d8adcb8d6c63b12411",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/scheduler/scheduler_dispatch.cpp": "sha256:53e2373cd0e1bba5aa64a4e083522fcf2707733041fc875fb8e8b51a5fab1868",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/scheduler/scheduler_types.h": "sha256:80d2ac99240a49ad22087fbaafa9118dce525f5e787eb43f9a9f940b96db7b09",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/shared/runtime.cpp": "sha256:b0bafaba75a3e039d7dfade2f4c0d992b47cfb03de38e49020a041824ffe3cef",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/shared/runtime_init.cpp": "sha256:242399c17977f233194f51176e8d5111508b3a5f8ae04e5b53e827db33267b32",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/shared/shared_memory.cpp": "sha256:ad0b47c42b53cc60825087f80200faeb54bb851ab738276d5569d6ccdbd6eae6",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/shared/tensormap.cpp": "sha256:022fd2fd20e0f2c26743ad4c97bc22da47531001e6bbcc32a2f94eb56e6d6f52",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/shared_memory.h": "sha256:d0bbdab8cadd9f02cc890f73d07bcf29ba376cf48a5a427f76afb7e6a60a169a",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/submit_types.h": "sha256:553bb726f837a94423bd19313663493b15f0e4aa2b076a8de4c67faaacb74460",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/tensor.h": "sha256:7b7074acc67397cd01cdd58fabc27feb9bdbb20cca7983a59d9e4ff4442db359",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/tensor_create_info.h": "sha256:285785b11bf8b53a50c916ba28fcbc211d457283f575c1501a26f449c72409a4",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/tensormap.h": "sha256:ab75e6c3c5517cea05c6cb29fbeba60031a1d854661bb2ad6fa790fbadeb15e6",
+        "simpler_setup/_assets/src/a2a3/runtime/tensormap_and_ringbuffer/runtime/types.h": "sha256:76cd6a2f2accbc7167adc2b4ee87865feacf22fd8e6fd39f5f97b27e9e1f4b88",
+        "simpler_setup/_assets/src/a5/docs/hardware.md": "sha256:9c067b93ec24efd26e9a0f2752bed365a4fdc78b70629083c5fea88e8ce100eb",
+        "simpler_setup/_assets/src/a5/docs/platform.md": "sha256:98246b46a28a3943c49bff5a4309adbf110c4ae6acbfca28fb1b43578976e6fe",
+        "simpler_setup/_assets/src/a5/docs/runtimes.md": "sha256:d4c00b3c3dce790e56d7f6a65a731190fde909fbad395cdb4b2ddfea7c535ffc",
+        "simpler_setup/_assets/src/a5/platform/docs/tpush-tpop-sim.md": "sha256:84c1eec2e8f2a095a255e4cdb672c09fe8b5b2b1e07e39a8c8e1524396671842",
+        "simpler_setup/_assets/src/a5/platform/include/aicore/aicore_profiling_state.h": "sha256:3542aef97592858ce430514f4379c592f8a7e4387ebbe47f63a518b9e950cfc5",
+        "simpler_setup/_assets/src/a5/platform/include/aicore/pmu_collector_aicore.h": "sha256:c4f3530390967d40ca0e3a9a35c9f5fc8f359186732fdff75756214292d8c06e",
+        "simpler_setup/_assets/src/a5/platform/include/aicpu/platform_regs.h": "sha256:c1e070d9bfda31187f497352c1745446470aa821d3ee0a03db02b2deaf9b11fb",
+        "simpler_setup/_assets/src/a5/platform/include/aicpu/pmu_collector_aicpu.h": "sha256:84b48452415dcfb579d128b26d80e4dda9010b1fe5a9aee755e35d7ab33bbae6",
+        "simpler_setup/_assets/src/a5/platform/include/common/kernel_args.h": "sha256:551380002643fd5ca844a0d066ab49c59189185e890f11ed15baa59dec3a9383",
+        "simpler_setup/_assets/src/a5/platform/include/common/platform_config.h": "sha256:8af3afe1b53e7f83c87b58d723ed80c255cbd88d4f69a56464a3db74ae5911c3",
+        "simpler_setup/_assets/src/a5/platform/include/common/pmu_profiling.h": "sha256:b6d9feda85bd4216c2afc6e15adcf541c6e4d44ed50f3cf7f891c184f224f0e0",
+        "simpler_setup/_assets/src/a5/platform/include/host/host_regs.h": "sha256:a02b893f535d970dbd054973f4c5ab35f510f91da57bfe53ebaa37e66273ca10",
+        "simpler_setup/_assets/src/a5/platform/include/host/pmu_collector.h": "sha256:7ea495f0656bdab9d1cb423571765b1ced27f6aa80e76b5fea226ec4c31bca7f",
+        "simpler_setup/_assets/src/a5/platform/onboard/aicore/CMakeLists.txt": "sha256:9d0ac1c6aea4ce0895df2a30eb2663c954baa43ff3181749bae79fd8f8273b75",
+        "simpler_setup/_assets/src/a5/platform/onboard/aicore/inner_kernel.h": "sha256:33c53ecb583d60b0a83c168e827e6fd0163fd47535423b26afc4b0c16ac815c5",
+        "simpler_setup/_assets/src/a5/platform/onboard/aicore/kernel.cpp": "sha256:6b0880b7147be10c76d86b8de75f06ec24df98c2d1d423c1e2738120f1070028",
+        "simpler_setup/_assets/src/a5/platform/onboard/aicore/simt_anchor.h": "sha256:f85b0be7841b87cbbfc19957ceb9e5e7759f566b47b4774af5e1007d4833335b",
+        "simpler_setup/_assets/src/a5/platform/onboard/aicpu/CMakeLists.txt": "sha256:d708e66625cae55d8224c9365ec3eed75d4580513e979fdee245c580e452887a",
+        "simpler_setup/_assets/src/a5/platform/onboard/aicpu/inner_platform_regs.cpp": "sha256:3a3fddba145b0ae252b510f65f95068e0c2167b3391d5e98e923371695f7a917",
+        "simpler_setup/_assets/src/a5/platform/onboard/aicpu/kernel.cpp": "sha256:bd05267ea9dd26264781cb53373618947cb07ca882e0ab5df550ba41e66987f2",
+        "simpler_setup/_assets/src/a5/platform/onboard/compile_commands.json": "sha256:3d219b1f241bc95a6dc4a1e570762702445339a4357904586ca114660990250f",
+        "simpler_setup/_assets/src/a5/platform/onboard/host/CMakeLists.txt": "sha256:a6654bad2f3690bb845f368668035ed1772576d5c5942c6bd94a64df07880e50",
+        "simpler_setup/_assets/src/a5/platform/onboard/host/aicpu_cpu_topo_fallback.json": "sha256:3164966203c2313d14b4ffdd2510ccd6ecc845a9b66b713e5c052154c0ff2aaa",
+        "simpler_setup/_assets/src/a5/platform/onboard/host/aicpu_topology_probe.cpp": "sha256:5520f717f50c9b3be4f061e9f25ee1a833f4a78374d95e156b6118243feb2170",
+        "simpler_setup/_assets/src/a5/platform/onboard/host/aicpu_topology_probe.h": "sha256:d7a9113cfac543dc7135aa39ec386209233ec490de9aacefa31342fb97beded8",
+        "simpler_setup/_assets/src/a5/platform/onboard/host/comm_hccl.cpp": "sha256:97b58c471abc8a978e4e9c3f03d404369bbc7fe81abdca9f6bf78ca3c67e4419",
+        "simpler_setup/_assets/src/a5/platform/onboard/host/device_runner.cpp": "sha256:d9c6ab2d6fe386d5f96bd046e4e61997bf47e6c2586729e2c0548e95b2ea100a",
+        "simpler_setup/_assets/src/a5/platform/onboard/host/device_runner.h": "sha256:cc1bd5fe871e8466443e3a6a5bfd642b4ee1157de789da611ee762dee93bd83a",
+        "simpler_setup/_assets/src/a5/platform/onboard/host/host_regs.cpp": "sha256:5fb2caedf76bb25261688c428c5c377e47da1479bb22fed59a6c02c45990bc29",
+        "simpler_setup/_assets/src/a5/platform/onboard/host/memory_allocator.cpp": "sha256:38ef8c005669eff363576ab44f4d3328533d66b7517e28d334f93d6400273ebc",
+        "simpler_setup/_assets/src/a5/platform/onboard/host/profiling_copy.cpp": "sha256:817b7526163ebada2c2081ea1b00a0319ea1dd4a65a6d2e0efaaaac46f9b06dd",
+        "simpler_setup/_assets/src/a5/platform/onboard/host/runtime_c_api.cpp": "sha256:b5cbbb2c17ed55f938070a5a03a7a3240836010c8db7d0c3fee5b7e96a1071b8",
+        "simpler_setup/_assets/src/a5/platform/shared/aicpu/platform_regs.cpp": "sha256:ab825bd8b2685a4e55ce42e3f160d73b6ab2118c6ef5b1531724344225f48cb2",
+        "simpler_setup/_assets/src/a5/platform/shared/aicpu/pmu_collector_aicpu.cpp": "sha256:46ad14640a5735b2fd907585c78c30602497e6cd34ca73d55e90f39db7452629",
+        "simpler_setup/_assets/src/a5/platform/shared/host/pmu_collector.cpp": "sha256:56287af82f766e43bc82323526e7f2f1571725787bc9226d31764f4739abef76",
+        "simpler_setup/_assets/src/a5/platform/sim/CMakeLists.txt": "sha256:af517073fdd29477c8ebfaf3585e305005f31807d2e11fdf6e46d89ea2f46320",
+        "simpler_setup/_assets/src/a5/platform/sim/aicore/CMakeLists.txt": "sha256:2cdd38508c98dfd0996bd6becdf9b49e47e6e15a683b6adc9e822a31bc2df8dc",
+        "simpler_setup/_assets/src/a5/platform/sim/aicore/inner_kernel.h": "sha256:dd60c2a8518e162437e9e88b2ecc741f945eb8d9c2f4c4e4095f03f7ea168c15",
+        "simpler_setup/_assets/src/a5/platform/sim/aicore/kernel.cpp": "sha256:2a86bb19dad3abc7932524a29ffef526c24233bd84ecfed349087cdda1e66a3e",
+        "simpler_setup/_assets/src/a5/platform/sim/aicpu/CMakeLists.txt": "sha256:f0f85acc48854f04f3849e73b84ae99c31b8458f7ca27bef76bec88989bd69dc",
+        "simpler_setup/_assets/src/a5/platform/sim/aicpu/inner_platform_regs.cpp": "sha256:833bc21a95fbe8518cd3cc15dec552b1609711fe96e5399171919b79f8fcac2f",
+        "simpler_setup/_assets/src/a5/platform/sim/compile_commands.json": "sha256:7fd0c6937296d6ab755b52d073b29df281ed8de774ca48710890454807ddcc46",
+        "simpler_setup/_assets/src/a5/platform/sim/host/CMakeLists.txt": "sha256:42ff4de4ff68ff4a1dec29e3972491d949bbd29c04d850872743913c9cb9cd7e",
+        "simpler_setup/_assets/src/a5/platform/sim/host/device_runner.cpp": "sha256:c2a0b08e0eb4cc7837cc694b723e7405f9876f2441f1d749867765794ce9e6b3",
+        "simpler_setup/_assets/src/a5/platform/sim/host/device_runner.h": "sha256:97049d39a19722ad8d89ea3e277664dc17f083dbc5ca8d3614cbefac4e9bcd6d",
+        "simpler_setup/_assets/src/a5/platform/sim/host/profiling_copy.cpp": "sha256:c2b47cfed9f26e311c7ea570f1891514e48550adc92dbc748e22ad9cce12a413",
+        "simpler_setup/_assets/src/a5/platform/sim/host/runtime_c_api.cpp": "sha256:09c7ab9a3b4b7e76a4e4c55b7c070b1b17e168d2f12cf667135e01b5c5e88087",
+        "simpler_setup/_assets/src/a5/runtime/README.md": "sha256:852106cb3ea27387fae3505c48e44a6d46a0e67c8f9f7249dbce263493126362",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/aicore/aicore_executor.cpp": "sha256:80f4de5d470f30242364a684273aea33a20751171b183b415097507d53ba59e1",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/aicore/aicore_legacy_executor.cpp": "sha256:8cae6693ac6bacb6eddd5320fa2e1a68d02e6e5abb74c4058ff949d782f452f7",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/aicpu/aicore_lifecycle.cpp": "sha256:a81e069c8de00625aa2c253586484b47db720614d231426cd9174aa66bda8e05",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/aicpu/aicore_lifecycle.h": "sha256:7e8620841d906c2e8881452030849a70d015379112d718a2370495e87634576a",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/aicpu/aicore_scheduler_error.h": "sha256:461245c5b073032409758b0cc25bd7c24de1c90d71ada538e1354b38334567e0",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/aicpu/aicore_scheduler_state.h": "sha256:47351b460c2916b61918e01b292b687c918351175eb00644220b9b524cde50fd",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/aicpu/aicpu_executor.cpp": "sha256:a6a33664588a398478701f6fd9f1a0366e417518eb2dcc2d6b4ab924da02653a",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/aicpu/aicpu_legacy_executor.cpp": "sha256:63c477e281542ded25d065a808cad3012d3728db2333f33ac40a012fcb7f9c7c",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/build_config.py": "sha256:a91f464dabe0d60cb4385064917af4ed4bd1e536f85d9892592390c444a1b800",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/common/intrinsic.h": "sha256:e4854378ff40aaf2eb12ec22e40ce0b656b7a2e50a3339c14017ee91355866cc",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/compile_commands.json": "sha256:6f49b8f0963c313eb3ff629c0b52161b3ace866c2a67fc1b12443661917493c8",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/docs/GRAPH_EXECUTION.md": "sha256:8403e429c6ea474718ec1879cb96dc7eab2bb998102298ead6dbb9da81243144",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/docs/RUNTIME_LOGIC.md": "sha256:d47baf24ff48c50f4e6d322e33a2a264c89abf8e95af6b3245084f390c0ce302",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/docs/SCALAR_DATA_ACCESS.md": "sha256:eb9ffd073ba5bef23adb2004cb13b9bdd5f35342da4d7d79ad47cc7172688976",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/docs/SUBMIT_BY_CLUSTER.md": "sha256:cf18f57a0cd3cebb567e904f5b4889b6b12adc2847eefed3ea98e404f2346681",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/docs/device_log_profiling.md": "sha256:471edd3b3c98b74c62941aec208a46638378aedb4db38bc15795762c1cbf37df",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/docs/profiling_levels.md": "sha256:1d7e54105ad6c55e2ad0e5a687bd64b48b9be9f5e2aa4ece91a6265148fafc55",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/host/runtime_compile_info.cpp": "sha256:80e119aee2ebf4b628ce662d0d1bd9a3df3639b7acdc930d6ca4f100356ba45a",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/host/runtime_maker.cpp": "sha256:43e035be71cfee7e8d09b156b7826ee5d4a4f35d936a15c7bc87bde5de2806e6",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/orchestration/arg_with_deps.h": "sha256:7ee432467e53aa8290124a25ab93ed0d8980c64b0321b3a2a9812a502546ad18",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/orchestration/common.cpp": "sha256:450cdfb408b36f7f1f0e828787d6b074f664fd01b3762b4acad674c424dcff5f",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/orchestration/orchestration_api.h": "sha256:2d6abdd6e709390ded21b9b5a09f765792342a1741412a6f24ecd55d062878cb",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/aicore_completion_mailbox.h": "sha256:ad7e67f4e2e5b5414a0776527c5b73f5970a36dfe7d8c67dc95873496c3f1f65",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/aicore_completion_mailbox_types.h": "sha256:a972ba2332010d67e04a882bc7dff643fdec3c20183762058f16e3ca4e81c682",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/async_kernel_api.h": "sha256:0b60672b193e6700034d666c7303d91efb3104540bb9d7ee9353911af4550e24",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/async_wait.h": "sha256:a4849d8eb98d0bc5679de94e7dcdf03230e1d7d82316fce3d59efe0d63728014",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/backend/sdma/sdma_completion_kernel.h": "sha256:e9ac5ea50f8453e5b632b20d3abaa88df826a9ffaebbbe25567c2a3c481473a7",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/backend/sdma/sdma_completion_scheduler.h": "sha256:fa87f6ab721077c461077aaf5cb75a33c3baca2d45ad0b19b9910e43d08d95d3",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/dispatch_payload.h": "sha256:741b7e686d10ff64a76fe2941a449ce9976eae6729e83e0f4e3c74eb4243f0a6",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/scheduler/scheduler.cpp": "sha256:214bcd90c871ae5ceefacb66f9c63fd3097335651a7454d8c68b0aa096afc9d4",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/scheduler/scheduler.h": "sha256:a6bf39f31dab4d936a4acb851c3a0a2af2e07a2f372d499d5f78597c2d839b3d",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/scheduler/scheduler_cold_path.cpp": "sha256:4bdaffb29e0f05b9dd0801e8ba9ead8d73683bb7ba939f9b2b6b075bdcbc675a",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/scheduler/scheduler_completion.cpp": "sha256:4220f573604ee1545c24ac61ff0398385504c6588b4366c34ad7bad6426da318",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/scheduler/scheduler_completion.h": "sha256:b8692a7fdb0dd3daa57c54fe2271ab40fb011a0ceb25b4964fdc4f87753247b1",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/scheduler/scheduler_context.h": "sha256:66cc7be9db4d58c4df0bd14a70b72fb69bfbac6ba5c147cd1a8ac30e9b46d252",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/scheduler/scheduler_dispatch.cpp": "sha256:9d2262b5fb21de21fb5ec6abe38fc0098fc763c5a3a770e225d68790df231114",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/scheduler/scheduler_dispatch.h": "sha256:18acdc76c07b6208fd2b6202695778abc3b710b6c8e7e6a180e1dead7a56eb85",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/scheduler/scheduler_graph.h": "sha256:596cf29428ccbbb3ede1ac8a49aa732288b1077c4acaf6b1ee09f4345ed98b0b",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/scheduler/scheduler_layout.h": "sha256:26c4582812934f223d669608964d22ff81617cc7250e9c38d89f93c0162b898a",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/scheduler/scheduler_memory.h": "sha256:5aecae24c564c4c27ec46dac96a4ba956e15e2debc99c535c183d42a518e32c1",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/scheduler/scheduler_ready.h": "sha256:06cf1b8057c263c5fff21f2eb525b8161af1127bcfd173ec32062f14d85db98c",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/scheduler/scheduler_topology.h": "sha256:6c73218632f268867a6e2ce74114d92cf718e6cfa474377f2c30cb9c0b88422a",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/scheduler/scheduler_types.h": "sha256:6460eba1f14053b1d692620d0a6f56af70cc7a11c8ec7212725a1d429b6d182e",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/scheduler/scheduler_watchdog.h": "sha256:402414b99e482453ae9e2db8e7adedc7d4402197f5afe09411a2760b00285ac9",
+        "simpler_setup/_assets/src/a5/runtime/host_build_graph/runtime/tensor.h": "sha256:8dcd808289e2c3beb2f0df513a8e034f79b914c489b0e2fc6e8b999a26fe0c99",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/aicore/aicore_executor.cpp": "sha256:cb81cca2ff3d23eb45cfe817315cc247dc23a16979d0f60e52cd18447cd65e3f",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/aicpu/aicpu_executor.cpp": "sha256:dfa52f8b7876eb9ed0497420222563fe55ea54e520b2cb3d35f7719bea37c440",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/build_config.py": "sha256:d1d4c4461979ea8464844f107a7c3ef16bacc4834cbdebac242240e8cb5da021",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/common/intrinsic.h": "sha256:a462305c5ef331eaa42fc76669057f2e3bd58587e7f744dbe15fed116410d998",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/common/runtime_status.h": "sha256:575137b68b0996a12a90d509455040169a90b794e24fa4f2102e74ba046c9bce",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/compile_commands.json": "sha256:3d219b1f241bc95a6dc4a1e570762702445339a4357904586ca114660990250f",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/docs/MULTI_RING.md": "sha256:3130d98a6e3e7e3518dbfa99619c71ede497aaeaad90a5c8a20de456ab80c4c0",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/docs/RUNTIME_LOGIC.md": "sha256:49497d1be581102f1ba3d41bbf519d990f3f74f8da831c517ab623078e7e521c",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/docs/SCALAR_DATA_ACCESS.md": "sha256:657f254bd69992eee09240e0961a1389fe1c8339c2f48514659093f818bb7bd2",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/docs/SUBMIT_BY_CLUSTER.md": "sha256:be65c780c732f08851f2d066c6d23105145db4836c66019819f01cd7ab9385e7",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/docs/device_log_profiling.md": "sha256:808c9787ec9b7eca92776a88da990d065d335909cd81c5ce9b0ccddba9e03094",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/docs/profiling_levels.md": "sha256:c21e3706d8b79e93e04d04499610b61791153c441ffb1b6ebd31a6f33fc89544",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/host/dep_gen_replay.cpp": "sha256:2959f3ef616e3b949fbb90b5ca0c8a056f3197613cce9ad4860c5688cf0a3055",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/host/dep_gen_replay.h": "sha256:90f76c1fe628785cd23c33bd793b0d9e0ec29cf95b655c51deec746e884a4714",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/host/runtime_compile_info.cpp": "sha256:799048ced86290bdfa71a559b7d54885a35fb8942b4b1ee48e2cab144527170d",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/host/runtime_maker.cpp": "sha256:fcdf2ddfe67a1dbb4a6c6ba66caeedb801a1d429b58b0947f31a41468a01ac13",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/orchestration/arg_with_deps.h": "sha256:7d3fc95d99051917662530ea556331fdeb9292ddd79ea2d4b19963270b2fc4fb",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/orchestration/common.cpp": "sha256:fbafaae5969745de7f5e35fd452fe1bf67bfb6bf5c0904adde57505084ae148c",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/orchestration/orchestration_api.h": "sha256:81dac68e45c75d226aef4e921187e1ac764fde94fb4b53f7b5fdda81fb2c2930",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/aicore_completion_mailbox.h": "sha256:da425ddbec6a62874ad0bc7853eb6fc0a8ffe32f67ebb82f41000311cf01b2b1",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/aicore_completion_mailbox_types.h": "sha256:b11f7ae4bc617354df9843fde721488d78397dd9519edf8d3a9b8a93cbeed0cb",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/async_kernel_api.h": "sha256:b7622a98d3d2db49455bc00f007a055cab966e40e81d6d831b7fcf54e19eaf01",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/async_wait.h": "sha256:4f65e9e79c3385331ceb209df02ba66161db9afb39dbeb70c2acfb2ab1428123",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/backend/sdma/sdma_completion_kernel.h": "sha256:1b15df2c0f9c1c9a4b69608eb2f9825bb7e5193bb9a33dd29a43179769ccfba3",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/backend/sdma/sdma_completion_scheduler.h": "sha256:c14978ea1612910b0c6c4fe159fc208a84802ee081fa62094ca4ef162f9457df",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/backend/urma/urma_completion_kernel.h": "sha256:2e31623aae9dc3d6189d259b9edf25eaa51acbc49a24c65cb52bedd8a7376a1d",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/backend/urma/urma_completion_scheduler.h": "sha256:8dd660a40645db68dd0940db20c264a28273a976be06bd2d8902cf9345a10b4f",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/common.h": "sha256:e12cc955cdf8a50e008230e97ca222bc0cf6f687ef401aee55d3b2547fd0f8ce",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/completion_token.h": "sha256:b428248fdccbddf526a73ea7c560c05d1d006d2b84399b011d4c74b5fd39ad09",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/constants.h": "sha256:11fdf58e7be1cee8d7f09240b02bbe6f1f5e5affec7933ca742b49b0798a3662",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/dep_compute.h": "sha256:9c6e2cd35558b577d834d18f913712a212fb5b18a1753557b23e5e486546ff01",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/dispatch_payload.h": "sha256:0b02a24cb053fb1defda98b6e01eeb019057676390308ca5c73741de24c7eecc",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/orchestrator.cpp": "sha256:9c8e7dc47f05c7bf28df4d1e02a40b93ed94845ddcd7056898e5da0e5b21492d",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/orchestrator.h": "sha256:8ff9836d3ca637a53600e290297b08a9a19def762130f81fa03c32bdd31f4bac",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/ring_buffer.cpp": "sha256:04a7352df807473506d28b01693796ce8b28f61d295edfbdb4829b8c77b16a07",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/ring_buffer.h": "sha256:f1b35c584001643ad4d4d77a38cc29f68544cb0e4214d2ac12ebe8650d120100",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/runtime.h": "sha256:e603176fec84f9ce099b9b0543f3df06471db3599bb380100ed991dc2629177e",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/runtime_core.cpp": "sha256:9a7636c25ac0dc6431780e8688b90c479d393226a90054411e29afd9ce53e0d6",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/runtime_core.h": "sha256:b61494e861f6409e65ea48ffcbdd609fd2b24b50680b4e9322e4039cdeae7bb1",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/runtime_types.h": "sha256:85581ed40ea8e7fb12155128bdb010d08a935d3625a1ac864df2a883ee647cf4",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/scheduler/scheduler.cpp": "sha256:415cfe997172f4ee2562b42c29026474e9b3deb1b6eb4d935bfbcc28e2a88ec9",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/scheduler/scheduler.h": "sha256:c2c73cd6e36dcecc65dfe971eef3b5b31045ef6b6b1d1fca3f057cf75cdb10ba",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/scheduler/scheduler_cold_path.cpp": "sha256:35b083cdeeacfeb5fbd84476fa64ea579f34dd8d5c109f8104e8e90763b5c0b5",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/scheduler/scheduler_completion.cpp": "sha256:a01ea7ca8bcee2eaf8038dc0b9971327c2088c756d65eb0e4365304d2947d0d9",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/scheduler/scheduler_context.h": "sha256:612aaea4792b1f3a6143d28d16bc39dc550474faecf796d8cb9f7f889202c0b4",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/scheduler/scheduler_dispatch.cpp": "sha256:428c7ef029c1274dda518ba7b085df8a4f144552d63b50a735ecf0b930d59e22",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/scheduler/scheduler_types.h": "sha256:80d2ac99240a49ad22087fbaafa9118dce525f5e787eb43f9a9f940b96db7b09",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/shared/runtime.cpp": "sha256:b0bafaba75a3e039d7dfade2f4c0d992b47cfb03de38e49020a041824ffe3cef",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/shared/runtime_init.cpp": "sha256:9b5c2c4f9cc83b0362bb27f55dfb6ceea69577902bcf3e6e60088dbda6a6cadf",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/shared/shared_memory.cpp": "sha256:ad0b47c42b53cc60825087f80200faeb54bb851ab738276d5569d6ccdbd6eae6",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/shared/tensormap.cpp": "sha256:022fd2fd20e0f2c26743ad4c97bc22da47531001e6bbcc32a2f94eb56e6d6f52",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/shared_memory.h": "sha256:d0bbdab8cadd9f02cc890f73d07bcf29ba376cf48a5a427f76afb7e6a60a169a",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/submit_types.h": "sha256:e9aa81c6f9f1c009c70993642bbe21cdbaafc67ec339181c29f8a24a7f21abc3",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/tensor.h": "sha256:7b7074acc67397cd01cdd58fabc27feb9bdbb20cca7983a59d9e4ff4442db359",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/tensor_create_info.h": "sha256:285785b11bf8b53a50c916ba28fcbc211d457283f575c1501a26f449c72409a4",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/tensormap.h": "sha256:ab75e6c3c5517cea05c6cb29fbeba60031a1d854661bb2ad6fa790fbadeb15e6",
+        "simpler_setup/_assets/src/a5/runtime/tensormap_and_ringbuffer/runtime/types.h": "sha256:4b843fb343027439c4542dd8923081f368b6f82e979b4a257257b4acdb00ea6a",
+        "simpler_setup/_assets/src/common/aicpu_loader/README.md": "sha256:1bb48f4a07fe1c21e3893e6cd19052dabd2710edf1944a4e851977df31cd4278",
+        "simpler_setup/_assets/src/common/aicpu_loader/device/aicpu_dispatcher.cpp": "sha256:d07a5d0382642cc48217c1d12529bc778e2edff9940e9d5dbd69b2e4b0402762",
+        "simpler_setup/_assets/src/common/aicpu_loader/device/aicpu_dispatcher.h": "sha256:1b94dc181bc761882566043d21d811080e7c97307cc645aaaeb103a3df8e742c",
+        "simpler_setup/_assets/src/common/aicpu_loader/host/load_aicpu_op.cpp": "sha256:3317ea30c6111f0e5028ace3d6baaf0bfc83b4affcf6663ba880e9e211534b11",
+        "simpler_setup/_assets/src/common/aicpu_loader/host/load_aicpu_op.h": "sha256:49f760cca8c67a0df11405adc3300d60e6e1232e3cb36b28d8cafd02f9593991",
+        "simpler_setup/_assets/src/common/hierarchical/mpi_group_mailbox.h": "sha256:8df8b1a55ca6d7a7e37eae1faa3cef90742095e6af263e21450a1cb566fe71b1",
+        "simpler_setup/_assets/src/common/hierarchical/orchestrator.cpp": "sha256:7812af6227625938a1c48adad38e571c210e05f44954138bcf5c475a1af24c08",
+        "simpler_setup/_assets/src/common/hierarchical/orchestrator.h": "sha256:4392463e2e285ee5c959549d9de5ac5eea24bb6f71bf7bac337210153f79c675",
+        "simpler_setup/_assets/src/common/hierarchical/remote_endpoint.cpp": "sha256:ada0ac5950f977dafd5ba8030465dbe379e5d43da91937e59a1ce7ec72b0f757",
+        "simpler_setup/_assets/src/common/hierarchical/remote_endpoint.h": "sha256:5556238d689c1eab81659a985f916a2e1bdbd2d9cf2255d81e2621d6518d8cde",
+        "simpler_setup/_assets/src/common/hierarchical/remote_wire.cpp": "sha256:45785aa93b07495389c64e369c41cffb263affd638a498e59b0a24c96c269dd7",
+        "simpler_setup/_assets/src/common/hierarchical/remote_wire.h": "sha256:69fd00bb06c17b9c7d016c464a4e175d3456a8708febb34ae35dd6af06a85e83",
+        "simpler_setup/_assets/src/common/hierarchical/ring.cpp": "sha256:5d1aa046239dec86ac074777d5ff231ee0479735ce570dfbea3496071a7ded4d",
+        "simpler_setup/_assets/src/common/hierarchical/ring.h": "sha256:984b41e5f57b8f9a25df7cb4b47e980fcc63d13aaa747412de698507a750c766",
+        "simpler_setup/_assets/src/common/hierarchical/scheduler.cpp": "sha256:33b97c4cfc6e3a4d9f9417c97cf7eba0866293ad0862cf5c045588641e3291fd",
+        "simpler_setup/_assets/src/common/hierarchical/scheduler.h": "sha256:6cc5235e8214e863337b6554abb81b0261a30ed475829888eea5b89d832ac6d2",
+        "simpler_setup/_assets/src/common/hierarchical/scope.cpp": "sha256:6f9a7523d21ed843b5997e8936dd19da4a0bea8076dc7df6b715fb84889ae0cc",
+        "simpler_setup/_assets/src/common/hierarchical/scope.h": "sha256:2f720a2a09d314860fb883c30917b1df4004238926deb4622f2cd9635ca69fe3",
+        "simpler_setup/_assets/src/common/hierarchical/tensormap.cpp": "sha256:d9d31294b995f65377bf145f14bc1d78e416c81dd9219710dc4b4d09b3715e8e",
+        "simpler_setup/_assets/src/common/hierarchical/tensormap.h": "sha256:8d3aefcbf4395652b550c9c93009d87a1fc95c72a2585843ad0320f1ffc0ab15",
+        "simpler_setup/_assets/src/common/hierarchical/types.cpp": "sha256:30de28bdfbf9b13db62bdf1ab2bb52e0f979a1242d2df597525a0c416b95f02a",
+        "simpler_setup/_assets/src/common/hierarchical/types.h": "sha256:a38b9a4f572211409e52f74d06ff5ffca1f2d4bb61f05961ca127298657de9e9",
+        "simpler_setup/_assets/src/common/hierarchical/worker.cpp": "sha256:59fa9004850215c4be521db574cf1223a7446fa605ab1312ebca0f293c955b7b",
+        "simpler_setup/_assets/src/common/hierarchical/worker.h": "sha256:8350c0d915614466a2bd045c8da77fe1e16986c3c992a81491fdb454d6c9b588",
+        "simpler_setup/_assets/src/common/hierarchical/worker_manager.cpp": "sha256:a020fc9b039ed365d14870df5328ce7e280bc334a9b02e3666ccd124de654084",
+        "simpler_setup/_assets/src/common/hierarchical/worker_manager.h": "sha256:c0eaa6e4877371dcd79214fbeea8024a1a9eeef894b59cd2349c4dfef7d7265c",
+        "simpler_setup/_assets/src/common/host_build_graph/async_poll_phase_accumulator.h": "sha256:739f59866a107aee63af571e7664d603c9fd1c47742091977fcd5a1b73bbcb40",
+        "simpler_setup/_assets/src/common/host_build_graph/common.h": "sha256:153b78be531b88364825572de2bcbbc8556a30b291e44e729a38f6289f73e592",
+        "simpler_setup/_assets/src/common/host_build_graph/completion_token.h": "sha256:6f6d6818e8918ddc21fa8a5924c08205c9ed5af640b09cea49f6a561569979ff",
+        "simpler_setup/_assets/src/common/host_build_graph/constants.h": "sha256:6826ffce791b8a0d0ce6395d14c283065e6f5dfd0bbbd943bdf6e9a5f33361c7",
+        "simpler_setup/_assets/src/common/host_build_graph/dep_compute.h": "sha256:34653a8802ac67359b723db6461e7193c2b4b94926673fe0ca905e05002cdfbf",
+        "simpler_setup/_assets/src/common/host_build_graph/dep_gen_host_graph.h": "sha256:213ce8a931e455ec7845fff7628bc317ee7a15e281d0ba57051f6f2c2e65e925",
+        "simpler_setup/_assets/src/common/host_build_graph/device/graph_execution.cpp": "sha256:81272b01ac8e89048e93acd07d4556e64737f1db51a3cc7f7ab1b091ca57b973",
+        "simpler_setup/_assets/src/common/host_build_graph/docs/GRAPH_EXECUTION.md": "sha256:1802922b53bb81857f5d7feff5f096f738e41dc59cba8964b60d58085c82b2fd",
+        "simpler_setup/_assets/src/common/host_build_graph/entry_args.h": "sha256:02059d1ded84a5c8b1b4328f1c0d8c641eacf1ba4f70b6ba75489de5767dca23",
+        "simpler_setup/_assets/src/common/host_build_graph/graph_cache.h": "sha256:e1a4082827691445fa79a096e50c86493a91b77f40312510d5125f5a85139580",
+        "simpler_setup/_assets/src/common/host_build_graph/graph_execution.h": "sha256:b37cde676c5e220d18ef07a0e48a88560fc2e8ada91badbe044e564481e43c53",
+        "simpler_setup/_assets/src/common/host_build_graph/graph_host_state.h": "sha256:55bf9f03c0a4a81167aa7c5fc1596c5e333abd126add6bbdcc86e4c10d560436",
+        "simpler_setup/_assets/src/common/host_build_graph/graph_recorder_pool.h": "sha256:738b795778a313766cb4463bf3d9a617c93e432421991e1281112196324201ae",
+        "simpler_setup/_assets/src/common/host_build_graph/host/dep_gen_host_graph.cpp": "sha256:ed6593ec60693de58e3255ecdc51602fd76164b6e1a6d5d0e5c3ded6b4a10647",
+        "simpler_setup/_assets/src/common/host_build_graph/host/graph_recorder_pool.cpp": "sha256:a88e6362557fe5c777f8bc10dfa083bb5cf354349d26eb278bc4451923548301",
+        "simpler_setup/_assets/src/common/host_build_graph/host/host_phase_trace.cpp": "sha256:806484cca6f6c548e70db6d40930401263805731ce0a49a2d9497ee962d212ce",
+        "simpler_setup/_assets/src/common/host_build_graph/host/host_tensor_access.cpp": "sha256:f73d43b3faeb784dca7fa1d818a388b92c6e2302b6fb07dd0459882899bc91ab",
+        "simpler_setup/_assets/src/common/host_build_graph/host/orchestrator.cpp": "sha256:df717240a281b4ef67180420b1a1b66006fcea3c8ee0408a78dbb881c154c5e1",
+        "simpler_setup/_assets/src/common/host_build_graph/host/ready_queue_sizing.cpp": "sha256:c5e6b69075f8a9ff585d9de2803dccf04f3a379c6b843d2d7ad7214765ce7f96",
+        "simpler_setup/_assets/src/common/host_build_graph/host/runtime_core.cpp": "sha256:3a4d32e3eae781bed207feb38c9d584f2d74c2864a1a09ea94a560a34e6c8957",
+        "simpler_setup/_assets/src/common/host_build_graph/host/tensormap.cpp": "sha256:6bb98f0ffc703dfa19bac56674492fd283a59bbf47ff2ac7b93fd433f15cfe5e",
+        "simpler_setup/_assets/src/common/host_build_graph/host_phase_trace.h": "sha256:67022929e739c967e41fb3067786630244013c9388d6f344e4d9054239649a4b",
+        "simpler_setup/_assets/src/common/host_build_graph/host_tensor_access.h": "sha256:b326323505bdfa729c2b891dff1c21ba15a8a969bcde63d3080633e84c9c85ca",
+        "simpler_setup/_assets/src/common/host_build_graph/orchestrator.h": "sha256:44df9312cf4caec252226d74e781722085807f1be08014b5f3c103dee2dbbf3c",
+        "simpler_setup/_assets/src/common/host_build_graph/ready_queue_sizing.h": "sha256:d95c4b62119ee93f64ef576f958624e0dc40440edbe1c8f91f564ecb042d43b9",
+        "simpler_setup/_assets/src/common/host_build_graph/runtime.h": "sha256:91e089fda1192b4b07d4bf069b83e185856fd54b9a9ddbda93203a93b445525b",
+        "simpler_setup/_assets/src/common/host_build_graph/runtime_core.h": "sha256:1b37e9e1e8b261711784eca9330f53c4ea368a8fde49a613bf22e43655835176",
+        "simpler_setup/_assets/src/common/host_build_graph/runtime_ops.h": "sha256:8f13593143b3c8e37eb6e67d6b639812d7adac7c2393a2075e1a0e87a110a844",
+        "simpler_setup/_assets/src/common/host_build_graph/runtime_status.h": "sha256:d0a6528dc0f56e6ddf95408a35c00ead6e1284129f8f45d07d2e8e66d38decf1",
+        "simpler_setup/_assets/src/common/host_build_graph/runtime_types.h": "sha256:2b9679a7a3c494b32ce62a4504061821da8ac71d6938c4379984b78993b81322",
+        "simpler_setup/_assets/src/common/host_build_graph/self_relative_ptr.h": "sha256:673157645fbb92654cfe867b1b1a3197d42d5de704b4d75abd72685cc51ced43",
+        "simpler_setup/_assets/src/common/host_build_graph/shared/runtime.cpp": "sha256:2c72c01957f83132fc4a4473a724221753294b0378ed3cc3f43b0777bf83bee1",
+        "simpler_setup/_assets/src/common/host_build_graph/shared/runtime_init.cpp": "sha256:46fa7fef14140f85523b5a6c76658c75ae437b40ed7f03b3e80cb802cd1d1fe5",
+        "simpler_setup/_assets/src/common/host_build_graph/shared/shared_memory.cpp": "sha256:3a51979271ee2ea4dd4ea77fc961bcb0d8367628ca22c1800cd9f6d805bc8000",
+        "simpler_setup/_assets/src/common/host_build_graph/shared_memory.h": "sha256:6a027149c87fb07c776ca1f57d4663bddd7673bb3255be0a35255f0d75c94f76",
+        "simpler_setup/_assets/src/common/host_build_graph/submit_types.h": "sha256:7d75090a1bcb2e74d53138b343df39270c8a52667e0fe4c54636735d06805af6",
+        "simpler_setup/_assets/src/common/host_build_graph/task_allocator.h": "sha256:ff4a7e62030151254301ccc1730fc3fe0e3f45e6580de3ff0585cb2dfdc489c3",
+        "simpler_setup/_assets/src/common/host_build_graph/task_id.h": "sha256:3fbb6c8b3c39ce8d0e536bf33b6546104c795d8d97b2ab3b5193c838bf851f92",
+        "simpler_setup/_assets/src/common/host_build_graph/tensor.h": "sha256:3590be941d70fc81f3900b842d11182dbe6161ddf096ede2c90530519bb7f722",
+        "simpler_setup/_assets/src/common/host_build_graph/tensor_create_info.h": "sha256:fac1cbb6c7df943d3cb8ed156f8b270f1e50b5228860d4c3d6b732fb5064ce47",
+        "simpler_setup/_assets/src/common/host_build_graph/tensormap.h": "sha256:71a01b1c3cdba0b356ac67ecd44dd5f3edab6542afb8c3e90d14b235dd7ff95b",
+        "simpler_setup/_assets/src/common/host_build_graph/types.h": "sha256:5bd8caeb67651624ecd5cb1c46b63198e349fc87d13d24e9bf5e9235e2002baa",
+        "simpler_setup/_assets/src/common/log/host_log.cpp": "sha256:b40afa70ffda8d3f76597ba6ab2d2ec1e8fe469c5fcd18d655dc8179a8490ab9",
+        "simpler_setup/_assets/src/common/log/include/common/host_log_binding.h": "sha256:e817366e1e01763ee000b336cf6fb47ca9898242122715eab66026c57b521481",
+        "simpler_setup/_assets/src/common/log/include/common/host_log_state.h": "sha256:79decd0c0f4ad0951aff0ee36718df1aac062b72cb0ea069704f8af492cb1db8",
+        "simpler_setup/_assets/src/common/log/include/common/host_span.h": "sha256:7696e8f7a4d9053e7e78a90637c7978f4b239622a841d399b69ea555ed90e16e",
+        "simpler_setup/_assets/src/common/log/include/common/host_span_names.h": "sha256:3847aacbd7746e32d029e2e24f2faeb39521c3007bf578c59faddc7f27541fb1",
+        "simpler_setup/_assets/src/common/log/include/common/host_span_scope.h": "sha256:be24eb0c534bf88f3ea5f8b2cd18d4fce0af235326f5050ee4500e423bf6a244",
+        "simpler_setup/_assets/src/common/log/include/common/log_clock.h": "sha256:6f2924f74ca2b8725b1da2131dec40773bfd930fcd6eb779896109a9c91b4702",
+        "simpler_setup/_assets/src/common/log/include/common/log_level.h": "sha256:521fb3c6cc28d37aec79fdc34b5eb1238b7648a9ae34ef71d50b3b100bce1d39",
+        "simpler_setup/_assets/src/common/log/include/common/strace.h": "sha256:ae05df359d4b0cfbf90c544c072efee99ab2460c4e0eea0b6ed0b5f93da1bcdc",
+        "simpler_setup/_assets/src/common/log/include/common/unified_log.h": "sha256:2c568ea10a7bf7f4bd728efb40abdd4948233acf2058f9ab5fdcc81aaad22e31",
+        "simpler_setup/_assets/src/common/log/include/host_log.h": "sha256:63a17898127e9e801399183a5024c0f425da2dc05f10d28641973f1bcdee1b95",
+        "simpler_setup/_assets/src/common/log/unified_log_host.cpp": "sha256:20d84a843e1dae7ff05ee0493a878aad0ef673b30b331fb0d8f671b72ae9c20a",
+        "simpler_setup/_assets/src/common/platform/include/aicore/aicore.h": "sha256:2c9a7eee9d1a9c535783f3836bd4b6b3ea05a5430d868ea80c574c8b00f82137",
+        "simpler_setup/_assets/src/common/platform/include/aicore/chip_swimlane_collector_aicore.h": "sha256:b1663adb21711c9e70e96c1bc6acd521aff5740c2487fbe02addcecaedf1888e",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/aicpu_device_config.h": "sha256:9bb82ee8fcea20f49dd04b419395645400e764678a7ae9a0cb46a9e21ddd024d",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/args_dump_aicpu.h": "sha256:11cf08a0611957a67d52c5d82f62a59167d0362402c9d0f1472094a6212704e9",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/cache_maintenance.h": "sha256:74cafa130a31979da6e7d73b575603ab50060596659b517686315371f9e4a34f",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/chip_swimlane_collector_aicpu.h": "sha256:27626ca974e5813a490f92aab2550e81c98000d60118c64b2eab5006f3b1ccab",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/dep_gen_collector_aicpu.h": "sha256:27d70fe2891e0fe10c3c9d51836e43eebb7e4a814835f13103676346051c4ee0",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/device_log.h": "sha256:23bfae2cd70750c95394557ae91857ec0ac689e553365204c479a936e18743aa",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/device_malloc.h": "sha256:7330f977f75403fddd77e67ab8bf4420e2d031a419ba26248ffea6142a983d0a",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/device_phase_aicpu.h": "sha256:1abab9dee44e13f9f7d9fc3cd2b51ace7397f1370442ffe107bf6386f84737ab",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/device_time.h": "sha256:61dd7d4862c19c1d8df84cef6d0f215969205d02afba3b2b406792b2bc565d36",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/dump_arg_selection.h": "sha256:a9f03734c908a6214768c3210a6611c6d133ee43fefad9649d9cd5f623136a07",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/orch_so_file.h": "sha256:4c233df0adc83e1adc231654a2cc69baf309b1f051e5cf3d8e14da788f491c9c",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/platform_aicpu_affinity.h": "sha256:69ee1528fe6af0a4f0c917356a75de7a0985fda0de4761f5468354c73f3bd75b",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/profiler_device_engine.h": "sha256:b8da581e4bbfbb48d678429a47f3b7318c6e325ad11d8f83fad186262938dd50",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/region_instance_view.h": "sha256:75d7cc0055e240729451d77e6f9557944e9cad01c9c37e6410bb34a919710866",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/scope_stats_collector_aicpu.h": "sha256:c6058de1feaf9a4ed074e833f4f93ed3f6b2e2f50fd6b922434bf65f74cf9069",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/worker_chip_message_queue.h": "sha256:0103e07be48213423fa8e36cb8f0f0b82901cb81ee4753e8c2e7169049841abf",
+        "simpler_setup/_assets/src/common/platform/include/aicpu/worker_chip_orch_endpoint.h": "sha256:12198d8971b8320144e6be17494d24952be7e8b856fcc05e0d9740e1db3a4753",
+        "simpler_setup/_assets/src/common/platform/include/common/acl_hal_device.h": "sha256:b9318f5ae3f6e30c77b08c6ab205b54fcbf1056c9ae4e43bd18aa4c81780b45c",
+        "simpler_setup/_assets/src/common/platform/include/common/args_dump.h": "sha256:f935fb33917135be3633b73844932f24a48cc4233062abcac53062c5ccb5718a",
+        "simpler_setup/_assets/src/common/platform/include/common/args_dump_task_metadata.h": "sha256:1edeaecfb419174f5ce912658eb3019d8e4138317a881c7ac99b95471bca23b8",
+        "simpler_setup/_assets/src/common/platform/include/common/chip_swimlane_profiling.h": "sha256:b097bc5bb923d1b83651a3c555f88417467b81ecaef0f58baff34f6489a2f86e",
+        "simpler_setup/_assets/src/common/platform/include/common/compile_strategy.h": "sha256:3832c155f62662cb1debf7d996df716bcae78c067eeeceb3389dfed5ae577734",
+        "simpler_setup/_assets/src/common/platform/include/common/core_type.h": "sha256:1189c1e44849c97fd93fa8271827dafe22576c0f8df8f93151fbca097847afba",
+        "simpler_setup/_assets/src/common/platform/include/common/dep_gen.h": "sha256:7f25fef39394f9163cf07f07b92b6dd5a8abdf7737066ba13e0aa5ad51f74699",
+        "simpler_setup/_assets/src/common/platform/include/common/device_phase.h": "sha256:2c5cb858d6e471cc23336c121e3cf37a43a2253b8144ff1373ed4ce55ffdc7a3",
+        "simpler_setup/_assets/src/common/platform/include/common/dfx_backpressure_device.h": "sha256:ece717ec1045d02d4f4c60ca666534e91ef4345e08c698767fb1f2e5c922ecbf",
+        "simpler_setup/_assets/src/common/platform/include/common/dma_workspace.h": "sha256:938396d8d427fd379309bd68d11510a32ace9296e2611eb0bbfddc452f6b210e",
+        "simpler_setup/_assets/src/common/platform/include/common/host_api.h": "sha256:6b94436908e1adef0dc5a8fa082cb3262f5e2bee55247c148e3eacc6a031b6e7",
+        "simpler_setup/_assets/src/common/platform/include/common/host_phase_kind.h": "sha256:464fc41323e39e3fab2b8b77756c594411619126aeabdf5527c8834ab82b3e1a",
+        "simpler_setup/_assets/src/common/platform/include/common/memory_barrier.h": "sha256:f08ee42a1727faf04e411f0a796ba9120b82c70deb5d200e8f41d0624b1e8d9c",
+        "simpler_setup/_assets/src/common/platform/include/common/qualifier.h": "sha256:bc2b053ba08fd2a7ac1856c58189f623c6ec701d6ae3891a26fc01e9d8e8f1ea",
+        "simpler_setup/_assets/src/common/platform/include/common/region_instance_semantics.h": "sha256:76dc78e152b3f3ae1e8fd8b1e062e047156497ad0f4cab9f6f8e18575166cf75",
+        "simpler_setup/_assets/src/common/platform/include/common/scope_stats.h": "sha256:a2dbf725c20baa6c012fc73f0b0cd95dbe4c64ac0e2acaaf6fce46a16b3cad42",
+        "simpler_setup/_assets/src/common/platform/include/common/sdma_warmup_layout.h": "sha256:e2ce91a23c7d7102e4af9cd88ec9cee81eab848a9e13ceddca8b0cbda6814bce",
+        "simpler_setup/_assets/src/common/platform/include/common/worker_chip_orch_comm.h": "sha256:34e35c98c4c87f4827857197bdaea6a2e433b960d7a57f63fb5f581f101ec045",
+        "simpler_setup/_assets/src/common/platform/include/host/acl_error_log.h": "sha256:8d312edc642a77a8bcd1adce3c16303c03ad35a5b32b893fc766346bd48bc13d",
+        "simpler_setup/_assets/src/common/platform/include/host/acl_error_names.h": "sha256:2e25332240218c25d255ab95a2f6834619d8099c52a67ebbb5d9412eac83258f",
+        "simpler_setup/_assets/src/common/platform/include/host/args_dump_collector.h": "sha256:a966822b949ce39e5e20091ae5cd20f9235f48280e81e1edfaa5a3e85eae3a84",
+        "simpler_setup/_assets/src/common/platform/include/host/buffer_pool_manager.h": "sha256:c5a3db7f1e4c1e5566a1e4f93d2b5cb9157633a3b8bedbfaae79693803ce7ab1",
+        "simpler_setup/_assets/src/common/platform/include/host/chip_swimlane_collector.h": "sha256:54e53092586d0423d5a4fdea2b524a3a76925ce9f70ff43a38b756d0af011512",
+        "simpler_setup/_assets/src/common/platform/include/host/clock_correlation.h": "sha256:6abc273a1e5a94328cdfbcd31886873133243d20ec569f8be776d617db66d2e8",
+        "simpler_setup/_assets/src/common/platform/include/host/dep_gen_collector.h": "sha256:d4a0dceb5e0106bbfb3ffe3b247e0b5ced3dca5d0e0dfecfc5a121fe7af904f0",
+        "simpler_setup/_assets/src/common/platform/include/host/file_marker_handshake.h": "sha256:9b37063b6d8bb8c5d01608083937b10a6913434362e6c3a58cbbf8ee561239f9",
+        "simpler_setup/_assets/src/common/platform/include/host/function_cache.h": "sha256:9b55f279262d3cac2439832fde645aec2907bb162e0a80c4c920c51395840c7d",
+        "simpler_setup/_assets/src/common/platform/include/host/host_phase_records.h": "sha256:dba902bae8360b96c8341b258a879c29d1731bd995fe1960b798d230dc0090db",
+        "simpler_setup/_assets/src/common/platform/include/host/host_phase_records_artifact.h": "sha256:bb63814c81d8ebc3fb03bcaf9a97d69075eb98f4f3c838413328ab4618b19f7d",
+        "simpler_setup/_assets/src/common/platform/include/host/memory_allocator.h": "sha256:64230ec346062395e0fc4d3cd2f9c5bfbb3cc249a30f9e0a8360abca2b238eaa",
+        "simpler_setup/_assets/src/common/platform/include/host/platform_compile_info.h": "sha256:3a654851f085bb2fccf7ba2d565f2dfd93a7396f5ccecdff1e485e0b439b47a4",
+        "simpler_setup/_assets/src/common/platform/include/host/profiler_base.h": "sha256:b015fd3d6180c3d5559c95587c1e7e06c2f4c672f01bc6c0ba4a0111f517a306",
+        "simpler_setup/_assets/src/common/platform/include/host/profiling_copy.h": "sha256:bcd3b30a0a21cef78974f29f0af6ceba407c09741cbb8d02bf6734f350bd6032",
+        "simpler_setup/_assets/src/common/platform/include/host/raii_scope_guard.h": "sha256:9112ca47b2a07b239ca1596c0ffda6d59cb5cb5cab1d2f6ca3ff896f552f64c3",
+        "simpler_setup/_assets/src/common/platform/include/host/run_stream_pair.h": "sha256:4cf9162f8fac6f3e474e446aeb6ce58c832841d5b0bab4ae68a10f83e9581eab",
+        "simpler_setup/_assets/src/common/platform/include/host/runtime_compile_info.h": "sha256:f2dc64fb320ef135eeefa381e1a051c544dce7faa21dcc9772b5ffa9290b932a",
+        "simpler_setup/_assets/src/common/platform/include/host/runtime_timeout_config.h": "sha256:05f8e20a57f76eb8c9037554ced5e8b64c5e8a2ebef92939aa829808b51bbcdf",
+        "simpler_setup/_assets/src/common/platform/include/host/scope_stats_collector.h": "sha256:3d1c4993932bc6f295283572de016718466832a7adb6d8cdd223e2e865bdbe1a",
+        "simpler_setup/_assets/src/common/platform/onboard/aicpu/cache_ops.cpp": "sha256:5946d1be1f790cd80b11db17b17c6dc2373de344dcdfe2a89d06c032bead507b",
+        "simpler_setup/_assets/src/common/platform/onboard/aicpu/device_log.cpp": "sha256:63341b4ced452f8cb54afd570494f83e095e2f00f0e6b687702c07dd5f720263",
+        "simpler_setup/_assets/src/common/platform/onboard/aicpu/device_malloc.cpp": "sha256:818331eb1e1a90a8f38dbe5ea89f5e504eb51e4b3f16cc21ec69cf064ec414a9",
+        "simpler_setup/_assets/src/common/platform/onboard/aicpu/device_time.cpp": "sha256:854e62c46a6463374a82986edfcf70b4d52fdb04e0624e0299d20124fac03b12",
+        "simpler_setup/_assets/src/common/platform/onboard/aicpu/orch_so_file.cpp": "sha256:1c04f44cfd2d75b09819458bad4e16d77246e881c5c8a8d346b1d1a62832028d",
+        "simpler_setup/_assets/src/common/platform/onboard/aicpu/platform_aicpu_affinity.cpp": "sha256:fbb82145ef1a048b52e459cc3ffea78361cac347070f13c03ae1f2abfd11813a",
+        "simpler_setup/_assets/src/common/platform/onboard/aicpu/spin_hint.h": "sha256:dc2304a7903f1baf6268bc15cdb281117ec70bda320e5dd4a3f393f4410fdf36",
+        "simpler_setup/_assets/src/common/platform/onboard/host/c_api_shared.cpp": "sha256:89b6341957c6462c806389713b11d166f2e9b0f87b3d6ac748c69d00f71c0624",
+        "simpler_setup/_assets/src/common/platform/onboard/host/clock_correlation.cpp": "sha256:6576099e04ac7efe1488e7003ace365d48aa8854f0b817f892fea0d809521441",
+        "simpler_setup/_assets/src/common/platform/onboard/host/device_phase_capture.cpp": "sha256:bfe0081c3596149b2a3fad5371a0fb447abbd704077b459f1be45932f8b792a0",
+        "simpler_setup/_assets/src/common/platform/onboard/host/device_phase_capture.h": "sha256:2de649aa208e0d4a1d0dd0b84de7292eb8ae1bf0648a1fc1b80f939472b204c0",
+        "simpler_setup/_assets/src/common/platform/onboard/host/device_runner_base.cpp": "sha256:eb8b4b78e45e79082072ffb33180cbf95784af1da9552201f3d014e18912ae51",
+        "simpler_setup/_assets/src/common/platform/onboard/host/device_runner_base.h": "sha256:c4c35351d76212bffdfd211ae9b8e07e0248cbd22a629dbe42d6c5928ea0cfa4",
+        "simpler_setup/_assets/src/common/platform/onboard/host/device_runner_helpers.cpp": "sha256:b1fb6de75a6183874acfc700996db771da05bef9f2109dd591a64f0e8ca443c0",
+        "simpler_setup/_assets/src/common/platform/onboard/host/device_runner_helpers.h": "sha256:34b8294c800700bb2d9b4279fcea0305dc183d3d15cef39cc41131b825428591",
+        "simpler_setup/_assets/src/common/platform/shared/aicpu/aicpu_device_config.cpp": "sha256:7f6acdf97d587a10f08b9829afbcc337109495e800a13c59aea3d833c6a95570",
+        "simpler_setup/_assets/src/common/platform/shared/aicpu/args_dump_aicpu.cpp": "sha256:5e7ccf7e22f45c713307ef2159bc57f624fbee0bab8eeaaba535d3bc9fa40741",
+        "simpler_setup/_assets/src/common/platform/shared/aicpu/chip_swimlane_collector_aicpu.cpp": "sha256:d5a66c28fdbc1b1b223f111679cb96eed8359fed66c2207f96a7d2dfbeb43461",
+        "simpler_setup/_assets/src/common/platform/shared/aicpu/dep_gen_collector_aicpu.cpp": "sha256:db9d0956b5e39364779c268a920246a79dbfbc019eb3b590560c1ccdd3220dce",
+        "simpler_setup/_assets/src/common/platform/shared/aicpu/device_phase_aicpu.cpp": "sha256:49faa93ff08a160ad3da07d0ea913dfd088ed7f263baf875bb52da570a7cefdf",
+        "simpler_setup/_assets/src/common/platform/shared/aicpu/scope_stats_collector_aicpu.cpp": "sha256:3a0b70035b094afe9b0a48f507d454bc9dfa7b9fb6bd2ed265eb21b94788b99b",
+        "simpler_setup/_assets/src/common/platform/shared/aicpu/unified_log_device.cpp": "sha256:5f9f8dce158de34adcac38341b40323e27764fed618fc769db9271076542ec99",
+        "simpler_setup/_assets/src/common/platform/shared/host/args_dump_collector.cpp": "sha256:92e7b16803156bb82426e424da2120c1d54a200945fe6a50179f220cd95687f2",
+        "simpler_setup/_assets/src/common/platform/shared/host/chip_swimlane_collector.cpp": "sha256:959c008317bd995177104aada2b17afa9f40cbd73fa3f268aabe4ca0fda030c9",
+        "simpler_setup/_assets/src/common/platform/shared/host/clock_correlation.cpp": "sha256:e35ddf2927bb927298d605a95857a9b2aa5ebee1ef15d6126398c365b9f819dd",
+        "simpler_setup/_assets/src/common/platform/shared/host/dep_gen_collector.cpp": "sha256:d6600c6999db6bbeef41789060a36ab927da1722d587635d51de1e14e1823089",
+        "simpler_setup/_assets/src/common/platform/shared/host/host_phase_records.cpp": "sha256:217d1667be671872465858a4c71df71efa6a0b5bba2e35f4831b0ce1574bd95c",
+        "simpler_setup/_assets/src/common/platform/shared/host/platform_compile_info.cpp": "sha256:9e7340784471be8fe6b5b6ccd3193b8d64a1a2de6906efe3a5316b45d62d8596",
+        "simpler_setup/_assets/src/common/platform/shared/host/scope_stats_collector.cpp": "sha256:530c4c4811b75ea13880fa6a82d672265168e98f12127b47f994f0c9dee5b07d",
+        "simpler_setup/_assets/src/common/platform/sim/aicpu/cache_ops.cpp": "sha256:089d57a70469028be2a10910b236a301211ba9ac2963e8701abb2123c3e54045",
+        "simpler_setup/_assets/src/common/platform/sim/aicpu/device_log.cpp": "sha256:7a4226e8f35ebb677397e261d2d7880e7b34f6d166bec1769f22516034104224",
+        "simpler_setup/_assets/src/common/platform/sim/aicpu/device_malloc.cpp": "sha256:92eb879261172ac24ccd02f9463b1c5e8e73923011896734afc55cf5f7c31e82",
+        "simpler_setup/_assets/src/common/platform/sim/aicpu/device_time.cpp": "sha256:854e62c46a6463374a82986edfcf70b4d52fdb04e0624e0299d20124fac03b12",
+        "simpler_setup/_assets/src/common/platform/sim/aicpu/orch_so_file.cpp": "sha256:cc95d59cd9e9b7e84abb76aa357dd92ddb79a6b9c02b2d89679757b2faed5ec8",
+        "simpler_setup/_assets/src/common/platform/sim/aicpu/platform_aicpu_affinity.cpp": "sha256:50a8bb7995f667e3d2139492e3f8d8cf676e8fad8f2b5ce0938984667592c633",
+        "simpler_setup/_assets/src/common/platform/sim/aicpu/spin_hint.h": "sha256:87a579bfa57c7ffd54bfeb1bf7365b987caff414029e61775cd338bd6b248b91",
+        "simpler_setup/_assets/src/common/platform/sim/host/c_api_shared.cpp": "sha256:96c91d370704c4f524d53378568dd621b990aaeb0f0038af7787f5f8bc29b73e",
+        "simpler_setup/_assets/src/common/platform/sim/host/clock_correlation.cpp": "sha256:853f1a042e29442a64deca6997c507e3f485e1303d0a876139837c1d724c38a7",
+        "simpler_setup/_assets/src/common/platform/sim/host/device_runner_base.cpp": "sha256:51963a919ff028e7aa7c7c13666c19c6692f0ef11a1d861e1e695ada457cf9f1",
+        "simpler_setup/_assets/src/common/platform/sim/host/device_runner_base.h": "sha256:18ce0727ff26ac90599142c2fd40b8182dd97b118f760a25a253e5dc1a84e796",
+        "simpler_setup/_assets/src/common/platform/sim/host/memory_allocator.cpp": "sha256:6bd9de28b5475d228b87af97b5c00c8f8f5b6e2e2030e13ac8ab0402bb40e970",
+        "simpler_setup/_assets/src/common/platform/sim/host/sim_run_completion.h": "sha256:dee997e3924372e65c8eb2e76122d781b292210d8d8e1f64bba3cb9ebaf1f807",
+        "simpler_setup/_assets/src/common/platform/sim/sim_context/CMakeLists.txt": "sha256:a0080f7d1cec7abe013a2828ea8c6346e17f0d00cbc84f6965e5d3d31431a668",
+        "simpler_setup/_assets/src/common/platform/sim/sim_context/cpu_sim_context.cpp": "sha256:a6e9c59f67274c4ce5214d12e15fe1a56c1e5e59867e05761a546b3428349d08",
+        "simpler_setup/_assets/src/common/platform/sim/sim_context/cpu_sim_context.h": "sha256:8dde5d306c99d98d50d4cb1b6b82f01c3afe249a65d14d97c17e14d9aac15f0f",
+        "simpler_setup/_assets/src/common/platform_comm/comm.h": "sha256:443663d92a12ca8333fd8faee21c73d0e4895ef2605b5fdadf90a1206cb29e6e",
+        "simpler_setup/_assets/src/common/platform_comm/comm_context.h": "sha256:c45aeef7a915e5dcd8a8c784e2727774e2efca6afe642c72bd482ad59b2bf0ec",
+        "simpler_setup/_assets/src/common/platform_comm/comm_sim.cpp": "sha256:4ae55397128b1c00898558f4da7acef392e24596c36696c27420f9a9d564d345",
+        "simpler_setup/_assets/src/common/runtime_status/error_log.h": "sha256:7be6d30879d189acaeea560b008893c6f60683a480534d4926a0a043790c96fb",
+        "simpler_setup/_assets/src/common/runtime_status/error_names.h": "sha256:36fcba059371c3773f2ef04ffba96bba5ae212b5d71cbc9a5d2fe327c9a11e25",
+        "simpler_setup/_assets/src/common/task_interface/arg_direction.h": "sha256:27b547ead21cc2be1225e78c7b712f74ee21a0761d80c75adbdff618467881a5",
+        "simpler_setup/_assets/src/common/task_interface/assert_compat.cpp": "sha256:038ba391a39de2f6f4792f43ceb1bca79d72cbbe6d3e62502b5a18579bfcd6eb",
+        "simpler_setup/_assets/src/common/task_interface/assert_compat.h": "sha256:b5ef35eab0e206f863fdbecd9d032c0caa5ead4d2188162bd54e0173691612fe",
+        "simpler_setup/_assets/src/common/task_interface/buffer.h": "sha256:83ae3a9ccce163c26da6219324ab35800e828e494dae23bdfa4d0341aacf9470",
+        "simpler_setup/_assets/src/common/task_interface/call_config.h": "sha256:75a2c6f405443de71460b053b47cf99fa3be94c394fcadec2fd3486fdbca1351",
+        "simpler_setup/_assets/src/common/task_interface/callable.h": "sha256:254d4a0cd447fe3f4556176dd8bf9040fd6783b05300784bf280dc7f0cd6eeed",
+        "simpler_setup/_assets/src/common/task_interface/callable_protocol.h": "sha256:3c165594328296616a33537f5d58f33fcec81eb9aa3e5f841cb314d8d111845f",
+        "simpler_setup/_assets/src/common/task_interface/chip_callable_layout.h": "sha256:5b2bcfdcbf4bac491d8bb356a500f06316e6f55094dd8eb3379e2e1c5ebaa583",
+        "simpler_setup/_assets/src/common/task_interface/data_type.h": "sha256:f747e52f726d0f3d20c36791077152846dd1906bb4efd57d522b708d691fa8d9",
+        "simpler_setup/_assets/src/common/task_interface/prepare_callable_common.h": "sha256:63d37e5d9916883ecf0b441da527cde42dbe6c83d3a36e5f2102956b1840733d",
+        "simpler_setup/_assets/src/common/task_interface/profiling_config.h": "sha256:26840ca85d0b719dc87f2c4ecac03d81440cfc47d7cd3e4e82dc6c832baf6617",
+        "simpler_setup/_assets/src/common/task_interface/task_args.h": "sha256:7cd8d2cae4cc609f556bc1ab092e9e3eb70fbfc675e8163f6185fe4eb54e7c83",
+        "simpler_setup/_assets/src/common/task_interface/task_args_wire.h": "sha256:9394f6e189c38d308c40c6b1f812aa91aaebb4d0063e445ee89fdfbeac367025",
+        "simpler_setup/_assets/src/common/task_interface/tensor.h": "sha256:dfed6b924a5743b2779ab8b3fced86cb4ba6d87f20a5817ef27682d187dcf373",
+        "simpler_setup/_assets/src/common/tensormap_and_ringbuffer/entry_args.h": "sha256:86eb3fb7fd26f0e02ce09e090998fd601b08029af2665168076358aed3e09a8d",
+        "simpler_setup/_assets/src/common/tensormap_and_ringbuffer/task_id.h": "sha256:775220c710ab47c4a8cd698d1963219ff829619d5df07f1d6abdb5183ead69c5",
+        "simpler_setup/_assets/src/common/tensormap_and_ringbuffer/tensor.h": "sha256:b57a4c84c94d6100cb330d4b7e36da3796fc79d48c546da62b1a36f193e307df",
+        "simpler_setup/_assets/src/common/utils/device_arena.h": "sha256:65725d18c1f9aa81836337988e99588d5e179dfbb1621195ef7c21e5a6215f87",
+        "simpler_setup/_assets/src/common/utils/elf_build_id.h": "sha256:275fa13fc3c3a61ce2941e82cf6b44e054becb3937af70c08a7758c151b4c000",
+        "simpler_setup/_assets/src/common/utils/fatal_shutdown_latch.h": "sha256:4f4d023ed804d30708cbc505d5cf51a8651f9f7f6bedd6b74ce1fd98a27f5567",
+        "simpler_setup/_assets/src/common/utils/fnv1a_64.h": "sha256:20f566a5731378394a87c5aae9e51c6e8018b33689e7c8297d4c79b142dfc65c",
+        "simpler_setup/_assets/src/common/utils/thread_completion_gate.h": "sha256:c3ccd342376c38f82b57bb154c67028147ba633a1f839428e31aa8c6fbe71bc1",
+        "simpler_setup/_assets/src/common/worker/chip_run_lane.cpp": "sha256:50746b15ef6e5dec46aaa3846fc985f5f88c9c5d1e3133cf7e7a240637efcc87",
+        "simpler_setup/_assets/src/common/worker/chip_run_lane.h": "sha256:95ff8b6993255d98f672ab6183aa4063c58432755be3f530ddf3c1478bd1ba83",
+        "simpler_setup/_assets/src/common/worker/chip_worker.cpp": "sha256:0ffcffd40acce261a3775d3cbc216dbebbdcc0f289809520e7211b95e37c92ed",
+        "simpler_setup/_assets/src/common/worker/chip_worker.h": "sha256:7c93e1ec9b7656610a2102fa01d229fe9c0dc9b291599365e957f9ce329fbd52",
+        "simpler_setup/_assets/src/common/worker/device_memory_info.h": "sha256:c3b99bfa0d33bb271c2e895ef80e773bff510190b41f36ef6c4247fc0f53f63f",
+        "simpler_setup/_assets/src/common/worker/native_run_context.h": "sha256:d3b999a48bc9b9067bd8ded2f3d91bed1bf27e2332e4b4c63987f7e8bd9f3a54",
+        "simpler_setup/_assets/src/common/worker/native_run_execution.h": "sha256:acc6e8964d74c2c68f715ca2acaf78b753f345d0ed2a7c826661860c166f39e8",
+        "simpler_setup/_assets/src/common/worker/pipeline_contract.h": "sha256:43900635f3a6c5d92d9391e43ea0a9b984fc5afb53b3c22ef9f1ca00a0709cf3",
+        "simpler_setup/_assets/src/common/worker/pipeline_slot_pool.h": "sha256:735c836c6f5e097c07e312201f73435ecf42db7635a772620290df4dc303d738",
+        "simpler_setup/_assets/src/common/worker/runtime_c_api.h": "sha256:621e6dc7ff8cdc174b8518f3deeaebc5fc1b41f8c37a5a73bfab8634e55c020e",
+        "simpler_setup/build_runtimes.py": "sha256:cb23891b4dbe99bdf901e7b3beb0a9c6f49867e70701016d2b7bbf1e3040d8f3",
+        "simpler_setup/compile_paths.py": "sha256:608af7ca3dc05a5635d41c9cee00a8b608ed37e6d77012fb0bec7c3c17c3a682",
+        "simpler_setup/compile_pool.py": "sha256:3d23d5c1c240630215fc7175475700dd310744608d7306f0edaa9f48e08ceb5e",
+        "simpler_setup/elf_parser.py": "sha256:357716a029cbf00d8c38779bafabd074f089d16b7b4b365689faaf4c9d62439f",
+        "simpler_setup/environment.py": "sha256:b2e935d9758d545ec18b874be455f0976bb11cc0020e1aefca8fe2fc52796fb6",
+        "simpler_setup/goldens/__init__.py": "sha256:693bf38b7524692a70328280dce86a69f65ec759b48c4053ee3335642568807f",
+        "simpler_setup/goldens/deepseek_v4_flash_decode.py": "sha256:1e65b7a01b10b2671a428150e5dca068b7eeeedb3b44ad620397c428014264e4",
+        "simpler_setup/goldens/mx_fp_gemm.py": "sha256:5a80527fc7bd7cb193a33d5b7d7b00046e259ab67c744c62a86067ced46bb45b",
+        "simpler_setup/goldens/paged_attention.py": "sha256:0922ded9d9643376a358e5eb775929811ec8c944247b6d443338a6dd04fdd6bc",
+        "simpler_setup/goldens/qwen3_14b_decode.py": "sha256:ec33025e7e4cd932c98d033ee5d1a1e6f0b6f3633c21de255ccfbbda209a0af2",
+        "simpler_setup/incore/pipe_sync.h": "sha256:bd631901bff66028474b2e1e0ca0059aba2752b21c55ab3a7d95aa594e676362",
+        "simpler_setup/kernel_compiler.py": "sha256:82832492466eebb10deafd82f396e29d06524e399ea530d9cafab01aca541c33",
+        "simpler_setup/log_config.py": "sha256:dbbc51583f6d008aba583410b3024557655ab5711419441f65b075c10f944b34",
+        "simpler_setup/parallel_scheduler.py": "sha256:dde6d963324c7404baeb5b085fc03d4b2d5886c9222a806fb85f4c56c9d317a7",
+        "simpler_setup/platform_info.py": "sha256:40b26a75baf7ac8f38b27914aedd0a12895182fb3c5e100bb887e1f36c18829e",
+        "simpler_setup/pto_isa.py": "sha256:223d8783eb207eb61e532b007b78b20776a547980fa973166be0a65fd29bbefe",
+        "simpler_setup/runtime_builder.py": "sha256:d5927838282d06cf20dfa4cd1da9880b36c0c678bfdd1f098c16114ad3b58346",
+        "simpler_setup/runtime_compiler.py": "sha256:7adac65104a4c4f736630a579c7b213145fb5ac0ff48a89389493dcd87e8c248",
+        "simpler_setup/sanitizers.py": "sha256:07166a42de12f863794b7c1f9210b90fa9ef441f3616bd092b990599617fead1",
+        "simpler_setup/scene_test.py": "sha256:694d1f5530e950417a2facc7ef5c3a898deebd32de0275dd4eba6605d90094f5",
+        "simpler_setup/scene_test_cache.py": "sha256:9ec85a97849857c4cf6042cba5a57107b45166bcbb6eb0bf4aeb805926310033",
+        "simpler_setup/toolchain.py": "sha256:70ff6bc4deb85408c0f2eb6b22f594c4fa37bc239f7833feef860ff6f20e7052",
+        "simpler_setup/tools/README.md": "sha256:fc7d75bd5bf2f12454e65b64e5e6dcc9c589f7fb3e9e5e9a31b0912ab1ecf884",
+        "simpler_setup/tools/__init__.py": "sha256:976246d1d94f1c01af35fb626ce506d97b9c422260c4900a046245c49f77ed6a",
+        "simpler_setup/tools/clock_correlation.py": "sha256:aedecf9a711ff7c810338c4e02c60d55f525330249dd75a31bece2b48538d7b7",
+        "simpler_setup/tools/core_swimlane.py": "sha256:eb8d6c829f80fec698b5161a36f3b023553b87024fd6a0632bae39a1cbdf6fc9",
+        "simpler_setup/tools/critical_path.py": "sha256:1af588c580f916ff87fc016c5361dc90d408973c1aa7a720a82783d2dd5b590f",
+        "simpler_setup/tools/deps_viewer.py": "sha256:24b1c5c069d08dfe198a21ad272b5cafab82237b897504ccca633109fcebc116",
+        "simpler_setup/tools/dump_viewer.py": "sha256:4c9095734caae137a9a5551dfed6dd342b58875ac09a8c355f76557e7cd37be8",
+        "simpler_setup/tools/hbg_bind_phases.py": "sha256:9a0178dc300e6667b02ef48789a18d26523ec90d7ea8d99e31b7a23bfde30323",
+        "simpler_setup/tools/phase_time_split.py": "sha256:84ccef07fbcd812e21b7d54f41cef58168db265ffc079702ab744822a7dfa2b4",
+        "simpler_setup/tools/scene_test_compile.py": "sha256:ee6c2f69d38b95ed88b608c509d2b5369d99bc2ee15503cb9151b1c4d220d081",
+        "simpler_setup/tools/sched_overhead_analysis.py": "sha256:4379f414c9a2af3244c2b73d1669f23cd0a0b15fc7c043df1f04ce563bec71c1",
+        "simpler_setup/tools/scheduler_phase_records.py": "sha256:513d55b5654fc73bc0d84dd3321fcee234758360b517cbcdd02a64898a257b11",
+        "simpler_setup/tools/scope_stats_plot.py": "sha256:7be1b356ae7096817664cc0e6e3b37ebdaa6b66cba07b2d2b2e7ee8408ee26d9",
+        "simpler_setup/tools/strace_timing.py": "sha256:455727a4ad85f63a03f4808c5535836b72a323ca7ef6af0a392f62ece6db7aa6",
+        "simpler_setup/tools/swimlane_converter.py": "sha256:96677998e7787158283d986ab9374c130da56e0369632592b56b249618d193f1",
+        "simpler_setup/torch_interop.py": "sha256:e916a20fe8359c56541508ac21a45667db85cb2cd25731efc76a3b39c0ae25ef"
+      },
+      "source_comparison": [
+        {
+          "installed": "simpler/__init__.py",
+          "source": "python/simpler/__init__.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/_log.py",
+          "source": "python/simpler/_log.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/buffer.py",
+          "source": "python/simpler/buffer.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/callable_identity.py",
+          "source": "python/simpler/callable_identity.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/comm_endpoints.py",
+          "source": "python/simpler/comm_endpoints.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/comm_provider.py",
+          "source": "python/simpler/comm_provider.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/comm_provider_control.py",
+          "source": "python/simpler/comm_provider_control.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/comm_region.py",
+          "source": "python/simpler/comm_region.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/env_manager.py",
+          "source": "python/simpler/env_manager.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/global_comm_domain.py",
+          "source": "python/simpler/global_comm_domain.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/mpi_group_mailbox.py",
+          "source": "python/simpler/mpi_group_mailbox.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/mpi_l3_session.py",
+          "source": "python/simpler/mpi_l3_session.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/orchestrator.py",
+          "source": "python/simpler/orchestrator.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/remote_l3_protocol.py",
+          "source": "python/simpler/remote_l3_protocol.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/remote_l3_session.py",
+          "source": "python/simpler/remote_l3_session.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/remote_l3_worker.py",
+          "source": "python/simpler/remote_l3_worker.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/task_interface.py",
+          "source": "python/simpler/task_interface.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/worker.py",
+          "source": "python/simpler/worker.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/worker_chip_message_queue.py",
+          "source": "python/simpler/worker_chip_message_queue.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/worker_chip_orch_comm.py",
+          "source": "python/simpler/worker_chip_orch_comm.py",
+          "matches_commit": true
+        },
+        {
+          "installed": "simpler/worker_level.py",
+          "source": "python/simpler/worker_level.py",
+          "matches_commit": true
+        }
+      ]
+    }
+  },
+  "installed_distributions": [
+    {
+      "name": "cloudpickle",
+      "version": "3.1.2"
+    },
+    {
+      "name": "cmake",
+      "version": "4.4.3"
+    },
+    {
+      "name": "exceptiongroup",
+      "version": "1.3.1"
+    },
+    {
+      "name": "filelock",
+      "version": "3.32.3"
+    },
+    {
+      "name": "fsspec",
+      "version": "2026.7.0"
+    },
+    {
+      "name": "iniconfig",
+      "version": "2.3.0"
+    },
+    {
+      "name": "Jinja2",
+      "version": "3.1.6"
+    },
+    {
+      "name": "MarkupSafe",
+      "version": "3.0.3"
+    },
+    {
+      "name": "mpmath",
+      "version": "1.3.0"
+    },
+    {
+      "name": "nanobind",
+      "version": "2.15.0"
+    },
+    {
+      "name": "networkx",
+      "version": "3.4.2"
+    },
+    {
+      "name": "ninja",
+      "version": "1.13.2"
+    },
+    {
+      "name": "numpy",
+      "version": "2.2.6"
+    },
+    {
+      "name": "packaging",
+      "version": "26.3"
+    },
+    {
+      "name": "pathspec",
+      "version": "1.1.1"
+    },
+    {
+      "name": "pluggy",
+      "version": "1.6.0"
+    },
+    {
+      "name": "Pygments",
+      "version": "2.21.0"
+    },
+    {
+      "name": "pypto",
+      "version": "0.1.0"
+    },
+    {
+      "name": "pytest",
+      "version": "9.1.1"
+    },
+    {
+      "name": "PyYAML",
+      "version": "6.0.3"
+    },
+    {
+      "name": "scikit_build_core",
+      "version": "1.0.3"
+    },
+    {
+      "name": "simpler",
+      "version": "0.1.0"
+    },
+    {
+      "name": "sympy",
+      "version": "1.13.1"
+    },
+    {
+      "name": "tomli",
+      "version": "2.4.1"
+    },
+    {
+      "name": "torch",
+      "version": "2.6.0+cpu"
+    },
+    {
+      "name": "typing_extensions",
+      "version": "4.16.0"
+    }
+  ],
+  "environment": {
+    "ASCEND_HOME_PATH": "/usr/local/Ascend/cann-9.0.0/cann-9.0.0",
+    "PTOAS_ROOT": "/data1/home/ziruiwang/ptoas-v0.60",
+    "PTO_ISA_ROOT": "/data1/home/ziruiwang/pypto-lib/.venv-official/lib/python3.10/site-packages/simpler_setup/_assets/build/pto-isa",
+    "PATH": "/data1/home/ziruiwang/ptoas-v0.60/bin:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/bin:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/tools/ccec_compiler/bin:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/tools/profiler/bin:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/tools/ascend_system_advisor/asys:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/tools/show_kernel_debug_data:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/tools/msobjdump:/data1/home/ziruiwang/.local/npm/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-arm64/vendor/aarch64-unknown-linux-musl/codex-path:/data1/home/ziruiwang/.codex/tmp/arg0/codex-arg0XtT20n:/data1/home/ziruiwang/.local/npm/bin:/data1/home/ziruiwang/.local/node/current/bin:/data1/home/ziruiwang/.local/bin:/data1/home/ziruiwang/ptoas-v0.60:/data1/home/ziruiwang/ptoas-v0.60/bin:/data1/home/ziruiwang/.cargo/bin:/data1/home/ziruiwang/.local/npm/bin:/data1/home/ziruiwang/.local/node/current/bin:/data1/home/ziruiwang/.local/bin:/data1/home/ziruiwang/.local/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin",
+    "PYTHONPATH": "/data1/home/ziruiwang/pypto-lib",
+    "LD_LIBRARY_PATH": "/data1/home/ziruiwang/miniforge3/lib:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/lib64:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/lib64/plugin/opskernel:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/lib64/plugin/nnengine:/usr/local/Ascend/cann-9.0.0/cann-9.0.0/opp/built-in/op_impl/ai_core/tbe/op_tiling/lib/linux/aarch64:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver:/usr/local/Ascend/driver/lib64:/usr/local/Ascend/driver/lib64/common:/usr/local/Ascend/driver/lib64/driver"
+  },
+  "toolchain": {
+    "cann_install_info": "package_name=Ascend-cann-toolkit\nversion=9.0.0\ninnerversion=V100R001C10SPC001B250\ncompatible_version=[V100R001C21],[V100R001C22],[V100R001C23],[V100R001C25],[V100R001C10]\narch=aarch64\nos=linux\npath=/usr/local/Ascend/cann-9.0.0/cann-9.0.0\n",
+    "ccec_version": "2026-04-25T15:46:25+08:00 clang version 15.0.5 (clang-5c68a1cb1231 flang-5c68a1cb1231)\nTarget: aarch64-unknown-linux-gnu\nThread model: posix\nInstalledDir: /usr/local/Ascend/cann-9.0.0/cann-9.0.0/bin",
+    "ptoas_sha256": "sha256:c65921a470c5ec69cffc7abb66c9962c26cda2d268db7580cfc503039441c88e",
+    "libstdcxx_sha256": "sha256:d153c7fbca3f2430aecbb1e8927b36ed41ff95444710ec0ed71b46d56c9accd9",
+    "driver_version": "Version=25.5.0\nascendhal_version=7.35.23\naicpu_version=1.0\ntdt_version=1.0\nlog_version=1.0\nprof_version=2.0\ndvppkernels_version=1.1\ntsfw_version=1.0\nInnerversion=V100R001C23SPC005B219\ncompatible_version=[V100R001C19],[V100R001C20],[V100R001C21],[V100R001C22],[V100R001C23]\ncompatible_version_fw=[7.0.0,8.9.9]\npackage_version=25.5.0\n",
+    "pto_isa_pin": "a8040450238f162985d8b596fbebeb54bfba2bf5",
+    "versions_env": "# Single source of truth for the pypto-owned external toolchain versions (ptoas).\n#\n# Every CI workflow reads these values via the `toolchain` lead job (see\n# .github/workflows/ci.yml) instead of hardcoding them. Bump a version HERE and\n# nowhere else — the `toolchain` job's guard step fails the build if a literal\n# PTOAS sha256 (or pto-isa commit) reappears inline in a workflow.\n#\n# ptoas: the assembler release used by the codegen -> device path. The runtime\n#        does not use ptoas. sha256 is for the CPython 3.10 manylinux wheel for\n#        each architecture (aarch64 / x86_64).\n#\n# pto-isa is NOT declared here. It is derived from the pinned `runtime/`\n# submodule's committed `runtime/pto_isa.pin` (the runtime is the source of\n# truth — it enforces build == run, see simpler #1096). The `toolchain` job\n# reads that file, so bumping the runtime submodule automatically moves pypto's\n# pto-isa in lockstep with the runtime it builds against.\n#\n# Shell-sourceable `KEY=value` (no spaces) so\n# `grep -E '^[A-Z0-9_]+=' toolchain/versions.env >> \"$GITHUB_OUTPUT\"` works directly.\nPTOAS_VERSION=v0.60\nPTOAS_SHA256_AARCH64=7ebc8bb45fd5a5a0b55c918227fe2194a7e33a7f3bd4b5ab64005a51717cb08e\nPTOAS_SHA256_X86_64=3a3f428a12b4f0a1bc61f978fd675417da543bab09494344426bb35977de842a\n"
+  },
+  "profiles": {
+    "a2a3_deepseek_v4_moe_ep2.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:f900523b34976ef935b36038b332b7576ac2540d189e7dd700c4e2f510f52704"
+    },
+    "a2a3_deepseek_v4_moe_ep2_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:8d7f8b6b69851268db61e181ccaa70086316f84bcdcc240da16bae42dd425213"
+    },
+    "a2a3_deepseek_v4_moe_ep8.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:6c59661cf909f722b1a489e7a34520287aae475017a8f466d1fed366dd82a57d"
+    },
+    "a2a3_deepseek_v4_prefill_cp_swa_cp4.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:2226d1ae48d4193f0cad614d247986ab026376404da1030871c0b30931057996"
+    },
+    "a2a3_deepseek_v4_prefill_layer_ep4_csa_flash.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:b162605b972bca1632ed1162d56a8250584a2dc4e3b9caa14054c79e7387524b"
+    },
+    "a2a3_models_0912_prefill_layer_ep2_maintenance.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:a982f8e4739e5c709df4019b4635632991f8a498467163e82c1f83f936f9304c"
+    },
+    "a2a3_models_manual_deepseek_v4_flash_dspark__dspark_drafter_flash_idle45.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:9ed7415a5eb4815c1a5182fa71dc384cc90ef9f0fc213cca01c950f512e8a7df"
+    },
+    "a2a3_models_manual_deepseek_v4_flash_dspark__dspark_drafter_pro_idle45.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:f6e6dd623d8c3db56923612f211504b184d988abe1cf276b65e6f39754a00c0d"
+    },
+    "a2a3_models_manual_deepseek_v4_flash_dspark__dspark_markov_demo_idle6_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:0639cda981d75c43512f1bd10b0bf134fd9f6f8432b38d21dbaaffa8be513ade"
+    },
+    "a2a3_models_manual_deepseek_v4_flash_dspark__dspark_markov_flash_idle6_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:b104aed97683a8326f31fc8a8850c2232266ba6e771d73961474463abd845f00"
+    },
+    "a2a3_models_manual_deepseek_v4_flash_dspark__dspark_markov_pro_idle6_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:3fc6f9794d44d12b8ebdb6be634013518a72ce4114b1f7ae2cc16f59d9d071f4"
+    },
+    "a2a3_models_manual_deepseek_v4_flash_mtp__prefill_swa_demo_idle6_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:19442083094b55eaafe1547b4b64797a0b5735840adf67dbd1cc04d081be4c42"
+    },
+    "a2a3_models_manual_deepseek_v4_flash_mtp__prefill_swa_flash_idle6_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:4327179ee254aeaad6136490eee53c83722c01011f04fa832f024f6a4d343227"
+    },
+    "a2a3_models_manual_deepseek_v4_flash_mtp__prefill_swa_pro_idle6_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:a126be0110e9838ef4b0451d74bbd09fd58bf85e76126b7e042e9fc6e283c8a3"
+    },
+    "a2a3_moe_ep2_demo.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:8e217cde4046a3d6757c6e8a3493d16aad1f44f759aded543cea721562f8228c"
+    },
+    "a2a3_moe_ep2_demo_admission_20261003.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:d70862ca45106f5e3ac08763eb96fba955c5bc102f8909e683fa79d27e4a2b3b"
+    },
+    "a2a3_moe_ep2_flash.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:8426ae39f3df0c9dfd252184cad94cf6f081de8ecc7662359da778c266b93fa0"
+    },
+    "a2a3_moe_ep2_flash_admission_20261003.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:2b7ec465606711f124fb60a2203f9bb61be0e2bfde5f7f3c8873196e5d855fc6"
+    },
+    "a2a3_moe_ep2_pro.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:fefd40e8ba82c656ecbba805f3507eac9c472c632d7d473d6c828b585501c36a"
+    },
+    "a2a3_moe_ep2_pro_admission_20261003.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:1ecda961b293fbba11f27d7b9c0494d227b2166842ea526893d16000ab0db3d2"
+    },
+    "a2a3_moe_ep4_demo.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:3c2a6083aff1d28772b545fd634bd4c4363a921c192aefa052e74c7a7ba4bd56"
+    },
+    "a2a3_moe_ep4_demo_admission_20261003.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:35b79ef5d09aca354d0eb8384f71349b38519ae48d3de7a5ca8d406485e2657f"
+    },
+    "a2a3_moe_ep4_flash.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:5605bb462e5e983f542325d42cc9719ea0fe8cd51f06a2dca6310fc0ab51e9a4"
+    },
+    "a2a3_moe_ep4_flash_admission_20261003.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:ed724ad3dbe11c72a8a9329e04a0b8159ff7520919a9150e4822340f6553e7e6"
+    },
+    "a2a3_moe_ep4_pro.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:7e10e3b003b7f8e1cd26da82ee6a3fce7c4a5649b1708064e8e32781e9fb9106"
+    },
+    "a2a3_moe_ep4_pro_admission_20261003.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:c1fb3e5b9f81b66a10cee6914fb8b6deaf18455dbf9c603db3f457d85fc84fbf"
+    },
+    "a2a3_moe_ep_ep8_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:bdaf129ac6d286a92d9b4b21af09c00c45b3bcd6075c461c19678742888535e0"
+    },
+    "a2a3_prefill_attention_hca_demo_admission_20261003.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:416c87a7f48a42e1c4f5365ace1f99a14637a6da2e1e2f163d0f620f7676827d"
+    },
+    "a2a3_prefill_attention_hca_flash_admission_20261003.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:83b29ced140696f5ac4ead95ffefd88baa67336d7c929446aa73e436516bcb0d"
+    },
+    "a2a3_prefill_attention_hca_pro_admission_20261003.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:161fd32da324fd2a90970aaf16698e5f07f871a5426bbc5961dc21458dc6960a"
+    },
+    "a2a3_prefill_layer_ep2_csa_demo.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:324433eabbaf85744fae7d291e390acae35ffadbc0b0d6559b3a4d86f625a10d"
+    },
+    "a2a3_prefill_layer_ep2_csa_demo_admission_20261003.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:de679fd48196687045ca15c9570515c414633ed74cc03c884be2a42c46d3d7b2"
+    },
+    "a2a3_prefill_layer_ep2_csa_flash.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:2c579a9e65fda32c2c4702e2b03390d594e9fd499b2bbf14534da02e5f0f2112"
+    },
+    "a2a3_prefill_layer_ep2_csa_flash_admission_20261003.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:042888cc9cb123a78eccb573084cf9e50494d59d86fd4d4a32678ec26aa482da"
+    },
+    "a2a3_prefill_layer_ep2_csa_pro.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:8b444e352e5f90c830f5fc26b3ef59b4fc41a6c7a3f8b7985717d6347285fdf3"
+    },
+    "a2a3_prefill_layer_ep2_csa_pro_admission_20261003.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:aae80e1fe59967d4f409f9e73dc90cfb47e04dca4c928d005b51c72d1700b5d9"
+    },
+    "a2a3_prefill_layer_ep2_csa_pro_repair_idle67.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:c21e4ad5c7e6db469bdea92276847a3333637b894067064f09f466faf3346af4"
+    },
+    "a2a3_single_card.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:12769f86e1ac3012fd9dea35d72fe9003bd1c163c81e00531e2fb72e11392bbe"
+    },
+    "a2a3_single_card_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:27eb7f74b58c10d121e7aeac13b473ed952dbbe344f8e72e42004e3f938ccd95"
+    },
+    "a2a3_synthetic_token_loop_ep2_idle67.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:bf9e4f862bcf619a15955a641e970de30b7190584507325599926e145b508a8d"
+    },
+    "a2a3_synthetic_token_loop_ep2_libstdcxx_idle67.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:9bb69fcf0b4cffb116e07a190aa7d78dbb6140296a539ecc1b359929653addde"
+    },
+    "deepseek_v4_flash_dspark__decode_swa_flash_manual_idle_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:60c364601921a5a8b30696ecbf068a7d18c4158ea51979aceb8a0d1b88d612cd"
+    },
+    "deepseek_v4_flash_dspark__decode_swa_flash_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:2730dcc5c098d525f5f6ecdd0ee9544151d79efc66bda85ae7b24ecdc90f915f"
+    },
+    "deepseek_v4_flash_dspark__dspark_prefill_flash_manual_idle_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:b63514ed41600ace66700fd009940b50c9e6f9b35e716cf0f51528fec582bbb0"
+    },
+    "deepseek_v4_flash_dspark__dspark_prefill_flash_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:b04ee5d3a2259703af5c6a01d210942426e59ebc1e66ee5acf5e247c8f954b32"
+    },
+    "deepseek_v4_flash_dspark__lm_head_demo_manual_idle_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:f17686c361f12e45aa2903323476e598f64a41a03ca0b0173bfba53235025fff"
+    },
+    "deepseek_v4_flash_dspark__lm_head_demo_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:3dcab2ffdbd0dbc215600bd219af9ec4d79df9fb97ad0154cc185fe59d77d683"
+    },
+    "deepseek_v4_flash_dspark__lm_head_flash_manual_idle_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:3c23c09ac3b75575a05df23572b1293c2bde009a1a05a52d0a90c44e3fc97aa5"
+    },
+    "deepseek_v4_flash_dspark__lm_head_flash_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:a38ef28602ef345d2821628f213f1a6ce3482588599123b5a271bb4833511ffe"
+    },
+    "deepseek_v4_flash_dspark__lm_head_pro_manual_idle_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:544edb202bec97eaf52af55355280663dcd5334d5ba910e118a88ca55a63dbac"
+    },
+    "deepseek_v4_flash_dspark__lm_head_pro_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:5ccd1ee8e99914b7aa4e48c637eedf97a0ce218bfb463edf2fcbfee58b4be39f"
+    },
+    "deepseek_v4_flash_dspark__prefill_csa_demo_manual_idle_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:dc928626e62e62302772664cd0fb5f657b27a51667e80fd45783f37792f7fd0f"
+    },
+    "deepseek_v4_flash_dspark__prefill_csa_demo_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:a7114d1c81c1a493624642b4f2f515859c4fafe744d72b1391ec4c5e8aa666d2"
+    },
+    "deepseek_v4_flash_dspark__prefill_csa_flash_manual_idle_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:10c2ac5b6848d9856836ce02fe3f9131405449180638e0b2fce7c21ffa184b9b"
+    },
+    "deepseek_v4_flash_dspark__prefill_csa_flash_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:b34614ee3fb8a43f7bc205e738e0b267bcd608d2f4e3914cba163f44092d82dd"
+    },
+    "deepseek_v4_flash_dspark__prefill_csa_pro_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:3f339e97ff6d58b68e6e4699e6dc49f7fc2c28197d670d1eaa5c7dbe1923c113"
+    },
+    "deepseek_v4_flash_dspark__prefill_hca_demo_manual_idle_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:c1967f0cc933b6243d365bf8fd611134254da9ec29b627961fd74cf5b08cb2aa"
+    },
+    "deepseek_v4_flash_dspark__prefill_hca_demo_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:6f31b05ba891d74d3acc326af7fb0255cbbd5dc7878aa616c47e3343c0cda525"
+    },
+    "deepseek_v4_flash_dspark__prefill_hca_flash_manual_idle_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:a368347ee20b07df93cc460af6d100300d41b78fa49fd57f1f080183026c81f7"
+    },
+    "deepseek_v4_flash_dspark__prefill_hca_flash_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:61d000c417c2eedd42018abcdc6f935410d0dfc360efa3c997fafd2d71874090"
+    },
+    "deepseek_v4_flash_dspark__prefill_hca_pro_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:1ce6a62f810923343d1e645ff14f14e868dac52827b936dbda1a937d84079d3a"
+    },
+    "deepseek_v4_flash_dspark__prefill_indexer_demo_manual_idle_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:fc7434ff17a585ea37284015e65108d09bb921e32b698b9eaa57cc6426aca0a5"
+    },
+    "deepseek_v4_flash_dspark__prefill_indexer_demo_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:f2de30a127cf6c32bc1e0ec895ccf894a426f45293dcf5f0a6939c9d4bec6c7b"
+    },
+    "deepseek_v4_flash_dspark__prefill_indexer_flash_manual_idle_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:a541cad69a5d2cc6e0619035e46bcdfd7d135cdf49c2e81998e1255cb82bcf0f"
+    },
+    "deepseek_v4_flash_dspark__prefill_indexer_flash_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:ced849ce3ef7dc9fda8386c10245a95e48b9794e3b3d09820830e49246989a25"
+    },
+    "deepseek_v4_flash_dspark__prefill_indexer_pro_manual_idle_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:c40ce29277124f59a0b41ebbe7d526027666f25d5baf96fe9724d7978c97965f"
+    },
+    "deepseek_v4_flash_dspark__prefill_indexer_pro_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:e466014759515fa4830498883d737bb72ed732ac8ca1f98afa4b02cdec06b8f8"
+    },
+    "deepseek_v4_flash_dspark__prefill_swa_demo_manual_idle_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:3e24f380b188de949591a24ed5e9e343a0fbae947256d70f76498676418125ca"
+    },
+    "deepseek_v4_flash_dspark__prefill_swa_demo_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:757f00d4790ee02b980b170e7c67847c460a2f04c1ceed0a4612ee1710f638ae"
+    },
+    "deepseek_v4_flash_dspark__prefill_swa_flash_manual_idle_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:1c311ee653ca4d31ec38a27c9a4ebe1bf7085d5a91a6c02fa63c5cc21c3807d9"
+    },
+    "deepseek_v4_flash_dspark__prefill_swa_flash_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:56c49026f2ad34a7d72194f9da8173706b5730a4c1dcc35142ca6f8f4d3dc250"
+    },
+    "deepseek_v4_flash_dspark__prefill_swa_pro_manual_idle_20261007_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:d1fe089dd2e20062534b52b64bac36b0add8b1dd230208697c0aa0fb2c03c0b7"
+    },
+    "models_0912_decode_hca_demo_manual_idle6_libstdcxx_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:b1d46e9979067d86768c7f348444134991ca3c77db47bda5d73a6526ec733780"
+    },
+    "models_0912_decode_hca_pro_manual_idle6_libstdcxx_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:bf7deb086901b10279452bcd8ea3c680f18153d2d492480710733abcee81315a"
+    },
+    "models_0912_decode_layer_csa_demo_a2a3_45.json": {
+      "python": "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:8f00b8867393504f8bdfc66fcb7eeae7f93ecc5acf3ddb86bb9667bb9d6c09b5"
+    },
+    "models_0912_decode_layer_csa_flash_a2a3_45.json": {
+      "python": "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:6ddbfb4e88961d09f06d394dadf0391d153472f38b7bdf03082c29ea181b0b9f"
+    },
+    "models_0912_decode_layer_hca_demo_a2a3_45.json": {
+      "python": "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:f00a97aa2c1ef62ea15991831e50c6a2a2625b09b2b55be2cfad3d43ecfaab8f"
+    },
+    "models_0912_decode_layer_hca_flash_a2a3_45.json": {
+      "python": "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:25a9392c2569473bacf287533d52446b5afe3003fd94bfe7bf15df5e7734bcce"
+    },
+    "models_0912_decode_layer_hca_pro_a2a3_45.json": {
+      "python": "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:ac8eeab561a79470fcbc7d2d9589361e74ab2286b16cc7c2b8f0aa581a5d6528"
+    },
+    "models_0912_decode_layer_swa_demo_a2a3_45.json": {
+      "python": "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:41bf6f2f0dc07c3010d2410cc096d15d5e4defb10789deb3f483b5a525e58e16"
+    },
+    "models_0912_decode_layer_swa_flash_a2a3_45.json": {
+      "python": "/data1/home/ziruiwang/pypto-lib/.venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:a13256e15c640b0986ab1c5e7318b2f42165934afb96ebc92b1922e7b42bc1ef"
+    },
+    "models_0912_decode_swa_demo_manual_idle6_libstdcxx_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:ef135459e4b787aac2821b34c71000d8d9781e762d8abc9811b0c3ad845c3ec5"
+    },
+    "models_0912_decode_swa_pro_manual_idle6_libstdcxx_20261007.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:2e54203f51ba45b02fbc0dc5b4fd2e91706ed421c8740d554573bf39719b1f7c"
+    },
+    "models_0912_deepseek_v4_flash_dspark_decode_hca_a2a3.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:db9f7385c2963d5e9f3f6c5d0baee6e2c5ddb2b646b11b52d9f87190cc6b5082"
+    },
+    "models_0912_deepseek_v4_flash_dspark_decode_hca_a2a3_manual_npu6.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:b138f8c39972e1052cc2821b539f4a7b973cb2eb20e06af49f91f0362be0563f"
+    },
+    "models_0912_deepseek_v4_flash_dspark_decode_hca_a2a3_manual_npu6_libstdcxx.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:a0de88118b4d53ce5436ee379f2f14636d852a287dd6c341422c458bb96f703d"
+    },
+    "qwen3_14b_decode_layer_single_layer_max_seq_127.json": {
+      "python": ".venv-official/bin/python",
+      "platform": "a2a3",
+      "sha256": "sha256:dd9438746496606f43798f41badb19d9b3877238b09640626b494a0c6d77d76c"
+    }
+  },
+  "hardware_summary": {
+    "model": "910B4",
+    "devices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "hbm_per_card_mib": 32768
+  }
+}

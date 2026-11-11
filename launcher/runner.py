@@ -1,5 +1,6 @@
 """Shared process lifecycle, log draining and S4 automatic finalization."""
 from contextlib import contextmanager
+import json
 import os
 import selectors
 import signal
@@ -47,34 +48,188 @@ def save(root, name, value):
         integrity.commit_records(root / 'protection', {logical: payload})
 
 
-def retain_method_reply(root, reply):
+def _token_usage(root):
+    totals = {'input_tokens': 0, 'output_tokens': 0, 'cached_input_tokens': 0,
+              'cached_output_tokens': 0, 'reported_total_tokens': 0}
+    seen = set()
+    found = False
+    reported_total_seen = False
+    observed = set()
+    paths = [*root.glob('agent/**/*.jsonl'), *root.glob('method/dispatches/**/agent/**/*.jsonl')]
+    for path in paths:
+        identity = str(path.resolve())
+        if identity in seen or path.name == 'events.jsonl':
+            continue
+        seen.add(identity)
+        try:
+            with file_tree.open_file(path) as descriptor, os.fdopen(os.dup(descriptor), 'r', errors='replace') as stream:
+                rows = (json.loads(line) for line in stream)
+                for row in rows:
+                    if not isinstance(row, dict):
+                        continue
+                    if row.get('type') == 'token_usage_record':
+                        usage = (row.get('payload') or {}).get('usage')
+                    else:
+                        payload = row.get('payload')
+                        if isinstance(payload, dict) and payload.get('type') == 'token_count':
+                            info = payload.get('info')
+                            info = info if isinstance(info, dict) else {}
+                            usage = info.get('last_token_usage')
+                            if isinstance(usage, dict):
+                                details = usage.get('input_tokens_details')
+                                details = details if isinstance(details, dict) else {}
+                                if type(details.get('cached_tokens')) is int:
+                                    usage = {**usage, 'cached_input_tokens': details['cached_tokens']}
+                            else:
+                                usage = None
+                        else:
+                            usage = None
+                        message = row.get('message')
+                        if usage is None and isinstance(message, dict) and message.get('role') == 'assistant':
+                            usage = message.get('usage')
+                    if not isinstance(usage, dict):
+                        continue
+                    values = {}
+                    for target, keys in {
+                        'input_tokens': ('input_tokens', 'input'),
+                        'output_tokens': ('output_tokens', 'output'),
+                        'cached_input_tokens': ('cached_input_tokens', 'cacheRead'),
+                        'cached_output_tokens': ('cached_output_tokens', 'cacheWrite'),
+                        'reported_total_tokens': ('total_tokens', 'total'),
+                    }.items():
+                        value = next((usage[key] for key in keys if type(usage.get(key)) is int and usage[key] >= 0), None)
+                        if value is not None:
+                            values[target] = value
+                    found |= bool(values)
+                    reported_total_seen |= 'reported_total_tokens' in values
+                    observed.update(values)
+                    for target, value in values.items():
+                        totals[target] += value
+        except (OSError, ValueError):
+            continue
+    if not found:
+        return {'status': 'unavailable', **{key: None for key in totals}}
+    if not reported_total_seen:
+        parts = [totals[key] for key in ('input_tokens', 'output_tokens')]
+        totals['reported_total_tokens'] = sum(parts) if observed & {'input_tokens', 'output_tokens'} else None
+    return {'status': 'available', **totals}
+
+
+def _run_summary(root, record, events, stop_reason):
+    def read(name):
+        path = root / name
+        try:
+            return session._read(path)
+        except (OSError, integrity.InfrastructureError):
+            return None
+
+    backend_record = read('backend.json') or {}
+    backend_info = backend_record.get('backend') if isinstance(backend_record, dict) else None
+    profile = read('profile.json') or {}
+    model = (backend_info.get('model') if isinstance(backend_info, dict) else None) or profile.get('model')
+    if not isinstance(model, str) or model.lower() == 'unknown':
+        model = None
+    attempts = [event for event in events if event.get('attempt_id') is not None]
+    counts = {
+        'attempts': len(attempts),
+        'check_calls': sum(event['action'] in {'evaluate', 'finish'} for event in attempts),
+        'bench_calls': sum(event.get('bench_status') in {'pass', 'fail', 'unavailable'} for event in attempts),
+        'profile_calls': sum(event['action'] == 'profile' for event in attempts),
+        'fork_events': sum(event['action'] == 'fork' for event in events),
+    }
+    observed_calls = [event.get('runtime_dispatch_entries') for event in attempts]
+    sampled_rounds = [event['bench_sampled_rounds'] for event in attempts
+                      if type(event.get('bench_sampled_rounds')) is int]
+    known_calls = [value for value in observed_calls if type(value) is int]
+    sampled_device_time = [event['bench_sampled_device_time_us'] for event in attempts
+                           if type(event.get('bench_sampled_device_time_us')) in (int, float)]
+    config_names = ('experiment.json', 'method.json', 'prompt.txt', 'mode.json', 'profile.json', 'backend.json',
+                    'agent/configuration.json', 'method/config.json', 'method/knowledge.json',
+                    'method/skills.json', 'baseline.json', 'environment.json')
+    config_refs = {name.removesuffix('.json').replace('/', '_'): name for name in config_names
+                   if (root / name).is_file()}
+    environment = read('environment.json')
+    return {
+        'run_id': record['session_id'], 'case_id': record['case_id'],
+        'agent': (record.get('mode') or {}).get('id'),
+        'backend': record['optimizer']['backend'], 'model': model,
+        'config_refs': config_refs,
+        'environment_ref': 'environment.json' if environment is not None else None,
+        'budget': record['budget'], 'start_time': record['created_at'],
+        'end_time': record['completed_at'], 'stop_reason': stop_reason,
+        'session_path': 'agent/session.json', 'events_path': 'events.jsonl',
+        'final_result_path': 'final_result.json',
+        'counts': counts,
+        'hardware_usage': {
+            'budgeted_actions': record['usage']['hardware_actions'],
+            'finish_actions': record['usage']['finish_actions'],
+            'total_actions': record['usage']['hardware_actions'] + record['usage']['finish_actions'],
+            'runtime_dispatch_entries': sum(known_calls) if known_calls else None,
+            'unobserved_runtime_attempts': len(observed_calls) - len(known_calls),
+            'bench_sampled_rounds': sum(sampled_rounds) if sampled_rounds else None,
+            'bench_sampled_device_time_us': sum(sampled_device_time) if sampled_device_time else None,
+            'device_time_scope': 'Bench device samples only; diagnostic and unmeasured calls are excluded.',
+        },
+        'token_usage': _token_usage(root),
+        'wall_clock_seconds': session.elapsed_seconds(record['created_at'], record['completed_at']),
+        'trace_linkage': 'Attempts retain event order and source snapshots; dispatch/tool-call IDs are included when the Agent provides them.',
+    }
+
+
+def retain_method_reply(root, reply, *, initial_records=None):
     """Archive participant-supplied records without interpreting their contents."""
-    records = reply.get('records', {})
+    records = dict(initial_records or {})
+    method_records = reply.get('records', {})
     archives = reply.get('archives', {})
-    if not isinstance(records, dict) or not isinstance(archives, dict):
+    if (not isinstance(method_records, dict) or not isinstance(archives, dict)
+            or not isinstance(initial_records, (dict, type(None)))
+            or records.keys() & method_records.keys()):
         raise integrity.InfrastructureError('invalid method archive declaration')
+    records.update(method_records)
     def relative(name):
         from pathlib import PurePosixPath
         path = PurePosixPath(name) if isinstance(name, str) else None
+        root_records = {'prompt.txt', 'profile.json', 'mode.json', 'backend.json',
+                        'experiment.json', 'method.json', 'method_request.json',
+                        'baseline.json', 'environment.json', 'method_collection.json',
+                        'launcher_result.json'}
         if (path is None or path.is_absolute() or '..' in path.parts or not path.parts
                 or str(path) != name or path.parts[0] not in ('agent', 'method')
-                and name not in ('prompt.txt', 'profile.json', 'mode.json', 'backend.json')):
+                and name not in root_records):
             raise integrity.InfrastructureError('invalid method record path')
         return root / name
+    replacements = {}
+    additions = {}
     for name, value in records.items():
-        relative(name)
-        save(root, name, value)
+        path = relative(name)
+        logical = 'launcher_' + name.replace('.', '_').replace('/', '_')
+        additions[logical] = integrity.ProtectionRoot(path, 'records')
+        replacements[logical] = value.encode() if isinstance(value, str) else session._bytes(value)
     with session._session_lock(root):
-        session._load_locked(root)
-        roots = {}
+        # Fresh Session creation already validated its record and fixed assets.
+        # Register every startup record/archive together instead of rescanning
+        # large fixed assets once per metadata file.
+        if initial_records is None:
+            session._load_locked(root)
+        protection = root / 'protection'
+        manifest = integrity._load(protection)
+        roots = {name: spec for name, spec in additions.items()
+                 if name not in manifest['roots']}
         for logical, name in archives.items():
             session._id(logical, 'Archive ID')
             path = relative(name)
             if name in records or name in ('prompt.txt', 'profile.json', 'mode.json', 'backend.json'):
                 raise integrity.InfrastructureError('method archive overlaps protected records')
-            roots['participant_' + logical] = integrity.ProtectionRoot(path, 'agent_archive', readonly=True)
+            root_name = 'participant_' + logical
+            if root_name not in manifest['roots']:
+                roots[root_name] = integrity.ProtectionRoot(path, 'agent_archive', readonly=True)
         if roots:
-            integrity.register_roots(root / 'protection', roots)
+            for specification in roots.values():
+                with file_tree.open_directory(specification.path.parent, create=True):
+                    pass
+            integrity.register_roots(protection, roots)
+        if replacements:
+            integrity.commit_records(protection, replacements)
 
 
 class Logs:
@@ -179,7 +334,13 @@ def run(path):
     if not isinstance(metadata, dict) or set(metadata) - {'command', 'tool_version'}:
         raise methods.MethodError('invalid participant metadata', 'infrastructure_error')
     optimizer = {**experiment.optimizer, **metadata}
-    handle = session.create_session(experiment.case, optimizer, experiment.output, experiment.budget, mode=experiment.mode)
+    handle = session.create_session(experiment.case, optimizer, experiment.output, experiment.budget,
+        mode=experiment.mode, profile_strategy=method.get('profile_strategy'), initial_record_paths=(
+            'experiment.json', 'method.json', 'method_request.json', 'baseline.json',
+            'environment.json', 'prompt.txt', 'profile.json', 'mode.json', 'backend.json',
+            'agent/configuration.json', 'agent/session.json', 'method/README.md',
+            'method/knowledge.json', 'method/skills.json',
+            'method_collection.json', 'launcher_result.json'))
     root = handle.session_root
     record = session.read_session(root)
     environment = {**os.environ, 'PATH': str(common.BENCHMARK_ROOT) + os.pathsep + os.environ.get('PATH', ''),
@@ -200,16 +361,20 @@ def run(path):
     final = None
     code = None
     agent_record = None
+    integrity_report = None
     collection_ready = True
+    mode_source_changed = False
     with signals() as state:
         try:
-            save(root, 'experiment.json', experiment.to_dict())
-            save(root, 'method.json', method)
-            save(root, 'method_request.json', request)
-            save(root, 'baseline.json', session._read(record['sealed_dir'] + '/ref_performance.json'))
-            save(root, 'environment.json', provenance.collect_environment(root, experiment.case))
+            initial_records = {
+                'experiment.json': experiment.to_dict(),
+                'method.json': method,
+                'method_request.json': request,
+                'baseline.json': session._read(record['sealed_dir'] + '/ref_performance.json'),
+                'environment.json': provenance.collect_environment(root, experiment.case),
+            }
             prepared = methods.call(method, 'prepare', request, environment=environment)
-            retain_method_reply(root, prepared)
+            retain_method_reply(root, prepared, initial_records=initial_records)
             logs = Logs(root)
             process = methods.start(method, root / 'method_request.json', handle.initial_workspace, environment)
             save(root, 'optimizer_process.json', process.ptobench_identity)
@@ -240,7 +405,8 @@ def run(path):
             session.close_exploration(root, reason)
         except Exception as failure:
             error = getattr(failure, 'error_code', 'infrastructure_error')
-            reason = 'launcher_infrastructure_failure'
+            integrity_report = getattr(failure, 'report', None)
+            reason = 'modes_changed' if isinstance(failure, integrity.ModesChangedError) else 'launcher_infrastructure_failure'
         finally:
             # Order matters: prevent new actions, stop/reap Optimizer owners,
             # then stop separate evaluator groups before acquiring hardware lock.
@@ -265,9 +431,16 @@ def run(path):
                     # Restore protected entrypoint/tool code before collect executes
                     # in a fresh interpreter, including edits after the last action.
                     available_groups = {value['group'] for value in integrity._load(root / 'protection')['roots'].values()}
-                    integrity.check_and_restore(root / 'protection', {'fixed', 'agent_archive'} & available_groups)
+                    integrity_report = integrity.check_and_restore(
+                        root / 'protection', {'fixed', 'agent_archive'} & available_groups)
+                    mode_source_changed = bool(integrity_report.blocked_paths)
                     if error:
                         session.fail_session(root, reason)
+            except integrity.ModesChangedError as failure:
+                error = failure.error_code
+                integrity_report = failure.report
+                reason = 'modes_changed'
+                collection_ready = False
             except Exception:
                 error = 'infrastructure_error'
                 collection_ready = False
@@ -280,15 +453,24 @@ def run(path):
             try:
                 if not collection_ready:
                     raise integrity.InfrastructureError('method cleanup or source restoration failed')
-                collected = methods.call(method, 'collect', {**request, 'started': process is not None,
-                                                            'close_reason': reason}, environment=environment)
-                retain_method_reply(root, collected)
-                agent_record = collected.get('recording')
-                if agent_record is not None and (not isinstance(agent_record, dict)
-                                                or not isinstance(agent_record.get('status'), str)):
-                    raise integrity.InfrastructureError('invalid participant recording status')
-                save(root, 'method_collection.json', {'schema_version': 1, 'recording': agent_record,
-                     'record_paths': list(collected.get('records', {})), 'archives': collected.get('archives', {})})
+                if mode_source_changed:
+                    # A changed participant entrypoint is evidence, not a reason
+                    # to rewrite modes/ or to execute the changed code for collect.
+                    agent_record = {'status': 'unavailable_mode_source_changed'}
+                    save(root, 'method_collection.json', {
+                        'schema_version': 1, 'recording': agent_record,
+                        'record_paths': [], 'archives': {},
+                    })
+                else:
+                    collected = methods.call(method, 'collect', {**request, 'started': process is not None,
+                                                                'close_reason': reason}, environment=environment)
+                    retain_method_reply(root, collected)
+                    agent_record = collected.get('recording')
+                    if agent_record is not None and (not isinstance(agent_record, dict)
+                                                    or not isinstance(agent_record.get('status'), str)):
+                        raise integrity.InfrastructureError('invalid participant recording status')
+                    save(root, 'method_collection.json', {'schema_version': 1, 'recording': agent_record,
+                         'record_paths': list(collected.get('records', {})), 'archives': collected.get('archives', {})})
             except Exception:
                 error = 'infrastructure_error'
         if not error:
@@ -297,8 +479,14 @@ def run(path):
         if not error and agent_record and agent_record['status'] == 'missing':
             error = 'recording_incomplete'
         try:
+            record = session.read_session(root)
+            with session._session_lock(root):
+                events = session._events(root, record)
+            run_summary = _run_summary(root, record, events, reason)
             save(root, 'launcher_result.json', {'close_reason': reason, 'optimizer_exit_code': code,
                  'signal': state['received'], 'error_code': error, 'agent_recording': agent_record,
+                 'integrity_report': integrity.report_dict(integrity_report) if integrity_report else None,
+                 'run': run_summary,
                  'final_result': str(root / 'final_result.json') if final else None})
         except Exception:
             error = 'infrastructure_error'

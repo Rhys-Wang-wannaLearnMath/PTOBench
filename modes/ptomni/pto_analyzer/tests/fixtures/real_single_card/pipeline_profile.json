@@ -1,0 +1,372 @@
+{
+  "total_seconds": 0.699126,
+  "stages": [
+    {
+      "name": "passes",
+      "seconds": 0.387132,
+      "children": [
+        {
+          "name": "InlineFunctions",
+          "seconds": 0.00654,
+          "children": []
+        },
+        {
+          "name": "UnrollLoops",
+          "seconds": 0.002764,
+          "children": []
+        },
+        {
+          "name": "CtrlFlowTransform",
+          "seconds": 0.001961,
+          "children": []
+        },
+        {
+          "name": "ConvertToSSA",
+          "seconds": 0.00625,
+          "children": []
+        },
+        {
+          "name": "Simplify",
+          "seconds": 0.007862,
+          "children": []
+        },
+        {
+          "name": "NormalizeStmtStructure",
+          "seconds": 0.002633,
+          "children": []
+        },
+        {
+          "name": "FlattenCallExpr",
+          "seconds": 0.002712,
+          "children": []
+        },
+        {
+          "name": "OutlineHierarchyScopes",
+          "seconds": 0.002285,
+          "children": []
+        },
+        {
+          "name": "OutlineGraphScopes",
+          "seconds": 0.002301,
+          "children": []
+        },
+        {
+          "name": "OutlineIncoreScopes",
+          "seconds": 0.009854,
+          "children": []
+        },
+        {
+          "name": "OutlineClusterScopes",
+          "seconds": 0.004165,
+          "children": []
+        },
+        {
+          "name": "ConvertTensorToTileOps",
+          "seconds": 0.017143,
+          "children": []
+        },
+        {
+          "name": "OptimizeOrchTensors",
+          "seconds": 0.003251,
+          "children": []
+        },
+        {
+          "name": "LowerCompositeOps",
+          "seconds": 0.004098,
+          "children": []
+        },
+        {
+          "name": "FlattenTileNdTo2D",
+          "seconds": 0.009712,
+          "children": []
+        },
+        {
+          "name": "BlockNzTensorViews",
+          "seconds": 0.003595,
+          "children": []
+        },
+        {
+          "name": "BlockMxScaleTensorViews",
+          "seconds": 0.003698,
+          "children": []
+        },
+        {
+          "name": "LegalizeTileCast",
+          "seconds": 0.004094,
+          "children": []
+        },
+        {
+          "name": "AutoTileMatmulL0",
+          "seconds": 0.008399,
+          "children": []
+        },
+        {
+          "name": "CanonicalizeTileSlice",
+          "seconds": 0.003343,
+          "children": []
+        },
+        {
+          "name": "InferTileMemorySpace",
+          "seconds": 0.015719,
+          "children": []
+        },
+        {
+          "name": "InsertMxScaleAddr",
+          "seconds": 0.004018,
+          "children": []
+        },
+        {
+          "name": "ResolveBackendOpLayouts",
+          "seconds": 0.004501,
+          "children": []
+        },
+        {
+          "name": "LowerAutoVectorSplit",
+          "seconds": 0.003358,
+          "children": []
+        },
+        {
+          "name": "ExpandMixedKernel",
+          "seconds": 0.006174,
+          "children": []
+        },
+        {
+          "name": "InjectGMPipeBuffer",
+          "seconds": 0.003409,
+          "children": []
+        },
+        {
+          "name": "SplitVectorKernel",
+          "seconds": 0.00346,
+          "children": []
+        },
+        {
+          "name": "StampTfreeSplit",
+          "seconds": 0.004523,
+          "children": []
+        },
+        {
+          "name": "NormalizeReturnOrder",
+          "seconds": 0.004865,
+          "children": []
+        },
+        {
+          "name": "SkewCrossCorePipeline",
+          "seconds": 0.004372,
+          "children": []
+        },
+        {
+          "name": "LowerPipelineToSlots",
+          "seconds": 0.003129,
+          "children": []
+        },
+        {
+          "name": "LowerPipelineLoops",
+          "seconds": 0.007921,
+          "children": []
+        },
+        {
+          "name": "CanonicalizeIOOrder",
+          "seconds": 0.007442,
+          "children": []
+        },
+        {
+          "name": "MaterializeTensorStrides",
+          "seconds": 0.005269,
+          "children": []
+        },
+        {
+          "name": "InitMemRef",
+          "seconds": 0.014718,
+          "children": []
+        },
+        {
+          "name": "MaterializeSemanticAliases",
+          "seconds": 0.014471,
+          "children": []
+        },
+        {
+          "name": "MemoryReuse",
+          "seconds": 0.022815,
+          "children": []
+        },
+        {
+          "name": "AllocateMemoryAddr",
+          "seconds": 0.009297,
+          "children": []
+        },
+        {
+          "name": "FoldNoOpReshape",
+          "seconds": 0.00882,
+          "children": []
+        },
+        {
+          "name": "FuseCreateAssembleToSlice",
+          "seconds": 0.006624,
+          "children": []
+        },
+        {
+          "name": "LowerL2TensorCollectives",
+          "seconds": 0.006923,
+          "children": []
+        },
+        {
+          "name": "DeriveCallDirections",
+          "seconds": 0.01025,
+          "children": []
+        },
+        {
+          "name": "AutoDeriveTaskDependencies",
+          "seconds": 0.010281,
+          "children": []
+        },
+        {
+          "name": "ExpandManualPhaseFence",
+          "seconds": 0.006797,
+          "children": []
+        },
+        {
+          "name": "SynthesizeAllReduceSignals",
+          "seconds": 0.007203,
+          "children": []
+        },
+        {
+          "name": "MaterializeCommDomainScopes",
+          "seconds": 0.006489,
+          "children": []
+        },
+        {
+          "name": "LowerHostTensorCollectives",
+          "seconds": 0.006485,
+          "children": []
+        },
+        {
+          "name": "MaterializeDistTensorCtx",
+          "seconds": 0.006525,
+          "children": []
+        },
+        {
+          "name": "Simplify",
+          "seconds": 0.014455,
+          "children": []
+        },
+        {
+          "name": "LegalizeGraphBoundary",
+          "seconds": 0.00518,
+          "children": []
+        },
+        {
+          "name": "MaterializeRuntimeScopes",
+          "seconds": 0.005751,
+          "children": []
+        },
+        {
+          "name": "ClassifyIterArgCarry",
+          "seconds": 0.005463,
+          "children": []
+        },
+        {
+          "name": "InsertCommFence",
+          "seconds": 0.007492,
+          "children": []
+        },
+        {
+          "name": "MaterializeValidShapeSymbols",
+          "seconds": 0.005175,
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "codegen",
+      "seconds": 0.30951,
+      "children": [
+        {
+          "name": "kernel_codegen:kv_finalize",
+          "seconds": 0.287736,
+          "children": [
+            {
+              "name": "ir_to_mlir",
+              "seconds": 0.000631,
+              "children": []
+            },
+            {
+              "name": "ptoas",
+              "seconds": 0.280629,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "kernel_codegen:kv_score_proj",
+          "seconds": 0.304486,
+          "children": [
+            {
+              "name": "ir_to_mlir",
+              "seconds": 0.001852,
+              "children": []
+            },
+            {
+              "name": "ptoas",
+              "seconds": 0.297912,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "kernel_codegen:rmsnorm_rope",
+          "seconds": 0.29626,
+          "children": [
+            {
+              "name": "ir_to_mlir",
+              "seconds": 0.001785,
+              "children": []
+            },
+            {
+              "name": "ptoas",
+              "seconds": 0.291518,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "kernel_codegen:softmax_pool",
+          "seconds": 0.288928,
+          "children": [
+            {
+              "name": "ir_to_mlir",
+              "seconds": 0.001353,
+              "children": []
+            },
+            {
+              "name": "ptoas",
+              "seconds": 0.285705,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "kernel_codegen:state_scatter_pre",
+          "seconds": 0.2799,
+          "children": [
+            {
+              "name": "ir_to_mlir",
+              "seconds": 0.000514,
+              "children": []
+            },
+            {
+              "name": "ptoas",
+              "seconds": 0.277723,
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "orchestration_codegen",
+          "seconds": 0.002378,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

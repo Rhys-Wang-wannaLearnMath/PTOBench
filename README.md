@@ -29,7 +29,8 @@ Case、Evaluator、Session 和 Launcher 不依赖当前工作目录或固定的�
 认证设置见 [LAUNCHER.md](LAUNCHER.md)。
 
 当前主机的软件版本、依赖来源、工具链路径和已验证范围见
-[当前软件栈与运行环境](ENVIRONMENT.md)（2026-10-05 核实），完整版本记录见
+[当前软件栈与运行环境](ENVIRONMENT.md)，当前 `.venv-official` 的版本、固定来源和重建步骤见
+[复现说明](environments/venv-official.md)（2026-10-21 核实）；旧版本记录保留在
 [环境快照](environments/inventory/20261005.json)。
 
 ## 独立运行
@@ -52,7 +53,7 @@ python pto-launcher run examples/experiment.yaml
 
 示例默认使用 Codex；所选 Agent 工具须已安装并完成主机认证。公开源码和 Case
 随 Git 仓库分发，受保护资产单独配置。`PTOBench` 是项目/仓库名称，命令仍为
-`ptobench` 和 `pto-launcher`，例如 `ptobench evaluate`、`ptobench profile runtime`。
+`ptobench` 和 `pto-launcher`，例如 `ptobench evaluate`、`ptobench profile .`。
 
 v0.2 将一个 Case 分成公开资产和评测专用资产：
 
@@ -62,6 +63,13 @@ v0.2 将一个 Case 分成公开资产和评测专用资产：
 Case 资产按模型组织为 `cases/<model>/<case>/` 和
 `sealed_assets/<model>/<case>/`。历史 `models_0912.*`、`models_1001.*`
 Case ID 仍可使用，Evaluator 会将它们映射到新的模型目录；旧的时间前缀目录不再作为规范布局。
+
+全部当前 Case 的 Standalone／Composite 二分类以 [CASE_CLASSIFICATION.json](CASE_CLASSIFICATION.json)
+为准，逐项记录分类、理由和源码依据；分类与迁移、正确性认证状态独立。
+
+论文使用的 workload granularity 和 operator categories 以 [case_metadata.json](sealed_assets/case_metadata.json)
+为准：granularity 每个 Case 单选，operator categories 可多选；分类依据是初始 Case 源码，
+只作数据集标注，不参与评测执行。311 个正式 Case 均有记录，验证专用 Case 不在其中。
 
 每个公开 Case 使用三个简单文件划分职责：
 
@@ -86,9 +94,10 @@ Comparator 的上游对齐原则在集成到 pypto-lib 时见 `../mig_workflow/C
 `fixture_000`。Ref 在正式优化前生成一次输出和性能基线，Candidate 后续直接与
 缓存的 Ref 结果比较。
 
-Agent CLI 是 `ptobench`，提供 evaluate、profile runtime/pmu/compiler 和 fork。
-`evaluate` 始终使用 clean 模式；启用的三种 profile 只运行 Candidate，
-生成诊断信息，不检查输出正确性、不产生正式性能成绩。Agent profile 成功
+Agent CLI 是 `ptobench`，提供 evaluate、profile 和 fork。默认 `profile` 一次采集
+runtime、PMU 和 compiler 诊断；method 可显式配置为 split，分别调用 runtime、pmu、compiler。
+`evaluate` 始终使用 clean 模式；profile 只运行 Candidate，生成诊断信息，
+不检查输出正确性、不产生正式性能成绩。Agent profile 成功
 表示诊断执行成功，结果不含 `correctness` 字段；正确性以 `evaluate` 和最终
 fresh clean 为准。profile 不生成可供最终选择的 Snapshot。
 迁移验收使用的 maintenance Session 仍保留原有 profiling 正确性检查。
@@ -115,7 +124,7 @@ Session 创建和 fork 会在 Candidate workspace 中生成给 Agent 阅读的 `
 ├── reference.json
 ├── environment.json
 ├── starting_point/       # read-only initial Candidate snapshot
-└── profiling_modes.json   # 仅在至少开放一种 profiling mode 时存在
+└── tuning_capabilities.json # 当前 Case 的可调参数及范围
 ```
 
 这些是公开快照；`starting_point/` 保存本轮优化开始时的 Candidate，供对比和恢复使用，
@@ -129,13 +138,12 @@ Session 创建和 fork 会在 Candidate workspace 中生成给 Agent 阅读的 `
 
 ```bash
 ptobench evaluate [WORKSPACE]
-ptobench profile runtime [WORKSPACE]
-ptobench profile pmu [WORKSPACE]
-ptobench profile compiler [WORKSPACE]
+ptobench profile [WORKSPACE]
 ptobench fork [PARENT_WORKSPACE]
 ```
 
 方括号表示可选位置参数，默认 `.`。workspace 必须是该 Session 登记的根目录。
+若 method 显式设置 `profile_strategy: split`，profile 命令需带 `runtime`、`pmu` 或 `compiler`。
 缺少 Session 环境、未登记路径、旧 profile 名称或旧参数会明确失败；不会自动查找、
 创建 Session 或回退评测。旧 `bench` 和 `evaluator/bench.py` 已删除。
 
@@ -169,10 +177,8 @@ Agent 只修改 workspace 中的 Candidate 实现文件，并通过 CLI 获取�
 # clean 正确性与性能，固定一次 action
 ptobench evaluate .
 
-# 需要时运行已开放的诊断模式；这些结果不是正式成绩
-ptobench profile runtime .
-ptobench profile pmu .
-ptobench profile compiler .
+# 需要时一次采集三类诊断；结果不是正式成绩
+ptobench profile .
 ptobench fork .
 ```
 
@@ -191,9 +197,8 @@ pmu/compiler 仍分别使用内部 hardware/compile 产物目录。profile 无�
 Agent 将 CLI 当作外部评测工具，只读取当前 workspace 及其公开结果。
 PATH、hash 和只读权限不构成操作系统隔离。直接绕过管理路径调用内部脚本违反实验规则。
 
-Profiling 模式和新 workspace 的开放列表由 `evaluator/profile_modes.py` 配置。
-新建 context 只向 Agent 公开当前开放的模式；没有开放的模式不会出现在
-`.benchmark_context/README.md` 或 `.benchmark_context/profiling_modes.json` 中。Agent 不能通过 CLI
+Profiling 模式由 `evaluator/profile_modes.py` 配置，当前 Session 的可用命令写在
+workspace README 中。新建 workspace 不生成独立的 Profile 模式清单。Agent 不能通过 CLI
 修改固定的 RunConfig 参数。Profiling 下的耗时仅用于诊断；最终性能比较必须
 来自 clean 的 `ptobench evaluate`。Profiling 和 clean `evaluate` 使用同一个
 固定 Fixture；区别只在于 profiling 生成诊断产物，而 clean `evaluate` 生成正式

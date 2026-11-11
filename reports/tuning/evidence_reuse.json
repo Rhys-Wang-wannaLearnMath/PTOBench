@@ -1,0 +1,24 @@
+{
+  "reused_baselines": 311,
+  "reused_nondefault": [
+    {
+      "case_id": "deepseek_v4.prefill_qkv_proj_rope_v2_decode_demo",
+      "tuning": {
+        "memory_planner": "DSA_RP",
+        "analyze_auto_scopes_for_deps": false
+      },
+      "path": "runs/formal_cannbot_pi_20_20261012/formal_cannbot_pi_20_20261012_deepseek_v4.prefill_qkv_proj_rope_v2_decode_demo/deepseek_v4.prefill_qkv_proj_rope_v2_decode_demo/20261012T202110Z_d911987b0050/staging/action_000003/result.json"
+    },
+    {
+      "case_id": "deepseek_v4.prefill_qkv_proj_rope_v2_decode_demo",
+      "tuning": {
+        "memory_planner": "PYPTO",
+        "analyze_auto_scopes_for_deps": true
+      },
+      "path": "runs/formal_cannbot_pi_20_20261012/formal_cannbot_pi_20_20261012_deepseek_v4.prefill_qkv_proj_rope_v2_decode_demo/deepseek_v4.prefill_qkv_proj_rope_v2_decode_demo/20261012T202110Z_d911987b0050/staging/action_000004/result.json"
+    }
+  ],
+  "historical_nondefault_records_examined": 589,
+  "source_matched_records": 6,
+  "note": "Different optimized Candidate source does not certify the canonical Seed."
+}

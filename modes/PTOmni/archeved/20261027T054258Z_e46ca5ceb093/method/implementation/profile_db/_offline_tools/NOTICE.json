@@ -1,0 +1,56 @@
+{
+  "project": "Simpler",
+  "revision": "39ce891dbb3f665e72e99b4a1387b47012fb18bd",
+  "license": "CANN Open Software License Agreement Version 2.0",
+  "adaptation": "Import namespace only for complete offline modules; core_swimlane includes the unchanged pure _to_perfetto function only. Device collection/build entry points excluded.",
+  "files": {
+    "clock_correlation.py": {
+      "upstream_sha256": "aedecf9a711ff7c810338c4e02c60d55f525330249dd75a31bece2b48538d7b7",
+      "sha256": "aedecf9a711ff7c810338c4e02c60d55f525330249dd75a31bece2b48538d7b7"
+    },
+    "scheduler_phase_records.py": {
+      "upstream_sha256": "513d55b5654fc73bc0d84dd3321fcee234758360b517cbcdd02a64898a257b11",
+      "sha256": "513d55b5654fc73bc0d84dd3321fcee234758360b517cbcdd02a64898a257b11"
+    },
+    "swimlane_converter.py": {
+      "upstream_sha256": "b09d0f51a00ae8f1adef958d8ad78dd3057cd7c9045203d053ff395782962291",
+      "sha256": "bc63ced4e892dd8753ef689ea76f241b392ca5b83a363928fae06f3e20d51e01"
+    },
+    "critical_path.py": {
+      "upstream_sha256": "1af588c580f916ff87fc016c5361dc90d408973c1aa7a720a82783d2dd5b590f",
+      "sha256": "1af588c580f916ff87fc016c5361dc90d408973c1aa7a720a82783d2dd5b590f"
+    },
+    "deps_viewer.py": {
+      "upstream_sha256": "6f7bb558b6b0129941818912191102476eb2b514a57fa0f0b1c6b00a3ac89b64",
+      "sha256": "6f7bb558b6b0129941818912191102476eb2b514a57fa0f0b1c6b00a3ac89b64"
+    },
+    "sched_overhead_analysis.py": {
+      "upstream_sha256": "28d90a1a8719048b2775f5698fc0273e742ca746949829bf1756be5c473041b4",
+      "sha256": "82e4c1501bed4cf6e5244ab283155cbd36c51c79d8ac564c488175451e353eeb"
+    },
+    "strace_timing.py": {
+      "upstream_sha256": "1d5f51eacedb84b4d0df0eeb90cc2e9bf588cf3510ef172b9a46ea3cbe4cb696",
+      "sha256": "1d5f51eacedb84b4d0df0eeb90cc2e9bf588cf3510ef172b9a46ea3cbe4cb696"
+    },
+    "hbg_bind_phases.py": {
+      "upstream_sha256": "b5241c5c9b20aab4513a6512323bc95692ed14c5b36717864071bfea636f4dc7",
+      "sha256": "1bab8b2139622c93a16bf3a7ed16446a172656905c2270dedb41d6257b26c40a"
+    },
+    "phase_time_split.py": {
+      "upstream_sha256": "5743971e46517fe214eb862a5277413d9ec8f87c8cb9142541b63ab90dcc2f12",
+      "sha256": "db7036cfbdfbb7bd5fb8434f758f7c7f08a81dbbd9767c97b98ff689168a589a"
+    },
+    "scope_stats_plot.py": {
+      "upstream_sha256": "7be1b356ae7096817664cc0e6e3b37ebdaa6b66cba07b2d2b2e7ee8408ee26d9",
+      "sha256": "7be1b356ae7096817664cc0e6e3b37ebdaa6b66cba07b2d2b2e7ee8408ee26d9"
+    },
+    "dump_viewer.py": {
+      "upstream_sha256": "4c9095734caae137a9a5551dfed6dd342b58875ac09a8c355f76557e7cd37be8",
+      "sha256": "4c9095734caae137a9a5551dfed6dd342b58875ac09a8c355f76557e7cd37be8"
+    },
+    "core_swimlane.py": {
+      "upstream_sha256": "eb8d6c829f80fec698b5161a36f3b023553b87024fd6a0632bae39a1cbdf6fc9",
+      "sha256": "629b046691e24b692433b03475a6242628faad4f6109bf33c32cac7f54540995"
+    }
+  }
+}

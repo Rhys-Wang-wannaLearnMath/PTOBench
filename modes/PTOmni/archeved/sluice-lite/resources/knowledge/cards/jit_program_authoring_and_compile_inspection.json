@@ -1,0 +1,57 @@
+{
+  "applicability": [
+    "Writing a PyPTO entry point with `.incore`, `.inline`, `.opaque`, `.host`, or `.graph` sub-functions.",
+    "Inspecting pre-pass or post-pass IR, or checking that code generation succeeds before dispatch.",
+    "Replacing one PyPTO codegen kernel with a hand-written C++ source while keeping the orchestration call site."
+  ],
+  "directions": [
+    "Write a device kernel as `@pl.jit.incore` and call it by name from `@pl.jit`; use `@pl.jit.inline` only for a helper that should be duplicated at call sites.",
+    "Call `kernel.compile(*sample_args, config=RunConfig(...))` when validating codegen; use `lower(*sample_args)` when only lowered IR is needed.",
+    "Use signature-mode `compile()` without sample tensors when all tensor parameters are fully annotated; pass scalar literals to specialize or `pl.RUNTIME` to leave them dynamic.",
+    "Return device scalars through a `pl.Out[pl.Tensor[[1], pl.INT32]]` or similar tensor, then `pl.tensor.read(t, [0])`.",
+    "Use `@pl.function(type=pl.FunctionType.AIV, external_source='kernels/my_kernel.cpp')` with a body of `...` when handing one kernel to hand-written C++; relative paths resolve from the defining file."
+  ],
+  "domain": "programming",
+  "effects": [
+    "Inline helpers reduce call overhead and enable cross-function optimization but increase code size and can duplicate large bodies.",
+    "Opaque functions preserve a separate call boundary and clearer debugging; they may block cross-function simplification.",
+    "External C++ buys a tuned kernel or existing implementation but gives up PyPTO layout inference, memory planning, perf hints, and protection when surrounding IR changes."
+  ],
+  "evidence_status": "documented",
+  "id": "jit_program_authoring_and_compile_inspection",
+  "invariants": [
+    "`compile()` takes the kernel's own arguments; compile-time options belong in `config=RunConfig(...)`, not as stray keyword arguments.",
+    "`auto_scope=False` is accepted on `@pl.jit`, `@pl.jit.host`, and `@pl.jit.inline`; `.incore` and `.opaque` reject it because they outline into standalone kernels.",
+    "`external_source` is only valid on `FunctionType.AIC` or `FunctionType.AIV`, and the body must be signature-only.",
+    "A `pl.graph` region cannot nest inside another graph, `pl.at`, `pl.cluster`, or `pl.spmd`; those constructs describe one device task while a graph records a topology.",
+    "A device kernel cannot return a scalar. A `@pl.jit.inline` helper that computes a scalar at a call site is not a task and does not carry that restriction."
+  ],
+  "principle": "A decorator parses the function AST into `ir.Function` or `ir.Program`; the body never runs as ordinary Python. `@pl.jit` is the user-facing authoring surface. It specializes on argument shapes and dtypes, discovers `.incore`, `.inline`, `.opaque`, and `.graph` dependencies by name, and caches compiled programs. A plain `@pl.jit` entry does not discover another top-level `@pl.jit` entry; `@pl.jit.host` is the level that discovers chip orchestration across the host boundary. `@pl.jit.inline` is spliced at each call site and leaves no function. `@pl.jit.opaque` remains a separate IR function. `@pl.function` and `@pl.program` express the same IR explicitly and are primarily for tests or printed IR. Three inspection stages exist: `specialize()` returns the parsed pre-pass program; `lower()` runs the pass pipeline and returns post-pass IR but performs no code generation or ptoas; `compile()` returns a `CompiledProgram` with code generation and cache behavior. `@pl.jit` has no `as_python()` because the IR does not exist until specialization. `compile()` can also be called with no tensor samples when every tensor parameter has a full shape annotation; scalar parameters may be supplied as literals or left unspecialized with `pl.RUNTIME`. A device kernel cannot return a scalar: scalar values go into a kernel by value, and only tensors come back. Route a device-computed scalar through a `[1]` tensor and read it with `pl.tensor.read`. `pl.func_attr` declares function metadata as the first body statement because it may reference parameters; `auto_scope=` and `external_source=` stay on the decorator because they must be read before the body is parsed.",
+  "questions": [
+    "The exact acceptance of every `@pl.jit.graph` runtime mode depends on `RuntimeKind.HOST_BUILD_GRAPH` and was not exercised locally."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Using `lower()` as the only validation: it runs passes but no code generation, so a kernel can appear to pass and fail only under `compile()` or dispatch.",
+    "Passing a scalar return through a tuple or from inside a `pl.at` scope; it is still a kernel return and must travel through a tensor unless it depends only on orchestration-known values.",
+    "Expecting a second top-level `@pl.jit` entry to be pulled into a program; use `.incore`/`.opaque` or a `@pl.jit.host` entry.",
+    "Writing `@pl.function(attrs=...)` with a parameter reference; parameters do not exist when the decorator is evaluated. Use `pl.func_attr` in the body."
+  ],
+  "source_features": [
+    "ir.Function",
+    "ir.Program",
+    "@pl.jit",
+    ".incore",
+    ".inline",
+    ".opaque",
+    ".graph",
+    "@pl.jit.host",
+    "@pl.jit.inline",
+    "@pl.jit.opaque",
+    "@pl.function",
+    "@pl.program"
+  ],
+  "summary": "Decorators parse source rather than execute it. `@pl.jit` discovers device sub-functions, `@pl.function`/`@pl.program` spell the IR one-to-one, and `specialize`, `lower`, and `compile` stop at different stages, so only a full compile validates code generation.",
+  "title": "JIT Authoring, Specialization, and Compile Checks"
+}

@@ -1,0 +1,21 @@
+{
+  "card_ids": [
+    "cache_policy_and_l2_residency",
+    "cube_tile_sizing_and_memory_report",
+    "memory_address_allocation_and_cross_core_ring",
+    "memory_hierarchy_and_movement",
+    "memory_reuse_and_declared_allocations",
+    "runtime_scopes_and_heap_rings",
+    "scalar_access_and_concurrent_writes",
+    "scope_stats_and_ring_deadlocks",
+    "tile_slicing_valid_shape_padding"
+  ],
+  "id": "memory_pack",
+  "keywords": [
+    "memory",
+    "PyPTO",
+    "source optimization"
+  ],
+  "summary": "PyPTO source-level mechanisms, conditions, and risks for the memory domain.",
+  "title": "Memory source optimization knowledge"
+}

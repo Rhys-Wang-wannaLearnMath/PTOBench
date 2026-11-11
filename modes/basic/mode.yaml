@@ -3,3 +3,4 @@ id: basic
 implemented: true
 description: General coding agent with clean evaluation and profiling feedback.
 entrypoint: runner.py
+profile_strategy: combined

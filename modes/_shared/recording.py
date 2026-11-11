@@ -129,6 +129,12 @@ def _json_lines(path):
 
 def collect(root, profile, workspace, *, started, close_reason):
     backend = profile['backend']
+    stores = [root / 'agent/codex']
+    if root.parent.name == 'dispatches' and root.parent.parent.name == 'method':
+        stores.append(root.parents[2] / 'agent/codex')
+    store = next((p for p in stores if p.is_dir()), None)
+    if backend == 'codex' and store is not None:
+        profile = {**profile, 'env': {**profile.get('env', {}), 'CODEX_HOME': str(store)}}
     result = {'schema_version': 1, 'run_id': root.name, 'backend': backend,
               'close_reason': close_reason, 'native_session_ids': [], 'files': []}
     if backend not in ('codex', 'pi'):

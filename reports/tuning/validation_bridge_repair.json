@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "cause": "The isolation validation protocol omitted trusted auxiliary invariant comparators and did not serialize official TensorSpec output projections.",
+  "affected_case": "deepseek_v4.deepseek_v4_decode_compressor_ratio0",
+  "original_failure": "validation output names disagree with Case; no numerical comparison occurred",
+  "preserved_standards": [
+    "Public output allclose(rtol=0.001, atol=0.001)",
+    "kv_state and score_state torch.equal against trusted cached expected states",
+    "Golden tensors and comparator callbacks stay on trusted host",
+    "Compiled input/output directions and input reset membership preserved"
+  ],
+  "static_review": {
+    "cases": 311,
+    "entries_with_direct_output_annotations": 281,
+    "extra_abi_output_cases": 7,
+    "auxiliary_exact_state_cases": 1,
+    "official_output_projection_cases": 6,
+    "indirect_entries": 30,
+    "scope": "Static review is not hardware certification of untested Cases"
+  },
+  "official_projection_cases": [
+    "deepseek_v4_flash_dspark.prefill_csa_demo",
+    "deepseek_v4_flash_dspark.prefill_csa_flash",
+    "deepseek_v4_flash_dspark.prefill_csa_pro",
+    "deepseek_v4_flash_dspark.prefill_hca_demo",
+    "deepseek_v4_flash_dspark.prefill_hca_flash",
+    "deepseek_v4_flash_dspark.prefill_hca_pro"
+  ],
+  "regression_tests": {
+    "passed": 36,
+    "commands": [
+      "python -m unittest test_candidate_execution test_isolation.FilesystemBoundaryTests test_verify_tuning",
+      "python -m unittest test_workflow test_evaluate test_tuning"
+    ],
+    "logs": [
+      "runs/tuning_case_defaults/validation_bridge_tests.log",
+      "runs/tuning_case_defaults/workflow_regression_tests.log"
+    ],
+    "negative_checks": [
+      "small change to either invariant state",
+      "wrong public output",
+      "missing or unknown outputs",
+      "worker-supplied permissive comparator cannot override host"
+    ]
+  },
+  "hardware_retry": {
+    "status": "PASS",
+    "evidence": "runs/tuning_case_defaults/jobs/deepseek_v4.deepseek_v4_decode_compressor_ratio0/PYPTO_deps0",
+    "baseline_published": true,
+    "tuning": {
+      "memory_planner": "PYPTO",
+      "analyze_auto_scopes_for_deps": false,
+      "ring_task_window": 16384,
+      "aicpu_thread_num": 4
+    },
+    "samples_us": [
+      7.06,
+      6.121,
+      6.16,
+      5.2,
+      5.64,
+      5.1,
+      5.12,
+      5.939,
+      5.38,
+      5.54
+    ],
+    "median_us": 5.59
+  },
+  "archived_attempt": {
+    "case_id": "deepseek_v4.deepseek_v4_decode_compressor_ratio0",
+    "tuning": {
+      "memory_planner": "PYPTO",
+      "analyze_auto_scopes_for_deps": false,
+      "ring_task_window": 16384,
+      "aicpu_thread_num": 4
+    },
+    "identity": {
+      "source_sha256": "4b0334885ef1642a06ae4c45e16d9cf7d3bd15c37429627c1d61401b6aaf9c12",
+      "case_sha256": "ad45eeeca6c8e7f2d18b1e7e8b5bbebbd15495751e7f8b50221247d520388af6",
+      "config_sha256": "45cc1c566f98fe6b608f827040b9550fa8b8cd56114ee4d12e72a7361747430b",
+      "comparator_sha256": "a901aa9e6e8a88693a7842c649505c7bd27a958b2f78167f5374eda01703650b",
+      "environment_sha256": "12769f86e1ac3012fd9dea35d72fe9003bd1c163c81e00531e2fb72e11392bbe",
+      "tuning_policy_sha256": "8cd654a995d973889f0dcc2fea7a220aba490eefbceb730b6ba3fa41466c0bad"
+    },
+    "status": "FAIL",
+    "evidence": "runs/tuning_case_defaults/jobs/deepseek_v4.deepseek_v4_decode_compressor_ratio0/PYPTO_deps0.failed_validation_protocol",
+    "exit_code": 1,
+    "original_evidence": "runs/tuning_case_defaults/jobs/deepseek_v4.deepseek_v4_decode_compressor_ratio0/PYPTO_deps0",
+    "failure_class": "validation_protocol_output_names"
+  },
+  "changed_files_sha256": {
+    "evaluator/candidate_execution.py": "da2ad4bcd96ec2030d993a01a76b5dd7290a2b2cdb9efa457834881523be2628",
+    "evaluator/workflow.py": "10dbd71093cc5a411179fe4c258bb354172a0a85fb58a25466d6c2714eadc7d0",
+    "sealed_assets/deepseek_v4/deepseek_v4_decode_compressor_ratio0/evaluate.py": "1a9495f4c4aaf3355e151a28eb80334f68ba7fa483044374468b4099f855eeef",
+    "evaluator/tests/test_candidate_execution.py": "149ad2f614de2daaaa3371c00e88daea0f1007629a3ed1066236e21ee2fb626b"
+  }
+}

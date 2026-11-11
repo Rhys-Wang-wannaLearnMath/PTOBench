@@ -5,36 +5,397 @@
   "iterations": 10,
   "compiler_tuning": {
     "memory_planner": "PYPTO",
-    "analyze_auto_scopes_for_deps": false
+    "analyze_auto_scopes_for_deps": false,
+    "ring_task_window": 16384,
+    "aicpu_thread_num": 4
   },
   "fixtures": {
     "fixture_000": {
+      "execution_contract": {
+        "timing_policy": {
+          "version": "ptobench-execution-boundary-20261108-v3",
+          "input_upload": "outside_execution_window",
+          "initial_state_restore": "outside_execution_window",
+          "final_validation_readback": "outside_execution_window",
+          "required_execution_communication": "inside_execution_window"
+        },
+        "logical_workers": 1,
+        "rank_layout": "case-defined",
+        "fixture_input_identity_sha256": "5f4dea0a975bac9acdbae8373d0c14417decb0f0ae1245fb2530f71d182e538f",
+        "initial_state_names": [
+          "quant_k_cache",
+          "quant_k_scales",
+          "quant_v_cache",
+          "quant_v_scales"
+        ],
+        "restore_before_each_launch": true,
+        "tensors": [
+          {
+            "name": "hidden_states",
+            "shape": [
+              16,
+              5120
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "input_rms_weight",
+            "shape": [
+              1,
+              5120
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wq",
+            "shape": [
+              5120,
+              5120
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wk",
+            "shape": [
+              5120,
+              1024
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wv",
+            "shape": [
+              5120,
+              1024
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "q_norm_weight",
+            "shape": [
+              1,
+              128
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "k_norm_weight",
+            "shape": [
+              1,
+              128
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "seq_lens",
+            "shape": [
+              16
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "block_table",
+            "shape": [
+              16
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "slot_mapping",
+            "shape": [
+              16
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "rope_cos",
+            "shape": [
+              127,
+              128
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "rope_sin",
+            "shape": [
+              127,
+              128
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "quant_k_cache",
+            "shape": [
+              16384,
+              64
+            ],
+            "dtype": "torch.uint8",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "quant_v_cache",
+            "shape": [
+              16384,
+              64
+            ],
+            "dtype": "torch.uint8",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "quant_k_scales",
+            "shape": [
+              16384,
+              1
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "quant_v_scales",
+            "shape": [
+              16384,
+              1
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "rot_matrices",
+            "shape": [
+              128,
+              128
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "tq_codebook",
+            "shape": [
+              1,
+              16
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "wo",
+            "shape": [
+              5120,
+              5120
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "post_rms_weight",
+            "shape": [
+              1,
+              5120
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "w_gate",
+            "shape": [
+              5120,
+              17408
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "w_up",
+            "shape": [
+              5120,
+              17408
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "w_down",
+            "shape": [
+              17408,
+              5120
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "final_norm_weight",
+            "shape": [
+              1,
+              5120
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "lm_head_weight",
+            "shape": [
+              152064,
+              5120
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "out",
+            "shape": [
+              16,
+              152064
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "out"
+          }
+        ],
+        "sha256": "074bc4bf02bddaff8823be4da058d4c2036aa1de5c1bb35440a8847a1893af14"
+      },
       "raw_samples_effective_us": [
-        7631.26,
-        7621.539,
-        7607.499,
-        7587.2,
-        7673.16,
-        7543.46,
-        7615.98,
-        7603.36,
-        7530.459,
-        7522.019
+        7681.96,
+        7637.439,
+        7577.76,
+        7690.96,
+        7639.099,
+        7514.0,
+        7635.84,
+        7651.06,
+        7659.2,
+        7516.32
       ],
       "samples_effective_us": [
-        7631.26,
-        7621.539,
-        7607.499,
-        7587.2,
-        7673.16,
-        7543.46,
-        7615.98,
-        7603.36,
-        7530.459,
-        7522.019
+        7681.96,
+        7637.439,
+        7577.76,
+        7690.96,
+        7639.099,
+        7514.0,
+        7635.84,
+        7651.06,
+        7659.2,
+        7516.32
       ],
-      "median_effective_us": 7605.4295,
-      "mean_effective_us": 7593.5936
+      "median_effective_us": 7638.269,
+      "mean_effective_us": 7620.363800000001
+    }
+  },
+  "timing_policy": {
+    "version": "ptobench-execution-boundary-20261108-v3",
+    "input_upload": "outside_execution_window",
+    "initial_state_restore": "outside_execution_window",
+    "final_validation_readback": "outside_execution_window",
+    "required_execution_communication": "inside_execution_window"
+  },
+  "tuning_identity": {
+    "source_sha256": "7f45a2280baeb195cfd15088ca4243c07a06f01fcd5859f9cef35c4eda874daa",
+    "case_sha256": "82f87dfe56340e00cbcb99849de66572691c66b4912184f93bb3fee8f6a7c2e5",
+    "config_sha256": "e9206939ab9a04538f69f901e0a4607379db1b5f532383649a5fb8e8e7dd2731",
+    "comparator_sha256": "e4a10e3247cf08125b8c4a6e24ef9038b927befd00263037a10907e187a2eb1a",
+    "environment_sha256": "12769f86e1ac3012fd9dea35d72fe9003bd1c163c81e00531e2fb72e11392bbe",
+    "tuning_policy_sha256": "9f104fcb2209ee2233534cdf50a4ec48b545e5ed9da64be2caa2a371299658e2"
+  },
+  "tuning_evidence": "runs/all_case_boundary_repair_20261108/case_results/qwen3_14b__qwen3_14b_decode_tq_single_layer.json",
+  "resolved_tuning": {
+    "requested": {
+      "memory_planner": "PYPTO",
+      "analyze_auto_scopes_for_deps": false,
+      "ring_task_window": 16384,
+      "aicpu_thread_num": 4
+    },
+    "resolved_run_config": {
+      "memory_planner": "PYPTO",
+      "analyze_auto_scopes_for_deps": false,
+      "strategy": "Default",
+      "ring_task_window": 16384,
+      "ring_heap": null,
+      "ring_dep_pool": null,
+      "aicpu_thread_num": 4
+    },
+    "unresolved_runtime_defaults": [
+      "ring_heap",
+      "ring_dep_pool"
+    ],
+    "diagnostics": {
+      "dump_passes": false,
+      "dump_ptoas_passes": false,
+      "compile_profiling": false,
+      "enable_pmu": 0,
+      "enable_chip_swimlane": 0,
+      "enable_dep_gen": false,
+      "enable_scope_stats": false,
+      "enable_dump_args": 0
+    }
+  },
+  "resolved_tuning_by_fixture": {
+    "fixture_000": {
+      "requested": {
+        "memory_planner": "PYPTO",
+        "analyze_auto_scopes_for_deps": false,
+        "ring_task_window": 16384,
+        "aicpu_thread_num": 4
+      },
+      "resolved_run_config": {
+        "memory_planner": "PYPTO",
+        "analyze_auto_scopes_for_deps": false,
+        "strategy": "Default",
+        "ring_task_window": 16384,
+        "ring_heap": null,
+        "ring_dep_pool": null,
+        "aicpu_thread_num": 4
+      },
+      "unresolved_runtime_defaults": [
+        "ring_heap",
+        "ring_dep_pool"
+      ],
+      "diagnostics": {
+        "dump_passes": false,
+        "dump_ptoas_passes": false,
+        "compile_profiling": false,
+        "enable_pmu": 0,
+        "enable_chip_swimlane": 0,
+        "enable_dep_gen": false,
+        "enable_scope_stats": false,
+        "enable_dump_args": 0
+      }
     }
   }
 }

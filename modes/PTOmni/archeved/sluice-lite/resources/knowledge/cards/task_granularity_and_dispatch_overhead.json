@@ -1,0 +1,45 @@
+{
+  "applicability": [
+    "A swimlane shows narrow bars, wide gaps, and a busy AICPU.",
+    "A kernel does a small fixed amount of work per task or repeatedly pays a GM round-trip between adjacent tasks.",
+    "A merged kernel has become so large that most of the device's cores sit idle."
+  ],
+  "directions": [
+    "Increase a tile from `[64, 128]` to `[128, 128]` when the same rows are processed in separate small dispatches.",
+    "Move an outer `pl.range`/`pl.parallel` loop's iteration chunk inside the `pl.at` as an inner `pl.range` so one kernel processes several chunks.",
+    "Merge adjacent `with pl.at(...):` blocks, or merge a cube and vector phase into one `pl.at` with `optimizations=[pl.split(...)]` when their buffers can fit.",
+    "Use `pl.spmd(n)` for a wide fan-out that should remain one schedule entry."
+  ],
+  "domain": "scheduling",
+  "effects": [
+    "Larger tasks reduce per-task overhead and often improve MTE efficiency, but can underfill the machine and increase buffer pressure.",
+    "A loop inside an InCore kernel is a dispatch win but a cross-core parallelism loss unless the body is itself pipelined or fanned out.",
+    "Merging through an on-chip intermediate removes GM traffic but increases liveness and register/buffer pressure."
+  ],
+  "evidence_status": "documented",
+  "id": "task_granularity_and_dispatch_overhead",
+  "invariants": [
+    "A merged task keeps every intermediate live at once, increasing on-chip pressure.",
+    "An inner `pl.range` serializes chunks within one core; if the chunks were independent and cores are free, this trades parallelism for fewer dispatches.",
+    "A larger tile grows the on-chip footprint quadratically in a 2D tile and may force the allocator to drop a pipeline stage or fail.",
+    "A mixed cube+vector merge needs a split mode; co-location alone is not sufficient."
+  ],
+  "principle": "A task is one kernel dispatch. Its cost includes resolving dependencies, placing it on a compatible core, writing a dispatch descriptor, and observing completion. When tasks are very small, this administration can dominate the makespan and cores can sit idle even while ready work exists. The first remedy is to make each task larger: raise the tile shape so one task covers more elements. The second is to move a chunking loop inside the InCore region so one dispatch processes several chunks. The third is to merge adjacent `pl.at` regions so an intermediate stays on chip instead of round-tripping through GM. A mixed Cube+Vector merge is a special case: putting `pl.matmul` and its vector epilogue in one `pl.at` removes a hand-off, but a cross-engine merge needs a split mode; without one, the buffers may not fit and the compiler refuses the scope. Granularity is not monotone. If merging drops the task count below the number of usable cores, the bottleneck moves from dispatch to parallelism. SPMD changes the price of describing a fan-out, not the amount of work per block, so it does not remove this tradeoff.",
+  "questions": [
+    "The per-task overhead and the best task size are workload- and device-dependent; the corpus establishes the direction, not a universal threshold."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Assuming a merge across Cube and Vector is just one `pl.at`; without a split mode, buffers may not fit and the compiler rejects it.",
+    "Using `pl.unroll` around a `pl.at` and expecting one kernel; each unrolled iteration emits its own region and dispatch.",
+    "Merging until nearly all cores are idle, then diagnosing the resulting empty swimlane as a dependency problem.",
+    "Comparing a source-level merge without confirming that the intermediate GM traffic disappeared from the generated kernel."
+  ],
+  "source_features": [
+    "pl.at",
+    "pl.matmul"
+  ],
+  "summary": "Every `pl.at` block is a task, and each task pays dependency resolution, placement, descriptor, and completion costs. Grow tasks when the AICPU is saturated and dispatch gaps dominate; split or fan out when wide tasks leave cores empty.",
+  "title": "Task Granularity and the Cost of Too Many or Too Few Dispatches"
+}

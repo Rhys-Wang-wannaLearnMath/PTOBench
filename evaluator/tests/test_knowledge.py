@@ -31,17 +31,6 @@ class KnowledgeTests(unittest.TestCase):
         (mode / 'knowledge/knowledge.lock.json').write_text(json.dumps(knowledge.describe(snapshot)))
         return mode, snapshot
 
-    def test_both_packaged_modes_provide_the_same_pinned_original_corpus(self):
-        basic = knowledge.validate(BENCHMARK / 'modes/basic')
-        cannbot = knowledge.validate(BENCHMARK / 'modes/cannbot')
-        self.assertEqual(basic, cannbot)
-        self.assertEqual(basic, knowledge.describe(BENCHMARK.parents[1] / 'pto_wiki/raw_wiki'))
-        for mode in ('basic', 'cannbot'):
-            root = BENCHMARK / 'modes' / mode / 'knowledge/raw_wiki'
-            for path in [root, *root.rglob('*')]:
-                self.assertFalse(path.is_symlink())
-                self.assertEqual(path.stat().st_mode & 0o222, 0)
-
     def test_session_copies_are_independent_readonly_and_recoverable(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

@@ -1,0 +1,58 @@
+{
+  "applicability": [
+    "The build reports a Mat, Acc, or Vec buffer overflow after reuse.",
+    "A cross-core mixed kernel reserves a pipe buffer whose slot depth is the real capacity consumer.",
+    "A hand-authored `pl.MemRef` must be isolated from all other allocations.",
+    "Choosing between deterministic PYPTO placement and capacity-aware DSA-RP placement."
+  ],
+  "directions": [
+    "For deterministic default placement, use `MemoryPlanner.PYPTO` and inspect `memory_after_AllocateMemoryAddr.txt` when the default planner produces it; under PTOAS, compare exact compile candidate program instead.",
+    "For opt-in capacity-aware placement, compile with the documented `memory_planner=passes.MemoryPlanner.DSA_RP` option.",
+    "Use `pl.reserve_buffer(name='pipe', size=..., base=AUTO)` or the default `base=-1` to let the compiler pick a non-conflicting address, and `pl.import_peer_buffer(name=..., peer_func=...)` to share it.",
+    "When a cross-core reserve ring overflows Mat or Vec, reduce `pl.cross_core_slot(slot_num=N)` or shrink the tile that crosses the boundary.",
+    "Keep hand-authored reserve-buffer names distinct from generated pipe-buffer names; the capacity diagnostic only points to `pl.cross_core_slot` for an exact generated pipe name."
+  ],
+  "domain": "memory",
+  "effects": [
+    "PYPTO is deterministic and simple; DSA_RP can find a better capacity-fitting placement but is slower and depends on compatible ptoas synchronization.",
+    "A deeper cross-core ring lets the producer run ahead but consumes capacity in the consumer.",
+    "`reserve_buffer` makes a cross-core handoff explicit but hides its bytes from ordinary per-tile inspection."
+  ],
+  "evidence_status": "documented",
+  "id": "memory_address_allocation_and_cross_core_ring",
+  "invariants": [
+    "PYPTO addresses are 32-byte aligned and deterministic by name order; views share their parent slot and keep relative offsets.",
+    "DSA_RP has a worst-case quadratic graph construction in the number of reusable buffers; it is opt-in and may emit `PH-DSA-001`.",
+    "PTOAS skips `AllocateMemoryAddr`; a memory map that depends on assigned addresses has nothing to draw.",
+    "The cross-core reserve ring lives in the consuming core's space; a Vec overflow in a function whose reserve is in Mat does not get the same remediation note.",
+    "A hand-authored buffer named like a generated pipe ring is not resizable by `pl.cross_core_slot`."
+  ],
+  "principle": "Under `MemoryPlanner.PYPTO`, `AllocateMemoryAddr` collects unique MemRefs and assigns each memory space its own address range starting from zero unless a reserve buffer already reserved a leading window. Addresses are 32-byte aligned, MemRefs are sorted by name for determinism, and DDR is skipped. View MemRefs that share a base pointer are co-located in one slot sized by the largest member; each view keeps its relative byte offset, so a reshape of a slice that does not emit a subview still reads the correct offset. Under `MemoryPlanner.DSA_RP`, the pass builds an in-memory problem with hard lifetime interference, reserved ranges, semantic no-alias, target hazards, requested pipeline-stage separation, and hard arena capacity. Author-declared MemRefs are hard-separated. Soft unit-weight pairs model recognized cross-pipe WAR/WAW handoffs to discourage costly physical reuse. Canonical greedy tries offset zero, reserved-range ends, and aligned tops of placed neighbors, chooses the lowest incremental penalty and then the lowest address, and validates every placement. Pipeline intent is strict-then-soft: solve with all requested separations hard; if no fitting placement is found, relax only pipeline-intent pairs, add unit penalties, and solve again; if the relaxed placement overlaps a pair, emit `PH-DSA-001`. A no-fit result is a bounded-search failure, not an infeasibility certificate. DSA_RP depends on ptoas InsertSync recognizing physical range overlap across allocation roots; older ptoas releases are incompatible. `MemoryPlanner.PTOAS` skips address allocation and leaves placement to ptoas. `system.reserve_buffer(base=AUTO)` reserves a named leading window and is resolved to an explicit base; its bytes are counted in the high-water mark but are not a MemRef and are invisible in per-tile accounting. The cross-core pipe ring is `slot_size * slot_num` bytes in the consuming core's memory: Mat/L1 for V2C (`pl.aic_gather`), Vec/UB for C2V (`pl.aiv_shard`). `slot_size` is the full tile the consumer pops, and `slot_num` defaults to 2. Lower the depth with `optimizations=[pl.cross_core_slot(slot_num=N)]` on the enclosing `pl.at(...)` or shrink the crossing tile. The ring depth is not auto-capped because that would turn a loud capacity error into a quiet throughput regression.",
+  "questions": [
+    "Whether ptoas 0.60 in the local toolchain includes the cross-root physical-overlap analysis that DSA_RP requires was not tested."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Reading a generic Mat overflow without noticing that most of it is reserved by a cross-core pipe floor.",
+    "Assuming `memory_planner=PTOAS` still produces assigned addresses and a drawable memory map.",
+    "Using an old ptoas whose InsertSync compares allocation-root identity rather than physical range with DSA_RP placements.",
+    "Believing a bounded DSA-RP no-fit result proves mathematical infeasibility."
+  ],
+  "source_features": [
+    "MemoryPlanner.PYPTO",
+    "AllocateMemoryAddr",
+    "MemoryPlanner.DSA_RP",
+    "PH-DSA-001",
+    "MemoryPlanner.PTOAS",
+    "system.reserve_buffer(base=AUTO)",
+    "slot_size * slot_num",
+    "pl.aic_gather",
+    "pl.aiv_shard",
+    "slot_size",
+    "slot_num",
+    "optimizations=[pl.cross_core_slot(slot_num=N)]"
+  ],
+  "summary": "`AllocateMemoryAddr` gives concrete addresses to non-DDR MemRefs. PYPTO uses deterministic 32-byte-aligned sequential allocation per space; DSA_RP solves capacity-constrained placement with reuse penalties; PTOAS skips the pass. `pl.reserve_buffer` and cross-core pipe rings can dominate an overflow.",
+  "title": "Address Allocation, DSA-RP, and Cross-Core Reserve Buffers"
+}

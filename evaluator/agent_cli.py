@@ -43,8 +43,11 @@ def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
     root = os.environ.get('PTOBENCH_SESSION_ROOT')
     try:
-        enabled_profiles = (session.read_session(root)['profiling_modes'] if root
+        session_record = session.read_session(root) if root else None
+        enabled_profiles = (session_record['profiling_modes'] if session_record
                             else list(profile_modes.public_enabled_modes()))
+        profile_strategy = (session_record.get('profile_strategy', profile_modes.DEFAULT_PROFILE_STRATEGY)
+                            if session_record else profile_modes.DEFAULT_PROFILE_STRATEGY)
     except Exception as error:
         _emit_result(session_actions._error_result(error))
         return session_actions._error_result(error).exit_code
@@ -56,11 +59,20 @@ def main(argv=None):
     evaluate.add_argument('workspace', nargs='?', default='.', help='Registered workspace root (default: current directory).')
     if enabled_profiles:
         profile = commands.add_parser('profile', allow_abbrev=False,
-                                      help='Collect runtime, PMU or compiler diagnostics.',
-                                      description='Collect diagnostics without output correctness checking; use evaluate to validate. Costs one exploration action.')
-        profile.add_argument('mode', choices=enabled_profiles,
-                             help='runtime: scheduling/dependencies; pmu: hardware counters; compiler: compiler/IR diagnostics.')
-        profile.add_argument('workspace', nargs='?', default='.', help='Registered workspace root (default: current directory).')
+                                      help=('Collect combined runtime, PMU and compiler diagnostics.'
+                                            if profile_strategy == 'combined'
+                                            else 'Collect runtime, PMU or compiler diagnostics.'),
+                                      description=(('Collect combined runtime, PMU and compiler diagnostics. '
+                                                    if profile_strategy == 'combined' else 'Collect diagnostics. ')
+                                                   + 'Profile does not check output correctness; '
+                                                   'use `ptobench evaluate` to check correctness and clean latency. '
+                                                   'Costs one exploration action.'))
+        if profile_strategy == 'combined':
+            profile.add_argument('workspace', nargs='?', default='.', help='Registered workspace root (default: current directory).')
+        else:
+            profile.add_argument('mode', choices=enabled_profiles,
+                                 help='runtime: scheduling/dependencies; pmu: hardware counters; compiler: compiler/IR diagnostics.')
+            profile.add_argument('workspace', nargs='?', default='.', help='Registered workspace root (default: current directory).')
     fork = commands.add_parser('fork', allow_abbrev=False, help='Copy source into a new registered workspace.',
                                description='Copy source into a new registered workspace and return its path; costs no hardware action.')
     fork.add_argument('workspace', nargs='?', default='.', help='Registered parent workspace root (default: current directory).')
@@ -77,7 +89,10 @@ def main(argv=None):
         if args.action == 'evaluate':
             result = session_actions.run_evaluate(root, args.workspace)
         elif args.action == 'profile':
-            result = session_actions.run_profile(root, args.workspace, args.mode)
+            result = session_actions.run_profile(
+                root, args.workspace,
+                'combined' if profile_strategy == 'combined' else args.mode,
+            )
         else:
             result = session_actions.fork_workspace(root, args.workspace)
     try:

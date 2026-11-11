@@ -1,0 +1,53 @@
+{
+  "applicability": [
+    "A critical path contains many short tasks and dispatch-to-start gaps dominate.",
+    "A consumer is structurally eligible for pre-staging and has idle compatible cores.",
+    "A non-critical sibling is consuming a speculative window that a critical-path task needs."
+  ],
+  "directions": [
+    "Add `allow_early_resolve=True` to every direct producer of a critical-path consumer, for example `with pl.spmd(token_tiles, name_hint='rms_norm', allow_early_resolve=True) as rms_tid:`.",
+    "Flag a whole producer chain when a downstream consumer depends on several short stages.",
+    "When a non-critical sibling consumes the window, add an unflagged `pl.system.task_dummy(deps=[])` predecessor to the sibling only, making it structurally ineligible.",
+    "Use `pl.system.task_dummy(deps=[producer_tid])` to delay a non-critical consumer by one hop when it resolves at the same instant as the critical one."
+  ],
+  "domain": "scheduling",
+  "effects": [
+    "Pre-staging hides pickup latency but occupies an idle core with a gated payload that may wait.",
+    "Flagging a chain improves the chance that all producers are ready but increases speculative occupancy and can crowd normal work.",
+    "Evicting a sibling with a dummy protects a critical task's window but costs a dispatch and may reduce throughput elsewhere."
+  ],
+  "evidence_status": "documented",
+  "id": "speculative_early_dispatch",
+  "invariants": [
+    "All direct producers must be flagged or already complete; one unflagged producer disables the opportunity.",
+    "A producer must be fully published before eligibility propagates; partial publication is a deadlock guard.",
+    "Normal work strictly outranks early work; there may be no early window under saturation.",
+    "`pl.system.task_dummy` cannot itself carry `allow_early_resolve`.",
+    "Predicated tasks never early-dispatch; `sync_start` cohorts need atomic capacity."
+  ],
+  "principle": "The scheduler may pre-stage a not-yet-released task onto an idle core in a gated state. When its producers finish, a doorbell releases the already-staged payload, so pickup latency is removed from the critical path. The hint is producer-side and is accepted by `pl.at`, `pl.spmd`, `pl.submit`, and `pl.spmd_submit`. It is pure scheduling and does not affect results. Four conditions decide whether it does anything. First, every direct producer of the consumer must be flagged or already complete; flagging one producer of a three-producer consumer buys nothing. Second, a producer propagates eligibility only once it is fully published, meaning all its logical blocks have been published; this prevents a wave-dispatched SPMD producer from stranding later blocks. Third, normal work outranks early work, and the early lane is serviced only when normal lanes are empty; a saturated engine has no window to win. Fourth, a predicated task never early-dispatches, and a `sync_start` cohort needs all-or-nothing capacity, so it cannot itself be pre-staged block by block, though flagging it still lets its consumers pre-stage. `deps.json::tasks[].early_dispatch` records only that the task carries the producer-side flag; it is not proof that staging happened. Proof requires both structural eligibility and a temporal check: the block's dispatch time must precede the maximum producer finish time by more than a small clock tolerance. An SPMD task may satisfy this on some physical rows and not others, so report `full N/N`, `partial N/M`, or `none`, not a bare yes.",
+  "questions": [
+    "Whether early dispatch is effective on the local 910B4 geometry for a specific short-task chain; this is a runtime scheduling question, not established by API presence."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Treating `deps.json::early_dispatch=true` as proof of actual staging.",
+    "Flagging one producer and expecting a multi-producer consumer to pre-stage.",
+    "Adding the eviction dummy to the shared producer or to the protected task, rather than to the non-critical sibling.",
+    "Judging the change only from a level-4 capture with observer overhead instead of an unprofiled benchmark."
+  ],
+  "source_features": [
+    "pl.at",
+    "pl.spmd",
+    "pl.submit",
+    "pl.spmd_submit",
+    "sync_start",
+    "deps.json::tasks[].early_dispatch",
+    "full N/N",
+    "partial N/M",
+    "none"
+  ],
+  "summary": "`allow_early_resolve=True` lets the scheduler pre-stage a consumer onto an idle core before its producer finishes, then release it with a doorbell. It works only when every direct producer is flagged or complete and the producer is fully published; it changes timing, not results.",
+  "title": "Speculative Early Dispatch and Producer-Side Flags"
+}

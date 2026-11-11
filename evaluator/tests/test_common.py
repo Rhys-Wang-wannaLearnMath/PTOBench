@@ -13,6 +13,7 @@ import torch
 
 
 EVALUATOR_DIR = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(EVALUATOR_DIR))
 SPEC = importlib.util.spec_from_file_location("bench_common_test", EVALUATOR_DIR / "common.py")
 assert SPEC is not None and SPEC.loader is not None
 common = importlib.util.module_from_spec(SPEC)
@@ -44,6 +45,22 @@ class TuningContractTest(unittest.TestCase):
                     (workspace / "tuning.json").write_text(payload, encoding="utf-8")
                     with self.assertRaisesRegex(ValueError, message):
                         common.read_tuning(workspace)
+
+
+class CandidateLayoutTest(unittest.TestCase):
+    def test_candidate_entry_and_helpers_load_from_candidate_subdirectory(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            candidate = root / "workspace/candidate"
+            candidate.mkdir(parents=True)
+            (candidate / "candidate.py").write_text("from helper import VALUE\nfrom new_helper import NEW_VALUE\n")
+            (candidate / "helper.py").write_text("VALUE = 42\n")
+            (candidate / "new_helper.py").write_text("NEW_VALUE = 40\n")
+            module = common.load_candidate(
+                root / "case", {"module": "candidate.py"}, root / "workspace", "candidate_layout_test",
+            )
+            self.assertEqual(module.VALUE, 42)
+            self.assertEqual(module.NEW_VALUE, 40)
 
 
 class RoleLoadingTest(unittest.TestCase):

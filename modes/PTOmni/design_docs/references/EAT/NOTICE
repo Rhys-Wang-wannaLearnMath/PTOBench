@@ -1,0 +1,5 @@
+EAT: Evolving Agent Teams
+Copyright 2026 the EAT authors
+
+Third-party code is part of the tasks, not the harness; each task in the EAT Gym
+(https://huggingface.co/datasets/eva98/eat-gym) lists it in its own NOTICE.

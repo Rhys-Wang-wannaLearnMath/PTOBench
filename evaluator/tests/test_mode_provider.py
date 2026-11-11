@@ -15,6 +15,7 @@ import integrity
 
 sys.path.insert(0, str(SOURCE_BENCHMARK))
 from modes._shared import provider, recording, provenance
+from modes._shared.config import load_profile, ConfigError
 
 
 ENV = '''LLM_PROVIDER=test-provider
@@ -90,14 +91,123 @@ class ProviderTests(unittest.TestCase):
             profile = provider.configure(self.profile, self.mode)
             self.assertEqual(provider.credentials(profile)['PYPTO_PROVIDER_API_KEY'], 'inherited-test-key')
 
+    def test_mode_env_model_and_reasoning_override_profile(self):
+        selected = {**self.profile, 'model': 'profile-provider/selected-model', 'reasoning': 'max',
+                    'argv': ['pi', '--print', '--provider', 'profile-provider',
+                             '--model', 'selected-model', '{prompt}']}
+        profile = provider.configure(selected, self.mode)
+        self.assertEqual(profile['model'], 'test-provider/test-model')
+        self.assertEqual(recording.option(profile['argv'], '--model'), 'test-model')
+        self.assertEqual(recording.option(profile['argv'], '--thinking'), 'high')
+        self.assertEqual(profile['mode_provider']['base_url'], 'http://127.0.0.1:8765/v1')
+        self.assertEqual(provider.credentials(profile)['PYPTO_PROVIDER_API_KEY'], 'local-provider-test-key')
+        self.assertEqual(set(provider.credentials(profile)), {'PYPTO_PROVIDER_API_KEY'})
+        prepared = provider.prepare(profile, self.root / 'selected-run')
+        directory = Path(prepared['env']['PI_CODING_AGENT_DIR'])
+        settings = json.loads((directory / 'settings.json').read_text())
+        self.assertEqual(settings['defaultModel'], 'test-model')
+        self.assertEqual(settings['defaultThinkingLevel'], 'high')
+        self.assertNotIn('local-provider-test-key', json.dumps(profile))
+        self.assertNotIn('local-provider-test-key', (directory / 'models.json').read_text())
+        self.assertIn('LLM_MODEL=test-model', (self.mode / '.env').read_text())
+
+    def test_mode_env_requires_a_model(self):
+        (self.mode / '.env').write_text(ENV.replace('LLM_MODEL=test-model\n', ''))
+        selected = {**self.profile, 'model': 'profile-provider/another-model', 'reasoning': 'max',
+                    'argv': ['pi', '--print', '{prompt}']}
+        with self.assertRaises(provider.ConfigError):
+            provider.configure(selected, self.mode)
+
+    def test_thinking_level_map_survives_session_model_copy(self):
+        host = self.root / 'host'
+        host.mkdir()
+        thinking_map = {'high': 'high', 'xhigh': None}
+        (host / 'models.json').write_text(json.dumps({'providers': {'registered': {
+            'models': [{'id': 'test-model', 'reasoning': True,
+                        'thinkingLevelMap': thinking_map}]}}}))
+        selected = {**self.profile, 'model': 'test-provider/test-model', 'reasoning': 'high',
+                    'argv': ['pi', '--print', '--provider', 'test-provider',
+                             '--model', 'test-model', '{prompt}']}
+        with mock.patch.object(recording, 'config_directory', return_value=host):
+            profile = provider.configure(selected, self.mode)
+        self.assertEqual(profile['mode_provider']['model']['thinkingLevelMap'], thinking_map)
+        prepared = provider.prepare(profile, self.root / 'run-max')
+        directory = Path(prepared['env']['PI_CODING_AGENT_DIR'])
+        models = json.loads((directory / 'models.json').read_text())
+        model = models['providers']['test-provider']['models'][0]
+        self.assertEqual(model['thinkingLevelMap'], thinking_map)
+        self.assertEqual(recording.option(profile['argv'], '--thinking'), 'high')
+
+    def test_profile_limits_are_validated(self):
+        directory = self.root / 'profiles' / 'pi'
+        directory.mkdir(parents=True)
+        path = directory / 'limits.yaml'
+        base = {'argv': ['pi', '--print', '{prompt}'], 'version_argv': ['pi', '--version'],
+                'env': {}, 'context_window': 1048576, 'max_output_tokens': 'unlimited'}
+        path.write_text(json.dumps(base))
+        profile = load_profile('pi', 'limits', directory.parent)
+        self.assertEqual(profile['context_window'], 1048576)
+        self.assertEqual(profile['max_output_tokens'], 'unlimited')
+        for key, value in [('context_window', 0), ('context_window', True),
+                           ('context_window', 'unlimited'), ('max_output_tokens', 0),
+                           ('max_output_tokens', None), ('max_output_tokens', False),
+                           ('max_output_tokens', 1.5)]:
+            with self.subTest(key=key, value=value):
+                path.write_text(json.dumps({**base, key: value}))
+                with self.assertRaises(ConfigError):
+                    load_profile('pi', 'limits', directory.parent)
+
+    def test_profile_limits_override_inherited_model_caps(self):
+        (self.mode / '.env').write_text(ENV.replace('openai-completions', 'openai-responses'))
+        host = self.root / 'host'
+        host.mkdir()
+        (host / 'models.json').write_text(json.dumps({'providers': {'registered': {'models': [{
+            'id': 'test-model', 'contextWindow': 128000, 'maxTokens': 8192,
+            'reasoning': True, 'thinkingLevelMap': {'max': 'max'},
+            'compat': {'supportsStore': False}}]}}}))
+        for limit in ('unlimited', 32768):
+            with self.subTest(limit=limit), mock.patch.object(recording, 'config_directory', return_value=host):
+                profile = provider.configure({**self.profile, 'context_window': 1048576,
+                                              'max_output_tokens': limit}, self.mode)
+            prepared = provider.prepare(profile, self.root / str(limit))
+            config = Path(prepared['env']['PI_CODING_AGENT_DIR']) / 'models.json'
+            model = json.loads(config.read_text())['providers']['test-provider']['models'][0]
+            self.assertEqual(model['contextWindow'], 1048576)
+            self.assertEqual(model['thinkingLevelMap'], {'max': 'max'})
+            self.assertFalse(model['compat']['supportsStore'])
+            self.assertEqual(model['compat']['supportsMaxOutputTokens'], limit != 'unlimited')
+            if limit == 'unlimited':
+                self.assertNotIn('maxTokens', model)
+            else:
+                self.assertEqual(model['maxTokens'], limit)
+
+    def test_requested_limits_cannot_be_silently_ignored(self):
+        profile = {**self.profile, 'context_window': 1048576, 'max_output_tokens': 'unlimited'}
+        configured = provider.configure(profile, self.mode)
+        self.assertNotIn('maxTokens', configured['mode_provider']['model'])
+        prepared = provider.prepare(configured, self.root / 'unlimited-run')
+        self.assertIn('--extension', prepared['argv'])
+        (self.mode / '.env').write_text(ENV.replace('openai-completions', 'anthropic-messages'))
+        with self.assertRaises(ConfigError):
+            provider.configure(profile, self.mode)
+        (self.mode / '.env').unlink()
+        with self.assertRaises(ConfigError):
+            provider.configure(profile, self.mode)
+
 
 CHECK_NATIVE = '''
 if '--version' not in sys.argv and '--help' not in sys.argv:
     provider_dir=Path(os.environ['PI_CODING_AGENT_DIR'])
     provider_models=json.loads((provider_dir/'models.json').read_text())['providers']
-    assert provider_models['test-provider']['baseUrl']=='http://127.0.0.1:8765/v1'
+    if os.environ.get('PTOBENCH_CANNBOT_SOCKET'):
+        expected_url='http://127.0.0.1:18081/v1'
+        expected_key='ptobench-local-model-gateway'
+    else:
+        expected_url='http://127.0.0.1:8765/v1'
+        expected_key='local-provider-test-key'
+    assert provider_models['test-provider']['baseUrl']==expected_url
     assert provider_models['test-provider']['api']=='openai-completions'
-    assert os.environ['PYPTO_PROVIDER_API_KEY']=='local-provider-test-key'
+    assert os.environ['PYPTO_PROVIDER_API_KEY']==expected_key
     assert sys.argv[sys.argv.index('--model')+1]=='test-model'
     assert sys.argv[sys.argv.index('--provider')+1]=='test-provider'
 '''
@@ -114,8 +224,8 @@ class ProviderLauncherTests(unittest.TestCase):
         self.assertEqual(profile['model'], 'test-provider/test-model')
         self.assertEqual(profile['env']['PI_CODING_AGENT_DIR'], str(root / 'agent/pi'))
         manifest = json.loads((root / 'protection/manifest.json').read_text())
-        self.assertNotIn('basic/.env', manifest['roots']['public_modes']['entries'])
-        self.assertNotIn('cannbot/.env', manifest['roots']['public_modes']['entries'])
+        self.assertNotIn('.env', manifest['roots']['public_modes_basic']['entries'])
+        self.assertNotIn('.env', manifest['roots']['public_modes_cannbot']['entries'])
         for path in root.rglob('*'):
             if path.is_file():
                 self.assertNotIn(b'local-provider-test-key', path.read_bytes(), str(path))
@@ -135,14 +245,26 @@ class ProviderLauncherTests(unittest.TestCase):
         node = test_cannbot.shutil.which('node')
         if not node or int(subprocess.check_output([node, '--version']).decode().split('.')[0][1:]) < 22:
             self.skipTest('Pi TypeScript bridge requires Node 22+')
+        import yaml
         fixture = self.fixture
         fixture.launcher_config('pi', budget=6, experiment_mode='cannbot', node=node)
+        fixture.env['PTOBENCH_SANDBOX'] = '1'
+        control = json.loads(fixture.launcher_control.read_text())
+        for key in ('seen', 'ready', 'go', 'child_pid', 'worker_pid'):
+            control.pop(key, None)
+        profile_path = fixture.bench / 'modes/_shared/profiles/pi/default.yaml'
+        profile = yaml.safe_load(profile_path.read_text())
+        position = profile['argv'].index('{prompt}')
+        profile['argv'][position:position] = [
+            '--test-control-json', json.dumps(control, separators=(',', ':')),
+        ]
+        profile_path.write_text(yaml.safe_dump(profile))
         (fixture.bench / 'modes/cannbot/.env').write_text(ENV)
         fixture.tool.write_text('#!' + fixture.python + '\n' + test_cannbot.FAKE_NATIVE.replace(
             "if '--version' in sys.argv:", CHECK_NATIVE + "\nif '--version' in sys.argv:", 1))
         process, result = fixture.launch()
         self.assertEqual(process.returncode, 0, (result, process.stderr.decode()))
-        root, _ = fixture.assert_final(result, 4)
+        root, _ = fixture.assert_final(result, 2)
         states = [json.loads(path.read_text()) for path in (root / 'method/dispatches').glob('*/dispatch.json')]
         self.assertEqual(len(states), 3)
         self.assertTrue(all(state['status'] == 'completed' for state in states))

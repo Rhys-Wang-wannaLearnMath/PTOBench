@@ -97,7 +97,8 @@ def file_version(value: os.stat_result) -> tuple[int, ...]:
 
 
 def _entry(parent: int, name: str, relative: str, entries: dict,
-           excluded_names: frozenset[str], reject_special: bool) -> None:
+           excluded_names: frozenset[str], reject_special: bool,
+           excluded_paths: frozenset[str]) -> None:
     before = os.stat(name, dir_fd=parent, follow_symlinks=False)
     mode = stat.S_IMODE(before.st_mode)
     if stat.S_ISLNK(before.st_mode):
@@ -111,7 +112,11 @@ def _entry(parent: int, name: str, relative: str, entries: dict,
             if (before.st_dev, before.st_ino) != (pinned.st_dev, pinned.st_ino):
                 raise TreeChangedError(f"directory changed: {relative}")
             entries[relative] = {"kind": "directory", "mode": mode}
-            names = sorted(os.listdir(descriptor))
+            def included_names():
+                return sorted(child for child in os.listdir(descriptor)
+                              if (f"{relative}/{child}" if relative else child) not in excluded_paths)
+
+            names = included_names()
             for child in names:
                 child_relative = f"{relative}/{child}" if relative else child
                 if child in excluded_names or Path(child).suffix in CACHE_SUFFIXES:
@@ -122,8 +127,8 @@ def _entry(parent: int, name: str, relative: str, entries: dict,
                             raise UnsafeTreeError(f"unsupported node: {child_relative}")
                     continue
                 _entry(descriptor, child, child_relative, entries,
-                       excluded_names, reject_special)
-            if names != sorted(os.listdir(descriptor)):
+                       excluded_names, reject_special, excluded_paths)
+            if names != included_names():
                 raise TreeChangedError(f"directory changed: {relative}")
         finally:
             os.close(descriptor)
@@ -148,11 +153,12 @@ def _entry(parent: int, name: str, relative: str, entries: dict,
 
 
 def scan_tree(path: str | Path, *, excluded_names: frozenset[str] = CACHE_NAMES,
-              reject_special: bool = False) -> dict[str, dict]:
+              reject_special: bool = False,
+              excluded_paths: frozenset[str] = frozenset()) -> dict[str, dict]:
     entries: dict[str, dict] = {}
     with open_parent(path) as (parent, name):
         try:
-            _entry(parent, name, "", entries, excluded_names, reject_special)
+            _entry(parent, name, "", entries, excluded_names, reject_special, excluded_paths)
         except FileNotFoundError:
             # Only an absent root is an ordinary absence. A disappearing
             # descendant must not turn a partial scan into a new baseline.

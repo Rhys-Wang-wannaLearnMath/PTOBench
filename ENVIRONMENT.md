@@ -1,8 +1,48 @@
 # 当前软件栈与运行环境
 
+**当前 `.venv-official` 配置与复现入口（2026-11-03）：**
+[环境、固定依赖、安装来源、工具链及复现步骤](environments/venv-official.md)。
+下文保留 2026-10-05 的盘点和测试历史，不代表这些测试在本次重新执行。
+2026-10-21 后续修复已补齐既有 GCC 15 的 `gcc-15` 用户入口，并通过 C/C++23 编译与
+`.venv-official` Python 加载检查；工具链精确清单及验证记录见上面的复现说明。
+
 核实日期：**2026-10-05，Asia/Shanghai**。本文件记录当前主机和工作区的实测状态；机器路径、软件版本和验证范围随环境变化需要更新。完整版本与安装位置见 [机器可读快照](environments/inventory/20261005.json)。
 
 PTOBench 当前 Case 的环境 profile 使用 **`.venv-official/bin/python`、CANN 9.0.0、PTOAS 0.60**。这套环境的最小 A2/A3 与 A5 功能模拟器运行、Golden 保存/回放及 Benchmark 已通过；完整 PyPTO-Lib Golden 测试仍有一项 Torch dtype 兼容性失败。正式 Case 的认证结果应以对应 Case 和 Session 记录为准。
+
+## 固定环境与运行时锁（2026-11-03）
+
+PTOBench 的 Ref、Candidate、Agent evaluate 和 baseline 必须使用同一份锁定环境：
+[environments/LOCK.json](environments/LOCK.json)。锁文件固定 Python 可执行文件、
+PyPTO、simpler、CPU Torch、PyYAML、PTOAS、CANN、PTO ISA、simpler runtime 源码
+补丁和已安装 runtime 二进制的 SHA-256。它也固定 66 个 Case environment profile。
+
+锁定的 runtime 来源是 `/data1/home/ziruiwang/pypto-official-747e1e4b/runtime`。
+PTOBench 不额外采集 host lifecycle 时间戳，也不按跨卡启动差调整成绩；正式性能指标只用
+Evaluator 原有的 `effective_us` 样本和逐轮统计。Ref、Candidate 与 Agent evaluate 均走同一
+计时和比较路径。
+
+`evaluator/environment_lock.py` 在 Case 环境 re-exec 后和 Launcher preflight 阶段
+执行 fail-closed 校验。版本、安装文件、runtime 源码补丁、已安装 runtime 库或
+profile 任一不匹配，都会在 Agent 或 NPU 执行前拒绝运行；不会自动安装、升级或
+切换环境。因而后续优化、正确性认证和性能对比都使用同一底层 runtime。
+
+Session 的 `session.json` 保留创建和完成时间戳；`final_result.json` 另写从创建到最终验收
+完成的 `elapsed_seconds`。它是整项优化的墙钟时间，不是 NPU 执行耗时；单次 Case 的 NPU
+成绩仍看逐轮 `effective_us`。
+
+当前实际 Case 清单为 322 项：311 个正式 Case，另有 11 个 `profile_validation`
+测试样例。正式结果、baseline 和 Agent 任务只登记 311 个；测试样例只用于回归测试，
+不会混入正式性能统计。
+
+正式 baseline 复认证按 Case 串行执行；开始时先归档旧认证与性能 JSON，并用硬链接保存旧 Ref 输出，避免重复占用大块
+Tensor 空间。每个 Case 按其固定 warmup/benchmark 轮数重新比较 CPU Oracle、写入 Ref
+输出，并一并发布 `tuning_identity`、`tuning_evidence`、`resolved_tuning`、执行契约及当前
+计时策略。完成后，`runs/<run-id>/instability_report.json` 保存每个 fixture 的逐样本统计。
+
+显著波动按同一 fixture 的原始 `samples_effective_us` 判定：变异系数 ≥ 10%，或最大样本 /
+中位数 ≥ 1.5。队列串行持有评测锁；是否可启动只看 NPU 健康、功耗和温度，不把 AICore
+利用率作为独占判断。
 
 ## 主机与硬件
 
@@ -69,7 +109,7 @@ PTOBench Evaluator 会依据 Case profile source CANN、设置环境并 re-exec 
 | --- | --- | --- |
 | GCC / G++ | `10.3.1`，`/usr/bin` | 使用外部编译器 |
 | `g++-15` | `15.2.0`，`/data1/home/ziruiwang/.local/bin/g++-15` | 使用外部编译器 |
-| `gcc-15` | PATH 中未找到 | 新建/重建模拟器环境的前提尚未完全满足 |
+| `gcc-15` | 盘点时 PATH 中未找到；2026-10-21 已补齐 `~/.local/bin/gcc-15`，15.2.0 | 与既有 g++-15 同一工具链；详见当前复现说明 |
 | CMake | `/usr/bin/cmake`，`3.22.0` | `4.4.3` |
 | Ninja | `/usr/bin/ninja`，`1.8.2` | `1.13.2` |
 | Git | `2.33.0` | 使用外部 Git |

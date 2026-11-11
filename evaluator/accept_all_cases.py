@@ -1,4 +1,4 @@
-"""S7 maintainer acceptance: inventory every Case, run four independent actions.
+"""S7 maintainer acceptance: inventory each formal Case, run four independent actions.
 
 This is not an Agent command. Never generate fixtures, prepare a Ref, edit a
 canonical Case, infer unsupported from generic errors, or combine batch versions.
@@ -28,7 +28,6 @@ import integrity
 import profile_modes
 import session
 import session_actions as actions
-import snapshots
 import workspace
 
 ITEMS = (("clean", None, "clean"), ("runtime", "runtime", "runtime"),
@@ -128,7 +127,7 @@ def required_devices(environment):
 
 def enumerate_cases(bench):
     rows = []
-    for path in sorted((bench / "cases").glob("*/*/case.json")):
+    for path in common.formal_case_configs(bench):
         relative = path.relative_to(bench).as_posix()
         row = {"case_path": relative, "case_id": None, "certification": "unknown", "environment": {},
                "identity_errors": [], "case_json_sha256": None}
@@ -327,13 +326,13 @@ class AcceptanceRunner:
             raw_path = action_dir / "result.json"
             raw = session._read(raw_path) if raw_path.is_file() else event.get("result")
             row["raw_result_path"] = str(raw_path) if raw_path.is_file() else str(handle.session_root / "events.jsonl")
-            run = None
+            declared = common.declared_fixture_ids(session._read(Path(record['case_dir'])/'case.json'))
             if (isinstance(raw, dict) and raw.get("case_id") == case["case_id"]
                     and raw.get("profiling_mode") == internal and raw.get("phase") == ("all" if public is None else "correctness")
-                    and isinstance(raw.get("runs"), list) and len(raw["runs"]) == 1):
-                run = raw["runs"][0]
-                if isinstance(run, dict) and run.get("fixture_id") == "fixture_000" and type(run.get("passed")) is bool:
-                    row["correctness"] = "passed" if run["passed"] else "failed"
+                    and isinstance(raw.get("runs"), list) and len(raw["runs"]) == len(declared)
+                    and all(isinstance(run, dict) and type(run.get("passed")) is bool for run in raw["runs"])
+                    and {run.get("fixture_id") for run in raw["runs"]} == set(declared)):
+                row["correctness"] = "passed" if all(run["passed"] for run in raw["runs"]) else "failed"
             # The event includes the CLI's full postcheck; independently check
             # protected records/context/Snapshots without repeating tensor hashes.
             manifest = session._read(handle.protection_root / "manifest.json")
@@ -371,7 +370,8 @@ class AcceptanceRunner:
                 raise ValueError("artifact root does not belong to this frozen action")
             report = row["artifact_check"]
             row.update(artifact_check=report, raw_result_path=str(authority), latency_us=observation["latency_us"],
-                       speedup=run.get("speedup"), snapshot_id=value.get("snapshot_id"))
+                       speedup=(common.fixture_aggregate(raw['runs'])['speedup'] if public is None else None),
+                       snapshot_id=value.get("snapshot_id"))
             if not report["passed"]:
                 row["reason"] = "artifact_missing_or_invalid"
                 return row
@@ -399,7 +399,7 @@ class AcceptanceRunner:
             handle = session.create_session(case["case_id"],
                 {"id": "acceptance", "backend": "internal_validation", "profile": "full_v02"},
                 {"runs_root": self.output / "runs", "snapshots_root": self.output / "snapshots"},
-                {"max_hardware_actions": 4, "finish_actions": 1})
+                {"max_hardware_actions": 4, "finish_actions": 1}, profile_strategy="split")
             # Session initialization adds the editable default tuning.json to
             # the seed Workspace. Freeze the hash from that published root so
             # fork verification covers the same source tree as the workers.
@@ -541,7 +541,7 @@ class AcceptanceRunner:
             "python": sys.version, "python_executable": sys.executable, "package_versions": versions, "argv": sys.argv,
             "timeout_seconds": self.timeout, "asset_hash": before["content_sha256"], "code_hash": code["content_sha256"],
             "asset_manifest": "canonical_before.json", "code_manifest": "code_before.json",
-            "profiling_open": list(profile_modes.public_enabled_modes()), "hash_errors": before["errors"] + code["errors"]})
+            "profiling_open": list(profile_modes.public_enabled_modes("split")), "hash_errors": before["errors"] + code["errors"]})
         (self.output / "results.jsonl").touch(exist_ok=False)
         save(self.output / "finalizations.json", [])
         if before["errors"] or code["errors"]:

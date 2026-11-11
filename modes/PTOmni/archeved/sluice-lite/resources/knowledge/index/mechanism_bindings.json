@@ -1,0 +1,207 @@
+{
+  "bindings": [
+    {
+      "card_ref": "card:benchmark_effective_us",
+      "evidence": [
+        {
+          "question_id": "did_clean_latency_change?",
+          "signal_keys": [
+            "clean_latency_down"
+          ]
+        },
+        {
+          "question_id": "what_are_measured_host_costs?",
+          "signal_keys": [
+            "median_host_us",
+            "maximum_host_us"
+          ]
+        }
+      ],
+      "mechanism_id": "benchmark_effective_us"
+    },
+    {
+      "card_ref": "card:chip_swimlane_dependency_artifacts",
+      "evidence": [
+        {
+          "question_id": "where_is_critical_work?",
+          "signal_keys": [
+            "cpm_us",
+            "observed_path_compute_us",
+            "observed_path_gap_us"
+          ]
+        },
+        {
+          "question_id": "where_are_dispatch_delays?",
+          "signal_keys": [
+            "dispatch_to_receive_core_us",
+            "receive_to_start_core_us",
+            "end_to_finish_core_us"
+          ]
+        }
+      ],
+      "mechanism_id": "chip_swimlane_dependency_artifacts"
+    },
+    {
+      "card_ref": "card:incore_pmu_alignment_and_escape",
+      "evidence": [
+        {
+          "question_id": "which_pipelines_are_active?",
+          "signal_keys": [
+            "scalar_cycle_fraction",
+            "vec_cycle_fraction",
+            "cube_cycle_fraction",
+            "mte1_cycle_fraction",
+            "mte2_cycle_fraction",
+            "mte3_cycle_fraction"
+          ]
+        },
+        {
+          "question_id": "did_pmu_total_cycles_change?",
+          "signal_keys": [
+            "pmu_cycles_down"
+          ]
+        }
+      ],
+      "mechanism_id": "incore_pmu_alignment_and_escape"
+    },
+    {
+      "card_ref": "card:memory_address_allocation_and_cross_core_ring",
+      "evidence": [
+        {
+          "question_id": "how_much_local_memory_headroom?",
+          "signal_keys": [
+            "minimum_headroom_bytes",
+            "maximum_space_utilization",
+            "largest_buffer_bytes"
+          ]
+        }
+      ],
+      "mechanism_id": "memory_address_allocation_and_cross_core_ring"
+    },
+    {
+      "card_ref": "card:memory_reuse_and_declared_allocations",
+      "evidence": [
+        {
+          "question_id": "how_much_local_memory_headroom?",
+          "signal_keys": [
+            "minimum_headroom_bytes",
+            "maximum_space_utilization",
+            "largest_buffer_bytes"
+          ]
+        },
+        {
+          "question_id": "did_buffer_peak_change?",
+          "signal_keys": [
+            "buffer_peak_down"
+          ]
+        }
+      ],
+      "mechanism_id": "memory_reuse_and_declared_allocations"
+    },
+    {
+      "card_ref": "card:pass_artifacts_and_compiler_diagnostics",
+      "evidence": [
+        {
+          "question_id": "did_compiler_hints_change?",
+          "signal_keys": [
+            "compiler_hints_changed"
+          ]
+        },
+        {
+          "question_id": "how_much_local_memory_headroom?",
+          "signal_keys": [
+            "minimum_headroom_bytes",
+            "maximum_space_utilization",
+            "largest_buffer_bytes"
+          ]
+        }
+      ],
+      "mechanism_id": "pass_artifacts_and_compiler_diagnostics"
+    },
+    {
+      "card_ref": "card:scope_stats_and_ring_deadlocks",
+      "evidence": [
+        {
+          "question_id": "how_much_async_completion_polling_is_recorded?",
+          "signal_keys": [
+            "recorded_async_poll_records",
+            "recorded_async_poll_lanes",
+            "recorded_async_poll_lane_us",
+            "recorded_async_poll_union_us"
+          ]
+        }
+      ],
+      "mechanism_id": "scope_stats_and_ring_deadlocks"
+    },
+    {
+      "card_ref": "card:software_pipeline_and_slots",
+      "evidence": [
+        {
+          "question_id": "did_pipeline_elapsed_change?",
+          "signal_keys": [
+            "pipeline_elapsed_down"
+          ]
+        },
+        {
+          "question_id": "how_much_local_memory_headroom?",
+          "signal_keys": [
+            "minimum_headroom_bytes",
+            "maximum_space_utilization",
+            "largest_buffer_bytes"
+          ]
+        }
+      ],
+      "mechanism_id": "software_pipeline_and_slots"
+    },
+    {
+      "card_ref": "card:speculative_early_dispatch",
+      "evidence": [
+        {
+          "question_id": "how_did_dispatched_work_change?",
+          "signal_keys": [
+            "logical_tasks",
+            "physical_rows"
+          ]
+        },
+        {
+          "question_id": "where_is_critical_work?",
+          "signal_keys": [
+            "cpm_us",
+            "observed_path_compute_us",
+            "observed_path_gap_us"
+          ]
+        }
+      ],
+      "mechanism_id": "speculative_early_dispatch"
+    },
+    {
+      "card_ref": "card:task_granularity_and_dispatch_overhead",
+      "evidence": [
+        {
+          "question_id": "did_task_granularity_change?",
+          "signal_keys": [
+            "task_count_down"
+          ]
+        },
+        {
+          "question_id": "how_did_dispatched_work_change?",
+          "signal_keys": [
+            "logical_tasks",
+            "physical_rows"
+          ]
+        },
+        {
+          "question_id": "how_busy_are_compute_engines?",
+          "signal_keys": [
+            "aic_occupancy",
+            "aiv_occupancy",
+            "aic_tail_occupancy",
+            "aiv_tail_occupancy"
+          ]
+        }
+      ],
+      "mechanism_id": "task_granularity_and_dispatch_overhead"
+    }
+  ],
+  "schema_version": 1
+}

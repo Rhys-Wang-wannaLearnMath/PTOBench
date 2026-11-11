@@ -11,14 +11,14 @@ root = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(root))
 sys.path.insert(0, str(root / 'evaluator'))
 
+import isolation
 from modes.basic.prompt import make_prompt
 from modes._shared.adapters import BackendUnavailable, get_adapter
 from modes._shared.config import ConfigError, load_profile, render
-from modes._shared import provenance, recording, knowledge, provider
+from modes._shared import provenance, recording, provider
 
 
 def preflight(request):
-    knowledge.validate(Path(__file__).parent)
     optimizer = request['experiment']['optimizer']
     profile = recording.prepare_profile(provider.configure(
         load_profile(optimizer['backend'], optimizer['profile']), Path(__file__).parent))
@@ -32,8 +32,10 @@ def prepare(request):
     run_root = Path(context['session_root'])
     workspace = Path(context['workspace'])
     ready = request['preflight']
-    profile = provider.prepare(ready['profile'], run_root)
-    references = knowledge.freeze(Path(__file__).parent, run_root)
+    ready_profile = ready['profile']
+    gateway = (isolation.enabled() and ready_profile['backend'] == 'pi'
+               and bool(ready_profile.get('mode_provider')))
+    profile = provider.prepare(ready_profile, run_root, gateway=gateway)
     instructions_path = Path(__file__).with_name('instructions.md')
     instructions = instructions_path.read_bytes()
     prompt = make_prompt(request['experiment'], context, context['case'], instructions.decode())
@@ -45,9 +47,8 @@ def prepare(request):
         'prompt.txt': prompt, 'profile.json': profile, 'mode.json': mode,
         'backend.json': {'backend': ready['backend'], 'argv': argv, 'cwd': str(workspace),
                          'profile_sha256': profile['sha256']},
-        'agent/configuration.json': configuration,
-        'method/README.md': knowledge.guide(run_root), 'method/knowledge.json': references},
-        'archives': {'agent_configuration': 'agent/config', 'reference_knowledge': knowledge.SNAPSHOT}}
+        'agent/configuration.json': configuration},
+        'archives': {'agent_configuration': 'agent/config'}}
 
 
 def run(request):
@@ -59,7 +60,13 @@ def run(request):
     # Use the exact frozen prompt; exec preserves the owned PID/group and exit code.
     prompt = (run_root / 'prompt.txt').read_text()
     argv, additions = render(profile, context['workspace'], run_root, prompt)
-    os.execvpe(argv[0], argv, {**os.environ, **additions, **provider.credentials(profile)})
+    environment = {**os.environ, **additions, **provider.credentials(profile)}
+    if profile['backend'] == 'pi' and profile.get('mode_provider') and isolation.enabled():
+        argv, environment = isolation.agent_command(
+            argv, cwd=context['workspace'], environment=environment,
+            workspace=context['workspace'], session_root=run_root,
+        )
+    os.execvpe(argv[0], argv, environment)
 
 
 def collect(request):

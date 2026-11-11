@@ -1,0 +1,13 @@
+QUEUE START 20261027_deepseek_flash_max_100 at 2026-10-27T14:17:05+00:00
+Mode: sluice-lite | Pi profile: deepseek-flash-max | reasoning: max
+Execution: serial | each case: 100 exploration actions + 1 final verification action
+
+===== START deepseek_v4.prefill_layer_ep2_csa_pro 2026-10-27T14:17:05+00:00 =====
+{"session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/sluice-lite/20261027_deepseek_flash_max_100/deepseek_v4.prefill_layer_ep2_csa_pro/sluice_lite_deepseek_flash_max/deepseek_v4.prefill_layer_ep2_csa_pro/20261027T142504Z_c38641e3c21e", "final_result_path": null, "status": "failed", "error_code": "infrastructure_error", "close_reason": "launcher_infrastructure_failure", "optimizer_exit_code": null, "agent_recording": {"schema_version": 1, "run_id": "20261027T142504Z_c38641e3c21e", "backend": "pi", "close_reason": "launcher_infrastructure_failure", "native_session_ids": [], "files": [], "status": "not_started"}}
+===== END deepseek_v4.prefill_layer_ep2_csa_pro exit=5 at 2026-10-27T14:48:47+00:00 =====
+
+===== START deepseek_v4.prefill_layer_ep2_csa_flash 2026-10-27T14:48:47+00:00 =====
+{"session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/sluice-lite/20261027_deepseek_flash_max_100/deepseek_v4.prefill_layer_ep2_csa_flash/sluice_lite_deepseek_flash_max/deepseek_v4.prefill_layer_ep2_csa_flash/20261027T145158Z_ccc2d1d0ff0a", "final_result_path": null, "status": "failed", "error_code": "infrastructure_error", "close_reason": "launcher_infrastructure_failure", "optimizer_exit_code": null, "agent_recording": {"schema_version": 1, "run_id": "20261027T145158Z_ccc2d1d0ff0a", "backend": "pi", "close_reason": "launcher_infrastructure_failure", "native_session_ids": [], "files": [], "status": "not_started"}}
+===== END deepseek_v4.prefill_layer_ep2_csa_flash exit=5 at 2026-10-27T14:54:56+00:00 =====
+
+===== START deepseek_v4.prefill_layer_ep2_hca_flash 2026-10-27T14:54:56+00:00 =====

@@ -36,13 +36,17 @@ class AgentCliTest(ActionTestBase):
                 self.assertEqual(process.returncode, 0, process.stderr.decode())
                 self.assertIn('profile', process.stdout.decode())
                 if args[0] == 'profile':
-                    for mode in ('runtime', 'pmu', 'compiler'):
-                        self.assertIn(mode, process.stdout.decode())
+                    help_text = ' '.join(process.stdout.decode().split())
+                    self.assertIn('Profile does not check output correctness', help_text)
+                    self.assertIn('ptobench evaluate', help_text)
+                    self.assertIn('combined', process.stdout.decode())
         self.assertEqual(self.events(), [])
         self.assertEqual(self.calls(), [])
         self.assertEqual(session.read_session(self.handle.session_root)['usage']['hardware_actions'], 0)
 
-    def test_five_operations_default_workspace_fixed_modes_and_null_profiles(self):
+    def test_five_operations_in_explicit_split_session(self):
+        self.handle = self.create(budget=5, profile_strategy='split')
+        self.env['PTOBENCH_SESSION_ROOT'] = str(self.handle.session_root)
         for args, phase, internal in ((['evaluate'],'all','clean'), (['profile','runtime'],'correctness','runtime'),
                                     (['profile','pmu'],'correctness','hardware'), (['profile','compiler'],'correctness','compile')):
             with self.subTest(args=args):
@@ -61,7 +65,7 @@ class AgentCliTest(ActionTestBase):
                 else:
                     self.assertNotIn('correctness', result)
                 if internal == 'clean':
-                    self.assertTrue((self.snapshot(result)/'source/helper.py').is_file())
+                    self.assertTrue((self.snapshot(result)/'source/candidate/helper.py').is_file())
                 else:
                     self.assertIsNone(result['snapshot_id'])
                 authority=self.events()[-1]['result']
@@ -75,6 +79,8 @@ class AgentCliTest(ActionTestBase):
         self.assertEqual(len(self.calls()),4)
 
     def test_rejects_old_parser_modes_parameters_and_commands_without_execution(self):
+        self.handle = self.create(profile_strategy='split')
+        self.env['PTOBENCH_SESSION_ROOT'] = str(self.handle.session_root)
         requests = [['profile','hardware'],['profile','compile'],['evaluate','--phase','all'],
                     ['evaluate','--candidate','.'],['evaluate','--result','result.json'],['evaluate','--workspace','.'],
                     ['evaluate','--measurement-mode','formal'],['evaluate','--warmup','1'],['evaluate','--rounds','1'],
@@ -108,13 +114,14 @@ class AgentCliTest(ActionTestBase):
         self.assertEqual(len(self.calls()),0)
         self.assertEqual(session.read_session(self.handle.session_root)['usage']['hardware_actions'],0)
 
-    def test_new_context_public_names_and_old_entry_absence(self):
+    def test_new_context_defaults_to_combined(self):
         metadata=self.handle.initial_workspace/'.benchmark_context'
-        modes=common.read_json(metadata/'profiling_modes.json')['modes']
-        self.assertEqual(set(modes),{'runtime','pmu','compiler'})
+        self.assertFalse((metadata/'profiling_modes.json').exists())
+        self.assertFalse((metadata/'fixture_catalog.json').exists())
         readme=(metadata/'README.md').read_text()
         self.assertIn('ptobench evaluate .',readme)
-        self.assertIn('ptobench profile pmu .',readme)
+        self.assertIn('ptobench profile .',readme)
+        self.assertNotIn('ptobench profile runtime',readme)
         self.assertNotIn('bench profile hardware',readme)
         self.assertNotIn('profile compile ',readme)
         self.assertFalse((SOURCE_BENCHMARK/'bench').exists())
@@ -122,9 +129,26 @@ class AgentCliTest(ActionTestBase):
         for path in ('evaluate.py','prepare_ref.py','generate_fixtures.py','workspace.py'):
             self.assertTrue((SOURCE_BENCHMARK/'evaluator'/path).is_file())
 
+    def test_combined_profile_matches_evaluate_workspace_syntax(self):
+        metadata = self.handle.initial_workspace / '.benchmark_context'
+        self.assertFalse((metadata / 'profiling_modes.json').exists())
+        self.assertFalse((metadata / 'fixture_catalog.json').exists())
+        readme = (metadata / 'README.md').read_text()
+        self.assertIn('`ptobench profile .`', readme)
+        self.assertNotIn('`ptobench profile runtime', readme)
+
+        process, result = self.cli(['profile'])
+        self.assertEqual(process.returncode, 0, result)
+        call = self.calls()[-1]
+        self.assertEqual((call['profile_mode'], call['phase']), ('combined', 'correctness'))
+        self.assertTrue(call['skip_correctness'])
+        process, rejected = self.cli(['profile', 'runtime'])
+        self.assertEqual(process.returncode, 2, rejected)
+        self.assertEqual(rejected['error_code'], 'invalid_workspace')
+
     def test_linked_source_is_rejected_before_reservation(self):
         sentinel=self.repo/'sentinel'; sentinel.write_text('outside')
-        helper=self.handle.initial_workspace/'helper.py'
+        helper=self.handle.initial_workspace/'candidate/helper.py'
         helper.unlink(); helper.symlink_to(sentinel)
         for args in (['evaluate'],['profile','runtime'],['fork']):
             process,result=self.cli(args)

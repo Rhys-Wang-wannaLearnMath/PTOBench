@@ -116,10 +116,7 @@ def _run(*, fn, specs, config, compare_fn, golden_data=None, golden_fn=None,
     # invariant from the public `out` comparator: they must remain bitwise
     # unchanged for this ratio-0 workload.
     validation_compare = dict(compare_fn)
-    validation_compare.update({
-        "kv_state": _exact_state,
-        "score_state": _exact_state,
-    })
+    validation_compare.update(_invariant_compare())
     result = run(
         fn=fn, specs=specs, golden_fn=golden_fn,
         golden_data=str(golden_data) if golden_data else None,
@@ -129,6 +126,10 @@ def _run(*, fn, specs, config, compare_fn, golden_data=None, golden_fn=None,
     if capture_outputs and result.outputs is not None:
         result.outputs = {"out": result.outputs["out"]}
     return result
+
+
+def _invariant_compare():
+    return {"kv_state": _exact_state, "score_state": _exact_state}
 
 
 def _program(module, case):
@@ -174,4 +175,5 @@ def evaluate_candidate(case_dir, sealed, case, candidate_workspace, platform=Non
             case_dir, case, candidate_workspace, "deepseek_v4_ratio0_candidate",
         ),
         make_program=_program, make_compare=lambda: _compare(case_dir, case), run=_run,
+        make_invariant_compare=_invariant_compare,
     )

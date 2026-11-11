@@ -4,5 +4,21 @@
   "case_id": "deepseek_v4.moe_ep_ep4_pro",
   "ref_output_cache": "ready",
   "cpu_oracle_role": "one_time_ref_certification",
-  "comparator_sha256": "6c966744c14d32cfd6ad6590bed867056800b24f0ba47d40b061df6134fb54ff"
+  "timing_policy": {
+    "version": "ptobench-execution-boundary-20261108-v3",
+    "input_upload": "outside_execution_window",
+    "initial_state_restore": "outside_execution_window",
+    "final_validation_readback": "outside_execution_window",
+    "required_execution_communication": "inside_execution_window"
+  },
+  "comparator_sha256": "6c966744c14d32cfd6ad6590bed867056800b24f0ba47d40b061df6134fb54ff",
+  "tuning_identity": {
+    "source_sha256": "2b39a9a93c8fbed5419132f2dd6b7e781740ac1ad456b844e5e8f5b0137c99db",
+    "case_sha256": "40e0ff137fa636b962a8098a06eedc3ab0faa681d98046b0c91294167c2a76b2",
+    "config_sha256": "6277f997b24a1a5593fee105491da650f8f5dcc0418163074cd1bc0f28c4d08f",
+    "comparator_sha256": "6c966744c14d32cfd6ad6590bed867056800b24f0ba47d40b061df6134fb54ff",
+    "environment_sha256": "c1fb3e5b9f81b66a10cee6914fb8b6deaf18455dbf9c603db3f457d85fc84fbf",
+    "tuning_policy_sha256": "d4d8a93dccfd8b73eeb9006073ec3939e66fbe0fcf410129c6db63205592af5a"
+  },
+  "tuning_evidence": "runs/all_case_boundary_repair_20261108/case_results/deepseek_v4__moe_ep_ep4_pro.json"
 }

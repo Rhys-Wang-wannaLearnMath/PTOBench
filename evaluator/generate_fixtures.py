@@ -42,8 +42,10 @@ def _materialize(case_dir: Path, sealed: Path, case: dict, fixture_id: str, seed
 def generate_case(case_dir: Path, sealed: Path, case: dict) -> None:
     policy_file = sealed / "fixture_policy.json"
     slots = common.read_json(policy_file)["fixture_seeds"]
-    if list(slots) != ["fixture_000"] or case.get("fixture_ids") != ["fixture_000"]:
-        raise ValueError("v0.2 Cases must declare exactly one fixture: fixture_000")
+    declared = common.declared_fixture_ids(case)
+    if (not isinstance(slots, dict) or set(slots) != set(declared)
+            or any(type(seed) is not int or seed < 0 for seed in slots.values())):
+        raise ValueError("fixture seed policy must cover the exact public fixture set")
     fixture_root = sealed / "fixtures"
     for old in fixture_root.iterdir() if fixture_root.exists() else ():
         if old.is_dir() and old.name not in slots:

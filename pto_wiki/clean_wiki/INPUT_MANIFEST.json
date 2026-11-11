@@ -1,0 +1,1742 @@
+{
+  "schema_version": 1,
+  "edition": "local_corrected_english_input",
+  "date": "2026-10-07",
+  "language": "en",
+  "base_path": ".",
+  "scope": "Documentation source input; action/environment/leakage filtering still required before Agent publication.",
+  "environment": {
+    "hardware": "Ascend910B4",
+    "npu_arch": 2201,
+    "cann": "9.0.0",
+    "pypto_revision": "747e1e4ba99f13dea1a609d893ac7512e85a5897",
+    "simpler_revision": "4e4d3a4ad1e54c1db3d50e72decc025a9075bfa0",
+    "ptoas": "0.60"
+  },
+  "input_files": [
+    {
+      "path": "01_pypto_lib/debug-and-tune/cce-incore-profiling.md",
+      "kind": "technical_document",
+      "bytes": 12991,
+      "sha256": "346f5949a068bfef6450e94d147742b573be4b4384fbd2fa378c510fc6ab6c15",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/debug-and-tune/cce-incore-profiling.md"
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/cube-tile-tuning.md",
+      "kind": "technical_document",
+      "bytes": 8119,
+      "sha256": "2637590091ea85330cf3ee6f84ed626e8c597ecbf65ce1e446d953af53d3aafc",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/debug-and-tune/cube-tile-tuning.md"
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/debugging.md",
+      "kind": "technical_document",
+      "bytes": 11429,
+      "sha256": "5729d220121e4a0b6a56bdc9ec4308d53ee791e2e2bb9655799d5de8993fe3c2",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/debug-and-tune/debugging.md"
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/dependency-and-scheduling.md",
+      "kind": "technical_document",
+      "bytes": 28895,
+      "sha256": "aca4a23089454b836ef7ced222f39cdf75f025e0e2fcf63796ab96af47eaa477",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/debug-and-tune/dependency-and-scheduling.md"
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/incore-simulator-profiling.md",
+      "kind": "technical_document",
+      "bytes": 9881,
+      "sha256": "eaf451960e2a266c4b20293fae20044be32e2828060d48160d52ded54d75f69f",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/debug-and-tune/incore-simulator-profiling.md"
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/index.md",
+      "kind": "technical_document",
+      "bytes": 3682,
+      "sha256": "cd6c5d1b9edf32d2614a42ebd4d31dd438370b9a36ae8cbdc777b1b8311f16a9",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/debug-and-tune/index.md"
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/l2-prefetch.md",
+      "kind": "technical_document",
+      "bytes": 14484,
+      "sha256": "949c81029d3b478c3bd47f914352975a92767319d1651b3bc49abce8361995fb",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/debug-and-tune/l2-prefetch.md"
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/performance-tuning.md",
+      "kind": "technical_document",
+      "bytes": 27974,
+      "sha256": "6f8ded5f3745b3f0503b7e79dabe60502b967643db68b0f98943756567bd713d",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/debug-and-tune/performance-tuning.md"
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/precision-tuning.md",
+      "kind": "technical_document",
+      "bytes": 11212,
+      "sha256": "79e74f1a191c30face3caf6bdb3d421d6cb22e0986a27023eef3ec4a088e9722",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/debug-and-tune/precision-tuning.md"
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/ring-heap-and-scope-stats.md",
+      "kind": "technical_document",
+      "bytes": 15916,
+      "sha256": "4a53f530ffe03d84fd34b8b7ad941ec5f977a4b984559ffcc556e71f9c8e401a",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/debug-and-tune/ring-heap-and-scope-stats.md"
+    },
+    {
+      "path": "01_pypto_lib/examples/current-smoke.md",
+      "kind": "example",
+      "bytes": 2344,
+      "sha256": "9f7d5a3cba0c5c9bfe6d304ee17d851324e0bf38c90d171f2ac24fa27d95489e",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/examples/current_smoke.py"
+    },
+    {
+      "path": "01_pypto_lib/examples/index.md",
+      "kind": "technical_document",
+      "bytes": 4498,
+      "sha256": "8cf7b1e4ce4747af7e2f715ea60e6e6b90982fb4e2d584e61c288ef6a407f35c",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/examples/index.md"
+    },
+    {
+      "path": "01_pypto_lib/get-started/first-kernel.md",
+      "kind": "technical_document",
+      "bytes": 2485,
+      "sha256": "2639d168b40543b9b01f07139312828d17213c02d44786f9880ffff4ce782e97",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/get-started/first-kernel.md"
+    },
+    {
+      "path": "01_pypto_lib/get-started/index.md",
+      "kind": "technical_document",
+      "bytes": 1511,
+      "sha256": "8786cb3e12c88f96089a12cc264486ab39cda68f5737e853c334efc298f738df",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/get-started/index.md"
+    },
+    {
+      "path": "01_pypto_lib/get-started/installation.md",
+      "kind": "technical_document",
+      "bytes": 5295,
+      "sha256": "a8901a9504366fcdcc9d65e21b876a9bc361b998ab82115d5c65c2bc82aa6007",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/get-started/installation.md"
+    },
+    {
+      "path": "01_pypto_lib/index.md",
+      "kind": "technical_document",
+      "bytes": 2145,
+      "sha256": "bad86452014973414440bc91a404f37d810d7cb679a3a4bfd84b8cdb1f4c2a0f",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/index.md"
+    },
+    {
+      "path": "01_pypto_lib/models/deepseek_v4_1_flash/index.md",
+      "kind": "technical_document",
+      "bytes": 8500,
+      "sha256": "447bcc6acad0547d11223d70b4c41c6a47cff6bc9b1e35870f1a9990487273b6",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/models/deepseek_v4_1_flash/index.md"
+    },
+    {
+      "path": "01_pypto_lib/models/deepseek_v4_flash_dspark/index.md",
+      "kind": "technical_document",
+      "bytes": 16196,
+      "sha256": "25469f3cf37bdf3fc24f592aeff76bd2500f2b85694845b2baedc6884d3e3df5",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/models/deepseek_v4_flash_dspark/index.md"
+    },
+    {
+      "path": "01_pypto_lib/models/deepseek_v4_flash_mtp/decode_optimization.md",
+      "kind": "technical_document",
+      "bytes": 34375,
+      "sha256": "5e59d8b92ea12c81d5d07602ddca05683310d2f865e99e65284f319b9cd95ac5",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/models/deepseek_v4_flash_mtp/decode_optimization.md"
+    },
+    {
+      "path": "01_pypto_lib/models/deepseek_v4_flash_mtp/index.md",
+      "kind": "technical_document",
+      "bytes": 14915,
+      "sha256": "f05ace1560e5f490de536efb74502912298e58caea6a57c7f1419cbc28b47bbe",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/models/deepseek_v4_flash_mtp/index.md"
+    },
+    {
+      "path": "01_pypto_lib/models/deepseek_v4_pro/index.md",
+      "kind": "technical_document",
+      "bytes": 17173,
+      "sha256": "5c4a3efbe15415803dfd37faf8a1b9e54b5d69cd19bc520353e5fa28ce212b8c",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/models/deepseek_v4_pro/index.md"
+    },
+    {
+      "path": "01_pypto_lib/models/index.md",
+      "kind": "technical_document",
+      "bytes": 2442,
+      "sha256": "fd0d02a60f4e7b98cab501ba5eea01543ed900f0d0c31dee5c0b9023db576f83",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/models/index.md"
+    },
+    {
+      "path": "01_pypto_lib/models/qwen3_14b/index.md",
+      "kind": "technical_document",
+      "bytes": 10087,
+      "sha256": "d8cd2107e968ab1f39f785f4f13cca39d8cf318b598c97f77b62ea4a67fea308",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/models/qwen3_14b/index.md"
+    },
+    {
+      "path": "01_pypto_lib/models/qwen3_14b/optimization.md",
+      "kind": "technical_document",
+      "bytes": 33008,
+      "sha256": "be9cdf0b278478606472b250be85834421012900943e5905734e16ed2ab6a7bd",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/models/qwen3_14b/optimization.md"
+    },
+    {
+      "path": "01_pypto_lib/models/qwen3_14b/paged_attention_pypto.md",
+      "kind": "technical_document",
+      "bytes": 28722,
+      "sha256": "acecc94766783dd802af189dfeddd81bf58600d4cf28e95626555fa72c1a3cea",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/models/qwen3_14b/paged_attention_pypto.md"
+    },
+    {
+      "path": "01_pypto_lib/pypto-coding/cce-extern-kernel.md",
+      "kind": "technical_document",
+      "bytes": 15513,
+      "sha256": "98bbd1f36deebf5939c1b6f25977dd9e3d1cbc7fc225e58ebbed1470e6b65048",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/pypto-coding/cce-extern-kernel.md"
+    },
+    {
+      "path": "01_pypto_lib/pypto-coding/golden-and-run.md",
+      "kind": "technical_document",
+      "bytes": 7218,
+      "sha256": "bc3a4d18495fa7bb4c8963015fed4a9299ee5d81c80cb599478c6e3b84e605ae",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/pypto-coding/golden-and-run.md"
+    },
+    {
+      "path": "01_pypto_lib/pypto-coding/index.md",
+      "kind": "technical_document",
+      "bytes": 1680,
+      "sha256": "d069bff733dd352ad995916a1debf6ea4db2a00c459dd0d08f3b13ec5e378c91",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/pypto-coding/index.md"
+    },
+    {
+      "path": "01_pypto_lib/pypto-coding/l2-programming.md",
+      "kind": "technical_document",
+      "bytes": 18024,
+      "sha256": "0bbaadd5362816fb61bb2b862c1d5da422e3b41b524f04f1ab5caf35f2cd3a80",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/pypto-coding/l2-programming.md"
+    },
+    {
+      "path": "01_pypto_lib/pypto-coding/l3-programming.md",
+      "kind": "technical_document",
+      "bytes": 16321,
+      "sha256": "c56f03e44e1d6c778baac4fae240f3983ddbedaf4b398923a5d99e456bfee7ed",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/pypto-coding/l3-programming.md"
+    },
+    {
+      "path": "01_pypto_lib/pypto-coding/loops.md",
+      "kind": "technical_document",
+      "bytes": 5738,
+      "sha256": "d1ea10413fe88ecb369636c536b8e52aabfac63f8644c34d166b086c097c4390",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/pypto-coding/loops.md"
+    },
+    {
+      "path": "01_pypto_lib/pypto-coding/naming-and-comments.md",
+      "kind": "technical_document",
+      "bytes": 3544,
+      "sha256": "51bb13c9ed31b57a398ea6b76f20a20614a4446cc31063d7cdc114e91ad4d9f3",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/pypto-coding/naming-and-comments.md"
+    },
+    {
+      "path": "01_pypto_lib/pypto-coding/operations.md",
+      "kind": "technical_document",
+      "bytes": 17631,
+      "sha256": "8dd8ebeefc2c5e1940e40daa6e3fcb35c969635a7a65fc7e5d22f6ff4a31a8a4",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/pypto-coding/operations.md"
+    },
+    {
+      "path": "01_pypto_lib/run-and-validate/compile-runtime-workflow.md",
+      "kind": "technical_document",
+      "bytes": 19794,
+      "sha256": "db8e84df44c5278c01c9c3fc2bcb810b65e1a0770950eecc606e7566441aee69",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/run-and-validate/compile-runtime-workflow.md"
+    },
+    {
+      "path": "01_pypto_lib/run-and-validate/golden-harness.md",
+      "kind": "technical_document",
+      "bytes": 8178,
+      "sha256": "e5b9e5eab95a6051cdd99f072df598716c424e1db00fe400bd63a5860d33ea48",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/run-and-validate/golden-harness.md"
+    },
+    {
+      "path": "01_pypto_lib/run-and-validate/index.md",
+      "kind": "technical_document",
+      "bytes": 1171,
+      "sha256": "246789529dd07f4c8fa69d44fff00a56fe7c813ddd537031aa04d43aa80a2d34",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/run-and-validate/index.md"
+    },
+    {
+      "path": "01_pypto_lib/run-and-validate/save-and-replay.md",
+      "kind": "technical_document",
+      "bytes": 4883,
+      "sha256": "17a7d38bf691ec276fdb571ca8ba015f56844eae3508131b390107b578112091",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/01_pypto_lib/run-and-validate/save-and-replay.md"
+    },
+    {
+      "path": "02_pypto/en/api/index.md",
+      "kind": "technical_document",
+      "bytes": 2114,
+      "sha256": "ba5c37ef96517c29375f425f17ca907c2572e4b70818080a64d78cf40b0df756",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/api/index.md"
+    },
+    {
+      "path": "02_pypto/en/dev/00-ecosystem.md",
+      "kind": "technical_document",
+      "bytes": 11427,
+      "sha256": "e10e01fef7ec6685a3044d520200b07538a06680ec47c486c7d44ae94a637845",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/00-ecosystem.md"
+    },
+    {
+      "path": "02_pypto/en/dev/01-compile-profiling.md",
+      "kind": "technical_document",
+      "bytes": 4771,
+      "sha256": "345ae564d4b9041472bdb95376ec9bddd6cb1fae036bba991a2bd6426f47e083",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/01-compile-profiling.md"
+    },
+    {
+      "path": "02_pypto/en/dev/02-error-handling.md",
+      "kind": "technical_document",
+      "bytes": 20682,
+      "sha256": "d1425c324ab9c5bc77e0c4e3c8f55ced003c5507ab267031c2bdd26b64045de1",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/02-error-handling.md"
+    },
+    {
+      "path": "02_pypto/en/dev/03-logging.md",
+      "kind": "technical_document",
+      "bytes": 9604,
+      "sha256": "10909fb612b591dbafc38dbfd7e7022f5c90ff8f3679a06f583f810ea7efd60b",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/03-logging.md"
+    },
+    {
+      "path": "02_pypto/en/dev/03-runtime-dfx.md",
+      "kind": "technical_document",
+      "bytes": 23556,
+      "sha256": "90f9042046d6b62627e1507844f9d394aa9174c3510cf22edba321f6fdc72d72",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/03-runtime-dfx.md"
+    },
+    {
+      "path": "02_pypto/en/dev/03-runtime-replay.md",
+      "kind": "technical_document",
+      "bytes": 11992,
+      "sha256": "21519c383716bfaf2aaedc4fd3f9398109fa11b126b0daa0a0a0c10f036e3048",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/03-runtime-replay.md"
+    },
+    {
+      "path": "02_pypto/en/dev/04-simulator-trace-cleaning.md",
+      "kind": "technical_document",
+      "bytes": 6032,
+      "sha256": "e70d05ed9883a181f8cf15419a7ce6df8ee9090046e7b957481892d613543d34",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/04-simulator-trace-cleaning.md"
+    },
+    {
+      "path": "02_pypto/en/dev/05-runtime-ring-sizing.md",
+      "kind": "technical_document",
+      "bytes": 8785,
+      "sha256": "3cc559cfb5d240d0d32f31e59efe654870c284c12b218b79332d0be5425d5597",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/05-runtime-ring-sizing.md"
+    },
+    {
+      "path": "02_pypto/en/dev/06-persistent-l3.md",
+      "kind": "technical_document",
+      "bytes": 4995,
+      "sha256": "4369c36ea9414e5625e43df1c026ec0a56c56fd2685de6007771b17ec7f5df86",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/06-persistent-l3.md"
+    },
+    {
+      "path": "02_pypto/en/dev/07-ir-lower-trace.md",
+      "kind": "technical_document",
+      "bytes": 8128,
+      "sha256": "243d77147d18219367dbf626a40778e30feb4c6e9587d3f7fb54d2e65ba7b4e1",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/07-ir-lower-trace.md"
+    },
+    {
+      "path": "02_pypto/en/dev/07-memory-map.md",
+      "kind": "technical_document",
+      "bytes": 9484,
+      "sha256": "0a21bd598fc12034d5b0bffddd1cf15c198148aedefe1213b193c5805e3bcff4",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/07-memory-map.md"
+    },
+    {
+      "path": "02_pypto/en/dev/08-artifact-identity.md",
+      "kind": "technical_document",
+      "bytes": 6809,
+      "sha256": "ddee9c44db2a200c02eac7f1562b70bd6c324ba655d09fe77edc8a235107cd85",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/08-artifact-identity.md"
+    },
+    {
+      "path": "02_pypto/en/dev/08-entry-points.md",
+      "kind": "technical_document",
+      "bytes": 17605,
+      "sha256": "53c2f68c6096b7cec949366f1d091684bd861f6cabec2c5fdfd16b63805dd62d",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/08-entry-points.md"
+    },
+    {
+      "path": "02_pypto/en/dev/backend/00-backend_handler.md",
+      "kind": "technical_document",
+      "bytes": 5456,
+      "sha256": "485d8a25b3cba67267a41652927d8ae541a350064ff85f40087638c8a0bc0c1e",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/backend/00-backend_handler.md"
+    },
+    {
+      "path": "02_pypto/en/dev/backend/index.md",
+      "kind": "technical_document",
+      "bytes": 959,
+      "sha256": "2b423cb57df617c227cbf6af36083f103ac06a0cac6d6d8f1f8f18a34eec6dcc",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/backend/index.md"
+    },
+    {
+      "path": "02_pypto/en/dev/codegen/00-pto_codegen.md",
+      "kind": "technical_document",
+      "bytes": 50472,
+      "sha256": "52cddb564988b711f3c5aa417877d85c6b03b014df76a224b80d7bdc92a6ec40",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/codegen/00-pto_codegen.md"
+    },
+    {
+      "path": "02_pypto/en/dev/codegen/01-orchestration_codegen.md",
+      "kind": "technical_document",
+      "bytes": 42595,
+      "sha256": "5dbffc4c1ed0d361350ea2db26a6bb993e90dfb1a0e6a6c0bbab4fef85aeb643",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/codegen/01-orchestration_codegen.md"
+    },
+    {
+      "path": "02_pypto/en/dev/codegen/index.md",
+      "kind": "technical_document",
+      "bytes": 1037,
+      "sha256": "9ed5793415542945ffe6f9a5aeb738e769be357696c2f6393ddfa6094818ca77",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/codegen/index.md"
+    },
+    {
+      "path": "02_pypto/en/dev/debug/00-torch_codegen.md",
+      "kind": "technical_document",
+      "bytes": 12285,
+      "sha256": "b92e210307574ee09770b8bed80b5646f8365ac6b1d9571e849c5dd00533b41d",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/debug/00-torch_codegen.md"
+    },
+    {
+      "path": "02_pypto/en/dev/debug/index.md",
+      "kind": "technical_document",
+      "bytes": 939,
+      "sha256": "4d7781ae512cc5248c1dd15cfd9269eb2f126742a9a1a167011fc19522a3b6a4",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/debug/index.md"
+    },
+    {
+      "path": "02_pypto/en/dev/distributed_ops.md",
+      "kind": "technical_document",
+      "bytes": 47431,
+      "sha256": "0d4e577520ab1ce935fc84ea2646cbfa85e4e443832dbcb2535039304e198708",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/distributed_ops.md"
+    },
+    {
+      "path": "02_pypto/en/dev/index.md",
+      "kind": "technical_document",
+      "bytes": 3037,
+      "sha256": "fed08c1e73c77abdf312382353e486a9323008c273d2755ccd8c1a222277b292",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/index.md"
+    },
+    {
+      "path": "02_pypto/en/dev/ir/00-overview.md",
+      "kind": "technical_document",
+      "bytes": 8449,
+      "sha256": "302614e9fab9200ad538b12d3acaa054d3eb14cfc45e422050362d1b48d355ef",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/ir/00-overview.md"
+    },
+    {
+      "path": "02_pypto/en/dev/ir/01-hierarchy.md",
+      "kind": "technical_document",
+      "bytes": 36447,
+      "sha256": "468632ad9a22f3b74320f31fd19ef82c72b06ed1ba879c5b72de7a3649499f48",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/ir/01-hierarchy.md"
+    },
+    {
+      "path": "02_pypto/en/dev/ir/02-types.md",
+      "kind": "technical_document",
+      "bytes": 23367,
+      "sha256": "1a6aef2134127a80fecd65293abc666b24837e98e5429a557c3c778cd54cf467",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/ir/02-types.md"
+    },
+    {
+      "path": "02_pypto/en/dev/ir/03-structural_comparison.md",
+      "kind": "technical_document",
+      "bytes": 11614,
+      "sha256": "b7237201e1feff54464723413bb25dfd6b88d861a31a60898a73d8d79e6ecb99",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/ir/03-structural_comparison.md"
+    },
+    {
+      "path": "02_pypto/en/dev/ir/04-serialization.md",
+      "kind": "technical_document",
+      "bytes": 11191,
+      "sha256": "b2ab4644b0298eb13a1cef687ba5923e81d433eda9a09c2c0b2cf9642703f5d9",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/ir/04-serialization.md"
+    },
+    {
+      "path": "02_pypto/en/dev/ir/05-operators.md",
+      "kind": "technical_document",
+      "bytes": 72733,
+      "sha256": "f566b3c741a09f86bfef9209f689182b31af359c8577f6af8c5685e7bf171be1",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/ir/05-operators.md"
+    },
+    {
+      "path": "02_pypto/en/dev/ir/06-builder.md",
+      "kind": "technical_document",
+      "bytes": 9660,
+      "sha256": "4c1612660697b8ad468f6cb03534a3448c1dc1a904b7f3f69fdccd5ac1656e74",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/ir/06-builder.md"
+    },
+    {
+      "path": "02_pypto/en/dev/ir/07-parser.md",
+      "kind": "technical_document",
+      "bytes": 9223,
+      "sha256": "93a6e504f46e13a379017791304306e1913272c7cea99b8ebdf19053247ed88f",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/ir/07-parser.md"
+    },
+    {
+      "path": "02_pypto/en/dev/ir/08-param-directions.md",
+      "kind": "technical_document",
+      "bytes": 9992,
+      "sha256": "721927b25f04d30ad368aa00604087b991c2fa408665a5fba6dbd6859cd25840",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/ir/08-param-directions.md"
+    },
+    {
+      "path": "02_pypto/en/dev/ir/09-multi_output_ops.md",
+      "kind": "technical_document",
+      "bytes": 9681,
+      "sha256": "bbad317751d931b99065b394df19dfaa4cf54c42d1633299964baa222ba0499c",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/ir/09-multi_output_ops.md"
+    },
+    {
+      "path": "02_pypto/en/dev/ir/index.md",
+      "kind": "technical_document",
+      "bytes": 2028,
+      "sha256": "00b59ec6432d118263f4c51f82c2e2d7520406bd9922d7b776309cecf40f4fd4",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/ir/index.md"
+    },
+    {
+      "path": "02_pypto/en/dev/language/00-python_syntax.md",
+      "kind": "technical_document",
+      "bytes": 20752,
+      "sha256": "40094385287700c819497aa64398be660f726bb171c40dad87ef487c73e277f3",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/language/00-python_syntax.md"
+    },
+    {
+      "path": "02_pypto/en/dev/language/01-statements.md",
+      "kind": "technical_document",
+      "bytes": 13537,
+      "sha256": "65404006f1b471947274aa3d998607faa993b8633fc7cc296fccf6670a8ba9ee",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/language/01-statements.md"
+    },
+    {
+      "path": "02_pypto/en/dev/language/02-manual_dependencies.md",
+      "kind": "technical_document",
+      "bytes": 22194,
+      "sha256": "24091cdea70a5b6405c75c876860d9197675694cb3f38f21f045c709f7bcd007",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/language/02-manual_dependencies.md"
+    },
+    {
+      "path": "02_pypto/en/dev/language/03-functions.md",
+      "kind": "technical_document",
+      "bytes": 15839,
+      "sha256": "70900978d355df50df6c720c0bd2fd5ca65861264e578e5b5c7f22e3b105b21d",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/language/03-functions.md"
+    },
+    {
+      "path": "02_pypto/en/dev/language/04-external-kernels.md",
+      "kind": "technical_document",
+      "bytes": 7318,
+      "sha256": "c7a70f40133dafa40c80c61b93875d0902e8718064227dc3724b22ff4edabb3a",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/language/04-external-kernels.md"
+    },
+    {
+      "path": "02_pypto/en/dev/language/05-cache-policy.md",
+      "kind": "technical_document",
+      "bytes": 13579,
+      "sha256": "0392d527114e544cc0b0072761d2078e42ab7764cc38868b35149e16d23d4f0d",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/language/05-cache-policy.md"
+    },
+    {
+      "path": "02_pypto/en/dev/language/index.md",
+      "kind": "technical_document",
+      "bytes": 1313,
+      "sha256": "b600a7078a386eb01f65f4a65c487bb66e64be2d322ef98ac625c42810565abb",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/language/index.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/00-pass_manager.md",
+      "kind": "technical_document",
+      "bytes": 35723,
+      "sha256": "c8032fc5197fce7efcdc92f719c510d332a933898d3679c1ce369819e83ea187",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/00-pass_manager.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/01-inline_functions.md",
+      "kind": "technical_document",
+      "bytes": 5840,
+      "sha256": "fd902cabb9137ddd3dd06f988716d9fc2955962af9e890fbf6b926909af9fa6a",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/01-inline_functions.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/02-unroll_loops.md",
+      "kind": "technical_document",
+      "bytes": 2462,
+      "sha256": "90232894c6586e454a3b584d2551d8309fd1b21fe9f82ada916cca1dfeb31703",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/02-unroll_loops.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/03-ctrl_flow_transform.md",
+      "kind": "technical_document",
+      "bytes": 4160,
+      "sha256": "b1fc3254bb9b1df36402c290055c0c0c2fd48b9ab9a8e74836c378be1f32efcd",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/03-ctrl_flow_transform.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/04-convert_to_ssa.md",
+      "kind": "technical_document",
+      "bytes": 5417,
+      "sha256": "1baeab3d3100ce59814d2c6760c607b8c37e2c69055977170cf5210aa29dd8ca",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/04-convert_to_ssa.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/05-simplify.md",
+      "kind": "technical_document",
+      "bytes": 21852,
+      "sha256": "b33b544f93fec474cee9b0b4fb4defa3c3e063638c0dcbcef37fadbdbeb78523",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/05-simplify.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/06-flatten_call_expr.md",
+      "kind": "technical_document",
+      "bytes": 5777,
+      "sha256": "fa9832351fff9d26524261ef0fe224d8f51f07bd522e927abeff87e80eea4685",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/06-flatten_call_expr.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/07-outline_hierarchy_scopes.md",
+      "kind": "technical_document",
+      "bytes": 10782,
+      "sha256": "cb82e966b370931f0d1f83a2e411de2d3aa6bf959d7c7e609fc5d4e969d366f9",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/07-outline_hierarchy_scopes.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/08-outline_graph_scopes.md",
+      "kind": "technical_document",
+      "bytes": 9430,
+      "sha256": "98b75ee17a658d9a61a92296f29fbaf8c156b821880b24ea0b8b945c248ef861",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/08-outline_graph_scopes.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/09-outline_incore_scopes.md",
+      "kind": "technical_document",
+      "bytes": 26679,
+      "sha256": "550f248a05aaad66d028fb7a0a76cc3954b68cc1ebc47ceec9c5abef073fa6bd",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/09-outline_incore_scopes.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/10-outline_cluster_scopes.md",
+      "kind": "technical_document",
+      "bytes": 9184,
+      "sha256": "8a8936c658c2968eb34336fac26e663162a50890159ee177acefb6db4840dd45",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/10-outline_cluster_scopes.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/11-convert_tensor_to_tile_ops.md",
+      "kind": "technical_document",
+      "bytes": 45207,
+      "sha256": "c6946119b51352434d8ac6db649518374271812c650d98971ba0793d9490297a",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/11-convert_tensor_to_tile_ops.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/12-optimize_orch_tensors.md",
+      "kind": "technical_document",
+      "bytes": 16494,
+      "sha256": "f0bd6da89b293b06ed1312c319eee71e4b470881caba9673d8b00cfed3a6eeb7",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/12-optimize_orch_tensors.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/13-lower_composite_ops.md",
+      "kind": "technical_document",
+      "bytes": 28374,
+      "sha256": "ccd5a9556275c4a1b06070cfc2d449e2e3bf7978aba9504bf408ff9f97831d56",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/13-lower_composite_ops.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/14-flatten_tile_nd_to_2d.md",
+      "kind": "technical_document",
+      "bytes": 24968,
+      "sha256": "bb5e37d8363f7c138e7526fa9be03416b2d17c43687d7fe12806f03d5e99f679",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/14-flatten_tile_nd_to_2d.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/15-block_nz_tensor_views.md",
+      "kind": "technical_document",
+      "bytes": 12115,
+      "sha256": "aef719c962e6fd33406cb2c47952652f74ee28ed96b483f3738633d387861274",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/15-block_nz_tensor_views.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/16-block_mx_scale_tensor_views.md",
+      "kind": "technical_document",
+      "bytes": 4496,
+      "sha256": "3f8288d50bd9c527bd07b5976b2063cda701b4e3d76b820ae3c36bfcd011bb2d",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/16-block_mx_scale_tensor_views.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/17-legalize_tile_cast.md",
+      "kind": "technical_document",
+      "bytes": 6225,
+      "sha256": "b1cb6b5cd8d627c650bf63bf02d93174cdcea3c78d1d6f6ee3de89c3be943b9e",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/17-legalize_tile_cast.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/18-auto_tile_matmul_l0.md",
+      "kind": "technical_document",
+      "bytes": 52129,
+      "sha256": "8f6a420e3a0d471b8fd3f54b5eebf90cbeb1c51d03bf731e2a16f132a70e8573",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/18-auto_tile_matmul_l0.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/19-canonicalize_tile_slice.md",
+      "kind": "technical_document",
+      "bytes": 24788,
+      "sha256": "94f5030f0aefef810e55d8841b431eaa67bfad25ab3bcb8aa04a8b39703e0e52",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/19-canonicalize_tile_slice.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/20-infer_tile_memory_space.md",
+      "kind": "technical_document",
+      "bytes": 30013,
+      "sha256": "28f88ae7cd6d3efe0255ed791075ef45d218e51659eaedddc1b5ad53486b764f",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/20-infer_tile_memory_space.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/21-insert_mx_scale_addr.md",
+      "kind": "technical_document",
+      "bytes": 3667,
+      "sha256": "be1f33de665eea642a5b009e5ecb3ab2a8e32ca10b9a5bf4a3027661f90e87cc",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/21-insert_mx_scale_addr.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/22-resolve_backend_op_layouts.md",
+      "kind": "technical_document",
+      "bytes": 12413,
+      "sha256": "ddecf5e88b88f1d3b101d2115dd6ca85cf3314410c71822ba0528e2b2eb2e035",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/22-resolve_backend_op_layouts.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/23-lower_auto_vector_split.md",
+      "kind": "technical_document",
+      "bytes": 56491,
+      "sha256": "5f997c224441c70c217282098273ee3befd767de397af401fefa4c79cf649c14",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/23-lower_auto_vector_split.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/24-expand_mixed_kernel.md",
+      "kind": "technical_document",
+      "bytes": 39276,
+      "sha256": "ed0f89936ea9b53c6c6244c767c588d5696a861cacc9c747ce2a0115db4b112e",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/24-expand_mixed_kernel.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/25-inject_gm_pipe_buffer.md",
+      "kind": "technical_document",
+      "bytes": 7605,
+      "sha256": "7c0c184794fe1eefff98ac910c5a15434888126753b478ab1198bc2ab4a16f1f",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/25-inject_gm_pipe_buffer.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/26-split_vector_kernel.md",
+      "kind": "technical_document",
+      "bytes": 11515,
+      "sha256": "e98b16fc617e41a3ad0ae67eded554ffbb460bb660a5e4f19e82118fe0b9a83b",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/26-split_vector_kernel.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/27-stamp_tfree_split.md",
+      "kind": "technical_document",
+      "bytes": 2731,
+      "sha256": "cf6d4fbd8539cce014387941efd590d9248d4563795b49ed1a38411f1a61326f",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/27-stamp_tfree_split.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/28-normalize_return_order.md",
+      "kind": "technical_document",
+      "bytes": 15942,
+      "sha256": "6283093e15572a09fb695055b4327f4de84e598290890205078cb0ed60897b14",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/28-normalize_return_order.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/29-skew_cross_core_pipeline.md",
+      "kind": "technical_document",
+      "bytes": 9039,
+      "sha256": "42b4ec5654c54c5db68c5271e60a683bd81518f1c5d4dfe9881c30bb6dda861c",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/29-skew_cross_core_pipeline.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/30-lower_pipeline_to_slots.md",
+      "kind": "technical_document",
+      "bytes": 12571,
+      "sha256": "c91c1999ece40e1a871c6553bfa1f2959c90e49ea7f16351b7926778d161c080",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/30-lower_pipeline_to_slots.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/31-lower_pipeline_loops.md",
+      "kind": "technical_document",
+      "bytes": 12727,
+      "sha256": "342e85e529b9163388ad9603306228866b299b0ea238e0efcbedbf62414c2276",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/31-lower_pipeline_loops.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/32-canonicalize_io_order.md",
+      "kind": "technical_document",
+      "bytes": 12048,
+      "sha256": "31b509e7e9f74ffbf9925f76fe1ae3dee8d5971808211eee078f9d033211fb48",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/32-canonicalize_io_order.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/33-materialize_tensor_strides.md",
+      "kind": "technical_document",
+      "bytes": 10251,
+      "sha256": "c1c9e4c8012859575651c5f96c749a2453b8b3dd09aa36418e21388e2ab9908a",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/33-materialize_tensor_strides.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/34-init_memref.md",
+      "kind": "technical_document",
+      "bytes": 17350,
+      "sha256": "a8971b6a76f7597f4e95cf4ee4b2e6a08226611b328febead7f5f90e4c1b9048",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/34-init_memref.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/35-materialize_semantic_aliases.md",
+      "kind": "technical_document",
+      "bytes": 5700,
+      "sha256": "aab56bafaa15e9f7c7c6018f9337089205f7b5fee6f3bcf030193d1ba96c3d88",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/35-materialize_semantic_aliases.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/36-memory_reuse.md",
+      "kind": "technical_document",
+      "bytes": 30554,
+      "sha256": "2a26d054f6dcbb09795d05412e46953a8450f6052501d20805c16177ab0b3767",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/36-memory_reuse.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/37-allocate_memory_addr.md",
+      "kind": "technical_document",
+      "bytes": 15909,
+      "sha256": "644f6d24dd5b9166e5267be2f8ef73428305ac3f2382b802e7ce04f3b56d1241",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/37-allocate_memory_addr.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/38-fold_no_op_reshape.md",
+      "kind": "technical_document",
+      "bytes": 6670,
+      "sha256": "d14bea4a639f0421826541993393c0c4eec3c1bbf8d1bfd0a7bef8b5807816d7",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/38-fold_no_op_reshape.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/39-fuse_create_assemble_to_slice.md",
+      "kind": "technical_document",
+      "bytes": 9662,
+      "sha256": "0b7b128fd983a637c3ed54b7a1ed9c975a14b6e11eaab85ea7aa1886c62e042b",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/39-fuse_create_assemble_to_slice.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/40-lower_l2_tensor_collectives.md",
+      "kind": "technical_document",
+      "bytes": 11203,
+      "sha256": "7d00ddc515ab511ee37860beb4b8fca86966802359650fc84d311e54c13aef89",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/40-lower_l2_tensor_collectives.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/41-derive_call_directions.md",
+      "kind": "technical_document",
+      "bytes": 16016,
+      "sha256": "6daa83e0c1ca1a0f03c422f9d502bb561e6e079d91c1870fd1f2ba52e0f9f787",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/41-derive_call_directions.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/42-auto_derive_task_dependencies.md",
+      "kind": "technical_document",
+      "bytes": 8873,
+      "sha256": "0af3539b5cec0015613bf22e8b4818ac84db5d8b4b3294628f291006b040a015",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/42-auto_derive_task_dependencies.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/43-expand_manual_phase_fence.md",
+      "kind": "technical_document",
+      "bytes": 6729,
+      "sha256": "9801f583e27d71a907594cc34a881d5ab423b2729a0fd618635730f9b8e681d2",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/43-expand_manual_phase_fence.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/44-synthesize_allreduce_signals.md",
+      "kind": "technical_document",
+      "bytes": 5314,
+      "sha256": "2f821642de87aac110bd7b466585aa34a5047817c2a4a4e9f0896ee447733e9d",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/44-synthesize_allreduce_signals.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/45-materialize_comm_domain_scopes.md",
+      "kind": "technical_document",
+      "bytes": 8338,
+      "sha256": "c2d646db3653f9d6353b7c013c48f5f115b83f11273408b083f0610b6656aeae",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/45-materialize_comm_domain_scopes.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/46-lower_host_tensor_collectives.md",
+      "kind": "technical_document",
+      "bytes": 12194,
+      "sha256": "a1e7a286f99ff7330ba7235d0df2b21d2534ee048a94781f2f2262ba1598b9ae",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/46-lower_host_tensor_collectives.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/47-materialize_dist_tensor_ctx.md",
+      "kind": "technical_document",
+      "bytes": 5939,
+      "sha256": "de1d694edd5f9d16269a5b0e63c3809ffec2da2515253e92929485066455b3bd",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/47-materialize_dist_tensor_ctx.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/48-legalize_graph_boundary.md",
+      "kind": "technical_document",
+      "bytes": 23677,
+      "sha256": "69c97719105e688da09c1c91939d6aa6f1c9e9f39992a3603beeeeb7ebaade32",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/48-legalize_graph_boundary.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/49-materialize_runtime_scopes.md",
+      "kind": "technical_document",
+      "bytes": 6722,
+      "sha256": "8841d5a54b6f86687d7d56a63f434a6419253dfd4c9ad3dc99a66d8f8ae00eb1",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/49-materialize_runtime_scopes.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/50-classify_iter_arg_carry.md",
+      "kind": "technical_document",
+      "bytes": 7996,
+      "sha256": "d8a536131b9847cf40173449d1ef937fd3d74d724a21d18e18822a0b9a5e06ce",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/50-classify_iter_arg_carry.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/51-insert_comm_fence.md",
+      "kind": "technical_document",
+      "bytes": 13821,
+      "sha256": "92ad5990d0864996aeac6a6ec7ba8616d2ec901992bfaa69deda9d9dea6e6bde",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/51-insert_comm_fence.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/52-materialize_valid_shape_symbols.md",
+      "kind": "technical_document",
+      "bytes": 5328,
+      "sha256": "c2b3726c147916f9a1bf034c3bcc27e6b2ed8ce26d75225dc289d8434762ed21",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/52-materialize_valid_shape_symbols.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/91-utility_passes.md",
+      "kind": "technical_document",
+      "bytes": 5232,
+      "sha256": "c342a160847e7fa907c2a2fc952c4ad5808b1f8b1e0d6ec2f493a5ca6b3f4551",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/91-utility_passes.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/92-diagnostics.md",
+      "kind": "technical_document",
+      "bytes": 11675,
+      "sha256": "6cc031a4ac964ebe33ba04ebf22ad7b3d41758ad6743f319caf0311989e85b40",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/92-diagnostics.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/99-verifier.md",
+      "kind": "technical_document",
+      "bytes": 53439,
+      "sha256": "a8ca2358b1db78ed76f37ce90c02a72516e83d5732de73829f38cd411955c130",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/99-verifier.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/index.md",
+      "kind": "technical_document",
+      "bytes": 9516,
+      "sha256": "e7c9a84f441fc20ef8e77817e9a62e74b59f8a0116fa24359eca7ddf54c4eaa0",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/index.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/loop-carried-dep-compression.md",
+      "kind": "technical_document",
+      "bytes": 3452,
+      "sha256": "2976d3044c4e350f8b61d24d3a756e6dd08df6f3ac7688c0c1d2097d6b89763d",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/loop-carried-dep-compression.md"
+    },
+    {
+      "path": "02_pypto/en/dev/passes/utils.md",
+      "kind": "technical_document",
+      "bytes": 5327,
+      "sha256": "6c8e69f3526f1459066dbb75ff458ee17e2ee9810c5df9e376f7703036044563",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/passes/utils.md"
+    },
+    {
+      "path": "02_pypto/en/dev/ptoas-op-status.md",
+      "kind": "technical_document",
+      "bytes": 28805,
+      "sha256": "068c1fbffa57851b0f4f389abde4fb6a45486a467618332032102bd6de4f1132",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/dev/ptoas-op-status.md"
+    },
+    {
+      "path": "02_pypto/en/index.md",
+      "kind": "technical_document",
+      "bytes": 2708,
+      "sha256": "50f6aa3e8d56c58b5f9fc1f3af0872d2fc6609ff04a53f94b255c241aad08618",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/index.md"
+    },
+    {
+      "path": "02_pypto/en/reference/index.md",
+      "kind": "technical_document",
+      "bytes": 1358,
+      "sha256": "c2633cdc2639ec0d4640dc3355222ec90b730a3bad758e4674b88a3a0b0b6278",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/reference/index.md"
+    },
+    {
+      "path": "02_pypto/en/reference/pto-isa/00-cluster_architecture.md",
+      "kind": "technical_document",
+      "bytes": 4268,
+      "sha256": "f3e8578f6c66d08ef3d44de4e03a2028cf4e8ec02edd7e1144f6b950198fcd37",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/reference/pto-isa/00-cluster_architecture.md"
+    },
+    {
+      "path": "02_pypto/en/reference/pto-isa/01-tpush_tpop.md",
+      "kind": "technical_document",
+      "bytes": 11379,
+      "sha256": "5ab4216b71c0b55a214f2f5ed67f53c6997b522ff7fb23fbeeb59d5d82385360",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/reference/pto-isa/01-tpush_tpop.md"
+    },
+    {
+      "path": "02_pypto/en/reference/pto-isa/02-buffer_management.md",
+      "kind": "technical_document",
+      "bytes": 9599,
+      "sha256": "450ba5846f579c24c0ca5bc4b2d704027076a4e3ec5429e9f7ca4364540165c5",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/reference/pto-isa/02-buffer_management.md"
+    },
+    {
+      "path": "02_pypto/en/reference/pto-isa/index.md",
+      "kind": "technical_document",
+      "bytes": 1007,
+      "sha256": "30bfcb0c244dd3bf86bf8ef4671513af5f976f7316f6a3bebb4bab5017f29b0a",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/reference/pto-isa/index.md"
+    },
+    {
+      "path": "02_pypto/en/user/00-getting_started.md",
+      "kind": "technical_document",
+      "bytes": 25428,
+      "sha256": "3f8a05b47bab2a40681f71efc3de2637b56b1632ed3ec76e1f8e3b4fc2aed7a7",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/00-getting_started.md"
+    },
+    {
+      "path": "02_pypto/en/user/01-installation.md",
+      "kind": "technical_document",
+      "bytes": 13472,
+      "sha256": "57989e9541fbc6d18d93b01d5221fc3d6afeb18beb9a48b8fbc0c7b0a217a7b6",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/01-installation.md"
+    },
+    {
+      "path": "02_pypto/en/user/02-quickstart.md",
+      "kind": "technical_document",
+      "bytes": 13978,
+      "sha256": "93a334e85ab7a553e21960fc39e69119197579239d10646b126b5b9efa013991",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/02-quickstart.md"
+    },
+    {
+      "path": "02_pypto/en/user/03-programming-model.md",
+      "kind": "technical_document",
+      "bytes": 15091,
+      "sha256": "b45962863a08ebaf27c7be97ffcd00f5f4f627ab9f531a84cf545a24dd5ed171",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/03-programming-model.md"
+    },
+    {
+      "path": "02_pypto/en/user/appendix/00-feature-matrix.md",
+      "kind": "technical_document",
+      "bytes": 3410,
+      "sha256": "8b49030f03fb1607763d5fc7e2b40c6ddefdec7a35d089647ce61370321f522b",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/appendix/00-feature-matrix.md"
+    },
+    {
+      "path": "02_pypto/en/user/appendix/01-faq.md",
+      "kind": "technical_document",
+      "bytes": 4872,
+      "sha256": "a89b2e81cb0acf4bcf8062bb30db4e4e5eecd9964463b531b76968d6efd85278",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/appendix/01-faq.md"
+    },
+    {
+      "path": "02_pypto/en/user/appendix/index.md",
+      "kind": "technical_document",
+      "bytes": 648,
+      "sha256": "48b676f0db7392c134d6d87cae536a47c26984cdf16c3cd514ce1beac87766d9",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/appendix/index.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/00-model.md",
+      "kind": "technical_document",
+      "bytes": 9855,
+      "sha256": "2b47b30bcec1d33062b7fe0a57cbae606f6d3097c1f1793363f8d96f7f2d2509",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/00-model.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/01-collectives.md",
+      "kind": "technical_document",
+      "bytes": 12284,
+      "sha256": "6abcc44e2e746078c8ec15f1b8c073011eed322fa4f087c594c468cf4ed533ca",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/01-collectives.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/02-primitives.md",
+      "kind": "technical_document",
+      "bytes": 20756,
+      "sha256": "4ca01eda5b202c3497937ba72feba30bb48cf3c36b9cbbc6eb489a93930bf92f",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/02-primitives.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/03-execution.md",
+      "kind": "technical_document",
+      "bytes": 16701,
+      "sha256": "8551fae079b1d80b89de09af3e11a2969af948ac2523561e969dbcebd2681071",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/03-execution.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/04-debugging.md",
+      "kind": "technical_document",
+      "bytes": 4570,
+      "sha256": "6f8420121b3b12bd593818288ff5bd225bb56820025cd012c069edbc67c08a20",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/04-debugging.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/05-tutorials.md",
+      "kind": "technical_document",
+      "bytes": 10852,
+      "sha256": "3ed8f4de346d828f2fde5fddd6847785785919bc96393ea3382c0936cecc7b42",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/05-tutorials.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/06-hello_rank.md",
+      "kind": "technical_document",
+      "bytes": 5840,
+      "sha256": "ddf00ee00c6556e6dfa762dff0d2cb50cb14d0d97d261547d98909c31d6d07e1",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/06-hello_rank.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/07-programming_model.md",
+      "kind": "technical_document",
+      "bytes": 4972,
+      "sha256": "f07dbec3279148cce994be93905b58bb759670b662544381d07bd49c5ca89188",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/07-programming_model.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/08-window_buffer.md",
+      "kind": "technical_document",
+      "bytes": 4857,
+      "sha256": "2745197dd7af53c46f0d8a79341845f2cb9da80d2e6379bebc9556fabfadb8c1",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/08-window_buffer.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/09-barrier.md",
+      "kind": "technical_document",
+      "bytes": 7470,
+      "sha256": "94592dd46b4658ff5e959f600c7ba9bd9ba897e8d9fa8184643e84b5b6ee3ac9",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/09-barrier.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/10-remote_load_store.md",
+      "kind": "technical_document",
+      "bytes": 7117,
+      "sha256": "4cb6c65d51ff8da7d2a50958d14683b8fba52dad60f13266b6f23c93fe33fa53",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/10-remote_load_store.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/11-put_get.md",
+      "kind": "technical_document",
+      "bytes": 6125,
+      "sha256": "1f89c46e2b6c7c3d03e2c9076d396b323c93da5851cb7a36a84ebf28b5180578",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/11-put_get.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/12-dynamic_rank_count.md",
+      "kind": "technical_document",
+      "bytes": 5867,
+      "sha256": "539707f2fc3b334441153998a3b4f283ff3b8e84d16687c63c7c607c88d31fae",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/12-dynamic_rank_count.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/13-allreduce_mesh.md",
+      "kind": "technical_document",
+      "bytes": 6526,
+      "sha256": "2c63ff7e3fa601c989a54ea903932640b176ff14c2275d3561d344f9953fc262",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/13-allreduce_mesh.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/14-allreduce_two_phase.md",
+      "kind": "technical_document",
+      "bytes": 5614,
+      "sha256": "01f46addfcb33c02d08b3ab16511c66340906da5ba98c993e770500e2c3ea7af",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/14-allreduce_two_phase.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/15-allreduce_ring.md",
+      "kind": "technical_document",
+      "bytes": 6163,
+      "sha256": "693bd4b5195408051c27ed84ce40bd790e68d15bbb8f800e66ea32734b086238",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/15-allreduce_ring.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/16-allreduce_reveal.md",
+      "kind": "technical_document",
+      "bytes": 6539,
+      "sha256": "43534f44e364d8ca2c77c7de96c6c1007dcc758a2d5c2925a28c1a676a57aedd",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/16-allreduce_reveal.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/17-broadcast.md",
+      "kind": "technical_document",
+      "bytes": 6803,
+      "sha256": "95121c423bfcd13cc4425d7ecee485bd590b6dfc93584dd6b9a63b829fff7cd0",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/17-broadcast.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/18-allgather.md",
+      "kind": "technical_document",
+      "bytes": 7895,
+      "sha256": "b294dd047d019d396ee9bf624ea49c1d03e39f430946954498c15b60c6065488",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/18-allgather.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/19-reduce_scatter.md",
+      "kind": "technical_document",
+      "bytes": 7854,
+      "sha256": "5d621445ef570680025e9f60a45934af53cafd0d457bc440b9f790d8ce5806f3",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/19-reduce_scatter.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/20-all_to_all.md",
+      "kind": "technical_document",
+      "bytes": 7864,
+      "sha256": "99512ee507727338e3c904840719ca61cda9de65564c288da3c35f92a6b0fa27",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/20-all_to_all.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/21-putting_it_together.md",
+      "kind": "technical_document",
+      "bytes": 8156,
+      "sha256": "6f0f391d49673c4b7d4d8c6af97f51057593d90f2457297bcfe2e0886316d3d1",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/21-putting_it_together.md"
+    },
+    {
+      "path": "02_pypto/en/user/distributed/index.md",
+      "kind": "technical_document",
+      "bytes": 3275,
+      "sha256": "4fb28efa67ee5a2fae633fe0c624528a01f908834028258fd7b4e145e96f24ae",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/distributed/index.md"
+    },
+    {
+      "path": "02_pypto/en/user/execution/00-compile.md",
+      "kind": "technical_document",
+      "bytes": 7413,
+      "sha256": "14dbc485d92774ee2ae697a1ab7e42878e9d2f2534b96a901992352930ed1ed0",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/execution/00-compile.md"
+    },
+    {
+      "path": "02_pypto/en/user/execution/01-run.md",
+      "kind": "technical_document",
+      "bytes": 7415,
+      "sha256": "06513649a03cdd4a1bcf3734248f62e68242795b1055365af18cb1f8d5b7731e",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/execution/01-run.md"
+    },
+    {
+      "path": "02_pypto/en/user/execution/index.md",
+      "kind": "technical_document",
+      "bytes": 1764,
+      "sha256": "cebae8724c4fd959465d3af7b4765b891908e746c6f938901c3892585dbf8503",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/execution/index.md"
+    },
+    {
+      "path": "02_pypto/en/user/index.md",
+      "kind": "technical_document",
+      "bytes": 6116,
+      "sha256": "722a8ee1c89cc324608101c82c4aca05d2784e72a4f829aae22bf3c7ae2cd560",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/index.md"
+    },
+    {
+      "path": "02_pypto/en/user/language/00-types.md",
+      "kind": "technical_document",
+      "bytes": 15481,
+      "sha256": "666d63948899fcf42f8b3559cc396702fbafd66feaf5783fcaf578a31debc8f9",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/language/00-types.md"
+    },
+    {
+      "path": "02_pypto/en/user/language/01-functions.md",
+      "kind": "technical_document",
+      "bytes": 18087,
+      "sha256": "49ebf9bff935ed5524eff56214a968bdd09d07b005d6ed7294ed413e57f65cda",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/language/01-functions.md"
+    },
+    {
+      "path": "02_pypto/en/user/language/02-control-flow.md",
+      "kind": "technical_document",
+      "bytes": 9571,
+      "sha256": "17e089a705deae57688f7755129ee93416348fe44be78fe41457a6f2f10ed26f",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/language/02-control-flow.md"
+    },
+    {
+      "path": "02_pypto/en/user/language/03-memory.md",
+      "kind": "technical_document",
+      "bytes": 17950,
+      "sha256": "a11f821b0708558851ef8ef2df8d7d74e1a9d646a8196495881fc1f788e4dbac",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/language/03-memory.md"
+    },
+    {
+      "path": "02_pypto/en/user/language/04-scopes.md",
+      "kind": "technical_document",
+      "bytes": 21825,
+      "sha256": "b2e50e539e4c961df0f88d9e5b2a32a81f64a3be890080ecac66e1e4459d3cc4",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/language/04-scopes.md"
+    },
+    {
+      "path": "02_pypto/en/user/language/05-directives.md",
+      "kind": "technical_document",
+      "bytes": 3452,
+      "sha256": "c58398019689d879f8d1ff6170b24f0aa5b17ca337d9c8ebf1c16c4760138dd6",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/language/05-directives.md"
+    },
+    {
+      "path": "02_pypto/en/user/language/06-syntax.md",
+      "kind": "technical_document",
+      "bytes": 4338,
+      "sha256": "a6a59f41715174abcf86c43e88ca7221544f8ce34f8adf69bbc3432f6b35fda2",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/language/06-syntax.md"
+    },
+    {
+      "path": "02_pypto/en/user/language/index.md",
+      "kind": "technical_document",
+      "bytes": 3036,
+      "sha256": "d73750877d6e9f12108d8efcd8423aa605745490604fe472992bb3f3eb026977",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/language/index.md"
+    },
+    {
+      "path": "02_pypto/en/user/ops/00-dispatch.md",
+      "kind": "technical_document",
+      "bytes": 5420,
+      "sha256": "87fe7aa892d68e55f17e1d79ae2d7cc60246019be0d9e5687ad7dd06caae5c4d",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/ops/00-dispatch.md"
+    },
+    {
+      "path": "02_pypto/en/user/ops/01-catalog.md",
+      "kind": "technical_document",
+      "bytes": 19524,
+      "sha256": "ee84d5c92656906e4e9b1f0fc6162e27b765c22b62e7f64bd1d8dff52e202ddc",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/ops/01-catalog.md"
+    },
+    {
+      "path": "02_pypto/en/user/ops/index.md",
+      "kind": "technical_document",
+      "bytes": 1749,
+      "sha256": "e13fe3b2a566f9bc6d8378ad5e896a20f21ba08254d5b162d94b6820127b57cd",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/ops/index.md"
+    },
+    {
+      "path": "02_pypto/en/user/performance/00-swimlane.md",
+      "kind": "technical_document",
+      "bytes": 11528,
+      "sha256": "9864339cb493b4ac1bd7103159dc7c255a92a93fb3e34687d3d749e270103858",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/performance/00-swimlane.md"
+    },
+    {
+      "path": "02_pypto/en/user/performance/01-task-granularity.md",
+      "kind": "technical_document",
+      "bytes": 10104,
+      "sha256": "143fe9efd66a5129375a01752aed1bac94730b3b35c7b69e502dfc4420408e82",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/performance/01-task-granularity.md"
+    },
+    {
+      "path": "02_pypto/en/user/performance/02-runtime-overhead.md",
+      "kind": "technical_document",
+      "bytes": 14251,
+      "sha256": "81e3c35fb6a088862ed9a269ec1a9f46056a51bc68f25c2b7b69418c1d921e06",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/performance/02-runtime-overhead.md"
+    },
+    {
+      "path": "02_pypto/en/user/performance/03-dependencies.md",
+      "kind": "technical_document",
+      "bytes": 12989,
+      "sha256": "34c1366b50e5fc3fcd8f727c9782e10c4d8ce739f03d90edd8fa8824764a14fc",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/performance/03-dependencies.md"
+    },
+    {
+      "path": "02_pypto/en/user/performance/04-incore.md",
+      "kind": "technical_document",
+      "bytes": 11238,
+      "sha256": "6ca02e84a8347abc3f2e71ada0fc4a745e6ac8df6023f6d861e7d9f208b67092",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/performance/04-incore.md"
+    },
+    {
+      "path": "02_pypto/en/user/performance/05-memory.md",
+      "kind": "technical_document",
+      "bytes": 11316,
+      "sha256": "f88faa27c968508ebd2b68eb3d66ef9fec511ee0b95569955851a7acba03c796",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/performance/05-memory.md"
+    },
+    {
+      "path": "02_pypto/en/user/performance/06-host.md",
+      "kind": "technical_document",
+      "bytes": 4267,
+      "sha256": "9bbe82b1f5084f9a3618acb17eb746cabbea3010d8c077b7c90cc68814f142b7",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/performance/06-host.md"
+    },
+    {
+      "path": "02_pypto/en/user/performance/index.md",
+      "kind": "technical_document",
+      "bytes": 3720,
+      "sha256": "037a18fc6917821fe19ee3c487f8a2aa319cc17c4cbec5f40621645331779bf5",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/performance/index.md"
+    },
+    {
+      "path": "02_pypto/en/user/precision/00-workflow.md",
+      "kind": "technical_document",
+      "bytes": 13000,
+      "sha256": "464aee3cbc046ddd8d360f0c9dc956ff953ee9b4cc651699b4ed1dd5821d670c",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/precision/00-workflow.md"
+    },
+    {
+      "path": "02_pypto/en/user/precision/01-cases.md",
+      "kind": "technical_document",
+      "bytes": 5388,
+      "sha256": "9572d23bccb0bc1a1fefed1297eaa63fa172871ee3f08239a5aa947ea64a25b1",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/precision/01-cases.md"
+    },
+    {
+      "path": "02_pypto/en/user/precision/index.md",
+      "kind": "technical_document",
+      "bytes": 2505,
+      "sha256": "76abe08db8e49e3538c47df9093c02c58e086dd983ad86b3843d14de37e5e18a",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/precision/index.md"
+    },
+    {
+      "path": "02_pypto/en/user/tasks/00-model.md",
+      "kind": "technical_document",
+      "bytes": 5702,
+      "sha256": "008374c7e512608462652dda3a56fc070c27a5c970367e758328c93975179b74",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/tasks/00-model.md"
+    },
+    {
+      "path": "02_pypto/en/user/tasks/01-scopes.md",
+      "kind": "technical_document",
+      "bytes": 4841,
+      "sha256": "3d0b964d32187b230776d57a5f365cdadf2589a13945f26cbe372061f5142afe",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/tasks/01-scopes.md"
+    },
+    {
+      "path": "02_pypto/en/user/tasks/02-submit.md",
+      "kind": "technical_document",
+      "bytes": 11027,
+      "sha256": "db1504e5d23a3f56a63762ef86e0634446cb82cd70bd585f7514f96adafbd182",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/tasks/02-submit.md"
+    },
+    {
+      "path": "02_pypto/en/user/tasks/03-tuning.md",
+      "kind": "technical_document",
+      "bytes": 9733,
+      "sha256": "4d69a1af2b29f64a2273f73f5da77158304d35e3a15d4202d3d9b46048f13d48",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/tasks/03-tuning.md"
+    },
+    {
+      "path": "02_pypto/en/user/tasks/index.md",
+      "kind": "technical_document",
+      "bytes": 2945,
+      "sha256": "2e33ea9cfd4210e19a7ff54cae37be5f4b9d2eb61796f340dfe15edef896fea4",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/tasks/index.md"
+    },
+    {
+      "path": "02_pypto/en/user/tools/00-debugging.md",
+      "kind": "technical_document",
+      "bytes": 5929,
+      "sha256": "52ce1e0c4eb737f866cb1561c067112469178e9c07900c78f22ebcb5cebdeb68",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/tools/00-debugging.md"
+    },
+    {
+      "path": "02_pypto/en/user/tools/01-torch-codegen.md",
+      "kind": "technical_document",
+      "bytes": 6725,
+      "sha256": "c18f68c40484e4da794f711bced3cc60a7c23fc416ba5be8e74e77ed5c50f303",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/tools/01-torch-codegen.md"
+    },
+    {
+      "path": "02_pypto/en/user/tools/02-memory-map.md",
+      "kind": "technical_document",
+      "bytes": 3620,
+      "sha256": "da3169791224940c68b05464dee409224f542c5f377e0aca6b568d8cb70b93ed",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/tools/02-memory-map.md"
+    },
+    {
+      "path": "02_pypto/en/user/tools/index.md",
+      "kind": "technical_document",
+      "bytes": 1686,
+      "sha256": "6a66f38420335b09071028f4b63b9131f756c84830103f1f9953ef839c9640d8",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/tools/index.md"
+    },
+    {
+      "path": "02_pypto/en/user/tutorials/00-elementwise.md",
+      "kind": "technical_document",
+      "bytes": 7296,
+      "sha256": "3616a6be9b8c1eaf8a1d59e0ea0b755114cd0a3693f41a73897906deaeb158b7",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/tutorials/00-elementwise.md"
+    },
+    {
+      "path": "02_pypto/en/user/tutorials/01-reduction-softmax.md",
+      "kind": "technical_document",
+      "bytes": 6739,
+      "sha256": "3a8e01feeb157af992d0d99a6aacc79c0eef041ca5de7ee8b267a5cd791a8c25",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/tutorials/01-reduction-softmax.md"
+    },
+    {
+      "path": "02_pypto/en/user/tutorials/02-matmul.md",
+      "kind": "technical_document",
+      "bytes": 6764,
+      "sha256": "7c0b55f6b550dce6689584860140990a421abb48779df8d53a74797632935088",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/tutorials/02-matmul.md"
+    },
+    {
+      "path": "02_pypto/en/user/tutorials/03-mixed-kernel.md",
+      "kind": "technical_document",
+      "bytes": 8903,
+      "sha256": "908465e9b3f6b2daabc97d87a3373d623637b8edcb61a5983c7e923f5c1ac48f",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/tutorials/03-mixed-kernel.md"
+    },
+    {
+      "path": "02_pypto/en/user/tutorials/04-task-graph.md",
+      "kind": "technical_document",
+      "bytes": 7088,
+      "sha256": "97b9ed3c3ef7e5d4ae2189332f85107c159cf929d6d0ca2fbc55591abb245d8b",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/tutorials/04-task-graph.md"
+    },
+    {
+      "path": "02_pypto/en/user/tutorials/05-scheduling-tuning.md",
+      "kind": "technical_document",
+      "bytes": 7071,
+      "sha256": "815056b33d994f1a8face039b90d922316209951651e0a256be75f2763b5069e",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/tutorials/05-scheduling-tuning.md"
+    },
+    {
+      "path": "02_pypto/en/user/tutorials/index.md",
+      "kind": "technical_document",
+      "bytes": 4082,
+      "sha256": "911acbab98e9439154784896af6cedc9d9bf6216d33bd96ddabba1c643b1adfe",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/en/user/tutorials/index.md"
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.array.md",
+      "kind": "installed_api",
+      "bytes": 1714,
+      "sha256": "621b59654c777a87721ee868a6284d2a00604a915da20ba9add24d178609d7da",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/static_api/pypto.language.array.md"
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.distributed.md",
+      "kind": "installed_api",
+      "bytes": 12731,
+      "sha256": "96accc3c3eb627f45fbfb6b91b35a879788ff07cf9aa408542ea3c63599b5c34",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/static_api/pypto.language.distributed.md"
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.distributed.system.md",
+      "kind": "installed_api",
+      "bytes": 6626,
+      "sha256": "b7e2147f8d5954c5daaf479fdffc0823c115b4d9f6222ca92e86d7310b5b969a",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/static_api/pypto.language.distributed.system.md"
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.distributed.tensor.md",
+      "kind": "installed_api",
+      "bytes": 34059,
+      "sha256": "7fa5a3bbd4e2590854782610695dee39bfff36d4c1fd0d074d272a1b030ca46d",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/static_api/pypto.language.distributed.tensor.md"
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.md",
+      "kind": "installed_api",
+      "bytes": 183320,
+      "sha256": "7ca5716c30e9905b87e881df276a77a37f17e4ba55b0743ba0d8c375725b8d3b",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/static_api/pypto.language.md"
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.optimizations.md",
+      "kind": "installed_api",
+      "bytes": 3252,
+      "sha256": "55063c0db2c487904a21e83094866399082f79391f154a13f6236af7d0ed4d95",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/static_api/pypto.language.optimizations.md"
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.prefetch.md",
+      "kind": "installed_api",
+      "bytes": 2880,
+      "sha256": "92e89fdb3f6591ec0ce5d119d7e4bd6dee4087fda6315014746b025d8cf018e4",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/static_api/pypto.language.prefetch.md"
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.system.md",
+      "kind": "installed_api",
+      "bytes": 22215,
+      "sha256": "d3fd473d36f9ea6b2ddaf0a966f8e4630aed6306167fe496d70ac72adcdcec26",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/static_api/pypto.language.system.md"
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.tensor.md",
+      "kind": "installed_api",
+      "bytes": 80464,
+      "sha256": "287a516874d8e61a583314e9e11709c306e4875843264af6b2242666de422d8f",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/static_api/pypto.language.tensor.md"
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.tile.md",
+      "kind": "installed_api",
+      "bytes": 103709,
+      "sha256": "3e016480b3bcffe8a8fc5ee8327d273e800cc9a225a09dbc5e15db914b599365",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/static_api/pypto.language.tile.md"
+    },
+    {
+      "path": "02_pypto/static_api/pypto.runtime.md",
+      "kind": "installed_api",
+      "bytes": 80209,
+      "sha256": "17afd9476b10f471a609c79f182d1c9c6fb986e9dfafbb2b94e12cc5eaba385d",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/02_pypto/static_api/pypto.runtime.md"
+    },
+    {
+      "path": "03_npu_910b/en/alloc_event_id.md",
+      "kind": "technical_document",
+      "bytes": 1969,
+      "sha256": "9e27adaffa80f8fec609a98688ae9dc9add7d68a716ec7c1b25c210a763a9919",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/03_npu_910b/en/alloc_event_id.md"
+    },
+    {
+      "path": "03_npu_910b/en/architecture_220x.md",
+      "kind": "technical_document",
+      "bytes": 13784,
+      "sha256": "a497f93d2dd25757c10b31b56246a2363df2234ce785f1bfa40564db701712e1",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/03_npu_910b/en/architecture_220x.md"
+    },
+    {
+      "path": "03_npu_910b/en/bank_conflicts_220x.md",
+      "kind": "technical_document",
+      "bytes": 9390,
+      "sha256": "a432b55c194525cfbf0fb9c3ee7055078d78be99df53b23fa41d9f1442aa14e7",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/03_npu_910b/en/bank_conflicts_220x.md"
+    },
+    {
+      "path": "03_npu_910b/en/basic_architecture.md",
+      "kind": "technical_document",
+      "bytes": 14415,
+      "sha256": "3cd99f7a70ef16a198afa1bb1051bdaa1f4b953cfe08ba685fad17c8c3efa034",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/03_npu_910b/en/basic_architecture.md"
+    },
+    {
+      "path": "03_npu_910b/en/constraints_220x.md",
+      "kind": "technical_document",
+      "bytes": 8216,
+      "sha256": "964ff516e445bd28502df1666b4de7dd07d8ae1d843993632f98a0c4029b429e",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/03_npu_910b/en/constraints_220x.md"
+    },
+    {
+      "path": "03_npu_910b/en/cpu_twin_debugging.md",
+      "kind": "technical_document",
+      "bytes": 8511,
+      "sha256": "6688c9ebb519b2ffb89bc849f0aa890de215608b1dd101bc31c958fd427b8ebb",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/03_npu_910b/en/cpu_twin_debugging.md"
+    },
+    {
+      "path": "03_npu_910b/en/cross_core_setflag.md",
+      "kind": "technical_document",
+      "bytes": 7483,
+      "sha256": "c2c5bf333227a353d2e7be15c9b28976306bece69c8b12b39ad8d012dc42712c",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/03_npu_910b/en/cross_core_setflag.md"
+    },
+    {
+      "path": "03_npu_910b/en/cross_core_waitflag.md",
+      "kind": "technical_document",
+      "bytes": 5549,
+      "sha256": "a1e22fe98e5d0004e993d9fcb5e34d43e321ff48295030b8d1f5a4f9344c477f",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/03_npu_910b/en/cross_core_waitflag.md"
+    },
+    {
+      "path": "03_npu_910b/en/debugging_overview.md",
+      "kind": "technical_document",
+      "bytes": 3353,
+      "sha256": "eb39d49017906e00df5f63019d32df2bbd09256b0af7c74fad7be667196790ca",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/03_npu_910b/en/debugging_overview.md"
+    },
+    {
+      "path": "03_npu_910b/en/fetch_event_id.md",
+      "kind": "technical_document",
+      "bytes": 2181,
+      "sha256": "7cc28afaf952dfee249ea5c4970a7152f2bef0de20e1408475de811d1885e474",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/03_npu_910b/en/fetch_event_id.md"
+    },
+    {
+      "path": "03_npu_910b/en/npu_debugging.md",
+      "kind": "technical_document",
+      "bytes": 7831,
+      "sha256": "991c26aa533584bcca9cdf7debde97d52bebe57a3a577176b6c9e4412fcfd416",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/03_npu_910b/en/npu_debugging.md"
+    },
+    {
+      "path": "03_npu_910b/en/pipe_barrier.md",
+      "kind": "technical_document",
+      "bytes": 2265,
+      "sha256": "c7753540eb6b8f465c72ca2a6b5cd6c400b7cb45ce52a00fcf10c098a1fa9d5f",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/03_npu_910b/en/pipe_barrier.md"
+    },
+    {
+      "path": "03_npu_910b/en/setflag_waitflag.md",
+      "kind": "technical_document",
+      "bytes": 4475,
+      "sha256": "d381eda211325d1542dd418f62bd492ddfa7accf8c8051feff38882bf828d27f",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/03_npu_910b/en/setflag_waitflag.md"
+    },
+    {
+      "path": "03_npu_910b/en/sync_control_overview.md",
+      "kind": "technical_document",
+      "bytes": 7101,
+      "sha256": "d6b5c1fe00445e7e99bb1bb302eb63b645858206321715303f609acc41380c87",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/03_npu_910b/en/sync_control_overview.md"
+    },
+    {
+      "path": "03_npu_910b/en/tiling_headers.md",
+      "kind": "technical_document",
+      "bytes": 2413,
+      "sha256": "6b6f29cdb5f396256e7b8fed445869b3871dffe5cfbf2d6e150774f5da28bd8b",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/03_npu_910b/en/tiling_headers.md"
+    },
+    {
+      "path": "BASELINE.md",
+      "kind": "baseline",
+      "bytes": 4186,
+      "sha256": "7c43b72299b33682ded8905119a43921177c4675df3700b0211f3a27d3cfa2f4",
+      "source_snapshot_path": "Corpus_Archive/20261007_input_cleanup/before/BASELINE.md"
+    }
+  ],
+  "navigation_only": [
+    "01_pypto_lib/README.md",
+    "02_pypto/README.md",
+    "02_pypto/en/api/array.md",
+    "02_pypto/en/api/language.md",
+    "02_pypto/en/api/optimizations.md",
+    "02_pypto/en/api/prefetch.md",
+    "02_pypto/en/api/system.md",
+    "02_pypto/en/api/tensor.md",
+    "02_pypto/en/api/tile.md",
+    "02_pypto/static_api/README.md",
+    "03_npu_910b/README.md",
+    "README.md"
+  ],
+  "excluded_trees": [
+    "../raw_wiki",
+    "../opt_wiki",
+    "../Corpus_Archive",
+    "../Knowledge_Workflow"
+  ],
+  "provenance_record": "../Corpus_Archive/20261007_input_cleanup/REPORT.md",
+  "source_snapshot_base": "..",
+  "source_snapshot_purpose": "Offline provenance only; these snapshots are excluded from content extraction."
+}

@@ -1,0 +1,60 @@
+{
+  "applicability": [
+    "Building MoE routing, top-k, or token gather.",
+    "De-interleaving even and odd lanes for RoPE.",
+    "A tensor-level gather works but the tile variant rejects the index or scratch.",
+    "A multi-row sort or a top-k block size produces the wrong output."
+  ],
+  "directions": [
+    "For index-form gather, allocate the index with `pl.create_tensor` and pass a real tensor; use mask gather only for even/odd lane de-interleaving.",
+    "For tensor scatter, keep `src` and `index` the same shape and match the index element width to the input width; for mask scatter, size `dst` by the pattern stride.",
+    "For top-k, start with `pl.arange(0, [1, N], dtype=pl.UINT32)`, use `pl.sort32`, then the required `pl.mrgsort` chain, slice the leading `2*k` pairs, and gather odd lanes.",
+    "Loop rows explicitly for multi-row sort; do not pass a multi-row tile to `sort32` or `mrgsort`."
+  ],
+  "domain": "compute",
+  "effects": [
+    "Mask gather/scatter is efficient but only expresses fixed lane patterns; index gather is flexible but has real-tensor and rank restrictions.",
+    "`sort32` plus staged `mrgsort` builds top-k without a full sort but requires a single-row layout and correct interleaved block lengths.",
+    "A real tensor index may require an orchestration allocation, while a computed tile index is rejected."
+  ],
+  "evidence_status": "documented",
+  "id": "gather_scatter_and_sort_contracts",
+  "invariants": [
+    "`pl.gather` index form is rank-2 and `dim=-1` only in the MVP; the index is INT32, or INT16 with a 16-bit input, and has the same rank as the input. At tile level the index must be a real tensor from `pl.create_tensor`, not a `pl.full` tile; the tensor path allocates needed scratch during conversion.",
+    "`pl.gather` mask form uses `P0101` for even lanes and `P1010` for odd lanes, shrinking the last dimension by 2; other patterns shrink by 4 or preserve it for `P1111`. `output_dtype` is a same-width bit reinterpretation, not a numeric cast.",
+    "`pl.scatter` tensor index form is the column-wise inverse of gather: `src` and `index` are `[rows, K]`, the input is `[rows, S]` with `K <= S`, and the index element width must match the input width. Mask-form scatter requires `dst.cols == input.cols * stride`.",
+    "`pl.tile.scatter` takes flattened destination offsets in an index tile with the same shape as `src`; `pl.tile.scatter_mask` is the mask inverse of `gather_mask`. Mask-pattern scatter is not a distinct pto-isa instruction and may lower differently from gather mask.",
+    "`pl.sort32` sorts fixed 32-element blocks, carrying an index tensor. Its output uses 8-byte value-index pairs and its last dimension is 2x the input width for FP32 and 4x for FP16.",
+    "`pl.mrgsort` format1 merges pre-sorted runs. `block_len` is the input run length in interleaved-array positions, so it counts twice the element count and must be a multiple of 64. A width-512 FP32 top-k needs the chain `sort32`, `mrgsort(block_len=64)`, `mrgsort(block_len=256)`; larger widths extend the chain.",
+    "Both `sort32` and `mrgsort` require row count 1. For a multi-row tile, loop the rows with `pl.range`. `pl.arange`/`pl.ci` populate only the first row and prefer `[1, N]` shapes."
+  ],
+  "principle": "`pl.gather` is a unified tensor-level operation with index, mask, and compare forms. The index form computes `output[b, k] = input[b, index[b, k]]`, is rank-2 with `dim=-1` in the MVP, and requires the index as a real tensor rather than a computed tile. The mask form selects fixed lane patterns, with `P0101` taking even lanes and `P1010` taking odd lanes; this is the RoPE de-interleave operation. `pl.scatter` is the inverse family. Its tensor index form writes `output[b, index[b, k]] = src[b, k]` and requires the index element width to match the input width; its mask form writes compact source rows into mask-selected columns of a destination with the required stride. At tile level, `scatter` uses flattened destination offsets with the same shape as the source, while `scatter_mask` is the mask inverse of `gather_mask`. Sorting is a separate primitive set. `pl.sort32` sorts each contiguous 32-element block in descending order while carrying an index ramp; the output is an interleaved value-index array. `pl.mrgsort` then 4-way-merges adjacent sorted blocks. Its `block_len` is the input run length in interleaved positions, not the element count, and it must be a multiple of 64. `sort32` leaves 64-position runs, so each stage grows the run by four. Top-k is built by sorting the row, slicing the leading `2*k` interleaved pairs, and gathering the odd lanes for the index list. Both sort primitives require a single row; multi-row tiles must loop over rows. `pl.arange` supplies the index ramp but populates only the first row, so use `[1, N]` shapes.",
+  "questions": [
+    "The exact supported index dtypes and lowering for every gather/scatter variant may depend on backend and compiler version; compile the concrete shape and dtype."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Passing a `pl.full` tile as an index to index-form gather; it is rejected and must be a real tensor.",
+    "Attempting a multi-row sort; only a single row is supported, so rows must be looped.",
+    "Confusing `block_len` with element count instead of interleaved-array positions.",
+    "Using a scatter index whose element width does not match the destination input.",
+    "Assuming mask-pattern scatter is the exact hardware mirror of mask-pattern gather."
+  ],
+  "source_features": [
+    "pl.gather",
+    "output[b, k] = input[b, index[b, k]]",
+    "dim=-1",
+    "P0101",
+    "P1010",
+    "pl.scatter",
+    "output[b, index[b, k]] = src[b, k]",
+    "scatter",
+    "scatter_mask",
+    "gather_mask",
+    "pl.sort32",
+    "pl.mrgsort"
+  ],
+  "summary": "Gather and scatter have index and mask forms with different rank, index-width, and destination-stride rules. Sort/top-k is single-row: `sort32` produces interleaved value-index runs and `mrgsort` merges them using a block length measured in interleaved positions.",
+  "title": "Gather, Scatter, and Sort Contracts"
+}

@@ -1,6 +1,6 @@
 """Strict experiment YAML; participant implementations own backend settings."""
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import os
 from pathlib import Path
 import re
@@ -66,15 +66,22 @@ class Experiment:
     budget: dict
     source: str
     mode: str = 'basic'
+    method_options: dict = field(default_factory=dict)
 
     def to_dict(self):
-        return {'case': self.case, 'mode': self.mode, 'optimizer': self.optimizer, 'output': self.output,
-                'budget': self.budget, 'source': self.source}
+        result = {'case': self.case, 'mode': self.mode, 'optimizer': self.optimizer, 'output': self.output,
+                  'budget': self.budget, 'source': self.source}
+        if self.method_options:
+            result['method_options'] = self.method_options
+        return result
 
 
 def load_experiment(path):
     path = file_tree.absolute_path(path)
-    value = mapping(read_yaml(path), ('case', 'mode', 'optimizer', 'output', 'budget'), ('case', 'optimizer'))
+    value = mapping(read_yaml(path), ('case', 'mode', 'optimizer', 'output', 'budget', 'method_options'), ('case', 'optimizer'))
+    method_options = value.get('method_options', {})
+    if not isinstance(method_options, dict):
+        raise ConfigError('method_options must be a mapping')
     mode = value.get('mode', 'basic')
     try:
         load_method(mode)
@@ -96,4 +103,5 @@ def load_experiment(path):
         normalized[name] = str(path.parent / target) if not Path(target).is_absolute() else target
     runs, snapshots = session._output(normalized)
     budget = session._budget(value.get('budget'))
-    return Experiment(case, optimizer, {'runs_root': str(runs), 'snapshots_root': str(snapshots)}, budget, str(path), mode)
+    return Experiment(case, optimizer, {'runs_root': str(runs), 'snapshots_root': str(snapshots)},
+                      budget, str(path), mode, dict(method_options))

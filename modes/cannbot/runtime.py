@@ -9,13 +9,15 @@ import selectors
 import signal
 import subprocess
 import sys
+import tempfile
 import time
 import uuid
 
 from modes._shared.config import render
-from modes._shared import recording, knowledge
+from modes._shared import recording
 from modes.cannbot import resources
 from workspace import source_manifest
+import isolation
 
 
 def load_config(path):
@@ -75,9 +77,10 @@ def command(config, directory, role, task, allow_task):
         # Every fresh stage gets public environment information independently
         # of the parent's Task handoff. Original role/skill bytes stay intact.
         task = ("Read .benchmark_context/README.md for the Case contract, Bench CLI and result locations.\n"
-                "Compiler tuning is editable in workspace-root tuning.json; its defaults are PYPTO + false.\n"
+                "Read .benchmark_context/tuning_capabilities.json for this Case's editable compiler and runtime scheduling options, allowed values and restrictions.\n"
+                "Edit Candidate source under `candidate/` and tuning options in `candidate/tuning.json`; the compiler defaults remain PYPTO + false, and the complete defaults vary by Case.\n"
+                "After changing source or settings, use ptobench evaluate . to check correctness and clean latency.\n"
                 "PATH and the Bench Session environment are already set.\n"
-                + knowledge.notice(config['run_root'])
                 + f"Share this Bench Session's {config['hardware_budget']}-action exploration budget; "
                   "this Agent stage does not receive a new budget.\n\n" + task)
     prompt = task if config['profile']['backend'] == 'pi' else role_text + '\n\n' + task
@@ -91,8 +94,9 @@ def command(config, directory, role, task, allow_task):
                    'CANNBOT_TOOLS': str(resources.DIRECTORY / 'tools.py')}
     additions = []
     if config['profile']['backend'] == 'pi':
-        additions = ['--extension', str(resources.DIRECTORY / 'bridge/pi_task.ts'),
+        additions = ['--extension', str(config.get('agent_extension') or resources.DIRECTORY / 'bridge/pi_task.ts'),
                      '--append-system-prompt', str(system)]
+        environment['PTOBENCH_CANNBOT_ALLOW_TASK'] = '1' if allow_task else '0'
     else:
         args = [str(resources.DIRECTORY / 'tools.py'), 'mcp', '--config', config['config_path'],
                 '--dispatch', directory.name]
@@ -183,6 +187,8 @@ def run_dispatch(config, role, task, *, parent, tool_call_id, forward=False, can
     cancelled = False
     exit_code, answer, error = None, None, None
     process = None
+    tool_server = None
+    tool_socket_directory = None
     try:
         save(directory / 'config.json', {key: value for key, value in config.items() if key != 'config_path'})
         config = load_config(directory / 'config.json')
@@ -190,6 +196,11 @@ def run_dispatch(config, role, task, *, parent, tool_call_id, forward=False, can
         supplied = {key: value for key, value in (task_input or {}).items() if key not in ('prompt', 'subagent_type')}
         native_task = task + ('\n\nTask arguments:\n' + json.dumps(supplied, ensure_ascii=False) if supplied else '')
         argv, environment, prompt, original = command(config, directory, role, native_task, parent is None)
+        environment['PTOBENCH_AGENT_DISPATCH_ID'] = directory.name
+        if tool_call_id is None:
+            environment.pop('PTOBENCH_AGENT_PARENT_TOOL_CALL_ID', None)
+        else:
+            environment['PTOBENCH_AGENT_PARENT_TOOL_CALL_ID'] = str(tool_call_id)
         (directory / 'prompt.txt').write_text(prompt)
         state.update(argv=argv, role_path=str(original),
                      role_sha256=hashlib.sha256(original.read_bytes()).hexdigest(),
@@ -199,6 +210,19 @@ def run_dispatch(config, role, task, *, parent, tool_call_id, forward=False, can
         save(directory / 'dispatch.json', state)
         if cancel is not None and cancel.is_set():
             raise InterruptedError('Task cancelled before native process start')
+        if (config['profile']['backend'] == 'pi' and config['profile'].get('mode_provider')
+                and isolation.enabled()):
+            from modes.cannbot.tools import ToolServer
+            tool_socket_directory = tempfile.TemporaryDirectory(prefix='ptb-cannbot-')
+            tool_socket = Path(tool_socket_directory.name) / 'tools.sock'
+            tool_server = ToolServer(config, directory.name, tool_socket, parent is None)
+            environment['PTOBENCH_CANNBOT_SOCKET'] = str(tool_socket)
+            argv, environment = isolation.agent_command(
+                argv, cwd=config['workspace'], environment=environment,
+                workspace=config['workspace'], session_root=config['run_root'],
+                cann_bot_extension=config.get('agent_extension'),
+                cann_bot_socket=tool_socket,
+            )
         # Inherit Launcher's process group: no detached child or fresh budget.
         process = subprocess.Popen(argv, cwd=config['workspace'], env=environment, shell=False,
                                    stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -245,6 +269,11 @@ def run_dispatch(config, role, task, *, parent, tool_call_id, forward=False, can
             process.wait()
         error = {'type': type(failure).__name__, 'message': str(failure)}
         cancelled = isinstance(failure, InterruptedError)
+    finally:
+        if tool_server is not None:
+            tool_server.close()
+        if tool_socket_directory is not None:
+            tool_socket_directory.cleanup()
     result = {'dispatch_id': directory.name, 'exit_code': exit_code, 'answer': answer,
               'error': error, 'cancelled': cancelled}
     result['is_error'] = cancelled or error is not None or exit_code != 0 or answer is None

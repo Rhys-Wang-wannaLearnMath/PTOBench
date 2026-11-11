@@ -1,5 +1,4 @@
 """Real CLI subprocesses in a copied public layer with a controlled CPU Evaluator."""
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -10,43 +9,27 @@ import time
 
 from session_test_support import SessionTestBase, write_json
 import common
-import session
 
 SOURCE_BENCHMARK = Path(__file__).resolve().parents[2]
 
 
 def copy_test_modes(destination):
-    """Exercise bundle lifecycle with small pinned documents, not the 58 MB corpus.
-
-    test_knowledge independently checks every file in both real mode bundles.
-    The fake corpus follows the same manifest, pin and permissions contract.
-    """
-    from modes._shared import knowledge
+    """Copy mode code without local credentials or the large reference corpus."""
     source = SOURCE_BENCHMARK / 'modes'
     bundles = {source / mode for mode in ('basic', 'cannbot')}
-    shutil.copytree(source, destination, ignore=lambda directory, names:
-                    ['knowledge'] if Path(directory) in bundles else
-                    [name for name in names if name in ('__pycache__', '.env')])
-    documents = {'README.md': b'Original test reference index\n',
-                 '01_pypto_lib/intro.md': b'PyPTO-Lib test reference\n',
-                 '02_pypto/intro.md': b'PyPTO test reference\n',
-                 '03_npu_910b/intro.md': b'Ascend test reference\n'}
+    excluded = {'__pycache__', '.env', 'knowledge', 'reports', 'dist', 'build', '.pytest_cache', '.ruff_cache'}
+    shutil.copytree(source, destination, ignore=lambda directory, names: [
+        name for name in names
+        if name in excluded and (name != 'knowledge' or Path(directory) in bundles)
+        or name.endswith('.egg-info')
+    ])
+    provider = ('LLM_PROVIDER=test-provider\nLLM_BASE_URL=http://127.0.0.1:8765/v1\n'
+                'LLM_API=openai-responses\nLLM_MODEL=test-model\nLLM_REASONING=high\n'
+                'LLM_API_KEY=test-provider-key\n')
     for mode in ('basic', 'cannbot'):
-        folder = destination / mode / 'knowledge'
-        snapshot = folder / 'raw_wiki'
-        for name, data in documents.items():
-            path = snapshot / name
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_bytes(data)
-        manifest = {'edition': 'test', 'captured_on': '2026-10-07',
-                    'pypto_revision': 'cpu-test-fixture', 'files': [
-                        {'path': name, 'sha256': hashlib.sha256(data).hexdigest()}
-                        for name, data in documents.items()]}
-        write_json(snapshot / 'manifest.json', manifest)
-        write_json(folder / 'knowledge.lock.json', knowledge.describe(snapshot))
-        for path in [snapshot, *snapshot.rglob('*')]:
-            path.chmod(0o555 if path.is_dir() else 0o444)
-        (folder / 'knowledge.lock.json').chmod(0o444)
+        env_file = destination / mode / '.env'
+        env_file.write_text(provider)
+        env_file.chmod(0o600)
 
 FAKE_EVALUATOR = r'''
 import argparse, json, os, signal, subprocess, sys, time
@@ -59,13 +42,14 @@ for name in ('case','candidate','phase','profile-mode','result'):
 p.add_argument('--measurement-mode', choices=('formal','exploration'), default='formal')
 p.add_argument('--skip-correctness', action='store_true')
 a=p.parse_args()
-control=json.loads(Path(os.environ['S3_CONTROL']).read_text())
-with open(os.environ['S3_COUNTER'],'a') as f: f.write(json.dumps(vars(a))+'\n')
+control=json.loads(Path(os.environ['S3_CONTROL']).read_text()) if 'S3_CONTROL' in os.environ else {}
+if 'S3_COUNTER' in os.environ:
+    with open(os.environ['S3_COUNTER'],'a') as f: f.write(json.dumps(vars(a))+'\n')
 root=Path(__file__).resolve().parents[1]
 w=Path(a.candidate)
 if control.get('inspect_before'):
     Path(control['inspect_before']).write_text(json.dumps({'outputs':(w/'.benchmark_outputs').exists(),
-        'cache':(w/'__pycache__').exists(),'helper':(w/'helper.py').read_text(),
+        'cache':(w/'__pycache__').exists(),'helper':(w/'candidate/helper.py').read_text(),
         'context_config':(w/'.benchmark_context/config.py').read_text()}))
 artifacts=w/'.benchmark_outputs'/a.profile_mode
 artifacts.mkdir(parents=True,exist_ok=True)
@@ -74,6 +58,13 @@ if control.get('generation',1)==1: (artifacts/'first_only.txt').write_text('firs
 if control.get('huge_logs'):
     os.write(1,b'O'*1048576+b'\n')
     os.write(2,b'E'*1048576+b'\n')
+if control.get('worker_logs'):
+    diagnostics=Path(a.result).parent/'worker_diagnostics/fixture_000'
+    diagnostics.mkdir(parents=True)
+    (diagnostics/'worker_stdout.log').write_text('isolated worker stdout\n')
+    (diagnostics/'worker_stderr.log').write_text('isolated worker stderr\n')
+    (diagnostics/'worker_process.json').write_text(json.dumps({'schema_version':1,'exit_code':0,
+        'summary_present':True,'execution_status':'unavailable'}))
 print('fake evaluator stdout',flush=True)
 print('fake evaluator stderr',file=sys.stderr,flush=True)
 if control.get('pause'):
@@ -87,9 +78,9 @@ if control.get('hang'):
     if control.get('ignore_term'): signal.signal(signal.SIGTERM,signal.SIG_IGN)
     Path(control['ready']).write_text('ready')
     while True: time.sleep(.05)
-if control.get('tamper')=='source': (w/'helper.py').write_text('VALUE = 999\n')
+if control.get('tamper')=='source': (w/'candidate/helper.py').write_text('VALUE = 999\n')
 if control.get('tamper')=='source_link':
-    (w/'helper.py').unlink(); (w/'helper.py').symlink_to(control['sentinel'])
+    (w/'candidate/helper.py').unlink(); (w/'candidate/helper.py').symlink_to(control['sentinel'])
 if control.get('tamper')=='context':
     q=w/'.benchmark_context/config.py'; q.chmod(0o600); q.write_text('tampered\n')
 if control.get('tamper')=='fixed': (root/'cases/test/case/public/config.py').write_text('tampered\n')
@@ -97,6 +88,9 @@ if control.get('tamper')=='record': Path(control['session_root'],'session.json')
 if control.get('crash'): raise RuntimeError('fake Evaluator exception')
 if control.get('missing'): sys.exit(0)
 run={'fixture_id':'fixture_000','passed':not control.get('fail'),'median_effective_us':control.get('median',10.0 if a.profile_mode=='clean' else None)}
+run['input_identity_sha256']=common.fixture_input_identity(common.case_paths(a.case)[1]/'fixtures/fixture_000')
+if control.get('missing_input_identity'): run.pop('input_identity_sha256')
+if control.get('wrong_input_identity'): run['input_identity_sha256']='0'*64
 if a.profile_mode=='clean': run['speedup']=control.get('speedup',2.0)
 run['samples_effective_us']=[run['median_effective_us']] if run['median_effective_us'] is not None else []
 run['raw_samples_effective_us']=list(run['samples_effective_us'])
@@ -128,6 +122,9 @@ class ActionTestBase(SessionTestBase):
         # Copy only the public layer; real canonical Case assets are never copied.
         for path in (SOURCE_BENCHMARK / 'evaluator').glob('*.py'):
             shutil.copyfile(path, self.bench / 'evaluator' / path.name)
+        shutil.copyfile(SOURCE_BENCHMARK / 'evaluator/pi_file_guard.mjs',
+                        self.bench / 'evaluator/pi_file_guard.mjs')
+        shutil.rmtree(self.bench / 'modes')
         copy_test_modes(self.bench / 'modes')
         shutil.copyfile(SOURCE_BENCHMARK / 'ptobench', self.bench / 'ptobench')
         (self.bench / 'evaluator/evaluate.py').write_text(FAKE_EVALUATOR)
@@ -136,6 +133,9 @@ class ActionTestBase(SessionTestBase):
         self.counter = self.repo / 'calls.jsonl'
         write_json(self.control, {})
         self.env = {**os.environ, 'S3_CONTROL': str(self.control), 'S3_COUNTER': str(self.counter),
+                    # Fake tools use host-only harness controls. Boundary tests opt
+                    # back into the actual sandbox path with value '1'.
+                    'PTOBENCH_SANDBOX': '0',
                     'PYTHONDONTWRITEBYTECODE': '1', 'PYPTO_BENCH_ENV': 'wrong:bootstrap', 'PYPTO_BENCH_PROFILE': 'hardware'}
         self.handle = self.create(budget=20)
         self.env['PTOBENCH_SESSION_ROOT'] = str(self.handle.session_root)

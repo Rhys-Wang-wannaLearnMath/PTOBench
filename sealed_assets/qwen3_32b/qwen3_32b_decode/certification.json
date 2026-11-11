@@ -4,5 +4,21 @@
   "case_id": "qwen3_32b.qwen3_32b_decode",
   "ref_output_cache": "ready",
   "cpu_oracle_role": "one_time_ref_certification",
-  "comparator_sha256": "f91b2223f03d901e4e3fad572a429194f4390b4d96fbea0314b21df0ce2951ad"
+  "timing_policy": {
+    "version": "ptobench-execution-boundary-20261108-v3",
+    "input_upload": "outside_execution_window",
+    "initial_state_restore": "outside_execution_window",
+    "final_validation_readback": "outside_execution_window",
+    "required_execution_communication": "inside_execution_window"
+  },
+  "comparator_sha256": "f91b2223f03d901e4e3fad572a429194f4390b4d96fbea0314b21df0ce2951ad",
+  "tuning_identity": {
+    "source_sha256": "404ab5d2ff0bae5f2572e80eedf5a5a3d3182a5878b1f99b4f2a67517a7c6b58",
+    "case_sha256": "79d16d43ab1c427d69260a98ef627afcabc6b3843317968ea9fdbfce0461b67c",
+    "config_sha256": "2104cd30927857e5f61e9425ad649bfeb29c3ff2add2cd42134ba24dacb54139",
+    "comparator_sha256": "f91b2223f03d901e4e3fad572a429194f4390b4d96fbea0314b21df0ce2951ad",
+    "environment_sha256": "12769f86e1ac3012fd9dea35d72fe9003bd1c163c81e00531e2fb72e11392bbe",
+    "tuning_policy_sha256": "67156043e6d6c98c96aa0b672a8ac2d31bf23a6b5cb6746245b1615311736fcd"
+  },
+  "tuning_evidence": "runs/all_case_boundary_repair_20261108/case_results/qwen3_32b__qwen3_32b_decode.json"
 }

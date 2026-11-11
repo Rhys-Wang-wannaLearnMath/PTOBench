@@ -1,0 +1,12 @@
+case: deepseek_v4.rmsnorm_prefill_demo
+mode: sluice-lite
+optimizer:
+  id: sluice_lite_smoke
+  backend: pi
+  profile: deepseek-flash-low
+output:
+  runs_root: ../../../runs/sluice-lite
+  snapshots_root: ../../../snapshots/sluice-lite
+budget:
+  max_hardware_actions: 4
+  finish_actions: 1

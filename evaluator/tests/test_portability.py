@@ -113,6 +113,11 @@ class PortabilityTests(unittest.TestCase):
                 fixture.launcher_config(backend, mode='all')
                 profile = bench / f'modes/_shared/profiles/{backend}/default.yaml'
                 shutil.copyfile(SOURCE_BENCHMARK / f'modes/_shared/profiles/{backend}/default.yaml', profile)
+                import yaml
+                settings = yaml.safe_load(profile.read_text())
+                settings.pop('context_window', None)
+                settings.pop('max_output_tokens', None)
+                profile.write_text(yaml.safe_dump(settings))
                 with mock.patch.dict(os.environ, {'PTOBENCH_SEALED_ROOT': str(assets)}):
                     process, value = fixture.launch()
                     self.assertEqual(process.returncode, 0, (value, process.stderr.decode()))

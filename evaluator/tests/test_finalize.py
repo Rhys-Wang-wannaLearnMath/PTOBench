@@ -41,7 +41,7 @@ class FinalizeTest(ActionTestBase):
     def create(self, budget=2, optimizer='maintenance', case_id=None, output=None):
         # Maintenance qualification retains correctness-checked profiles and
         # their historical Snapshot/final-selection behavior.
-        return super().create(budget, optimizer, case_id, output)
+        return super().create(budget, optimizer, case_id, output, profile_strategy='split')
 
     def observe(self, mode=None, median=10.0, **control):
         self.configure(median=median, **control)
@@ -98,7 +98,7 @@ class FinalizeTest(ActionTestBase):
         self.assertEqual(len(self.calls()),4)
 
     def test_no_snapshot_never_falls_back_to_current_or_seed_and_is_idempotent(self):
-        (self.handle.initial_workspace/'helper.py').write_text('VALUE = 999\n')
+        (self.handle.initial_workspace/'candidate/helper.py').write_text('VALUE = 999\n')
         self.assertIsNone(snapshots.select_best_snapshot(self.handle.session_root))
         result=self.finish()
         self.assertEqual((result.status,result.error_code),('failed','no_valid_snapshot'))
@@ -109,10 +109,23 @@ class FinalizeTest(ActionTestBase):
         self.assertEqual(self.events(),[])
         self.assertFalse((self.handle.session_root/'final/workspace').exists())
 
+    def test_failed_attempt_is_not_reported_as_best_observed(self):
+        self.configure(crash=True)
+        process, result = self.cli(['evaluate'])
+        self.assertEqual(process.returncode, 1, result)
+        self.assertEqual(result['error_code'], 'action_failed')
+
+        final = self.finish()
+
+        self.assertEqual(final.last_agent_attempt_id, 1)
+        self.assertEqual(final.last_agent_source, 'staging/action_000001/workspace')
+        self.assertIsNone(final.best_observed_attempt_id)
+        self.assertIsNone(final.best_observed_source_path)
+
     def test_success_uses_clean_selected_source_and_new_verified_numbers(self):
         candidate=self.observe('pmu',median=2)
         self.observe(median=10)
-        (self.handle.initial_workspace/'helper.py').write_text('VALUE = 900\n')
+        (self.handle.initial_workspace/'candidate/helper.py').write_text('VALUE = 900\n')
         stale=self.handle.session_root/'final/workspace'
         (stale/'.benchmark_outputs/clean').mkdir(parents=True)
         (stale/'.benchmark_outputs/clean/old').write_text('old')
@@ -121,6 +134,15 @@ class FinalizeTest(ActionTestBase):
         self.configure(median=123.0,speedup=3.25,inspect_before=str(inspected),generation=2)
         result=self.finish('optimizer_nonzero_exit')
         self.assertEqual(result.status,'completed',result)
+        self.assertEqual((result.last_agent_attempt_id, result.best_observed_attempt_id,
+                          result.final_verified_attempt_id), (2, 1, 3))
+        self.assertEqual(result.best_observed_source_path, 'staging/action_000001/workspace')
+        self.assertEqual(result.final_verified_source, 'final/workspace')
+        self.assertGreaterEqual(result.elapsed_seconds, 0)
+        self.assertEqual(
+            common.read_json(self.handle.session_root/'final_result.json')['elapsed_seconds'],
+            result.elapsed_seconds,
+        )
         self.assertEqual(result.selected_snapshot,candidate['snapshot_id'])
         self.assertEqual(result.best_observed_latency_us,2)
         self.assertEqual((result.best_observed_source,result.best_observed_mode),('profile','pmu'))
@@ -129,8 +151,8 @@ class FinalizeTest(ActionTestBase):
         self.assertEqual((result.hardware_actions_used,result.finish_actions_used),(2,1))
         self.assertEqual(result.close_reason,'optimizer_nonzero_exit')
         self.assertEqual(common.read_json(inspected),{'outputs':False,'cache':False,'helper':'VALUE = 1\n','context_config':'SIZE = 2\n'})
-        self.assertEqual((stale/'helper.py').read_text(),'VALUE = 1\n')
-        self.assertEqual((self.handle.initial_workspace/'helper.py').read_text(),'VALUE = 900\n')
+        self.assertEqual((stale/'candidate/helper.py').read_text(),'VALUE = 1\n')
+        self.assertEqual((self.handle.initial_workspace/'candidate/helper.py').read_text(),'VALUE = 900\n')
         self.assertEqual(self.calls()[-1]['phase'],'all'); self.assertEqual(self.calls()[-1]['profile_mode'],'clean')
         self.assertEqual(self.calls()[-1]['measurement_mode'],'formal')
         self.assertEqual(self.calls()[-1]['candidate'],str(stale))
@@ -154,14 +176,15 @@ class FinalizeTest(ActionTestBase):
         snap=self.snapshot(original)
         sentinel=self.repo/'sentinel'; sentinel.write_text('outside')
         (snap/'source').chmod(0o755)
-        (snap/'source/helper.py').unlink(); (snap/'source/helper.py').symlink_to(sentinel)
+        (snap/'source/candidate').chmod(0o755)
+        (snap/'source/candidate/helper.py').unlink(); (snap/'source/candidate/helper.py').symlink_to(sentinel)
         metadata=snap/'metadata.json'; metadata.chmod(0o600); metadata.write_text('{}')
         (self.handle.session_root/'events.jsonl').write_text('[]\n')
         (self.handle.session_root/'staging/action_000001/authority_result.json').write_text('{}')
         selected=snapshots.select_best_snapshot(self.handle.session_root)
         self.assertEqual(selected.snapshot_id,original['snapshot_id'])
         self.assertEqual(sentinel.read_text(),'outside')
-        self.assertEqual((snap/'source/helper.py').read_text(),'VALUE = 1\n')
+        self.assertEqual((snap/'source/candidate/helper.py').read_text(),'VALUE = 1\n')
         self.assertEqual((snap/'source').stat().st_mode & 0o777,0o555)
         self.configure()
         self.assertEqual(self.finish().status,'completed')
@@ -170,9 +193,9 @@ class FinalizeTest(ActionTestBase):
     def test_corrupt_history_recovery_blocks_finish_without_charge(self):
         original=self.observe()
         manifest=common.read_json(self.handle.protection_root/'manifest.json')
-        entry=manifest['roots'][original['snapshot_id']]['entries']['source/helper.py']
+        entry=manifest['roots'][original['snapshot_id']]['entries']['source/candidate/helper.py']
         backup=self.handle.protection_root/entry['backup']; backup.chmod(0o600); backup.write_text('corrupt')
-        source=self.snapshot(original)/'source/helper.py'; source.chmod(0o600); source.write_text('needs recovery')
+        source=self.snapshot(original)/'source/candidate/helper.py'; source.chmod(0o600); source.write_text('needs recovery')
         with self.assertRaises(integrity.InfrastructureError):
             snapshots.select_best_snapshot(self.handle.session_root)
         result=self.finish()
@@ -207,6 +230,7 @@ class FinalizeTest(ActionTestBase):
         self.configure(fail=True)
         result=self.finish()
         self.assertEqual((result.status,result.error_code),('failed','action_failed'))
+        self.assertGreaterEqual(result.elapsed_seconds, 0)
         self.assertEqual(result.selected_snapshot,selected['snapshot_id'])
         self.assertEqual(result.best_observed_latency_us,1)
         self.assertIsNone(result.final_verified_latency_us); self.assertIsNone(result.final_verified_speedup)

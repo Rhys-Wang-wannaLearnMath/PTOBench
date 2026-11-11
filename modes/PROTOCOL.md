@@ -28,6 +28,10 @@ entrypoint: runner.py
 通用层只验证 optimizer 字段的结构与标识格式；支持哪些 backend、如何解释
 profile，由方法的 preflight 决定。已有 Basic YAML 无须修改。
 
+可选的顶层 `method_options` 为 mapping，由通用层原样传给方法并保存至实验记录；
+通用层不解释其中的策略。方法负责校验和记录生效值；Basic 当前不声明
+`method_options` 字段。
+
 ## 四个操作
 
 入口命令统一为：

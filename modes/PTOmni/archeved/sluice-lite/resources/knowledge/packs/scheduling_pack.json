@@ -1,0 +1,21 @@
+{
+  "card_ids": [
+    "dependency_inference_hazards",
+    "dependency_optouts_and_manual_ownership",
+    "dispatch_predicates",
+    "explicit_edges_taskids_and_task_dummy",
+    "mixed_kernels_split_aiv_cross_core_sync",
+    "speculative_early_dispatch",
+    "spmd_launch_and_task_fanout",
+    "task_granularity_and_dispatch_overhead"
+  ],
+  "id": "scheduling_pack",
+  "keywords": [
+    "scheduling",
+    "PyPTO",
+    "source optimization",
+    "task_orchestration"
+  ],
+  "summary": "PyPTO source-level mechanisms, conditions, and risks for the scheduling domain.",
+  "title": "Scheduling source optimization knowledge"
+}

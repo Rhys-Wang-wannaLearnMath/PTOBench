@@ -1,0 +1,11 @@
+{
+  "level": 2,
+  "orchestrator_name": null,
+  "callable_id_to_name": {
+    "0": "kv_score_proj",
+    "1": "state_scatter_pre",
+    "2": "softmax_pool",
+    "3": "rmsnorm_rope",
+    "4": "kv_finalize"
+  }
+}

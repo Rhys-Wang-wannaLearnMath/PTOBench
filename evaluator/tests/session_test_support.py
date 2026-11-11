@@ -37,6 +37,9 @@ class SessionTestBase(unittest.TestCase):
         self.bench.mkdir()
         for path in (self.bench / 'evaluator/helper.py', self.bench / 'launcher/runner.py',
                      self.bench / 'ptobench', self.repo / 'golden/core.py',
+                     self.bench / 'modes/__init__.py', self.bench / 'modes/basic/runner.py',
+                     self.bench / 'modes/_shared/runtime.py', self.bench / 'modes/cannbot/runner.py',
+                     self.bench / 'modes/ptomni/runner.py',
                      self.bench / 'sealed_assets/test/family_helper.py'):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text('# protected public implementation\n')
@@ -94,9 +97,11 @@ def build(case_dir, sealed, case, seed):
         output.write_bytes(b'certified reference output')
         return case_dir, sealed
 
-    def create(self, budget=2, optimizer='codex', case_id=None, output=None):
+    def create(self, budget=2, optimizer='codex', case_id=None, output=None,
+               profile_strategy=None):
         return session.create_session(case_id or self.case_id, optimizer, output or self.output,
-                   {'max_hardware_actions': budget, 'finish_actions': 1})
+                   {'max_hardware_actions': budget, 'finish_actions': 1},
+                   profile_strategy=profile_strategy)
 
     def reserve(self, handle, kind='evaluate', mode=None):
         record = session.read_session(handle.session_root)

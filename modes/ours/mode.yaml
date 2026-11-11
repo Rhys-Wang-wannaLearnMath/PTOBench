@@ -3,3 +3,4 @@ id: ours
 implemented: false
 description: Working name reserved for our method integration.
 entrypoint: runner.py
+profile_strategy: combined

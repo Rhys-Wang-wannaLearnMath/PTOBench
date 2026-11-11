@@ -1,0 +1,57 @@
+{
+  "applicability": [
+    "A weight matrix is read once per stage and evicts a smaller activation set that is reread.",
+    "A stage re-reads a fixed weight set every layer after a large unrelated stage has evicted it.",
+    "A benchmark replays the same weights every round and overstates a warm-cache benefit."
+  ],
+  "directions": [
+    "Add `pl.set_cache_policy(weights, pl.CachePolicy.BYPASS)` as a standalone statement inside the `pl.at` or `pl.spmd` body that reads the weights.",
+    "For a tile-level load whose policy is local, use `pl.load(weights, [n0, k0], [N_TILE, K_TILE], cache=pl.CachePolicy.BYPASS)`.",
+    "Use `pl.prefetch` only after checking the installed method surface and only where a fixed weight set is re-read after an eviction; measure with an unprofiled benchmark that does not replay a permanently warm cache.",
+    "Do not combine a bypassing read with a cached write of the same bytes."
+  ],
+  "domain": "memory",
+  "effects": [
+    "BYPASS can preserve a reread working set by preventing a streaming operand from polluting cache, but a wrong declaration creates a coherency risk.",
+    "A scope-wide policy saves annotating every implicit read; a per-load policy is more precise and overrides the scope.",
+    "A prefetch can hide a reload behind existing compute, but a partial or oversized warm adds traffic without a hit."
+  ],
+  "evidence_status": "documented",
+  "id": "cache_policy_and_l2_residency",
+  "invariants": [
+    "BYPASS is a correctness contract about no reuse and no concurrent writer, not merely a performance preference.",
+    "A scope declaration must be directly inside the scope body; nesting it in an `if` or `for` inside the scope is rejected.",
+    "Only a `CORE_GROUP` `pl.at` or `pl.spmd` scope lowers the declaration; other levels carry it without effect.",
+    "The compiler rejects BYPASS on a tensor the scope writes, but cannot prove the general no-writer case.",
+    "The current PTOAS path emits the same code for BYPASS as for a cached access.",
+    "The concrete `pl.prefetch` method names and arguments are not established by the registered API extracts."
+  ],
+  "principle": "The scope-level cache surface is `pl.set_cache_policy(tensor, policy)`, written as a standalone statement directly inside a `pl.at(level=pl.Level.CORE_GROUP, ...)` or `pl.spmd(...)` body. It covers every read of that tensor in the scope, including implicit reads inside `pl.matmul`, `pl.assemble`, and subscript slicing. The per-access counterpart is `pl.load(..., cache=pl.CachePolicy.BYPASS)`; `pl.slice` deliberately takes no `cache=` because it computes an address descriptor rather than moving data. An explicit load policy always wins over a scope declaration in both directions, so `cache=pl.CachePolicy.DEFAULT` can opt one read back into the cache inside a bypassing scope. `CachePolicy.BYPASS` asserts two things: the bytes have no reuse worth caching, and nothing writes those bytes while the kernel runs. Mixing a cached write with a bypassing read is a coherency bug the compiler cannot detect. Declaring BYPASS on a tensor the scope itself writes is rejected at outlining. The declaration is tracked by Var identity, not name; rebinding the tensor after the declaration produces a new value the declaration does not cover. A declaration on a non-`CORE_GROUP` `pl.at` scope is parsed and carried but not lowered, so it has no effect. Current status: PTOAS has no L2-bypass path yet. A BYPASS request is accepted, warns at compile time, and generates exactly the same code as an ordinary cached access. Writing it now costs nothing and starts working when the path lands. For weight residency, `pl.prefetch` is the documented module-level cache-warm surface: it writes no tensor and is free to try and delete, but a partial or oversized warm can cost more than it saves. The benchmark loop replays the same weights every round, so its L2 is already warm; a prefetch or cold-cache change is both flattered and diluted by that replay. The corpus does not expose the concrete `pl.prefetch` method signatures in its registered API extracts, so do not invent them.",
+  "questions": [
+    "When the installed PTOAS will implement an L2-bypass path, and what the exact `pl.prefetch` method surface is in the local package."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Expecting `BYPASS` to change generated code today; the toolchain warns and emits the cached path.",
+    "Declaring BYPASS on a tensor that another task writes while the kernel runs.",
+    "Rebinding the tensor name after a scope declaration and assuming the new value inherits it.",
+    "Using the benchmark's warm-cache replay as evidence for a cold-cache prefetch strategy."
+  ],
+  "source_features": [
+    "pl.set_cache_policy(tensor, policy)",
+    "pl.at(level=pl.Level.CORE_GROUP, ...)",
+    "pl.spmd(...)",
+    "pl.matmul",
+    "pl.assemble",
+    "pl.load(..., cache=pl.CachePolicy.BYPASS)",
+    "pl.slice",
+    "cache=",
+    "cache=pl.CachePolicy.DEFAULT",
+    "CachePolicy.BYPASS",
+    "CORE_GROUP",
+    "pl.at"
+  ],
+  "summary": "`pl.set_cache_policy(tensor, pl.CachePolicy.BYPASS)` declares every read of a tensor in a scope streaming; `pl.load(..., cache=...)` declares one access. BYPASS is a coherence and no-reuse contract, not a hint. The installed toolchain has no L2-bypass path yet, so it warns and compiles as an ordinary cached access.",
+  "title": "Cache Policy, Streaming Reads, and L2 Residency Warming"
+}

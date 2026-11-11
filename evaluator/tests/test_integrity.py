@@ -8,6 +8,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import integrity
@@ -86,6 +87,80 @@ class FileIntegrityTest(unittest.TestCase):
     def values(self):
         return (json.loads((self.root / "session.json").read_text())["used"],
                 json.loads((self.root / "events.jsonl").read_text())["seq"])
+
+    def test_modes_changes_are_logged_without_interruption_or_restore(self):
+        modes = self.root / "modes"
+        basic = modes / "basic"
+        basic.mkdir(parents=True)
+        (basic / "runner.py").write_text("original")
+        (basic / "removed.py").write_text("remove me")
+        (modes / "ptomni").mkdir()
+        (modes / "ptomni" / "runner.py").write_text("unrelated source")
+        with patch.object(integrity.common, "BENCHMARK_ROOT", self.root):
+            self.capture(public_modes=integrity.ProtectionRoot(modes, "fixed"))
+            (basic / "runner.py").write_text("operator edit")
+            (basic / "new.py").write_text("protected addition")
+            (basic / "removed.py").unlink()
+            (modes / "ptomni" / "runner.py").write_text("unrelated edit")
+            (modes / "future_mode").mkdir()
+            (modes / "future_mode" / "runner.py").write_text("unregistered source")
+            (self.assets / "a.txt").write_text("tampered")
+
+            report = integrity.check_and_restore(self.protection)
+            self.assertFalse(report.passed, "the separate assets edit remains an integrity failure")
+            self.assertIn("public_modes/basic/runner.py", report.blocked_paths)
+            self.assertIn("public_modes/basic/new.py", report.blocked_paths)
+            self.assertIn("public_modes/basic/removed.py", report.blocked_paths)
+            self.assertFalse(any("ptomni" in path or "future_mode" in path
+                                 for path in report.changed_paths))
+            self.assertIn("assets/a.txt", report.changed_paths)
+            self.assertIn("assets/a.txt", report.restored_paths)
+            self.assertEqual((basic / "runner.py").read_text(), "operator edit")
+            self.assertEqual((basic / "new.py").read_text(), "protected addition")
+            self.assertFalse((basic / "removed.py").exists())
+            self.assertEqual((modes / "ptomni" / "runner.py").read_text(), "unrelated edit")
+            self.assertTrue((modes / "future_mode" / "runner.py").is_file())
+            self.assertEqual((self.assets / "a.txt").read_text(), "original a")
+
+    def test_modes_root_replacements_are_left_in_place(self):
+        modes = self.root / "modes"
+        original = modes / "basic"
+        original.mkdir(parents=True)
+        (original / "runner.py").write_text("original")
+        with patch.object(integrity.common, "BENCHMARK_ROOT", self.root):
+            self.capture(public_modes=integrity.ProtectionRoot(modes, "fixed"))
+            shutil.rmtree(original)
+            replacement = modes / "basic"
+            replacement.write_text("replacement")
+            report = integrity.check_and_restore(self.protection)
+            self.assertTrue(report.passed)
+            self.assertIn("public_modes/basic", report.blocked_paths)
+            self.assertTrue(replacement.is_file())
+            self.assertEqual(replacement.read_text(), "replacement")
+
+    def test_same_name_in_other_roots_is_still_restored(self):
+        target = self.assets / "active.py"
+        target.write_text("original")
+        self.capture()
+        target.write_text("tampered")
+        report = integrity.check_and_restore(self.protection)
+        self.assertIn("assets/active.py", report.changed_paths)
+        self.assertEqual(target.read_text(), "original")
+
+    def test_runtime_policy_rejects_old_scope_before_recovery(self):
+        import session
+
+        current = integrity.common.BENCHMARK_ROOT / "evaluator/runtime_policy.py"
+        current_hash = integrity.common.sha256_file(current)
+        (self.root / "evaluator").mkdir()
+        (self.root / "evaluator/runtime_policy.py").write_bytes(current.read_bytes())
+        entry = {"sha256": current_hash}
+        manifest = {"roots": {"evaluator": {"entries": {"runtime_policy.py": entry}}}}
+        with patch.object(integrity.common, "BENCHMARK_ROOT", self.root):
+            session.require_current_evaluator(manifest)
+            entry["sha256"] = "8d02d3ced190ac5eaa30b02e169b3abca719082dfc3e85a6933cc5b987fed0ad"
+            with self.assertRaisesRegex(integrity.InfrastructureError, "older runtime environment policy"):
+                session.require_current_evaluator(manifest)
 
     def test_restore_content_empty_directories_types_and_extra_nodes(self):
         self.capture()

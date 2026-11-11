@@ -1,49 +1,94 @@
-/** Run-local CANNBot tools. No global Pi extension or skill installation. */
-import { spawn, spawnSync } from "node:child_process";
+import { createConnection } from "node:net";
+
+type ToolSpec = {
+  name: string;
+  label: string;
+  description: string;
+  parameters: Record<string, unknown>;
+};
+
+function schema(properties: Record<string, unknown>, required: string[] = []) {
+  return { type: "object", properties, required, additionalProperties: true };
+}
+
+function request(value: Record<string, unknown>): Promise<any> {
+  const path = process.env.PTOBENCH_CANNBOT_SOCKET;
+  if (!path) return Promise.reject(new Error("CANNBot tool socket is unavailable"));
+  return new Promise((resolve, reject) => {
+    const socket = createConnection({ path });
+    let response = "";
+    socket.once("connect", () => socket.write(JSON.stringify(value) + "\n"));
+    socket.on("data", (chunk: Buffer) => {
+      response += chunk.toString("utf8");
+      const newline = response.indexOf("\n");
+      if (newline < 0) return;
+      socket.end();
+      try {
+        resolve(JSON.parse(response.slice(0, newline)));
+      } catch (error) {
+        reject(error);
+      }
+    });
+    socket.once("error", reject);
+  });
+}
 
 export default function (pi: any) {
-  const helper = process.env.CANNBOT_TOOLS;
-  const python = process.env.CANNBOT_PYTHON;
-  const config = process.env.CANNBOT_CONFIG;
-  const dispatch = process.env.CANNBOT_DISPATCH;
-  if (!helper || !python || !config || !dispatch) throw new Error("CANNBot session configuration is missing");
-  const options = ["--config", config, "--dispatch", dispatch];
-  if (process.env.CANNBOT_ALLOW_TASK === "1") options.push("--allow-task");
-  const listed = spawnSync(python, [helper, "list", ...options], { encoding: "utf8" });
-  if (listed.status !== 0) throw new Error(listed.stderr || "CANNBot tool discovery failed");
-  for (const spec of JSON.parse(listed.stdout)) {
+  const tools: ToolSpec[] = [
+    {
+      name: "skill",
+      label: "skill",
+      description: "Read an unchanged upstream skill and its source path.",
+      parameters: schema({ name: { type: "string" } }, ["name"]),
+    },
+    {
+      name: "todowrite",
+      label: "todowrite",
+      description: "Persist your Todo list unchanged in the method work directory.",
+      parameters: schema({ todos: { type: "array", items: {} } }, ["todos"]),
+    },
+    {
+      name: "todoread",
+      label: "todoread",
+      description: "Read your persisted Todo list.",
+      parameters: schema({}),
+    },
+  ];
+  if (process.env.PTOBENCH_CANNBOT_ALLOW_TASK === "1") {
+    tools.unshift({
+      name: "Task",
+      label: "Task",
+      description: "Dispatch an original optimizer or verifier role in a fresh native session. Sessions share source and PTOBench budget; the original answer or error is returned.",
+      parameters: schema({
+        subagent_type: { type: "string", enum: ["pypto-op-optimizer", "pypto-op-verifier"] },
+        prompt: { type: "string" },
+        description: { type: "string" },
+        workspace: { type: "string" },
+      }, ["subagent_type", "prompt"]),
+    });
+  }
+
+  for (const spec of tools) {
     pi.registerTool({
-      name: spec.name, label: spec.name, description: spec.description, parameters: spec.inputSchema,
-      async execute(toolCallId: string, params: any, signal: AbortSignal) {
-        return await new Promise((resolve, reject) => {
-          if (signal?.aborted) {
-            resolve({ content: [{ type: "text", text: "Tool call cancelled before dispatch" }], isError: true });
-            return;
-          }
-          const child = spawn(python, [helper, "call", ...options], { stdio: ["pipe", "pipe", "pipe"] });
-          const out: Buffer[] = [], err: Buffer[] = [];
-          let escalation: ReturnType<typeof setTimeout> | undefined;
-          const abort = () => {
-            child.kill("SIGTERM");
-            escalation = setTimeout(() => child.kill("SIGKILL"), 4000);
-          };
-          signal?.addEventListener("abort", abort, { once: true });
-          child.stdout.on("data", (chunk: Buffer) => out.push(chunk));
-          child.stderr.on("data", (chunk: Buffer) => err.push(chunk));
-          child.on("error", reject);
-          child.on("close", (code) => {
-            signal?.removeEventListener("abort", abort);
-            if (escalation) clearTimeout(escalation);
-            try {
-              const value = JSON.parse(Buffer.concat(out).toString("utf8"));
-              resolve(value);
-            } catch {
-              resolve({ content: [{ type: "text", text: Buffer.concat(err).toString("utf8") || `CANNBot helper exited (${code}) without a tool result` }], isError: true });
-            }
+      ...spec,
+      async execute(toolCallId: string, params: Record<string, unknown>, signal: AbortSignal) {
+        if (signal?.aborted) {
+          return { content: [{ type: "text", text: "Tool call cancelled before dispatch" }], isError: true };
+        }
+        const cancel = () => {
+          void request({ action: "cancel", tool_call_id: toolCallId }).catch(() => {});
+        };
+        signal?.addEventListener("abort", cancel, { once: true });
+        try {
+          return await request({
+            action: "call",
+            tool_call_id: toolCallId,
+            name: spec.name,
+            arguments: params,
           });
-          child.stdin.on("error", () => {});
-          child.stdin.end(JSON.stringify({ name: spec.name, arguments: params, tool_call_id: toolCallId }));
-        });
+        } finally {
+          signal?.removeEventListener("abort", cancel);
+        }
       },
     });
   }

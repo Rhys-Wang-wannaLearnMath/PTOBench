@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "run_id": "20261108T064739429597Z",
+  "manifest_sha256": "6c3d50cfc1413beaeb226bff4bab5c05d20c98fdd21eee636d4ac0700bc69dd7",
+  "input_count": 243,
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "reasoning": "high",
+  "base_url": "https://api.aixuanhub.me/v1",
+  "review_status": "pass"
+}

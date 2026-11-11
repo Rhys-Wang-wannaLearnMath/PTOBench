@@ -7,11 +7,14 @@ Python API](SESSION.md); S3 does not provide a Launcher or finalization command.
 
 ```bash
 ptobench evaluate [WORKSPACE]
-ptobench profile runtime [WORKSPACE]
-ptobench profile pmu [WORKSPACE]
-ptobench profile compiler [WORKSPACE]
+ptobench profile [WORKSPACE]
 ptobench fork [PARENT_WORKSPACE]
 ```
+
+`profile` defaults to the Combined Runtime, PMU, and Compiler diagnostics and
+uses the same workspace argument as `evaluate`. A method can explicitly select
+`profile_strategy: split` to expose the individual `runtime`, `pmu`, and
+`compiler` commands.
 
 Brackets mean an optional positional argument, defaulting to `.`. Absolute and
 relative registered roots work. A subdirectory, link, another Session's worker,
@@ -36,12 +39,10 @@ selected environment before importing the Case.
 | Operation | Internal Evaluator phase/mode | Exploration cost |
 | --- | --- | ---: |
 | evaluate | all / clean | 1 |
-| profile runtime | correctness / runtime | 1 |
-| profile pmu | correctness / hardware | 1 |
-| profile compiler | correctness / compile | 1 |
+| profile (combined) | correctness / runtime + hardware + compile | 1 |
 | fork | source copy and fresh context | 0 |
 
-The public names pmu/compiler map to existing hardware/compile behavior and
+The split names pmu/compiler map to existing hardware/compile behavior and
 artifact directories. Agent profiling runs the Candidate without comparing its
 outputs with the cached Ref. The internal `correctness` phase name is retained
 for the one-shot execution path; it does not mean output validation was performed.

@@ -1,0 +1,59 @@
+{
+  "applicability": [
+    "A long prefill or high-EP-degree run runs out of intermediate GM memory.",
+    "Auto-scope nesting collapses most work onto one ring while other rings sit idle.",
+    "A loop allocates intermediates every iteration and never reclaims them before the enclosing scope ends.",
+    "A runtime allocation must be initialized without the removed `init_value` prefilling surface."
+  ],
+  "directions": [
+    "Set `@pl.jit(auto_scope=False)` or `@pl.jit.inline(auto_scope=False)` and write `with pl.scope():` around the layer or token block that should own intermediate lifetime.",
+    "Create loop-carried ping-pong buffers and outputs outside the inner scope so they outlive it.",
+    "Allocate GM scratch just outside the `pl.at` that first writes it; inside `pl.at`, `pl.create_tensor` yields a tile.",
+    "When measurement proves a ring is too small, pass `RunConfig(ring_task_window=..., ring_heap=..., ring_dep_pool=...)` with a scalar or four per-ring values.",
+    "Initialize a runtime tensor with a kernel or `pl.full`; do not use the removed `init_value=` argument."
+  ],
+  "domain": "memory",
+  "effects": [
+    "Inner scopes shorten intermediate lifetime and can reclaim memory earlier, but add scope bookkeeping and scheduling boundaries.",
+    "Larger rings avoid deadlock and allow deeper in-flight work, but the static arena grows and can cause an `rtMalloc` OOM before the kernel runs.",
+    "A scalar ring knob broadcasts, so one intended ring may enlarge all four; per-ring values avoid that.",
+    "Splitting a scope reduces its peak but may duplicate work or expose more orchestration tensors."
+  ],
+  "evidence_status": "documented",
+  "id": "runtime_scopes_and_heap_rings",
+  "invariants": [
+    "Scopes are orchestration-only. `mode=AUTO` requires `auto_scope=False` on the enclosing function; `mode=MANUAL` is allowed in either mode.",
+    "An AUTO scope may not nest inside a MANUAL scope, and `manual_scope` may not nest inside another `manual_scope`.",
+    "`@pl.jit`, `@pl.jit.host`, and `@pl.jit.inline` accept `auto_scope=False`; `.incore` and `.opaque` reject it.",
+    "Nesting deeper than ring 3 buys no additional ring.",
+    "`pl.create_tensor(init_value=...)` is removed in the installed API: passing a non-None value raises. Seed a runtime tensor from a kernel or `pl.full`, and order readers after the seed. The local snapshot exposes `pl.full` but not `pl.zeros`.",
+    "Ring-size fields are constrained: `ring_task_window` is a power-of-two slot count at least 4, `ring_heap` is a power-of-two byte count at least 1024, and `ring_dep_pool` is in `[4, INT32_MAX]`. Each accepts a scalar or exactly four per-ring values; 0 leaves the compile default.",
+    "Sizing is per task, not process-global. Both L2 and L3 paths are documented to forward `RunConfig`; confirm the effective capacities from the metadata line rather than assuming the override landed."
+  ],
+  "principle": "The runtime provides an implicit top-level scope, so writing scopes is control and tuning, never a correctness requirement by itself. AUTO mode keeps the producer-map dependency tracking on; MANUAL mode turns it off and makes every edge author-owned. By default the compiler inserts AUTO scopes around a function body and around each `for` and `if` body. A runtime scope also selects one of four ring sets by scope nesting depth: depth 0 uses ring 0, depth 1 ring 1, depth 2 ring 2, and depth 3 or deeper is clamped to ring 3. Each ring has its own task-window slots, output heap, and dependency-edge pool, reclaimed FIFO by its own watermark. A flat kernel can therefore put everything on ring 0 and leave the other rings idle. A `pl.create_tensor` in orchestration becomes a kernel-less allocation task on the current ring. Its block is released only when every consumer has completed and the owning scope has closed; the scope holds its own fanout reference until scope exit. Consequently memory is not freed at last use, a loop without an inner scope accumulates every iteration's intermediates, and one long-lived allocation at the head of a ring can block all later allocations behind it. Deep nesting past depth 3 concentrates pressure on ring 3. Very fine scopes are also scheduling boundaries and cost bookkeeping. The practical fix is usually scope placement: put one scope around a layer and an inner scope around a token block, keep loop-carried values and output parameters outside the inner ownership, and allocate GM scratch outside the `pl.at` that first writes it. Ring sizing is a second fix: `RunConfig` fields `ring_task_window`, `ring_heap`, and `ring_dep_pool` take a scalar broadcast to all four rings or four per-ring values, with 0 meaning the compile default. The process-wide `PTO2_RING_*` environment variables are retired. The source's a2a3 documented defaults are 16384 task slots, 256 MiB heap, and 16384 dependency entries per ring, with a global 65536-entry tensormap; treat those as defaults to verify, not local measurements.",
+  "questions": [
+    "The effective ring capacities on a given local run must be read from `scope_stats` metadata; the corpus states compile defaults, not a measured local configuration.",
+    "Whether every local entry point forwards L2 and L3 ring overrides in the installed runtime build was not exercised."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Assuming an intermediate is reclaimed when its last consumer finishes; it remains live until the owning scope closes.",
+    "Using `pl.scope(mode=pl.ScopeMode.MANUAL)` as a ring-placement knob; it is a dependency-tracking choice. Fortuitously, an AUTO scope is the ordinary ring choice.",
+    "Creating a tensor inside `pl.at` and expecting a GM scratch buffer; it becomes a tile.",
+    "Sizing every ring with one large scalar when only one ring needs the space."
+  ],
+  "source_features": [
+    "for",
+    "if",
+    "pl.create_tensor",
+    "pl.at",
+    "RunConfig",
+    "ring_task_window",
+    "ring_heap",
+    "ring_dep_pool",
+    "PTO2_RING_*"
+  ],
+  "summary": "A runtime scope is both a dependency-tracking boundary and a heap tier. Four ring sets are selected by scope nesting depth, so placing scopes changes when intermediate GM tensors are reclaimed. Memory is freed at scope exit and FIFO reclaim, not at last use.",
+  "title": "Runtime Scopes, Ring Heaps, and Intermediate Lifetime"
+}

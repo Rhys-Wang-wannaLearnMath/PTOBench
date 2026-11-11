@@ -21,6 +21,26 @@ import uuid
 from typing import Mapping
 
 import file_tree
+import common
+
+
+def _scan_root(path: str | Path, **kwargs) -> dict:
+    return file_tree.scan_tree(path, **kwargs)
+
+
+def _root_policy(path: str | Path) -> str:
+    """Return the recovery policy for a protected root.
+
+    The public modes tree is mutable source owned by the operator. It remains
+    observable and its changes remain evidence, but integrity recovery must
+    never rewrite or delete it. Other roots retain the historical repair
+    policy.
+    """
+    modes_root = file_tree.absolute_path(common.BENCHMARK_ROOT / "modes")
+    protected_path = file_tree.absolute_path(path)
+    if protected_path == modes_root or protected_path.is_relative_to(modes_root):
+        return "observe"
+    return "restore"
 
 
 @dataclass(frozen=True)
@@ -34,12 +54,13 @@ class ProtectionRoot:
 class IntegrityReport:
     changed_paths: list[str] = field(default_factory=list)
     restored_paths: list[str] = field(default_factory=list)
+    blocked_paths: list[str] = field(default_factory=list)
     unrecoverable_paths: list[str] = field(default_factory=list)
 
     @property
     def passed(self) -> bool:
-        # Restoration never erases evidence of the original change.
-        return not self.changed_paths and not self.unrecoverable_paths
+        # Modes are observed for the audit log but are not an execution gate.
+        return not (set(self.changed_paths) - set(self.blocked_paths)) and not self.unrecoverable_paths
 
 
 class InfrastructureError(RuntimeError):
@@ -48,6 +69,22 @@ class InfrastructureError(RuntimeError):
     def __init__(self, message: str, report: IntegrityReport | None = None):
         super().__init__(message)
         self.report = report or IntegrityReport()
+
+
+class ModesChangedError(InfrastructureError):
+    """The mutable public modes tree changed during a protected operation."""
+
+    error_code = "integrity_failed"
+
+
+def report_dict(report: IntegrityReport) -> dict[str, list[str]]:
+    """Serialize integrity evidence for Session and launcher records."""
+    return {
+        "changed_paths": list(report.changed_paths),
+        "restored_paths": list(report.restored_paths),
+        "blocked_paths": list(report.blocked_paths),
+        "unrecoverable_paths": list(report.unrecoverable_paths),
+    }
 
 
 def _json_bytes(value: dict) -> bytes:
@@ -198,7 +235,7 @@ def _capture_roots(protection_root: Path, roots: Mapping[str, ProtectionRoot]) -
         if not isinstance(specification, ProtectionRoot):
             raise InfrastructureError("roots must map logical names to ProtectionRoot")
         path = file_tree.absolute_path(specification.path)
-        raw = file_tree.scan_tree(path, reject_special=True)
+        raw = _scan_root(path, reject_special=True)
         scans[name] = raw
         entries = copy.deepcopy(raw)
         for entry in entries.values():
@@ -212,9 +249,9 @@ def _capture_roots(protection_root: Path, roots: Mapping[str, ProtectionRoot]) -
     _validate(manifest, protection_root)
     for name, root in captured.items():
         for relative, entry in root["entries"].items():
-            if entry["kind"] == "file":
+            if entry["kind"] == "file" and _root_policy(root["path"]) == "restore":
                 _store_file(protection_root, Path(root["path"]) / relative, entry)
-        if scans[name] != file_tree.scan_tree(root["path"], reject_special=True):
+        if scans[name] != _scan_root(root["path"], reject_special=True):
             raise InfrastructureError(f"asset changed during capture: {name}")
     return captured
 
@@ -240,22 +277,56 @@ def _selected(manifest: dict, groups) -> dict:
     return {name: root for name, root in manifest["roots"].items() if root["group"] in wanted}
 
 
-def _check(manifest: dict, groups) -> IntegrityReport:
+def _legacy_modes_changes(name: str, root: dict) -> list[str]:
+    """Check only the still-relevant mode paths in older whole-tree manifests."""
+    path = Path(root["path"])
+    entries = root["entries"]
+    changed = []
+    for child in ("__init__.py", *common.MODE_SOURCE_DIRS):
+        prefix = child + "/"
+        actual = _scan_root(path / child)
+        expected = {
+            ("" if relative == child else relative[len(prefix):]):
+                {key: value for key, value in entry.items() if key != "backup"}
+            for relative, entry in entries.items()
+            if relative == child or relative.startswith(prefix)
+        }
+        if not expected:
+            expected = {"": {"kind": "absent"}}
+        for relative in sorted(actual.keys() | expected.keys()):
+            if actual.get(relative) != expected.get(relative):
+                suffix = f"/{relative}" if relative else ""
+                changed.append(f"{name}/{child}{suffix}")
+    return changed
+
+
+def _check(manifest: dict, groups, roots: Mapping[str, dict] | None = None) -> IntegrityReport:
     report = IntegrityReport()
-    for name, root in _selected(manifest, groups).items():
+    selected = _selected(manifest, groups) if roots is None else roots
+    for name, root in selected.items():
         try:
-            actual = file_tree.scan_tree(root["path"])
+            if file_tree.absolute_path(root["path"]) == file_tree.absolute_path(common.BENCHMARK_ROOT / "modes"):
+                changed = _legacy_modes_changes(name, root)
+                report.changed_paths.extend(changed)
+                if _root_policy(root["path"]) == "observe":
+                    report.blocked_paths.extend(changed)
+                continue
+            actual = _scan_root(root["path"])
         except (OSError, file_tree.UnsafeTreeError, file_tree.TreeChangedError) as error:
             report.unrecoverable_paths.append(name)
             raise InfrastructureError(f"cannot safely inspect {name}: {error}", report) from error
         expected = {relative: {k: v for k, v in entry.items() if k != "backup"}
                     for relative, entry in root["entries"].items()}
-        report.changed_paths.extend(
+        changed = [
             f"{name}/{relative}" if relative else name
             for relative in sorted(actual.keys() | expected.keys())
             if actual.get(relative) != expected.get(relative)
-        )
+        ]
+        report.changed_paths.extend(changed)
+        if _root_policy(root["path"]) == "observe":
+            report.blocked_paths.extend(changed)
     report.changed_paths.sort()
+    report.blocked_paths.sort()
     return report
 
 
@@ -312,8 +383,18 @@ def _restore(protection_root: Path, manifest: dict, groups) -> IntegrityReport:
         return report
     roots = _selected(manifest, groups)
     changed = set(report.changed_paths)
+    observed = {
+        name for name, root in roots.items()
+        if _root_policy(root["path"]) == "observe"
+        and any(path == name or path.startswith(name + "/") for path in changed)
+    }
+    report.blocked_paths = sorted(set(report.blocked_paths) | {
+        path for path in report.changed_paths
+        if any(path == name or path.startswith(name + "/") for name in observed)
+    })
+    repair_roots = {name: root for name, root in roots.items() if name not in observed}
     # Validate every needed recovery source before modifying a working tree.
-    for name, root in roots.items():
+    for name, root in repair_roots.items():
         for relative, entry in root["entries"].items():
             logical = f"{name}/{relative}" if relative else name
             if entry["kind"] == "file" and logical in changed:
@@ -322,7 +403,7 @@ def _restore(protection_root: Path, manifest: dict, groups) -> IntegrityReport:
                 except InfrastructureError as error:
                     report.unrecoverable_paths.append(logical)
                     raise InfrastructureError(str(error), report) from error
-    for name, root in roots.items():
+    for name, root in repair_roots.items():
         prefix = name + "/"
         relative_changes = {"" if path == name else path[len(prefix):]
                             for path in changed if path == name or path.startswith(prefix)}
@@ -334,11 +415,14 @@ def _restore(protection_root: Path, manifest: dict, groups) -> IntegrityReport:
         except (OSError, file_tree.UnsafeTreeError, InfrastructureError) as error:
             report.unrecoverable_paths.append(name)
             raise InfrastructureError(f"cannot safely restore {name}: {error}", report) from error
-    verification = _check(manifest, groups)
+    verification = _check(manifest, groups, repair_roots)
     if not verification.passed:
         report.unrecoverable_paths.extend(verification.changed_paths)
         raise InfrastructureError("protected files changed during restoration", report)
     report.restored_paths = report.changed_paths.copy()
+    report.restored_paths = sorted(
+        path for path in report.restored_paths if path not in report.blocked_paths
+    )
     return report
 
 

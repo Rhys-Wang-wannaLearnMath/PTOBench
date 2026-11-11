@@ -144,13 +144,11 @@ INIT → S1_SETUP → S2_COLLECT → S3_ANALYZE
 | --- | --- | --- |
 | 初始 baseline 性能 | 读取 `.benchmark_context/reference.json` 对应缓存 | 不扣探索预算 |
 | correctness / 正式性能评测 | `ptobench evaluate`，由 CANNBot 自行使用并解释返回值 | 每次接受的 evaluate 请求扣一项 |
-| runtime profile | `ptobench profile runtime`，返回原始结果与文件路径 | 每次请求扣一项 |
-| 需要 PMU | `ptobench profile pmu` | 每次请求扣一项 |
-| 需要编译产物 | `ptobench profile compiler` | 沿用共同 CLI 计费规则 |
+| 三类诊断 | `ptobench profile`，一次收集 Runtime、PMU 和 Compiler 诊断 | 每次请求扣一项 |
 | 读源码、查冻结文档、分析已有 profile、更新 Todo/摘要 | 本地操作 | 不扣硬件预算 |
 | 最终回归验证 | 共同的 PTOBench finish | 沿用所有方法共同的独立最终验证策略 |
 
-三种 mode 都开放 `runtime / pmu / compiler`；CANNBot 只是按原方法选择如何使用。
+Basic 和 CANNBot 的 workspace 均开放一体式 `ptobench profile`；每次请求同时收集 Runtime、PMU 和 Compiler 诊断。
 诊断产生的运行时间与正式延迟必须区分：原 `analyze_perf.py` 的 `max_work_time`
 是核工作时间统计，不是 PTOBench 的 clean evaluation latency。
 最后成绩以相同 fixture/聚合口径的正式 evaluate 为依据；候选取舍和回退由原方法决定。

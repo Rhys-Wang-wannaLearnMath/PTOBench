@@ -4,5 +4,21 @@
   "case_id": "deepseek_v4.prefill_attention_hca_pro",
   "ref_output_cache": "ready",
   "cpu_oracle_role": "one_time_ref_certification",
-  "comparator_sha256": "d699691a44d236da6f9ab0979d76de5f30acb776ee1763bae9933e53010907d3"
+  "timing_policy": {
+    "version": "ptobench-execution-boundary-20261108-v3",
+    "input_upload": "outside_execution_window",
+    "initial_state_restore": "outside_execution_window",
+    "final_validation_readback": "outside_execution_window",
+    "required_execution_communication": "inside_execution_window"
+  },
+  "comparator_sha256": "d699691a44d236da6f9ab0979d76de5f30acb776ee1763bae9933e53010907d3",
+  "tuning_identity": {
+    "source_sha256": "0d5cd6b9e2fa6bd89c373df0c08502d0251c9d24994ca721655f8b8391ed9745",
+    "case_sha256": "424e0e07a64a48c7c7e1a0fafe7ff2f4f3f6f1d0686894e8dbfdf65932c59a62",
+    "config_sha256": "7189098a5080bec7e06334b0d089093d764ed2b8ba2f90cfb7e370f82bbf3cfb",
+    "comparator_sha256": "d699691a44d236da6f9ab0979d76de5f30acb776ee1763bae9933e53010907d3",
+    "environment_sha256": "161fd32da324fd2a90970aaf16698e5f07f871a5426bbc5961dc21458dc6960a",
+    "tuning_policy_sha256": "b14a7c093c3f7bfd0bd3db47cc57cd6c1d0854e76596602238869666cace6b5d"
+  },
+  "tuning_evidence": "runs/all_case_boundary_repair_20261108/case_results/deepseek_v4__prefill_attention_hca_pro.json"
 }

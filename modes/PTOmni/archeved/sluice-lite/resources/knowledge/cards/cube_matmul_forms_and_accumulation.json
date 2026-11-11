@@ -1,0 +1,62 @@
+{
+  "applicability": [
+    "Writing a K-loop that accumulates a projection on chip.",
+    "Choosing GEMV instead of matmul for a one-row decode operand.",
+    "Splitting K across cores with atomics or an accumulator seed.",
+    "Using MX block-scaled matmul or quantizing for it."
+  ],
+  "directions": [
+    "Use `acc = pl.matmul_acc(acc, tile_a, tile_b, init_cond=(kb == 0))` inside the K loop and allocate `acc` inside the `pl.at` or `pl.spmd` body.",
+    "Slice an accumulator along columns, for example `acc_n = pl.slice(acc, [M, N_TILE], [0, n0 * N_TILE])`, rather than taking a row band of a multi-block-column parent.",
+    "Use `pl.gemv` or `pl.gemv_acc` for M=1 and `pl.matmul` for larger M.",
+    "Use `out_dtype` only for conversions the FIXPIPE can perform; use explicit `pl.cast` for INT32->FP32, FP32->INT8, or INT32->INT8.",
+    "For MX quantization, use `pl.quant_mx` with `group_axis` matching the operand, then stage data and scales through GM before `matmul_mx`."
+  ],
+  "domain": "compute",
+  "effects": [
+    "`matmul_acc` keeps the partial sum on chip and removes a zeroing step, but ties the accumulator to one L0C buffer and strict window geometry.",
+    "GEMV schedules a smaller Cube form for M=1, but requires the one-row and dtype conditions.",
+    "A fused bias saves an epilogue dispatch but restricts the bias shape.",
+    "MX reduces operand width and memory, but adds scale layout, dtype, and cross-core transport restrictions."
+  ],
+  "evidence_status": "documented",
+  "id": "cube_matmul_forms_and_accumulation",
+  "invariants": [
+    "`init_cond` is documented for 2D operands in the installed API, but the operations guide demonstrates a rank-3 grouped GEMM predicate. Rank-greater-than-2 `init_cond` is unresolved; avoid it unless the exact compiler accepts it.",
+    "When the left operand narrows to a runtime row count and the accumulator is taller than one 16-row fractal, `mad` writes compact rows while a non-compact accumulator is read at its physical row count; `init_cond` alone then fails `AccCompactValid`. A compile-time-constant valid shape or an accumulator of at most 16 rows is unaffected.",
+    "`a_trans`, `b_trans`, and `c_matrix_nz` are Tensor-only and raise with Tile operands. The Tile-level `pl.tile.matmul` has no `out_dtype`; the unified entry accepts `out_dtype` on tiles only when it agrees with the cube deduction. On tensors, `out_dtype` is limited to FIXPIPE conversions: FP32/FP16/BF16 for float operands and INT32 for int operands.",
+    "`matmul_bias` bias has shape `[1, N]` and the accumulator dtype.",
+    "MX data tiles reaching `matmul_mx` must both be FP8E4M3FN; native FP4xFP4 and reverse FP8xFP4 are unsupported.",
+    "`pl.quant_mx` is MXFP8-only in this release; `group_axis=1` is the A-side `[M, K]` path with `M%16==0` and `K%64==0`, while `group_axis=0` is the B-side `[N, K]` path with `N%32==0` and `K%64==0`. It cannot currently share one InCore mixed task with `matmul_mx`; stage quantized data and scale through GM between AIV and AIC."
+  ],
+  "principle": "`pl.matmul(lhs, rhs, out_dtype=None, a_trans=False, b_trans=False, c_matrix_nz=False)` computes matrix multiplication, with the transpose and C-layout flags applying to the tensor path. At tile level, transposition is a type property, so passing `a_trans` or `b_trans` with a Tile operand raises rather than being ignored. A tensor-level matmul with rank greater than 2 is lowered to batched matmul and then unrolled to per-batch tile matmuls. `pl.matmul_acc(acc, lhs, rhs, init_cond=...)` fuses accumulation. On K steps where `init_cond` holds, `acc` is overwritten with `lhs @ rhs` instead of accumulated into, which is the split-K `k == 0` idiom and removes the need to zero the accumulator or peel the first step. A literal `True`/`False` selects a compile-time form; a runtime predicate lowers to a branch over the two. The accumulator must be allocated inside the InCore region; hoisting it to orchestration makes it GM and ptoas rejects the load. L0C is stored in 16x16 blocks column-major. When `acc` is a window of a larger `Mem.Acc` tile, slice it along columns so the window either spans every row of its parent or is at most 16 columns wide inside a single 16-column block. A row window at `[t0, 0]` out of an `[M, N]` accumulator is strided with more than one block column and is rejected; a column window addresses L0C in the order the hardware writes it. `pl.matmul_bias(lhs, rhs, bias)` fuses a broadcast bias add. `pl.gemv`/`gemv_acc`/`gemv_bias` specialize a one-row left operand; use them when M is 1 because the Cube schedules the smaller form more efficiently. `acc_phase=pl.AccPhase.Partial` and `Final` track producer-side unit-flag chunks; a producer ending in `Final` must be consumed by a store with `st_phase=pl.STPhase.Final`. Batched tile forms are `pl.batch_matmul` and `pl.tile.batch_matmul_acc`; there is no top-level `pl.batch_matmul_acc`. MX forms are `pl.matmul_mx`, `pl.matmul_mx_acc`, and `pl.matmul_mx_bias`, with FP8E4M3FN data and FP8E8M0 scales; an FP4 lhs must be cast to FP8E4M3FN first.",
+  "questions": [
+    "Whether the installed compiler accepts `init_cond` on rank-3 grouped `matmul_acc` operands.",
+    "Whether the runtime-narrowed, tall-accumulator case is best solved by peeling the first K step or by using a `pl.matmul` seed on the local compiler."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Hoisting the accumulator out of the InCore region; ptoas rejects the accumulator load.",
+    "Slicing an L0C accumulator by rows rather than columns.",
+    "Requesting `out_dtype=pl.FP32` on INT8 operands; that is a dequantization and raises.",
+    "Using `init_cond` with a runtime-narrowed row count and a tall accumulator without the required seed/peel form.",
+    "Trying to place `quant_mx` and `matmul_mx` in one mixed InCore task without staging through GM."
+  ],
+  "source_features": [
+    "pl.matmul(lhs, rhs, out_dtype=None, a_trans=False, b_trans=False, c_matrix_nz=False)",
+    "a_trans",
+    "b_trans",
+    "pl.matmul_acc(acc, lhs, rhs, init_cond=...)",
+    "init_cond",
+    "acc",
+    "lhs @ rhs",
+    "k == 0",
+    "True",
+    "False",
+    "Mem.Acc",
+    "[t0, 0]"
+  ],
+  "summary": "`pl.matmul`, `pl.matmul_acc`, and `pl.matmul_bias` map to the Cube unit; `pl.gemv*` specialize M=1. Float accumulates in FP32 and INT8 in INT32. `init_cond` removes the peeled first K step, but rank and L0C-window rules have unresolved or strict cases.",
+  "title": "Cube Matmul, Accumulator Predicates, and L0C Windows"
+}

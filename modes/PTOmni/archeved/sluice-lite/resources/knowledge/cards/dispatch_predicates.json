@@ -1,0 +1,55 @@
+{
+  "applicability": [
+    "An MoE expert has an empty row count and should not launch.",
+    "A task's need is known only from a value produced by an earlier kernel.",
+    "A dynamic branch should avoid dispatching work without forcing an orchestration-time tensor wait."
+  ],
+  "directions": [
+    "Use `out, tid = pl.spmd_submit(self.expert, tokens, out, core_num=N, deps=[gather_tid], predicate=(row_count[e] > 0))`.",
+    "With `pl.at`, use `with pl.at(level=pl.Level.CORE_GROUP, deps=[gate_tid], predicate=(rc[0, 0] > 0)) as tid:`.",
+    "Compute a single gate value in a prior kernel when the real condition is compound, then predicate on that one tensor element."
+  ],
+  "domain": "scheduling",
+  "effects": [
+    "Skipping a task saves its dispatch and compute, but the predicate itself is evaluated on the scheduler hot path and still settles fanin/fanout.",
+    "A simple comparison is cheap and current at dispatch; a compound condition needs a prior gate kernel, adding a task and a dependency.",
+    "A mis-specified predicate is silent: the task runs when it should not or is skipped based on stale data."
+  ],
+  "evidence_status": "documented",
+  "id": "dispatch_predicates",
+  "invariants": [
+    "A predicate is a static syntax contract, not an arbitrary Python expression.",
+    "The operand producer must be in `deps=`; the parser makes a best-effort check but the author remains responsible.",
+    "A predicated task never early-dispatches.",
+    "On `pl.at`, a predicate forces lowering to `ir.Submit` and is rejected outside a `CORE_GROUP` scope or inside a wrapper that has no Submit.",
+    "On `pl.spmd`, use the `as tid` spelling when the predicate's producer must be named in `deps=`; a bare `with pl.spmd(n, predicate=...)` parses but has no documented way to name the producer."
+  ],
+  "principle": "`predicate=` attaches a single comparison of one tensor element against an integer literal, for example `row_count[e] > 0`. The parser matches the syntax; it does not turn the expression into `pl.tensor.read` plus a compare, because reading in orchestration would wait on the tensor and defeat the purpose. The scheduler evaluates the comparison at the dispatch point, after this task's dependencies are satisfied, so the value is current. If false, the task is retired inline and never reaches a core, while its fanin and fanout still settle so downstream consumers unlock normally. Only `tensor[indices] OP int-literal` is expressible, with one of `==`, `!=`, `>`, `<`, `>=`, `<=`; no chained comparison, arithmetic, or boolean combination is supported. Reduce a richer condition to one gate value in a prior kernel. The operand tensor's producing task must be one of the task's `deps=` so the dispatch-point read sees the current value. The installed API exposes `predicate` on `pl.submit`, `pl.spmd_submit`, and `pl.spmd`; the current `pl.at` signature also exposes it, although an older scheduling guide says `predicate` is not carried by `pl.at`. On `pl.at`, the predicate is only valid at `level=pl.Level.CORE_GROUP` and not inside `pl.cluster()`, `pl.spmd()`, or another `pl.at` scope.",
+  "questions": [
+    "Whether the installed parser accepts every documented `predicate=` spelling on `pl.at`; the signature and documentation support it, but parser behavior was not exercised."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Reading the predicate operand in orchestration to build a Python `if`; this stalls on tensor readiness and defeats the dispatch-time check.",
+    "Omitting the gate producer from `deps=` so the comparison sees a previous iteration's value.",
+    "Using a chained or arithmetic predicate; it is not expressible.",
+    "Putting `predicate=` on a cluster-nested `pl.spmd`, where the Submit that would carry it does not exist."
+  ],
+  "source_features": [
+    "predicate=",
+    "row_count[e] > 0",
+    "pl.tensor.read",
+    "tensor[indices] OP int-literal",
+    "==",
+    "!=",
+    ">",
+    "<",
+    ">=",
+    "<=",
+    "deps=",
+    "predicate"
+  ],
+  "summary": "A dispatch predicate skips a task based on one tensor-element comparison evaluated at the dispatch point. The comparison is matched syntactically and never evaluated in orchestration; the operand's producer must be in `deps=`, or the predicate can read a stale value.",
+  "title": "Runtime Dispatch Predicates"
+}

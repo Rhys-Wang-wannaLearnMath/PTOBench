@@ -1,0 +1,58 @@
+{
+  "applicability": [
+    "A region contains many independent chunks and the AICPU dispatch trail is visible.",
+    "A mixed or cube-only kernel must launch at full device occupancy for a hard `pl.system.syncall`.",
+    "A block fan-out should be represented as one task with one producer TaskId rather than one task per chunk."
+  ],
+  "directions": [
+    "Replace `for ... in pl.parallel(...): with pl.at(...): ...` with `for i in pl.spmd(n, name_hint='...'): ...` when the per-iteration body is self-contained and AICPU overhead is visible.",
+    "Use `with pl.spmd(n) as tid:` when a later task needs a join on the whole fan-out; store the TaskId in `pl.array.create(N, pl.TASK_ID)` when the fan-out must be hoisted.",
+    "Pass `optimizations=[pl.split(pl.SplitMode.UP_DOWN)]` only where cross-core splitting is intended; entries must be written inline.",
+    "Use `pl.spmd(pl.system.available_cluster_count(), sync_start=True)` or `pl.spmd(pl.system.available_aiv_count(), sync_start=True)` with a hard barrier."
+  ],
+  "domain": "scheduling",
+  "effects": [
+    "SPMD sharply reduces AICPU scheduling overhead for a large fan-out, especially with heavy fan-in/fan-out, but leaves the per-block work granularity unchanged.",
+    "`sync_start=True` gives a coordinated cohort and is required for some barriers, but atomic launch can strand capacity and is not the cheapest mode for ordinary independent chunks.",
+    "A single TaskId simplifies fan-in and lifetime tracking but prevents a consumer from waiting on an individual block."
+  ],
+  "evidence_status": "documented",
+  "id": "spmd_launch_and_task_fanout",
+  "invariants": [
+    "The block count is positional and is the only positional argument; start is 0 and step is 1.",
+    "In the dispatch form, `with pl.spmd(n):` may launch only one kernel; lowering stops at the first call. An inline body that reads `pl.tile.get_block_idx()` may contain multiple tile ops.",
+    "A `pl.cluster()`-nested `pl.spmd` is unwrapped into a Group function and cannot carry Submit-only metadata such as `deps=`, `allow_early_resolve=`, or `predicate=`.",
+    "`sync_start=True` requires all blocks to launch atomically and may be constrained by available capacity.",
+    "The registered documents conflict on `deps=`: the current installed API reference says `deps=` is accepted on all three `pl.spmd` forms, while the scheduling guide says `with pl.spmd(n):` and `for i in pl.spmd(n):` reject it and only the `as tid` form accepts it. Treat only the `as tid` form as settled; the others require local validation."
+  ],
+  "principle": "`pl.spmd(core_num)` dispatches the same kernel over `core_num` blocks from one orchestrator schedule entry. The loop form is `for i in pl.spmd(n):`, where `i` is the per-block index and the body is auto-outlined into an InCore function. The context-manager form is `with pl.spmd(n):`; its body either dispatches a pre-defined InCore kernel or is an inline body that reads `pl.tile.get_block_idx()`. A body that neither reads the block index nor dispatches a kernel is rejected because every block would do identical work. The capture form `with pl.spmd(n) as tid:` additionally returns the dispatch's producer TaskId for later `deps=`. Blocks are scheduled individually; with more blocks than cores the launch runs in waves unless `sync_start=True`, which forces an atomic all-or-nothing launch. The whole fan-out carries one TaskId, so a consumer waits on the whole launch, not on one block. The launch resource shape is `MIX`, `AIC`, or `AIV`; a task never waits on a core it could not use. For a hard `pl.system.syncall`, size the launch from the device with `pl.system.available_cluster_count()` for mixed or cube-only kernels and `pl.system.available_aiv_count()` for vector-only kernels, written inline at the call site, and set `sync_start=True`.",
+  "questions": [
+    "Which non-`as tid` `pl.spmd` forms actually accept `deps=` in the installed parser.",
+    "Whether a `sync_start` SPMD launch can be block-by-block pre-staged on the local 910B4; the documentation says it cannot itself be pre-staged, but its consumers can be flagged."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Believing `pl.spmd` removes the too-few-tasks or too-many-tasks tradeoff: it changes dispatch cost, not the amount of work per block.",
+    "Using a hard `syncall` with a literal block count that does not match device occupancy.",
+    "Putting `deps=` on a cluster-nested `pl.spmd`; that scope never lowers to a Submit that can carry the edge.",
+    "Capturing a TaskId but then waiting on only one block; the TaskId denotes the whole fan-out.",
+    "Expecting the dispatch form to launch several kernels; use an inline body or separate tasks."
+  ],
+  "source_features": [
+    "pl.spmd(core_num)",
+    "core_num",
+    "for i in pl.spmd(n):",
+    "i",
+    "with pl.spmd(n):",
+    "pl.tile.get_block_idx()",
+    "with pl.spmd(n) as tid:",
+    "deps=",
+    "sync_start=True",
+    "MIX",
+    "AIC",
+    "AIV"
+  ],
+  "summary": "`pl.spmd(n)` is one scheduling unit fanned out over `n` logical blocks. It cuts AICPU dispatch overhead for many independent chunks, but it does not decide granularity, and the accepted `deps=` spelling is inconsistent across the registered documents.",
+  "title": "SPMD Launch, Block Fanout, and Device-Sized Occupancy"
+}

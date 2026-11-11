@@ -10,6 +10,8 @@ import time
 
 from action_test_support import ActionTestBase, SOURCE_BENCHMARK, write_json
 import session
+sys.path.insert(0, str(SOURCE_BENCHMARK))
+from launcher import runner as launcher_runner
 
 FAKE_TOOL = r'''
 import json, os, signal, subprocess, sys, time, uuid
@@ -47,6 +49,12 @@ def call(args):
     p=subprocess.run(['ptobench',*args],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     os.write(1,p.stdout); os.write(2,p.stderr)
     return p
+def profile(target='.'):
+    if os.environ.get('S5_PROFILE_STRATEGY')=='combined':
+        return call(['profile',target])
+    result=None
+    for mode in ('runtime','pmu','compiler'): result=call(['profile',mode,target])
+    return result
 if c.get('child'):
     child=subprocess.Popen([sys.executable,'-c','import signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); time.sleep(60)'])
     Path(c['child']).write_text(str(child.pid))
@@ -55,19 +63,19 @@ if c.get('mode') != 'profiles_only': call(['evaluate'])
 if c.get('mode')=='s6':
     fork=call(['fork'])
     target=Path(json.loads(fork.stdout.decode().splitlines()[-1])['workspace'])
-    (target/'helper.py').write_text('VALUE = 2\n')
+    (target/'candidate/helper.py').write_text('VALUE = 2\n')
     control=Path(os.environ['S3_CONTROL'])
     control.write_text(json.dumps({'median':5.0}))
     call(['profile','runtime',str(target)])
     call(['evaluate',str(target)])
     control.write_text(json.dumps({'median':7.0}))
 if c.get('mode')=='profiles_only':
-    for mode in ('runtime','pmu','compiler'): call(['profile',mode])
+    profile()
 if c.get('mode')=='all':
     fork=call(['fork'])
     data=json.loads(fork.stdout.decode().splitlines()[-1])
     target=data['workspace']
-    for mode in ('runtime','pmu','compiler'): call(['profile',mode,target])
+    profile(target)
 if c.get('mode')=='active':
     Path(c['ready']).write_text('ready')
     while not Path(c['go']).exists(): time.sleep(.01)
@@ -80,7 +88,7 @@ if c.get('tamper_method'):
     method.write_text("from pathlib import Path\nPath("+repr(c['tamper_method'])+").write_text('executed tampered collector')\n")
     if c.get('corrupt_method_backup'):
         manifest=json.loads((root/'protection/manifest.json').read_text())
-        entry=manifest['roots']['public_modes']['entries']['basic/runner.py']
+        entry=manifest['roots']['public_modes_basic']['entries']['runner.py']
         backup=root/'protection'/entry['backup']
         backup.chmod(0o600)
         backup.write_bytes(b'corrupt method recovery source')
@@ -92,7 +100,7 @@ class LauncherTests(ActionTestBase):
     def setUp(self):
         super().setUp()
         # Keep the venv path: resolving its symlink loses local PyYAML.
-        self.python = str(Path(sys.executable).absolute())
+        self.python = os.path.abspath(sys.executable)
         shutil.rmtree(self.bench / 'launcher')
         shutil.copytree(SOURCE_BENCHMARK / 'launcher', self.bench / 'launcher', ignore=shutil.ignore_patterns('__pycache__'))
         shutil.copyfile(SOURCE_BENCHMARK / 'pto-launcher', self.bench / 'pto-launcher')
@@ -113,15 +121,18 @@ class LauncherTests(ActionTestBase):
         # Diagnostic methods are test-only; Ours remains reserved.
         method = self.bench/'modes/diagnostic_test'
         method.mkdir()
-        (method/'mode.yaml').write_text('schema_version: 2\nid: diagnostic_test\nimplemented: true\ndescription: Test diagnostic policy\nentrypoint: runner.py\n')
+        (method/'mode.yaml').write_text('schema_version: 2\nid: diagnostic_test\nimplemented: true\ndescription: Test diagnostic policy\nentrypoint: runner.py\nprofile_strategy: split\n')
         (method/'instructions.md').write_text('Test diagnostics.\n')
         shutil.copyfile(self.bench/'modes/basic/runner.py', method/'runner.py')
-        shutil.copytree(self.bench/'modes/basic/knowledge', method/'knowledge')
         self.launcher_config()
 
     def launcher_config(self, backend='codex', budget=4, **control):
         import yaml
         profile = yaml.safe_load((self.bench / 'modes/_shared/profiles' / backend / 'default.yaml').read_text())
+        # Fake native transports have no provider registry or API token limits.
+        # Actual limit handling is exercised independently in test_mode_provider.
+        profile.pop('context_window', None)
+        profile.pop('max_output_tokens', None)
         for key in ('argv','version_argv','help_argv'):
             profile[key][0] = str(self.tool)
         (self.bench / 'modes/_shared/profiles' / backend / 'default.yaml').write_text(yaml.safe_dump(profile))
@@ -129,6 +140,9 @@ class LauncherTests(ActionTestBase):
         self.runs = self.repo / 'launcher_runs'
         self.snapshots = self.repo / 'launcher_snapshots'
         experiment_mode = control.get('experiment_mode', 'diagnostic_test' if control.get('mode') in ('all','s6','profiles_only') else 'basic')
+        self.env['S5_PROFILE_STRATEGY'] = yaml.safe_load(
+            (self.bench / 'modes' / experiment_mode / 'mode.yaml').read_text()
+        ).get('profile_strategy', 'combined')
         self.config.write_text(yaml.safe_dump({'case':self.case_id,'mode':experiment_mode,
             'optimizer':{'id':'fake_'+backend,'backend':backend},
             'output':{'runs_root':'launcher_runs','snapshots_root':'launcher_snapshots'},
@@ -172,6 +186,41 @@ class LauncherTests(ActionTestBase):
         self.assertIsNone(session.read_session(root)['active_action'])
         return root,final
 
+    def test_launcher_records_can_be_registered_together_before_commit(self):
+        names = ('experiment.json', 'method.json', 'method_request.json',
+                 'baseline.json', 'environment.json', 'method_collection.json',
+                 'launcher_result.json')
+        handle = session.create_session(self.case_id, {'id': 'fake_codex', 'backend': 'codex'},
+            self.output, {'max_hardware_actions': 2, 'finish_actions': 1},
+            initial_record_paths=names)
+        root = handle.session_root
+        launcher_runner.save(root, 'experiment.json', {'case': self.case_id})
+        manifest = json.loads((root / 'protection/manifest.json').read_text())
+        for name in names:
+            logical = 'launcher_' + name.replace('.', '_').replace('/', '_')
+            self.assertIn(logical, manifest['roots'])
+            self.assertEqual(manifest['roots'][logical]['group'], 'records')
+        self.assertEqual(json.loads((root / 'experiment.json').read_text()), {'case': self.case_id})
+
+    def test_initial_launcher_and_method_records_share_one_registration(self):
+        root = self.create(optimizer='pi').session_root
+        resources = root / 'method/resources'
+        resources.mkdir(parents=True)
+        (resources / 'knowledge.json').write_text('{}\n')
+        initial = {'experiment.json': {'case': self.case_id}, 'method.json': {'id': 'test'},
+                   'method_request.json': {'schema_version': 1}, 'baseline.json': {'median': 1.0},
+                   'environment.json': {'platform': 'cpu'}}
+        launcher_runner.retain_method_reply(root,
+            {'schema_version': 1, 'records': {'method/knowledge.json': {'enabled': True}},
+             'archives': {'knowledge': 'method/resources'}}, initial_records=initial)
+        manifest = json.loads((root / 'protection/manifest.json').read_text())
+        for name in (*initial, 'method/knowledge.json'):
+            logical = 'launcher_' + name.replace('.', '_').replace('/', '_')
+            self.assertIn(logical, manifest['roots'])
+            self.assertEqual(manifest['roots'][logical]['group'], 'records')
+        self.assertEqual(manifest['roots']['participant_knowledge']['group'], 'agent_archive')
+        self.assertEqual(json.loads((root / 'method/knowledge.json').read_text()), {'enabled': True})
+
     def test_four_adapters_real_cli_all_five_operations(self):
         for backend in ('codex','claudecode','pi','opencode'):
             with self.subTest(backend=backend):
@@ -187,7 +236,7 @@ class LauncherTests(ActionTestBase):
                 prompt=(root/'prompt.txt').read_text()
                 self.assertEqual(seen['argv'][-1],prompt)
                 self.assertIn('.benchmark_context/README.md', prompt)
-                self.assertIn(str(root/'method/README.md'), prompt)
+                self.assertNotIn(str(root/'method/README.md'), prompt)
                 guide=(root/'workspaces/worker_000/.benchmark_context/README.md').read_text()
                 for command in ('evaluate', 'profile runtime', 'profile pmu', 'profile compiler', 'fork'):
                     self.assertIn('ptobench '+command, guide)
@@ -203,20 +252,17 @@ class LauncherTests(ActionTestBase):
                 self.launcher_config(backend, mode='all', experiment_mode='basic')
                 p, value = self.launch()
                 self.assertEqual(p.returncode, 0, (value, p.stderr.decode()))
-                root, final = self.assert_final(value, 4)
+                root, final = self.assert_final(value, 2)
                 record = session.read_session(root)
                 self.assertEqual(record['mode']['id'], 'basic')
-                self.assertEqual(record['profiling_modes'], ['runtime', 'pmu', 'compiler'])
+                self.assertEqual(record['profiling_modes'], ['combined'])
                 self.assertEqual(json.loads((root/'baseline.json').read_text())['fixtures']['fixture_000']['median_effective_us'], 1.0)
                 self.assertNotIn('First run ptobench evaluate', (root/'prompt.txt').read_text())
-                references=json.loads((root/'method/knowledge.json').read_text())
-                knowledge_root=root/references['snapshot']
-                self.assertEqual(references['content_sha256'], json.loads(
-                    (self.bench/'modes/basic/knowledge/knowledge.lock.json').read_text())['content_sha256'])
-                self.assertEqual((knowledge_root/'README.md').stat().st_mode & 0o222, 0)
-                self.assertEqual(knowledge_root.stat().st_mode & 0o222, 0)
                 protection=json.loads((root/'protection/manifest.json').read_text())
-                self.assertTrue(protection['roots']['participant_reference_knowledge']['readonly'])
+                self.assertNotIn('participant_reference_knowledge', protection['roots'])
+                self.assertFalse((root/'method/resources/raw_wiki').exists())
+                self.assertFalse((root/'method/README.md').exists())
+                self.assertFalse((root/'method/knowledge.json').exists())
                 self.assertNotIn('automatically selects', (root/'prompt.txt').read_text())
                 native = json.loads((root/'agent/session.json').read_text())
                 self.assertEqual(native['status'], 'recorded')
@@ -227,7 +273,10 @@ class LauncherTests(ActionTestBase):
                 self.assertTrue((root/'agent/events.jsonl').is_file())
                 self.assertIn('python', json.loads((root/'environment.json').read_text()))
                 for worker in record['workspaces'].values():
-                    self.assertTrue((root/worker['path']/'.benchmark_context/profiling_modes.json').is_file())
+                    context = root/worker['path']/'.benchmark_context'
+                    self.assertFalse((context/'profiling_modes.json').exists())
+                    self.assertFalse((context/'fixture_catalog.json').exists())
+                    self.assertIn('ptobench profile .', (context/'README.md').read_text())
                     self.assertFalse((root/worker['path']/'raw_wiki').exists())
                 env = {**self.env, 'PTOBENCH_SESSION_ROOT': str(root)}
                 help_result = subprocess.run([self.python, str(self.bench/'ptobench'), '--help'], env=env,
@@ -235,12 +284,27 @@ class LauncherTests(ActionTestBase):
                 self.assertEqual(help_result.returncode, 0)
                 self.assertIn('profile', help_result.stdout.decode())
                 events = [json.loads(line) for line in (root/'events.jsonl').read_text().splitlines()]
+                self.assertTrue(all(event['run_id'] == root.name for event in events))
                 measured = [event for event in events if event['hardware_action']]
-                self.assertEqual(len(measured), 5)  # four exploration actions and one finish
+                self.assertEqual(len(measured), 3)  # evaluate, combined profile and finish
+                attempts = [event for event in events if event.get('attempt_id') is not None]
+                self.assertEqual([event['attempt_id'] for event in attempts], [1, 2, 3])
+                self.assertEqual(next(event for event in events if event['action'] == 'fork')['seq'], 2)
+                self.assertNotIn('attempt_id', next(event for event in events if event['action'] == 'fork'))
+                run = json.loads((root/'launcher_result.json').read_text())['run']
+                self.assertEqual((run['agent'], run['backend']), ('basic', backend))
+                self.assertEqual(run['counts'], {
+                    'attempts': 3, 'check_calls': 2, 'bench_calls': 2,
+                    'profile_calls': 1, 'fork_events': 1,
+                })
+                self.assertEqual(run['hardware_usage']['total_actions'], 3)
+                self.assertEqual(run['token_usage']['input_tokens'], 12)
+                self.assertEqual(run['token_usage']['output_tokens'], 3)
+                self.assertEqual(run['token_usage']['reported_total_tokens'], 15)
                 for event in measured:
                     self.assertIn('started_at', event)
                     index = json.loads((root/event['artifact_index']).read_text())
-                    self.assertTrue((root/index['candidate_snapshot']/'candidate.py').is_file())
+                    self.assertTrue((root/index['candidate_snapshot']/'candidate/candidate.py').is_file())
 
     def test_reserved_methods_fail_before_creating_run(self):
         for mode in ('ours',):
@@ -249,6 +313,24 @@ class LauncherTests(ActionTestBase):
             self.assertEqual(p.returncode, 2)
             self.assertIn('not implemented', value['message'])
             self.assertFalse(self.runs.exists())
+
+    def test_basic_has_no_wiki_injection_and_uses_mode_provider(self):
+        self.launcher_config('pi', budget='unlimited', experiment_mode='basic')
+        process, result = self.launch()
+        self.assertEqual(process.returncode, 0, (result, process.stderr.decode()))
+        root, _ = self.assert_final(result)
+        self.assertFalse((root / 'method/resources/raw_wiki').exists())
+        self.assertFalse((root / 'method/README.md').exists())
+        self.assertFalse((root / 'method/knowledge.json').exists())
+        self.assertNotIn('participant_reference_knowledge',
+                         json.loads((root / 'protection/manifest.json').read_text())['roots'])
+        frozen = json.loads((root / 'profile.json').read_text())
+        self.assertEqual(frozen['model'], 'test-provider/test-model')
+        self.assertEqual(frozen['reasoning'], 'high')
+        self.assertNotIn('raw_wiki', (root / 'prompt.txt').read_text())
+        record = session.read_session(root)
+        self.assertEqual(record['budget']['max_hardware_actions'], 'unlimited')
+        self.assertEqual(record['budget']['finish_actions'], 1)
 
     def test_independent_method_runs_without_basic_instructions_or_known_backend(self):
         import yaml
@@ -289,7 +371,7 @@ print(json.dumps(response))
         self.assertEqual(value['agent_recording']['status'], 'missing')
         self.assert_final(value)
 
-    def test_method_code_is_restored_before_post_run_collection(self):
+    def test_method_code_change_is_recorded_without_restore_or_execution_during_collection(self):
         sentinel = self.repo / 'tampered_collector_executed'
         original = (self.bench / 'modes/basic/runner.py').read_bytes()
         self.launcher_config(tamper_method=str(sentinel))
@@ -297,18 +379,24 @@ print(json.dumps(response))
         self.assertEqual(process.returncode, 0, (value, process.stderr.decode()))
         root, _ = self.assert_final(value)
         self.assertFalse(sentinel.exists())
-        self.assertEqual((self.bench / 'modes/basic/runner.py').read_bytes(), original)
-        self.assertEqual(json.loads((root / 'agent/session.json').read_text())['status'], 'recorded')
+        self.assertNotEqual((self.bench / 'modes/basic/runner.py').read_bytes(), original)
+        self.assertEqual(json.loads((root / 'method_collection.json').read_text())['recording']['status'],
+                         'unavailable_mode_source_changed')
+        report = json.loads((root / 'launcher_result.json').read_text())['integrity_report']
+        self.assertIn('public_modes_basic/runner.py', report['blocked_paths'])
 
-    def test_unrecoverable_method_code_never_executes_post_run_collection(self):
+    def test_unavailable_mode_backup_does_not_block_collection(self):
         sentinel = self.repo / 'tampered_collector_executed'
         self.launcher_config(tamper_method=str(sentinel), corrupt_method_backup=True)
         process, value = self.launch()
-        self.assertEqual(process.returncode, 5, (value, process.stderr.decode()))
-        self.assertEqual(value['error_code'], 'infrastructure_error')
+        self.assertEqual(process.returncode, 0, (value, process.stderr.decode()))
         self.assertFalse(sentinel.exists())
         root = Path(value['session_root'])
-        self.assertFalse((root / 'final_result.json').exists())
+        self.assertTrue((root / 'final_result.json').exists())
+        self.assertEqual(json.loads((root / 'method_collection.json').read_text())['recording']['status'],
+                         'unavailable_mode_source_changed')
+        report = json.loads((root / 'launcher_result.json').read_text())['integrity_report']
+        self.assertIn('public_modes_basic/runner.py', report['blocked_paths'])
         self.assertIn('thread.started', (root / 'stdout.log').read_text())
         self.assertTrue(list((self.repo / 'codex_home/sessions').glob('*.jsonl')))
 
@@ -341,15 +429,21 @@ print(json.dumps(response))
         root,final=self.assert_final(value,3)
         events=[json.loads(line) for line in (root/'events.jsonl').read_text().splitlines()]
         self.assertEqual([event['action'] for event in events],['evaluate','fork','profile','evaluate','finish'])
+        self.assertTrue(all(event['run_id'] == root.name for event in events))
         first,profile,improved=events[0],events[2],events[3]
+        self.assertEqual([event['attempt_id'] for event in (first,profile,improved,events[4])], [1,2,3,4])
+        self.assertNotIn('attempt_id', events[1])
+        self.assertEqual(events[1]['parent_attempt_id'], first['attempt_id'])
+        self.assertEqual(profile['parent_attempt_id'], first['attempt_id'])
+        self.assertEqual(improved['parent_attempt_id'], profile['attempt_id'])
         self.assertNotEqual(first['content_sha256'],improved['content_sha256'])
         self.assertEqual(profile['content_sha256'],improved['content_sha256'])
         self.assertIsNone(profile['snapshot_id'])
         self.assertNotIn('correctness', profile['observation'])
         self.assertEqual(final['selected_snapshot'],improved['snapshot_id'])
         selected=Path(session.read_session(root)['snapshots_root'])/improved['snapshot_id']
-        self.assertEqual((selected/'source/helper.py').read_text(),'VALUE = 2\n')
-        self.assertEqual((root/'final/workspace/helper.py').read_text(),'VALUE = 2\n')
+        self.assertEqual((selected/'source/candidate/helper.py').read_text(),'VALUE = 2\n')
+        self.assertEqual((root/'final/workspace/candidate/helper.py').read_text(),'VALUE = 2\n')
         self.assertEqual(events[-1]['result']['runs'][0]['median_effective_us'],7.0)
         self.assertFalse((root/'final/workspace/__pycache__').exists())
 

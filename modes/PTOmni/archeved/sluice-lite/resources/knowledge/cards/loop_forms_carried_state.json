@@ -1,0 +1,57 @@
+{
+  "applicability": [
+    "Choosing sequential versus parallel versus pipelined iteration.",
+    "Accumulating a result across iterations without relying on mutation semantics.",
+    "Avoiding a race caused by declaring independent iterations that actually share state."
+  ],
+  "directions": [
+    "Use `pl.parallel` for independent batch or tile chunks; reserve `pl.range` for carried state, ordered accumulation, or an InCore loop that should not be distributed.",
+    "Use `for i in pl.pipeline(0, K // K_STEP, stage=2):` for a matmul K loop so the next tile's load can overlap current compute.",
+    "Use `for i, (acc,) in pl.range(N, init_values=(zero,)): acc = pl.yield_(pl.add(acc, x[i]))` when state must be explicit; otherwise rebind `acc = pl.add(acc, x[i])`.",
+    "Use `for (x,) in pl.while_(init_values=(0,)):` with `pl.cond(x < 10)` as the first body statement."
+  ],
+  "domain": "programming",
+  "effects": [
+    "`pl.parallel` exposes cross-core parallelism but requires genuine independence and can increase scheduling pressure.",
+    "`pl.unroll` removes loop overhead and index math but increases code size and instruction-cache pressure.",
+    "`pl.pipeline` buys load/compute overlap but needs `stage` copies of live buffers and can overflow on-chip memory.",
+    "A loop inside one InCore kernel removes dispatches but serializes work that could otherwise run on other cores."
+  ],
+  "evidence_status": "documented",
+  "id": "loop_forms_carried_state",
+  "invariants": [
+    "`pl.parallel` is an assertion, not a request to remove dependencies; if iterations are not independent, the result is a race.",
+    "`pl.unroll` has no carried values and accepts only compile-time constant bounds.",
+    "`pl.pipeline` requires a positive `stage` and cannot appear outside `pl.at`; `pl.spmd` cannot appear inside `pl.at` and does not take start/stop/step.",
+    "Every carried value must keep one level and type through the loop. Mixing a tensor-level value with a tile-level value inside an InCore scope does not type-check.",
+    "`pl.yield_` binds all carried values simultaneously; code generation orders the copies by byte overlap, but an author-level swap needs scratch."
+  ],
+  "principle": "`pl.range` is a strict sequential loop and is legal both outside and inside `pl.at`. `pl.unroll` is sequential with compile-time replication; its bounds must be literal and it rejects `init_values`. `pl.parallel` asserts that iterations are independent and may be distributed across cores; it belongs in orchestration, not inside `pl.at`. `pl.pipeline` is a sequential InCore loop that software-pipelines stages; it requires `stage=N` and belongs inside `pl.at`. `pl.spmd` is a parallel SPMD loop whose body is implicitly InCore; it belongs outside `pl.at` and takes only a block count, with start fixed at 0 and step 1. Rebinding a name inside a loop is the ordinary way to carry a value: the parser renames it and threads it through as an `IterArg`, even though the IR has no mutation. `init_values=` plus `pl.yield_` is the explicit spelling, and it is mandatory for `pl.while_`. A loop result is read from the name bound by `yield_`, not from the initializer name. `pl.while_` also requires `pl.cond(...)` as the first statement of its body. A branch that produces a value must yield from both arms with the same arity and types. `strict_ssa=True` rejects rebinding and disables subscript-write sugar.",
+  "questions": [
+    "The pass-level lowering of a particular pipeline loop can differ between the default PyPTO planner and `memory_planner=PTOAS`; see the pipeline-card constraints."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Reading the `init_values` variable after a loop returns the initializer, often zeros, rather than the accumulated value.",
+    "Declaring `pl.parallel` over iterations that write the same accumulator or share a buffer without disjointness.",
+    "Carrying a tensor-level expression into a tile-level computation; the error often names the operator rather than the carry.",
+    "Using `pl.unroll` with a runtime `Scalar` bound or `init_values`, both of which are rejected."
+  ],
+  "source_features": [
+    "pl.range",
+    "pl.at",
+    "pl.unroll",
+    "init_values",
+    "pl.parallel",
+    "pl.pipeline",
+    "stage=N",
+    "pl.spmd",
+    "IterArg",
+    "init_values=",
+    "pl.yield_",
+    "pl.while_"
+  ],
+  "summary": "`pl.range`, `pl.unroll`, `pl.parallel`, `pl.pipeline`, and `pl.spmd` share syntax but carry different compiler promises. The IR is SSA, so values crossing a loop or branch are carried explicitly or through parser-inserted `pl.yield_`.",
+  "title": "Loop Semantics, Carried State, and Legal Placement"
+}

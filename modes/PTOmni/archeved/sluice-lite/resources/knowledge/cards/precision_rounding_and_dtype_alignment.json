@@ -1,0 +1,56 @@
+{
+  "applicability": [
+    "A float-to-bf16, float-to-fp16, or float-to-int8 conversion must match a torch reference.",
+    "A quantized stage is the precision bottleneck.",
+    "A kernel parameter, golden tensor, and real weight disagree on dtype."
+  ],
+  "directions": [
+    "Write `pl.cast(x, pl.BF16, mode='rint')` or `pl.cast(x, pl.FP16, mode='rint')` when matching torch's narrowing.",
+    "Use `pl.cast(acc, pl.FP32, mode='none')` for a width-preserving accumulator move.",
+    "Quantize with `pl.cast(pl.mul(x_fp32, inv_scale), pl.INT8, mode='rint')` rather than casting to bf16 or fp16 first.",
+    "Cast an injected real weight to `TensorSpec.dtype` before running, and make kernel and golden output dtypes identical.",
+    "For per-channel weights, carry `weight_scale` per channel and use the same granularity in the kernel and golden."
+  ],
+  "domain": "compute",
+  "effects": [
+    "Wider intermediates improve accuracy but cost bandwidth and registers.",
+    "Per-channel or per-token quantization recovers dynamic range but adds scales and arithmetic.",
+    "A multi-hop cast may be the only lowering for a pair on a target, but it changes last-bit behavior."
+  ],
+  "evidence_status": "documented",
+  "id": "precision_rounding_and_dtype_alignment",
+  "invariants": [
+    "`pl.cast` on a `Scalar` supports only the default mode; a non-default scalar rounding mode raises.",
+    "Some `(source, destination)` cast pairs are one instruction on one architecture and a chain on another.",
+    "A dtype mismatch can mis-read bytes or silently widen rather than raise.",
+    "The comparator may cast one side and hide a real narrowing if output dtypes differ.",
+    "The default `round` is not torch's tie behavior."
+  ],
+  "principle": "`pl.cast(input, target_type, mode=...)` accepts `none` (0, a width-preserving or reinterpret move), `rint` (1, round-to-nearest ties-to-even), `round` (2, ties-away-from-zero, the default), `floor` (3), `ceil` (4), `trunc` (5), and `odd` (6). Torch's `.to(dtype)` uses round-to-nearest ties-to-even, so a narrowing cast intended to match torch must pass `mode='rint'`; the default differs on exact ties. Use `rint` for fp32-to-bf16, fp32-to-fp16, fp32-to-int8 quantizers, and integer dequantization that needs rounded conversion. Use `none` for an Acc-to-Vec or other width-preserving move. Use `trunc` or `floor` for float-to-int index or lane math, never ties-away, which can jump an index. Keep activations and intermediates at the highest precision that is free, usually fp32, and narrow only where a bf16, fp16, or int8 consumer requires it. Never cast through an intermediate narrowing: fp32-to-uint8 or fp32-to-int8 should quantize directly from fp32, not via bf16 or fp16, because the intermediate hop discards mantissa bits before quantization. The same applies to dequantization: go from the integer to fp32, not through fp16. PyPTO has no implicit promotion; every width change needs an explicit cast. A narrow op may lower to one hardware `pto.tcvt` or a chain of conversions depending on target; a multi-hop chain can differ from a directly rounded conversion by one destination ULP. Match every input and output dtype across kernel, golden, and real weights. A real weight injected into a kernel must be cast to the kernel's declared spec dtype. Cube matmul honors the stored dtype of each operand: fp32 x fp32, fp16 x fp16, bf16 x bf16, and int8 paths are distinct. Do not assume the whole model is bf16; match the matmul precision to the stored weight and make the golden do the same. Quantization is a scheme, not a constant: per-tensor versus per-channel or per-token scales, symmetric versus asymmetric, activation scale from the actual dynamic range, and RNE on the scaled value. Measure the error distribution rather than a single pass/fail.",
+  "questions": [
+    "The exact one-ULP difference introduced by a target-specific multi-hop cast requires compiling and comparing the concrete pair."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Using the default `round` for a torch-matching narrowing cast and chasing a tie-only mismatch.",
+    "Casting fp32 to bf16 before int8 quantization, losing mantissa bits before the quantizer.",
+    "Letting the golden stay fp32 where the kernel narrows to bf16, under-reporting the kernel's real error.",
+    "Assuming every matmul is bf16 while a real weight is stored fp32 or fp16."
+  ],
+  "source_features": [
+    "pl.cast(input, target_type, mode=...)",
+    "none",
+    "rint",
+    "round",
+    "floor",
+    "ceil",
+    "trunc",
+    "odd",
+    ".to(dtype)",
+    "mode='rint'",
+    "pto.tcvt"
+  ],
+  "summary": "Most apparent kernel errors are avoidable precision losses: the wrong cast rounding mode, a dtype that silently widened or narrowed, a two-hop cast, or a golden that computes a different order. Keep intermediates in the widest free type, cast once at the consuming boundary, and align kernel, golden, and stored weights.",
+  "title": "Rounding Modes, Dtype Alignment, and Quantization Precision"
+}

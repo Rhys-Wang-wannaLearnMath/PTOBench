@@ -43,25 +43,63 @@ class FinalResult:
     error_code: str | None
     completed_at: str | None = None
     message: str | None = None
+    elapsed_seconds: float | None = None
+    last_agent_attempt_id: int | None = None
+    last_agent_source: str | None = None
+    best_observed_attempt_id: int | None = None
+    best_observed_source_path: str | None = None
+    final_verified_attempt_id: int | None = None
+    final_verified_source: str | None = None
 
     def to_dict(self):
         return asdict(self)
 
 
-def _result(record, selected=None, *, error_code=None, raw=None, intact=False, seq=None, message=None):
+def _result(record, selected=None, *, error_code=None, raw=None, intact=False, seq=None, message=None,
+            events=None):
     observation = selected.observation if selected else {}
     passed = error_code is None and raw is not None and intact
-    run = raw['runs'][0] if passed else {}
+    aggregate = common.fixture_aggregate(raw['runs']) if passed else {}
     usage = record.get('usage', {'hardware_actions': 0, 'finish_actions': 0})
-    return FinalResult(1, record.get('session_id'), record.get('optimizer_id'), record.get('case_id'),
+    result = FinalResult(1, record.get('session_id'), record.get('optimizer_id'), record.get('case_id'),
         'completed' if passed else 'failed', record.get('close_reason'), snapshots.SELECTION_POLICY,
         selected.selection_reason if selected else None, selected.snapshot_id if selected else None,
         selected.event_seq if selected else None, selected.content_sha256 if selected else None,
         selected.observation if selected else None, observation.get('kind'), observation.get('mode'),
         observation.get('latency_us'), observation.get('metric_name'), observation.get('unit'),
-        'passed' if passed else None, float(run['median_effective_us']) if passed else None,
-        float(run['speedup']) if passed else None, intact, usage['hardware_actions'], usage['finish_actions'],
-        seq, error_code, record.get('completed_at'), message)
+        'passed' if passed else None, aggregate['latency_us'] if passed else None,
+        aggregate['speedup'] if passed else None, intact, usage['hardware_actions'], usage['finish_actions'],
+        seq, error_code, record.get('completed_at'), message,
+        session.elapsed_seconds(record.get('created_at'), record.get('completed_at')))
+    if events is None:
+        try:
+            events = session._events(Path(record['session_root']), record)
+        except (KeyError, integrity.InfrastructureError):
+            events = []
+    for name, value in _trace_fields(record, events, selected).items():
+        setattr(result, name, value)
+    return result
+
+
+def _trace_fields(record, events, selection=None):
+    agent_attempts = [event for event in events if event['action'] in {'evaluate', 'profile'}
+                      and event.get('attempt_id') is not None]
+    last = agent_attempts[-1] if agent_attempts else None
+    selected_seq = (selection.get('seq') if isinstance(selection, dict) else
+                    selection.event_seq if selection is not None else None)
+    selected = next((event for event in events if selected_seq is not None and event.get('seq') == selected_seq), None)
+    finish = next((event for event in events if event['action'] == 'finish'), None)
+    active = record.get('active_action')
+    if finish is None and active and active.get('kind') == 'finish':
+        finish = active
+    return {
+        'last_agent_attempt_id': last.get('attempt_id') if last else None,
+        'last_agent_source': last.get('source_snapshot') if last else None,
+        'best_observed_attempt_id': selected.get('attempt_id') if selected else None,
+        'best_observed_source_path': selected.get('source_snapshot') if selected else None,
+        'final_verified_attempt_id': finish.get('attempt_id') if finish else None,
+        'final_verified_source': finish.get('source_snapshot') if finish else None,
+    }
 
 
 def _read_if_present(path):
@@ -98,10 +136,14 @@ def _validate_final(root, value, record, events):
         if result.status == 'completed' and selected != snapshots._select_best_snapshot_locked(root):
             raise ValueError('selection does not match protected history')
         expected = _result(record, selected, error_code=result.error_code, intact=result.final_integrity_passed,
-                           seq=result.finish_event_seq, message=result.message)
+                           seq=result.finish_event_seq, message=result.message, events=events)
+        if result.elapsed_seconds is not None and result.elapsed_seconds != expected.elapsed_seconds:
+            raise ValueError('session elapsed time')
         for key in ('selection_reason', 'selected_snapshot', 'selected_event_seq', 'selected_content_sha256',
                     'selected_observation', 'best_observed_source', 'best_observed_mode',
-                    'best_observed_latency_us', 'best_observed_metric_name', 'best_observed_unit'):
+                    'best_observed_latency_us', 'best_observed_metric_name', 'best_observed_unit',
+                    'last_agent_attempt_id', 'last_agent_source', 'best_observed_attempt_id',
+                    'best_observed_source_path', 'final_verified_attempt_id', 'final_verified_source'):
             if getattr(result, key) != getattr(expected, key):
                 raise ValueError('selection provenance')
         finishes = [event for event in events if event['action'] == 'finish']
@@ -117,7 +159,7 @@ def _validate_final(root, value, record, events):
                 raise ValueError('success prerequisites')
             event = finishes[0]
             raw, _ = actions.validate_result(root / 'final/authority_result.json', record, root / 'final/workspace', 'evaluate', 'clean', event['exit_code'])
-            verified = _result(record, selected, raw=raw, intact=True, seq=event['seq'])
+            verified = _result(record, selected, raw=raw, intact=True, seq=event['seq'], events=events)
             if (event['error_code'] is not None or not event['integrity_passed'] or event['snapshot_id'] is not None
                     or event['content_sha256'] != selected.content_sha256 or event['result'] != raw
                     or any(getattr(result, key) != getattr(verified, key) for key in
@@ -148,11 +190,19 @@ def _commit_failure(root, result):
             saved = _read_if_present(root / 'final/selection.json')
             if saved:
                 result = _result(record, snapshots.Selection(**saved), error_code=result.error_code,
-                                 intact=result.final_integrity_passed, seq=result.finish_event_seq, message=result.message)
+                                 intact=result.final_integrity_passed, seq=result.finish_event_seq, message=result.message,
+                                 events=events)
         if record['usage']['finish_actions'] and result.finish_event_seq is None:
             result.finish_event_seq = next(event['seq'] for event in events if event['action'] == 'finish')
+        selected_event = None
+        if result.selected_snapshot is not None:
+            selected_event = next((event for event in events
+                                   if event.get('snapshot_id') == result.selected_snapshot), None)
+        for name, value in _trace_fields(record, events, selected_event).items():
+            setattr(result, name, value)
         record.update(status='failed', exploration_closed=True, completed_at=session._now())
         result.completed_at = record['completed_at']
+        result.elapsed_seconds = session.elapsed_seconds(record.get('created_at'), record['completed_at'])
         result.close_reason = record['close_reason']
         session._commit(root, record, record_updates={'final_result': session._bytes(result.to_dict())})
     return result
@@ -167,7 +217,7 @@ def _prepare_final(root, record, selected):
         file_tree.remove_at(fd, 'workspace')
         for name in ('result.json', 'stdout.log', 'stderr.log'):
             file_tree.remove_at(fd, name)
-    manifest = workspace.copy_candidate_tree(source, target)
+    manifest = workspace.copy_candidate_tree(source, target / 'candidate')
     if manifest['content_sha256'] != selected.content_sha256:
         raise integrity.InfrastructureError('final source differs from selected Snapshot')
     for relative, entry in file_tree.scan_tree(target, reject_special=True).items():
@@ -206,11 +256,16 @@ def _raw_bytes(path):
         return None
 
 
-def _finish_locked(root, record, selected, signal_state):
+def _finish_locked(root, record, selected, signal_state, observed_mode_changes=None):
     manifest = _prepare_final(root, record, selected)
     seq = record['next_event_seq']
     frozen = root / 'final/workspace'
-    session.reserve_action(root, seq, 'finish', workspace_path=frozen, source_manifest=manifest)
+    history = session._events(root, record)
+    selected_event = next((event for event in history if event['seq'] == selected.event_seq), None)
+    session.reserve_action(root, seq, 'finish', workspace_path=frozen, source_manifest=manifest,
+                           observed_mode_changes=observed_mode_changes,
+                           parent_attempt_id=selected_event.get('attempt_id') if selected_event else None,
+                           compile_config=selected_event.get('compile_config') if selected_event else None)
     argv = [sys.executable, str(common.BENCHMARK_ROOT / 'evaluator/evaluate.py'), '--case', record['case_id'],
             '--candidate', str(frozen), '--phase', 'all', '--profile-mode', 'clean',
             '--measurement-mode', 'formal', '--result', str(root / 'final/result.json')]
@@ -234,7 +289,8 @@ def _finish_locked(root, record, selected, signal_state):
         if not unsafe_stop:
             marker = _read_if_present(actions._marker_path())
             started = bool(marker and marker.get('process'))
-            intact, repaired = actions._postcheck_action(root, frozen, manifest)
+            intact, repaired, observed = actions._postcheck_action(root, frozen, manifest)
+            observed_mode_changes = sorted(set(observed_mode_changes or []) | set(observed))
     if signal_state['received']:
         error_code, message, exit_code = 'interrupted', f"received signal {signal_state['received']}", 130
     if not intact and error_code != 'interrupted':
@@ -250,10 +306,14 @@ def _finish_locked(root, record, selected, signal_state):
     body = result.to_dict()
     raw_bytes = _raw_bytes(root / 'final/result.json')
     updates = {'final_evaluator_result': raw_bytes} if raw_bytes is not None else None
+    artifact_index = actions.action_records.archive(root, seq, root / 'final')
+    attempt_metadata = actions._attempt_metadata(root / 'final', 'finish', error_code,
+                                                 None, raw, artifact_index)
     session.complete_action(root, seq, exit_code=exit_code, error_code=error_code, integrity_passed=intact,
                             result=raw, repaired_paths=repaired, action_started=started,
+                            observed_mode_changes=observed_mode_changes,
                             final_result=body, record_updates=updates,
-                            artifact_index=actions.action_records.archive(root, seq, root / 'final'))
+                            artifact_index=artifact_index, attempt_metadata=attempt_metadata)
     actions._clear_marker()
     return FinalResult(**body)
 
@@ -271,7 +331,7 @@ def finalize_session(session_root, close_reason):
             actions._recover_unmarked_action(root)
             record = session.read_session(root)
             snapshots._snapshot_bindings(record, session._read(root / 'protection/manifest.json'))
-            actions._repair_for_action(root)
+            repairs = actions._repair_for_action(root)
             existing = _existing_final(root)
             if existing is not None:
                 return existing
@@ -293,7 +353,7 @@ def finalize_session(session_root, close_reason):
             selected = snapshots._select_best_snapshot_locked(root)
             if selected is None:
                 return _commit_failure(root, _result(record, error_code='no_valid_snapshot'))
-            return _finish_locked(root, record, selected, signal_state)
+            return _finish_locked(root, record, selected, signal_state, repairs.blocked_paths)
     except (Exception, KeyboardInterrupt) as error:
         code = getattr(error, 'error_code', 'infrastructure_error')
         if code not in {'interrupted', 'invalid_request'}:

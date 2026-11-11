@@ -1,0 +1,47 @@
+{
+  "applicability": [
+    "Understanding why two tasks that write disjoint slices still serialize.",
+    "Diagnosing a missing ordering edge that causes intermittent stale reads.",
+    "Deciding whether a buffer direction is wrong or an opt-out is needed."
+  ],
+  "directions": [
+    "Correct parameter directions first: declare `pl.Out[...]` only for write-only buffers and `pl.InOut[...]` for read-write buffers.",
+    "Add `deps=[producer_tid]` on the consumer when ordering is real but no buffer overlap expresses it.",
+    "When false serialization comes from disjoint slices, use the narrowest opt-out (`no_dep_args`, `manual_dep=True`) or slice the output in orchestration so each task receives a distinct region.",
+    "When two views of one external tensor must be ordered, restructure so the dependency is visible or add an explicit edge rather than relying on producer lookup through aliases."
+  ],
+  "domain": "scheduling",
+  "effects": [
+    "Declaring an explicit edge fixes ordering but adds scheduler bookkeeping; redundant edges may be removable by a graph audit.",
+    "Opting out of inference removes false serialization but converts a performance assumption into a correctness assertion.",
+    "Slicing an output into distinct orchestration tensors avoids an assertion but adds arguments, registrations, and dependency-walk work; on a dispatch-bound graph this can cost more than the serialization removed."
+  ],
+  "evidence_status": "documented",
+  "id": "dependency_inference_hazards",
+  "invariants": [
+    "Statement adjacency is never an edge by itself.",
+    "Creator-retention edges are not normal dataflow edges and are protected from structural edge reduction; do not treat a reduced graph as proof that the edge is unnecessary.",
+    "A wrong direction silently removes an edge rather than raising a type error.",
+    "A pure-reader promotion to `InOut` creates a WAW chain among readers and destroys their concurrency."
+  ],
+  "principle": "A task is one kernel dispatch; the runtime builds a graph rather than executing orchestration statements sequentially. On each submit, creator retention adds an edge to the task that created every tensor argument. Producer lookup for `In` and `InOut` arguments adds an edge to the current registered producer of any overlapping region. Producer registration for `Out` and `InOut` makes this task the producer of that buffer. Thus RAW and WAW are tracked. WAR is not tracked: finding every in-flight reader on every write would require a hot-path walk over a reader set. When a pure reader must finish before a later overwrite, declare the edge on the writer with `deps=`; do not promote the reader to `InOut`, because that registers the reader as a writer and serializes it against other readers. The overlap test is conservative: regions the runtime cannot prove disjoint are treated as overlapping. That is correct safety, but it creates false serialization when loop iterations write disjoint slices of one output. The final wait set is the union of auto-inferred edges and explicit `deps=`, so explicit edges are a precision tool inside ordinary auto scope. Two logical views of one external buffer can also defeat value-based producer tracking; avoid relying on alias identity for ordering, or add an explicit edge or restructure the buffers.",
+  "questions": [
+    "The exact overlap metadata emitted for a given slice or view chain is compiler- and IR-dependent; inspect `deps.json` for the concrete graph."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Declaring an `InOut` buffer as `Out` so a later write races an earlier read.",
+    "Assuming two `pl.reshape` views of one external tensor are independent for dependency tracking.",
+    "Promoting a reader to `InOut` to fix one WAR edge, thereby serializing every reader of that buffer.",
+    "Believing a graph-view `reduced` result that reports zero removable edges; creator edges are protected and can mask redundant pairs."
+  ],
+  "source_features": [
+    "In",
+    "InOut",
+    "Out",
+    "deps="
+  ],
+  "summary": "The runtime derives task edges from tensor arguments and a producer map. RAW and WAW are tracked, WAR is deliberately not tracked, and an overlap the compiler cannot disprove is treated as real. Declared `deps=` adds ordering on top of inference.",
+  "title": "Dependency Inference, RAW/WAW/WAR, and Conservative Overlap"
+}

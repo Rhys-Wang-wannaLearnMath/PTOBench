@@ -1,0 +1,5 @@
+{"fatal": false, "dropped": 0, "total": 4, "task_window_max": [16384, 16384, 16384, 16384], "heap_max": [268435456, 268435456, 268435456, 268435456], "dep_pool_max": [16384, 16384, 16384, 16384], "tensormap_max": 65536}
+{"site": "(unknown):0", "phase": "begin", "depth": 0, "ring": 0, "task_window_start": 0, "task_window_end": 0, "heap_start": 0, "heap_end": 0, "dep_pool_start": 1, "dep_pool_end": 1, "tensormap": 0}
+{"site": "compressor_test.cpp:41", "phase": "begin", "depth": 1, "ring": 1, "task_window_start": 0, "task_window_end": 0, "heap_start": 0, "heap_end": 0, "dep_pool_start": 1, "dep_pool_end": 1, "tensormap": 0}
+{"site": "compressor_test.cpp:41", "phase": "end", "depth": 1, "ring": 1, "task_window_start": 0, "task_window_end": 6, "heap_start": 0, "heap_end": 98304, "dep_pool_start": 1, "dep_pool_end": 6, "tensormap": 7}
+{"site": "(unknown):0", "phase": "end", "depth": 0, "ring": 0, "task_window_start": 0, "task_window_end": 0, "heap_start": 0, "heap_end": 0, "dep_pool_start": 1, "dep_pool_end": 1, "tensormap": 7}

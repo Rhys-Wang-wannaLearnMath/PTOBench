@@ -1,0 +1,55 @@
+{
+  "applicability": [
+    "Loop iterations write disjoint regions of one output but the runtime serializes them.",
+    "A data-dependent write offset is guaranteed disjoint by the allocation protocol but cannot be proven by the compiler.",
+    "A hand-tuned pipeline already knows every true edge and wants to suppress a mostly false inferred graph."
+  ],
+  "directions": [
+    "Use `with pl.at(level=pl.Level.CORE_GROUP, no_dep_args=[out]):` when sibling fan-outs touch disjoint regions of one captured tensor.",
+    "Use `pl.no_dep(k_cache)` at an explicit kernel-call argument when the callee writes a data-dependent but protocol-disjoint region.",
+    "Use `pl.create_tensor(..., manual_dep=True)` only for a scratch tensor whose entire lifetime is manually ordered; add explicit `deps=` on its consumers.",
+    "Hoist a `pl.array.create(N, pl.TASK_ID)` outside a manual scope so a later task can gate on producers created inside it."
+  ],
+  "domain": "scheduling",
+  "effects": [
+    "Narrow opt-outs preserve inference for unrelated arguments and scopes; broad `manual_scope` is less code but transfers all correctness responsibility to the author.",
+    "Slicing disjoint regions by construction avoids an unchecked assertion but adds orchestration tensors and registration work.",
+    "Manual dependency tracking can recover concurrency on a mostly false graph, but it loses the inferred safety net for every task in the region."
+  ],
+  "evidence_status": "documented",
+  "id": "dependency_optouts_and_manual_ownership",
+  "invariants": [
+    "Every opt-out is an assertion the compiler generally cannot check. If the regions are not actually disjoint, the result is an intermittent race.",
+    "`pl.no_dep` is a no-op outside a recognized kernel-call argument; `no_dep_args` entries must be bare captured tensor names.",
+    "A manual scope is orchestration-only. An AUTO scope may not nest inside a MANUAL scope, and `manual_scope` may not nest inside another `manual_scope`.",
+    "`manual_dep=True` does not remove the tensor's creator-retention edge.",
+    "Auto dependency tracking treats `manual_dep=True` as off for the tensor's whole lifetime, so a later consumer loses its inferred RAW edges; pair it with explicit `deps=` where ordering remains necessary."
+  ],
+  "principle": "The opt-outs, from narrowest to broadest, are `pl.at(..., no_dep_args=[t])` for one tensor in one task, `pl.no_dep(t)` at a `@pl.program` kernel-call argument for one tensor in one task, `pl.create_tensor(..., manual_dep=True)` for one tensor over its whole lifetime, and `with pl.manual_scope():` for every task in a region. `no_dep_args` operates on tensors and is the form used when the kernel call is synthesized by the `pl.at` outliner; `pl.no_dep` operates on an explicit call argument and is a parser marker that returns the tensor unchanged. `manual_dep=True` makes every task that reads or writes the tensor skip the producer lookup and producer registration, but creator retention still applies. It therefore removes the consumer's RAW edges on that tensor as well as the unwanted producer edge; a later consumer needs explicit `deps=` or a different granularity. `manual_scope` skips creator retention, producer lookup, and producer registration for every submit in the region, so every edge in it is author-owned. Explicit edges are orthogonal: final fan-in is auto-tracked dependencies union explicit `deps=`. Use the narrowest claim that expresses the actual disjointness. A manual scope is appropriate only when owning the whole graph is easier than patching one false edge.",
+  "questions": [
+    "The exact set of edges removed by a given manual scope is visible only in the generated dependency graph for the concrete program."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Dropping a `deps=` from a consumer of a `manual_dep=True` tensor and receiving a partly correct answer rather than a compile error.",
+    "Using `manual_scope` merely to remove one false edge, then missing unrelated edges that inference used to provide.",
+    "Wrapping a tensor with `pl.no_dep` in a `@pl.jit` body where it breaks shape/dtype inference; use `no_dep_args` on the enclosing scope instead.",
+    "Asserting disjointness for a tensor whose views are actually overlapping."
+  ],
+  "source_features": [
+    "pl.at(..., no_dep_args=[t])",
+    "pl.no_dep(t)",
+    "@pl.program",
+    "pl.create_tensor(..., manual_dep=True)",
+    "with pl.manual_scope():",
+    "no_dep_args",
+    "pl.at",
+    "pl.no_dep",
+    "manual_dep=True",
+    "deps=",
+    "manual_scope"
+  ],
+  "summary": "Four opt-outs remove auto-dependency tracking at different granularities: one argument of one task, one tensor for its lifetime, or every task in a region. Narrower is safer. Explicit `deps=` still composes with every opt-out.",
+  "title": "Dependency Opt-Outs and Manual Scope Ownership"
+}

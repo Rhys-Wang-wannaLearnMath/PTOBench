@@ -1,0 +1,58 @@
+{
+  "applicability": [
+    "The last block of a dimension does not divide evenly into the tile.",
+    "A dynamic batch or sequence length is smaller than the fixed tile.",
+    "A softmax or max reduction must ignore padded tail elements."
+  ],
+  "directions": [
+    "Use `pl.load(x, [row, 0], [TILE, COLS], valid_shape=[valid_rows, COLS])` for a dynamic row count.",
+    "Use `pl.slice(x, [TILE, COLS], [offset, 0], valid_shape=[valid_rows, COLS], pad_value=pl.PadValue.min)` when the tail must mask a max reduction.",
+    "After an on-chip computation with a runtime extent, use `pl.set_validshape(t, rows, cols)`; do not apply it to a slice/reshape view.",
+    "Use `pl.fillpad(scores, pad_value=pl.PadValue.min)` before a softmax `row_max`; use `pl.tile.fillpad_inplace` only when buffer sharing is intended.",
+    "Use `pl.reshape` for a zero-copy layout change and verify that the source valid region maps to an origin-anchored box of the new shape."
+  ],
+  "domain": "memory",
+  "effects": [
+    "A fixed tile with a smaller valid region keeps a stable allocation and layout but carries padding through reductions and stores.",
+    "`fillpad_inplace` saves a buffer but aliases the input, which interacts with memory reuse and later readers.",
+    "Dropping unit dimensions simplifies downstream shapes but is only legal when the dim is static, unit, and fully valid."
+  ],
+  "evidence_status": "documented",
+  "id": "tile_slicing_valid_shape_padding",
+  "invariants": [
+    "`pl.slice` argument order is `(input, shape, offset)`; `pl.load` is `(tensor, offsets, shapes)`; `pl.store` is `(tile, offsets, output_tensor)`.",
+    "A tile `pl.slice` has no `clamp`; `offset + shape` must stay inside the source. Tensor slicing does expose `clamp=True`.",
+    "`pl.set_validshape` requires a 2D non-view operand.",
+    "Only `pl.PadValue.zero`, `pl.PadValue.max`, and `pl.PadValue.min` are hardware padding modes; arbitrary sentinels are rejected. `drop_dims` entries must be static unit dims that remain fully valid.",
+    "`pl.reshape` rejects a partial valid region that cannot be described by the target shape."
+  ],
+  "principle": "`pl.slice(tensor, shape, offset, valid_shape=..., drop_dims=..., pad_value=..., clamp=...)` takes a sub-region with shape before offset. `pl.load(tensor, offsets, shapes, valid_shape=..., target_memory=..., clamp=..., cache=...)` uses the opposite order: offsets before shapes. `pl.store(tile, offsets, output_tensor, shapes=..., atomic=..., st_phase=...)` writes a tile back. `pl.assemble(target, source, offset, atomic=...)` writes a source into a target at an offset. A slice or load is never valid where the source is not: the source's valid region, shifted by the offset and cut to the window, bounds the result. `valid_shape` narrows; it cannot widen. A tensor slice with `clamp=True` sanctions a window that runs off the source and cuts the valid region to the source edge; a tile slice has no `clamp` because an on-chip window cannot overhang. `drop_dims` erases static unit axes from the result type; tile rank is clamped back to 2D. `pl.set_validshape(tile, valid_rows, valid_cols)` annotates an already-computed 2D tile when the valid extent is known only at runtime. It is not accepted on a view (a slice or reshape result), because that view already carries its valid extent; narrow at the slice with `valid_shape=` instead. `pl.fillpad(tile, pad_value=...)` rewrites only the invalid tail of a tile; the tile-only `pl.tile.fillpad_inplace` does it in place and shares the input buffer; `pl.fillpad_expand` copies a smaller source into a larger destination. The pad value matters for reductions: a max over a zero-padded partial tile returns at least zero, so use `pl.PadValue.min` for max and zero for sum. `pl.reshape` is a zero-copy view and never widens the valid region; a partial region that no origin-anchored box of the new shape can describe is rejected. `pl.reinterpret_view` changes dtype over the same bytes, and `pl.transpose` swaps axes.",
+  "questions": [
+    "The exact set of partial-region reshapes that the installed compiler accepts is best established by compiling the concrete shape pair."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Using `pl.PadValue.zero` for a max reduction over an all-negative row, silently returning zero.",
+    "Applying `set_validshape` to a slice or reshape result; the view already owns its valid extent.",
+    "Passing a float expression such as `n / 2` where an integer offset is required; offsets and shapes must be integer scalars.",
+    "Assuming a reshape can widen a partial valid region; it is carried through, never invented.",
+    "Calling a top-level `pl.fillpad_inplace`; only `pl.tile.fillpad_inplace` is exposed."
+  ],
+  "source_features": [
+    "pl.slice(tensor, shape, offset, valid_shape=..., drop_dims=..., pad_value=..., clamp=...)",
+    "pl.load(tensor, offsets, shapes, valid_shape=..., target_memory=..., clamp=..., cache=...)",
+    "pl.store(tile, offsets, output_tensor, shapes=..., atomic=..., st_phase=...)",
+    "pl.assemble(target, source, offset, atomic=...)",
+    "valid_shape",
+    "clamp=True",
+    "clamp",
+    "drop_dims",
+    "pl.set_validshape(tile, valid_rows, valid_cols)",
+    "valid_shape=",
+    "pl.fillpad(tile, pad_value=...)",
+    "pl.tile.fillpad_inplace"
+  ],
+  "summary": "A tile has an allocated shape and an optional valid region. Loads and slices only read source bytes that exist, reductions see the padding, and `fillpad`/`set_validshape` make the tail explicit. Argument order and view restrictions differ between `pl.slice`, `pl.load`, and `pl.store`.",
+  "title": "Slicing, Valid Shapes, Padding, and Shape Views"
+}

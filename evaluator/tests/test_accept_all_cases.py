@@ -50,8 +50,8 @@ class FullAcceptanceTest(ActionTestBase):
     def setUp(self):
         super().setUp()
         source = FAKE_EVALUATOR.replace(
-            "control=json.loads(Path(os.environ['S3_CONTROL']).read_text())",
-            "control=json.loads(Path(os.environ['S3_CONTROL']).read_text())\n"
+            "control=json.loads(Path(os.environ['S3_CONTROL']).read_text()) if 'S3_CONTROL' in os.environ else {}",
+            "control=json.loads(Path(os.environ['S3_CONTROL']).read_text()) if 'S3_CONTROL' in os.environ else {}\n"
             "control.update(control.get('modes',{}).get(a.profile_mode,{}))")
         source = source.replace("run={'fixture_id'", ARTIFACTS + "\nrun={'fixture_id'")
         source = source.replace("result={'schema_version':1", "result={'artifact_dir':str(artifacts),"

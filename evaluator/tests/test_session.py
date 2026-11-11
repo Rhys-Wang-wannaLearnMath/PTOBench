@@ -67,12 +67,11 @@ class SessionTest(SessionTestBase):
                                         mode='independent_participant')
         record = session.read_session(handle.session_root)
         self.assertEqual(record['mode'], {'id': 'independent_participant'})
-        self.assertEqual(record['profiling_modes'], ['runtime', 'pmu', 'compiler'])
+        self.assertEqual(record['profiling_modes'], ['combined'])
         fork_id = session.fork_workspace(handle.session_root, handle.initial_workspace)
         fork = handle.session_root / 'workspaces' / fork_id
         for location in (handle.initial_workspace, fork):
-            metadata = json.loads((location / '.benchmark_context/mode.json').read_text())
-            self.assertEqual(metadata, {'id': 'independent_participant'})
+            self.assertFalse((location / '.benchmark_context/mode.json').exists())
 
     def test_creation_independent_layout_schema_and_original_assets(self):
         self.make_case('test.other')
@@ -88,7 +87,7 @@ class SessionTest(SessionTestBase):
             self.assertEqual(record['next_event_seq'], 1)
             self.assertEqual(record['workspaces']['worker_000']['path'], 'workspaces/worker_000')
             self.assertRegex(record['session_id'], r'^\d{8}T\d{6}Z_[a-f0-9]{12}$')
-            self.assertEqual(record['profiling_modes'], ['runtime', 'pmu', 'compiler'])
+            self.assertEqual(record['profiling_modes'], ['combined'])
             for name in ('workspaces', 'staging', 'final', 'protection'):
                 self.assertTrue((handle.session_root / name).is_dir())
             self.assertTrue((handle.session_root / 'process.log').is_file())
@@ -97,12 +96,27 @@ class SessionTest(SessionTestBase):
             self.assertEqual((handle.session_root / 'events.jsonl').read_bytes(), b'')
             manifest = common.read_json(handle.protection_root / 'manifest.json')
             self.assertTrue({'case', 'sealed', 'environment', 'evaluator', 'golden', 'public_ptobench', 'public_launcher'} <= manifest['roots'].keys())
+            self.assertTrue({'public_modes_package', 'public_modes_basic', 'public_modes_shared',
+                             'public_modes_cannbot'} <= manifest['roots'].keys())
+            self.assertNotIn('public_modes', manifest['roots'])
+            self.assertFalse(any(Path(root['path']).is_relative_to(
+                common.BENCHMARK_ROOT / 'modes/ptomni') for root in manifest['roots'].values()))
             self.assertTrue(any(n.startswith('family_') for n in manifest['roots']))
             self.assertEqual((handle.initial_workspace / '.benchmark_context/config.py').stat().st_mode & 0o777, 0o444)
             self.assertTrue(integrity.check_only(handle.protection_root).passed)
         self.assertNotEqual(first.session_root, second.session_root)
         self.assertEqual(session.read_session(first.session_root)['budget']['max_hardware_actions'], 2)
         self.assertEqual(session.read_session(second.session_root)['budget']['max_hardware_actions'], 5)
+
+    def test_unrelated_mode_tree_changes_do_not_enter_session_integrity_checks(self):
+        handle = self.create()
+        unrelated = common.BENCHMARK_ROOT / 'modes/ptomni/runner.py'
+        unrelated.write_text('changed while Session is active\n')
+
+        report = integrity.check_and_restore(handle.protection_root)
+
+        self.assertTrue(report.passed)
+        self.assertFalse(any('ptomni' in path for path in report.changed_paths))
 
     def test_preflight_rejects_every_incomplete_certified_asset_without_preparing(self):
         cases = [
@@ -168,7 +182,7 @@ class SessionTest(SessionTestBase):
         write_json(context / 'profiling_modes.json', {'modes': {'hardware': {}, 'unlimited': {}}})
         name, target, case_id = session.resolve_workspace(handle.session_root, handle.initial_workspace)
         self.assertEqual((name, target, case_id), ('worker_000', handle.initial_workspace, self.case_id))
-        self.assertEqual(session.read_session(handle.session_root)['profiling_modes'], ['runtime', 'pmu', 'compiler'])
+        self.assertEqual(session.read_session(handle.session_root)['profiling_modes'], ['combined'])
         child_id = session.fork_workspace(handle.session_root, handle.initial_workspace)
         child = handle.session_root / 'workspaces' / child_id
         self.assertEqual(common.read_json(child / '.benchmark_context/workspace.json')['case_id'], self.case_id)
@@ -203,7 +217,7 @@ class SessionTest(SessionTestBase):
             event = session.complete_action(handle.session_root, 1, exit_code=1, error_code='action_failed')
         case_config = self.bench / 'cases/test/case/public/config.py'
         case_config.write_text('CHANGED = True\n')
-        (handle.initial_workspace / 'helper.py').write_text('VALUE = 9\n')
+        (handle.initial_workspace / 'candidate/helper.py').write_text('VALUE = 9\n')
         context_config = handle.initial_workspace / '.benchmark_context/config.py'
         context_config.chmod(0o600)
         context_config.write_text('ROGUE = True\n')
@@ -221,8 +235,8 @@ class SessionTest(SessionTestBase):
         self.assertTrue(repaired.restored_paths)
         self.assertEqual(case_config.read_text(), 'SIZE = 2\n')
         self.assertEqual(context_config.read_text(), 'SIZE = 2\n')
-        self.assertEqual((handle.initial_workspace / 'helper.py').read_text(), 'VALUE = 9\n')
-        self.assertEqual((handle.initial_workspace / '.benchmark_context/starting_point/helper.py').read_text(), 'VALUE = 1\n')
+        self.assertEqual((handle.initial_workspace / 'candidate/helper.py').read_text(), 'VALUE = 9\n')
+        self.assertEqual((handle.initial_workspace / '.benchmark_context/starting_point/candidate/helper.py').read_text(), 'VALUE = 1\n')
         self.assertTrue(integrity.check_only(handle.protection_root).passed)
 
     def test_corrupt_manifest_backup_and_wrong_binding_fail_without_rebaseline(self):
@@ -251,14 +265,14 @@ class SessionTest(SessionTestBase):
 
     def test_fork_copies_helpers_and_initial_snapshot_without_budget(self):
         handle = self.create()
-        (handle.initial_workspace / 'helper.py').write_text('VALUE = 2\n')
+        (handle.initial_workspace / 'candidate/helper.py').write_text('VALUE = 2\n')
         (handle.initial_workspace / '.benchmark_outputs/cache').mkdir(parents=True)
         (handle.initial_workspace / '.benchmark_outputs/cache/junk').write_text('excluded')
         first = session.fork_workspace(handle.session_root, handle.initial_workspace)
         child = handle.session_root / 'workspaces' / first
         self.assertEqual(first, 'worker_001')
-        self.assertEqual((child / 'helper.py').read_text(), 'VALUE = 2\n')
-        self.assertEqual((child / '.benchmark_context/starting_point/helper.py').read_text(), 'VALUE = 2\n')
+        self.assertEqual((child / 'candidate/helper.py').read_text(), 'VALUE = 2\n')
+        self.assertEqual((child / '.benchmark_context/starting_point/candidate/helper.py').read_text(), 'VALUE = 2\n')
         self.assertFalse((child / '.benchmark_outputs').exists())
         second = session.fork_workspace(handle.session_root, child)
         record = session.read_session(handle.session_root)
@@ -326,7 +340,7 @@ class SessionTest(SessionTestBase):
                 record = session.read_session(handle.session_root)
                 self.assertEqual(record['next_workspace_index'], 2)
                 published = handle.session_root / 'workspaces/worker_001'
-                self.assertTrue((published / '.benchmark_context/starting_point/helper.py').is_file())
+                self.assertTrue((published / '.benchmark_context/starting_point/candidate/helper.py').is_file())
                 self.assertEqual('worker_001' in record['workspaces'], after_manifest)
                 if not after_manifest:
                     with self.assertRaises(session.SessionError):

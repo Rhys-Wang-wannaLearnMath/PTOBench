@@ -3,3 +3,4 @@ id: cannbot
 implemented: true
 description: Original CANNBot PyPTO performance workflow executed by fresh Pi or Codex sessions.
 entrypoint: runner.py
+profile_strategy: combined

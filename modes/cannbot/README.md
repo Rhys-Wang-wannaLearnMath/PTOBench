@@ -40,13 +40,10 @@ Pi 通过每次启动的 `--extension` 加载局部扩展；Codex 通过每次�
 阶段选择、交接摘要、目标与退出判断由 CANNBot 自己完成，运行器不代做。
 子会话不获得 Task 工具，也不继承父会话历史。
 
-`knowledge/raw_wiki/` 是与 Basic 相同的原始参考文档快照，版本和指纹固定在
-`knowledge/knowledge.lock.json`，与 `upstream/` 分开保存。CANNBot 自行校验并
-复制到 `RUN/method/resources/raw_wiki/`；文件设为 0444、目录设为 0555，再由
-现有附件协议登记内容保护和恢复备份。这是权限与完整性保护，不是 OS 隔离。
-主会话、全部新阶段和 fork workspace 共享同一份资料；每个阶段自动获得
-`.benchmark_context/README.md` 与 `RUN/method/README.md` 的入口，无需父会话转述。
-知识库读取使用普通文件工具，不占硬件预算；上游角色和技能原文保持不变。
+CANNBot 保留冻结的上游 Skills 和角色文件，但新 Session 不校验、复制或注入
+单独的 `raw_wiki`。每个阶段仍可读取公开的
+`.benchmark_context/README.md` 与 Case 工作区里的项目资料。Pi 使用本 mode
+自己的 `.env`；当前模型为 `deepseek-flash`，reasoning 为 `high`。
 
 所有会话直接使用 `ptobench evaluate/profile/fork`。公开 CLI 的原始返回值
 不经过格式转换；旧 API、原脚本及其他上游宿主工具的使用由方法自行处理。
@@ -59,12 +56,9 @@ Pi 通过每次启动的 `--extension` 加载局部扩展；Codex 通过每次�
 RUN/method/
 ├── config.json              # 公开运行参数、角色/技能路径
 ├── upstream.json            # 来源与内容 hash
-├── README.md                # Agent 的知识库入口说明
-├── knowledge.json           # 实际暴露的知识库路径、版本和指纹
 ├── resources/
 │   ├── upstream/            # 冻结的原始内容
-│   ├── integration/         # 本接入代码与入口的确切版本
-│   └── raw_wiki/            # CANNBot 自行复制的只读原始知识库
+│   └── integration/         # 本接入代码与入口的确切版本
 ├── dispatches/<id>/
 │   ├── dispatch.json        # 父调用、角色、argv、源码前后指纹、进程与时间
 │   ├── config.json          # 此会话配置与 workspace

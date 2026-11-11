@@ -13,6 +13,9 @@ from launcher.config import ConfigError, load_experiment
 def preflight(path):
     experiment = load_experiment(path)
     method = load_method(experiment.mode)
+    import isolation
+    if isolation.enabled():
+        isolation.check_available()
     for old in ('bench', 'evaluator/bench.py'):
         if os.path.lexists(common.BENCHMARK_ROOT / old):
             raise ConfigError('old benchmark entry still exists')
@@ -34,6 +37,9 @@ def preflight(path):
         try:
             exports = common.load_profile_environment(environment)
             common.validate_toolchain(environment, exports)
+            from evaluator import environment_lock
+
+            environment_lock.validate(environment, exports)
         except (OSError, RuntimeError, subprocess.SubprocessError) as error:
             raise MethodError(f'Case compiler environment is unavailable: {error}',
                               'infrastructure_error') from error

@@ -7,7 +7,9 @@ import functools
 import hashlib
 import importlib.util
 import json
+import math
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -16,6 +18,54 @@ from typing import Any, Iterator
 
 
 BENCHMARK_ROOT = Path(__file__).resolve().parents[1]
+TEST_ONLY_CASE_FAMILY = "profile_validation"
+MODE_SOURCE_DIRS = ("basic", "_shared", "cannbot")
+
+
+def formal_case_configs(benchmark_root: Path | None = None) -> list[Path]:
+    """Return registered benchmark Cases, excluding profile-validation fixtures."""
+    root = BENCHMARK_ROOT if benchmark_root is None else Path(benchmark_root)
+    return [path for path in sorted((root / "cases").glob("*/*/case.json"))
+            if path.parent.parent.name != TEST_ONLY_CASE_FAMILY]
+
+
+def declared_fixture_ids(case):
+    """Validate the public fixed fixture set; never discover hidden directories."""
+    values = case.get('fixture_ids')
+    if (not isinstance(values, list) or not 1 <= len(values) <= 64
+            or any(not isinstance(v, str) or not re.fullmatch(r'fixture_[0-9]{3,6}', v) for v in values)
+            or len(set(values)) != len(values)):
+        raise ValueError('fixture_ids must declare 1 to 64 unique fixture_NNN identifiers')
+    return list(values)
+
+
+def fixture_aggregate(runs):
+    """Equal fixture weight, preserving all fixture medians and speedups.
+
+    The latency summary is a geometric mean of individual fixture medians,
+    never a pooled timing series or an end-to-end chain measurement.
+    """
+    def geometric(key):
+        values = [r.get(key) for r in runs]
+        if (not values or any(type(v) not in (int, float) or not math.isfinite(v) or v <= 0
+                              for v in values)):
+            raise ValueError('all fixture measurements must be finite and positive')
+        return float(values[0]) if len(values) == 1 else math.exp(math.fsum(math.log(v) for v in values)/len(values))
+    return {'latency_us': geometric('median_effective_us'), 'speedup': geometric('speedup'),
+            'metric_name': ('median_effective_us' if len(runs) == 1 else
+                            'geometric_mean_fixture_median_effective_us'),
+            'aggregation': 'equal_weight_geometric_fixture_medians', 'fixture_count': len(runs),
+            'worst_fixture_speedup': min(r['speedup'] for r in runs), 'end_to_end': False}
+
+
+def fixture_input_identity(fixture):
+    """Hash the persisted input artifacts, independently of fixture labels/seeds."""
+    import file_tree
+    entries = file_tree.scan_tree(Path(fixture)/'in', excluded_names=frozenset(), reject_special=True)
+    files = [(name, entry['sha256']) for name, entry in sorted(entries.items()) if entry['kind'] == 'file']
+    if not files or any(entry['kind'] == 'symlink' for entry in entries.values()):
+        raise ValueError('fixture input identity requires regular persisted input files')
+    return hashlib.sha256(json.dumps(files, separators=(',',':')).encode()).hexdigest()
 
 
 def _nested_repo_root() -> Path | None:
@@ -62,36 +112,20 @@ TUNING_ALLOWED = {
 }
 
 
-def read_tuning(workspace: Path) -> dict[str, Any]:
-    """Read the small, public Candidate tuning contract.
+def read_tuning(workspace: Path, case: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Validate the public allowlist before importing any Candidate code."""
+    import tuning
+    return tuning.read(workspace, case)
 
-    The file is intentionally outside ``.benchmark_context`` so an Agent can
-    edit it. Missing fields use the public defaults; unknown fields and values
-    are rejected before any Candidate code is imported or run.
-    """
-    path = Path(workspace) / "tuning.json"
-    if not path.exists():
-        return dict(TUNING_DEFAULTS)
-    try:
-        value = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeError, json.JSONDecodeError) as error:
-        raise ValueError(f"invalid tuning.json: {error}") from error
-    if not isinstance(value, dict):
-        raise ValueError("tuning.json must contain an object")
-    unknown = set(value) - set(TUNING_DEFAULTS)
-    if unknown:
-        names = ", ".join(sorted(str(name) for name in unknown))
-        raise ValueError(f"unknown tuning option(s): {names}")
-    result = dict(TUNING_DEFAULTS)
-    result.update(value)
-    planner = result["memory_planner"]
-    if not isinstance(planner, str) or planner not in TUNING_ALLOWED["memory_planner"]:
-        allowed = ", ".join(sorted(TUNING_ALLOWED["memory_planner"]))
-        raise ValueError(f"memory_planner must be one of: {allowed}")
-    analyze = result["analyze_auto_scopes_for_deps"]
-    if type(analyze) is not bool:
-        raise ValueError("analyze_auto_scopes_for_deps must be true or false")
-    return result
+
+def tuning_defaults(case: dict[str, Any]) -> dict[str, Any]:
+    import tuning
+    return tuning.defaults(case)
+
+
+def tuning_capabilities(case: dict[str, Any], profile: dict[str, Any] | None = None) -> dict[str, Any]:
+    import tuning
+    return tuning.capabilities(case, _environment_profile(case) if profile is None else profile)
 
 
 def profile_path(value: str | os.PathLike[str]) -> Path:
@@ -368,8 +402,11 @@ def local_import_scope(directories: tuple[Path, ...]) -> Iterator[None]:
 
 def load_candidate(case_dir: Path, case: dict[str, Any], workspace: Path, name: str):
     """Load a Candidate entry with its workspace-local dependency closure."""
+    candidate_root = workspace / 'candidate'
+    if not candidate_root.is_dir():
+        candidate_root = workspace
     return load_isolated_module(
-        workspace / case["module"], name, (case_dir / "public", workspace),
+        candidate_root / case["module"], name, (case_dir / "public", candidate_root),
     )
 
 
@@ -424,6 +461,10 @@ def bootstrap_environment(case: dict[str, Any]) -> None:
     marker = f"{case['case_id']}:{profile['name']}:cxx-runtime-v1"
     if Path(sys.executable).resolve() == python.resolve() and os.environ.get("PYPTO_BENCH_ENV") == marker:
         validate_toolchain(profile)
+        if os.environ.get("PTOBENCH_WORKER") != "1":
+            from environment_lock import validate as validate_environment_lock
+
+            validate_environment_lock(profile)
         return
     environment = load_profile_environment(profile)
     environment["PYPTO_BENCH_ENV"] = marker
@@ -480,7 +521,8 @@ def environment(
     # These compiler options are controlled by the Candidate workspace. The
     # default is also used by Ref preparation, so historical Case runtime
     # overrides cannot silently change the certified baseline.
-    effective_tuning = dict(TUNING_DEFAULTS if tuning is None else tuning)
+    import tuning as tuning_policy
+    effective_tuning = tuning_policy.validate({} if tuning is None else tuning, case)
     if os.environ.get("PYPTO_BENCH_ARTIFACT_DIR"):
         runtime_fields.pop("save_kernels_dir", None)
     profile_mode = profiling_mode()
@@ -489,7 +531,7 @@ def environment(
 
         runtime_fields.update(settings(profile_mode))
     # Apply Agent tuning last so diagnostic presets cannot silently replace it.
-    runtime_fields.update(effective_tuning)
+    runtime_fields.update({name: value for name, value in effective_tuning.items() if value is not None})
     device_ids = runtime_fields.pop("device_ids", None)
     if device_ids is not None:
         from pypto.ir.distributed_compiled_program import DistributedConfig
@@ -501,7 +543,9 @@ def environment(
     runtime_fields["memory_planner"] = MemoryPlanner[effective_tuning["memory_planner"]]
     from pypto.runtime import RunConfig
 
-    return updates, RunConfig(**runtime_fields)
+    runtime = RunConfig(**runtime_fields)
+    runtime._ptobench_tuning_record = tuning_policy.check_projection(runtime, effective_tuning, case)
+    return updates, runtime
 
 
 def profiling_mode() -> str:
@@ -518,7 +562,7 @@ def environment_scope(
         "PYPTO_BENCH": "1" if benchmark else "0",
         "PYPTO_BENCH_WARMUP": str(warmup),
         "PYPTO_BENCH_ROUNDS": str(rounds),
-        "PYPTO_BENCH_RESET_INPUTS": "each_launch" if benchmark and reset_inputs else "none",
+        "PYPTO_BENCH_RESET_INPUTS": "each_launch" if reset_inputs else "none",
     }
     previous = {key: os.environ.get(key) for key in effective}
     os.environ.update(effective)
@@ -540,19 +584,19 @@ def benchmark_sizes(case: dict[str, Any]) -> tuple[int, int]:
 
 
 
-def bench_samples(result) -> list[float]:
+def bench_samples(result, metric: str = 'effective') -> list[float]:
     import math
-    return [value for value in raw_bench_samples(result)
+    return [value for value in raw_bench_samples(result, metric)
             if isinstance(value, float) and math.isfinite(value) and value > 0]
 
 
-def raw_bench_samples(result) -> list:
+def raw_bench_samples(result, metric: str = 'effective') -> list:
     """Preserve timing slots in order; nonfinite values use explicit JSON strings."""
     import math
     if result.bench is None:
         return []
     samples = []
-    for value in result.bench.per_round('effective'):
+    for value in result.bench.per_round(metric):
         if value is None:
             samples.append(None)
         else:

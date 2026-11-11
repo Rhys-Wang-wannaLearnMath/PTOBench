@@ -1,0 +1,2933 @@
+{
+  "schema_version": 1,
+  "scope": "311 formal benchmark cases; profile_validation cases are excluded",
+  "classification_basis": "The initial Case source; categories are multi-label and granularity is single-label.",
+  "granularity_values": [
+    "operator-level",
+    "subgraph-level",
+    "model-level"
+  ],
+  "operator_category_values": [
+    "matmul",
+    "attention",
+    "normalization",
+    "softmax",
+    "reduction",
+    "selection",
+    "elementwise",
+    "indexing",
+    "communication"
+  ],
+  "cases": [
+    {
+      "case_id": "deepseek_v3_2.deepseek_v3_2_decode_back",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v3_2.deepseek_v3_2_decode_front",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "selection"
+      ]
+    },
+    {
+      "case_id": "deepseek_v3_2.deepseek_v3_2_decode_front_scope1",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v3_2.deepseek_v3_2_decode_front_scope2",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "reduction"
+      ]
+    },
+    {
+      "case_id": "deepseek_v3_2.deepseek_v3_2_decode_front_scope3",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "reduction",
+        "selection",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v3_2.deepseek_v3_2_decode_front_scope4_full",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "attention"
+      ]
+    },
+    {
+      "case_id": "deepseek_v3_2.deepseek_v3_2_decode_front_scope4_reduced",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "attention"
+      ]
+    },
+    {
+      "case_id": "deepseek_v3_2.deepseek_v3_2_prefill_back",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.combine_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "reduction",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.combine_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "reduction",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.combine_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "reduction",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.compressor_ratio128_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.compressor_ratio128_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.compressor_ratio128_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.compressor_ratio4_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.compressor_ratio4_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.compressor_ratio4_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_attention_hca_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_attention_hca_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_attention_hca_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_attention_swa_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_attention_swa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_attention_swa_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_compressor_ratio128_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_compressor_ratio128_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_compressor_ratio128_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_compressor_ratio4_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_compressor_ratio4_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_compressor_ratio4_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_hc_post_b16",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_hc_pre_b16",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_indexer_compressor_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_indexer_compressor_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_indexer_compressor_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_indexer_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "selection",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_indexer_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "selection",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_indexer_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "selection",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_moe_expert",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_moe_router",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "normalization",
+        "selection",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_o_proj_grouped",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "matmul"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_qkv_proj_rope_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_qkv_proj_rope_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_qkv_proj_rope_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_sparse_attn_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_sparse_attn_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_sparse_attn_hca_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_sparse_attn_hca_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_sparse_attn_hca_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_sparse_attn_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_sparse_attn_swa_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_sparse_attn_swa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.decode_sparse_attn_swa_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.deepseek_v4_decode_compressor_ratio0",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.deepseek_v4_decode_compressor_ratio128",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.deepseek_v4_decode_compressor_ratio4",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.deepseek_v4_decode_swa",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.dispatch_demo",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.dispatch_flash",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.dispatch_pro",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.expert_routed_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.expert_routed_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.expert_shared_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.expert_shared_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.gate_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "selection"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.gate_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "selection"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_head_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "reduction"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_head_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "reduction"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_head_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "reduction"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_post_demo",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_post_flash",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_post_pro",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_post_v2_decode_demo",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_post_v2_decode_flash",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_post_v2_decode_pro",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_post_v2_prefill_demo",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_post_v2_prefill_flash",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_post_v2_prefill_pro",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_pre_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_pre_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_pre_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_pre_v2_decode_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_pre_v2_decode_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_pre_v2_prefill_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.hc_pre_v2_prefill_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.indexer_compressor_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.indexer_compressor_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.indexer_compressor_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.legacy_decode_qkv_proj_rope_t16",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.lm_head_tp2_demo",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "matmul",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.lm_head_tp2_flash",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "matmul",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.lm_head_tp2_pro",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "matmul",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_combine_demo",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "reduction",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_combine_flash",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "reduction",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_combine_pro",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "reduction",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_dispatch_combine_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "reduction",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_dispatch_combine_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "reduction",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_dispatch_combine_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "reduction",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_dispatch_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "normalization",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_dispatch_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "normalization",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_dispatch_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "normalization",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep2_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep2_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep2_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep4_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep4_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep4_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep8_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep8_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep_ep2_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep_ep2_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep_ep2_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep_ep4_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep_ep4_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep_ep4_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep_ep8_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep_ep8_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_expert_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_expert_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_expert_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_router_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_router_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.moe_router_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.mtp_projection_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.mtp_projection_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.mtp_projection_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_attention_csa_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_attention_csa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_attention_csa_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_attention_hca_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_attention_hca_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_attention_hca_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_attention_swa_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_attention_swa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_compressor_ratio128_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "reduction",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_compressor_ratio128_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "reduction",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_compressor_ratio128_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_compressor_ratio4_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_compressor_ratio4_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_compressor_ratio4_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_hc_post_demo",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_hc_post_flash",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_hc_post_pro",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_hc_pre_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_hc_pre_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_hc_pre_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_indexer_compressor_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_indexer_compressor_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_indexer_compressor_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_indexer_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_indexer_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_indexer_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_layer_ep2_csa_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_layer_ep2_csa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_layer_ep2_csa_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_layer_ep2_hca_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_layer_ep2_swa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_layer_ep4_csa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_layer_ep4_hca_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_layer_ep4_swa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_layer_ep8_csa_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_layer_ep8_csa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_layer_ep8_hca_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_layer_ep8_hca_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_layer_ep8_swa_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_layer_ep8_swa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_moe_ep2_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_moe_ep2_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_moe_ep2_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_moe_ep4_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_moe_ep4_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_moe_ep4_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_moe_ep8_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_moe_ep8_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_moe_ep8_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "elementwise",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_qkv_proj_rope_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_qkv_proj_rope_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_qkv_proj_rope_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_qkv_proj_rope_v2_decode_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_qkv_proj_rope_v2_decode_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_qkv_proj_rope_v2_decode_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_qkv_proj_rope_v2_prefill_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_qkv_proj_rope_v2_prefill_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_qkv_proj_rope_v2_prefill_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_sparse_attn_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_sparse_attn_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_sparse_attn_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_sparse_attn_v2_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_sparse_attn_v2_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_sparse_attn_v2_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_swa_sparse_attn_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_swa_sparse_attn_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.prefill_swa_sparse_attn_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.qkv_proj_rope_compat_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.qkv_proj_rope_compat_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.qkv_proj_rope_compat_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.rmsnorm_decode_demo",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.rmsnorm_decode_flash",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.rmsnorm_decode_pro",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.rmsnorm_prefill_demo",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.rmsnorm_prefill_flash",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.rmsnorm_prefill_pro",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.sparse_attn_demo",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "attention"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.sparse_attn_flash",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "attention"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.synthetic_token_loop_decode_flash",
+      "granularity": "model-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.synthetic_token_loop_decode_pro",
+      "granularity": "model-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.synthetic_token_loop_prefill_flash",
+      "granularity": "model-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4.synthetic_token_loop_prefill_pro",
+      "granularity": "model-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_csa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_hca_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_hca_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_hca_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_indexer_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_layer_csa_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_layer_csa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_layer_hca_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_layer_hca_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_layer_hca_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_layer_swa_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_layer_swa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_swa_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_swa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.decode_swa_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.dspark_drafter_flash",
+      "granularity": "model-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.dspark_drafter_pro",
+      "granularity": "model-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.dspark_markov_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.dspark_markov_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.dspark_markov_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.dspark_prefill_demo",
+      "granularity": "model-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.dspark_prefill_flash",
+      "granularity": "model-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.dspark_prefill_pro",
+      "granularity": "model-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.dspark_proj_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.dspark_proj_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.dspark_proj_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.lm_head_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.lm_head_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.lm_head_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.moe_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_csa_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "normalization",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_csa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "normalization",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_csa_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "normalization",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_hca_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_hca_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_hca_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_indexer_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "selection",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_indexer_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "selection",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_indexer_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "softmax",
+        "selection",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_layer_csa_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_layer_csa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_layer_hca_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_layer_hca_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_layer_hca_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_layer_swa_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_layer_swa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_swa_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_swa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_dspark.prefill_swa_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp2_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp2_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp2_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp4_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp4_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp4_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "selection",
+        "indexing",
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_hca_cp2_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_hca_cp2_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_hca_cp4_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_hca_cp4_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_hca_cp4_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_hca_cp8_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_hca_cp8_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_swa_cp2_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_swa_cp2_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_swa_cp4_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_swa_cp4_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "normalization",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_swa_cp4_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_swa_cp8_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_swa_cp8_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_zigzag_cp2_demo",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_zigzag_cp2_flash",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_zigzag_cp2_pro",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_zigzag_cp4_demo",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_zigzag_cp4_flash",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_zigzag_cp4_pro",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_zigzag_cp8_demo",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_zigzag_cp8_flash",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_cp_zigzag_cp8_pro",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "communication"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_swa_demo",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_swa_flash",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.prefill_swa_pro",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "normalization",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.sample_demo",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "selection",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.sample_flash",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "selection",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "deepseek_v4_flash_mtp.sample_pro",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "selection",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "qwen3_14b.decode_layer_single_layer_max_seq_127",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "qwen3_14b.greedy_sample",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "selection"
+      ]
+    },
+    {
+      "case_id": "qwen3_14b.prefill_fwd",
+      "granularity": "model-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "qwen3_14b.qwen3_14b_decode",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "qwen3_14b.qwen3_14b_decode_scope1",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "qwen3_14b.qwen3_14b_decode_scope2",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "qwen3_14b.qwen3_14b_decode_scope3",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "qwen3_14b.qwen3_14b_decode_tq_single_layer",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "qwen3_14b.qwen3_14b_prefill",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "qwen3_14b.token_embed",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "indexing"
+      ]
+    },
+    {
+      "case_id": "qwen3_14b.topk_select_k1",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "selection"
+      ]
+    },
+    {
+      "case_id": "qwen3_14b.topk_select_k32",
+      "granularity": "operator-level",
+      "operator_categories": [
+        "selection"
+      ]
+    },
+    {
+      "case_id": "qwen3_32b.qwen3_32b_decode",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "qwen3_32b.qwen3_32b_decode_4d",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "attention",
+        "normalization",
+        "elementwise"
+      ]
+    },
+    {
+      "case_id": "qwen3_32b.qwen3_32b_decode_scope1",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "qwen3_32b.qwen3_32b_decode_scope1_tile",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "matmul",
+        "normalization"
+      ]
+    },
+    {
+      "case_id": "qwen3_32b.qwen3_32b_decode_scope2",
+      "granularity": "subgraph-level",
+      "operator_categories": [
+        "attention",
+        "indexing"
+      ]
+    }
+  ]
+}

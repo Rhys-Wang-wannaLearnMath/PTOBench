@@ -3,4 +3,4 @@
 Sessions predating this policy must not restore their older evaluator backups.
 """
 
-VERSION = 1
+VERSION = 42  # Preserve native BenchmarkStats accessors; timing and score formulas are unchanged.

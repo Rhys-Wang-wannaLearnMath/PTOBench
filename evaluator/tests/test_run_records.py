@@ -15,6 +15,7 @@ import execution_record
 import session
 
 sys.path.insert(0, str(SOURCE_BENCHMARK))
+from launcher import runner as launcher_runner
 from modes._shared import recording
 
 
@@ -53,6 +54,24 @@ class RecordingProfilesTest(unittest.TestCase):
 
 
 class MeasurementRecordsTest(unittest.TestCase):
+    def test_native_pi_and_codex_token_usage_is_summed_from_per_turn_records(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            pi = root / 'agent/native/pi.jsonl'
+            pi.parent.mkdir(parents=True)
+            pi.write_text(json.dumps({'type': 'message_end', 'message': {'role': 'assistant',
+                'usage': {'input': 12, 'output': 3, 'cacheRead': 2}}}) + '\n')
+            codex = root / 'method/dispatches/child/agent/native/codex.jsonl'
+            codex.parent.mkdir(parents=True)
+            codex.write_text(json.dumps({'type': 'event_msg', 'payload': {'type': 'token_count',
+                'info': {'last_token_usage': {'input_tokens': 8, 'output_tokens': 4,
+                    'input_tokens_details': {'cached_tokens': 5}}}}}) + '\n')
+            self.assertEqual(launcher_runner._token_usage(root), {
+                'status': 'available', 'input_tokens': 20, 'output_tokens': 7,
+                'cached_input_tokens': 7, 'cached_output_tokens': 0,
+                'reported_total_tokens': 27,
+            })
+
     def test_invalid_timing_slots_are_retained_in_original_order(self):
         bench = SimpleNamespace(per_round=lambda metric: [71.0, 0.0, None, -1.0, math.nan, math.inf, 72.0])
         result = SimpleNamespace(bench=bench)
@@ -100,7 +119,7 @@ class FailedActionRecordsTest(ActionTestBase):
         self.assertEqual(process_record['exit_code'], 1)
         self.assertTrue(process_record['spawned'])
         snapshot = self.handle.session_root/index['candidate_snapshot']
-        self.assertEqual((snapshot/'helper.py').read_text(), 'VALUE = 1\n')
+        self.assertEqual((snapshot/'candidate/helper.py').read_text(), 'VALUE = 1\n')
         self.assertIsNone(event['snapshot_id'])
         self.assertEqual(event['hardware_actions_used'], 1)
         manifest = session._read(self.handle.session_root/'protection/manifest.json')

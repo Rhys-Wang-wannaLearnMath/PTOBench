@@ -49,6 +49,32 @@ def build_case_comparators(evaluator, case_dir, case):
     return factory(case_dir, case), config
 
 
+def _fixed_output_shape(name, config):
+    shape = getattr(config, f"{name.upper()}_SHAPE", None)
+    if shape is not None:
+        return tuple(shape)
+    if name == "x_out" and all(hasattr(config, key) for key in ("T", "HC_MULT", "D")):
+        return config.T, config.HC_MULT, config.D
+    if name == "x_attn_active" and all(
+        hasattr(config, key) for key in ("N_RANKS", "LOCAL_T", "HC_MULT", "D")
+    ):
+        return config.N_RANKS, config.LOCAL_T, config.HC_MULT, config.D
+    if name == "x_moe_next" and all(
+        hasattr(config, key) for key in ("N_RANKS", "MOE_TOKENS", "HC_MULT", "D")
+    ):
+        return config.N_RANKS, config.MOE_TOKENS, config.HC_MULT, config.D
+    if name == "x_next":
+        if all(hasattr(config, key) for key in ("EP_WORLD_SIZE", "PADDED_TOKENS", "HC_MULT", "D")):
+            return config.EP_WORLD_SIZE, config.PADDED_TOKENS, config.HC_MULT, config.D
+        if all(hasattr(config, key) for key in ("N_RANKS", "MOE_TOKENS", "HC_MULT", "D")):
+            return config.N_RANKS, config.MOE_TOKENS, config.HC_MULT, config.D
+    if name == "kv_cache" and all(
+        hasattr(config, key) for key in ("PREFILL_ORI_BLOCK_NUM", "BLOCK_SIZE", "HEAD_DIM")
+    ):
+        return config.PREFILL_ORI_BLOCK_NUM, config.BLOCK_SIZE, 1, config.HEAD_DIM
+    return None
+
+
 def comparator_examples(name, rule, config):
     """Small CPU tensors with the callback's ranks, masks and paired bindings.
 
@@ -59,9 +85,14 @@ def comparator_examples(name, rule, config):
     actual_outputs, expected_outputs, inputs = {}, {}, {}
     extras = []
     method = rule["method"]
+    if method == "custom" and "name" not in rule:
+        alias = rule.get("implementation", rule.get("comparator"))
+        if alias is not None:
+            rule = {**rule, "name": alias}
     if method in {"exact", "allclose", "ratio_allclose"}:
-        expected = torch.tensor([100.0, 200.0])
-        rejected = torch.zeros_like(expected)
+        shape = _fixed_output_shape(name, config) or (2,)
+        expected = torch.ones(shape)
+        rejected = torch.full_like(expected, 100)
     elif method != "custom":
         raise AssertionError(f"Unsupported comparator method: {method}")
     elif rule["name"] == "topk_pair_compare" and "paired_output" in rule:
@@ -69,13 +100,15 @@ def comparator_examples(name, rule, config):
         # prefix of each active token, padding the rest with -1.
         padded = "padding" in rule
         width = config.INDEXER_SCORE_CAP if padded else config.SCORE_LEN
-        shape = (3, width) if padded else (1, 1, width)
+        shape = (config.T, width) if padded else (config.B, config.S, width)
         scores = torch.arange(width, 0, -1, dtype=torch.float32).expand(shape).clone()
         if not rule["descending"]:
             scores = scores.flip(-1)
         if padded:
+            positions = torch.zeros(config.T, dtype=torch.int32)
+            positions[:2] = torch.tensor([7, 11], dtype=torch.int32)
             inputs = {"num_tokens": torch.tensor(2, dtype=torch.int32),
-                      "position_ids": torch.tensor([7, 11, 0], dtype=torch.int32)}
+                      "position_ids": positions}
             expected = torch.full(shape, rule["padding"], dtype=torch.int32)
             expected[0, :2] = torch.arange(2)
             expected[1, :3] = torch.arange(3)
@@ -104,8 +137,10 @@ def comparator_examples(name, rule, config):
         indexed = rule["name"] == "indexed_topk_pair" or name == "topk_idxs"
         if rule["name"] == "indexed_topk_pair":
             length, offset = config.INDEXER_SCORE_CAP, rule["index_offset"]
+            shape = (config.T, length)
         elif indexed:
             length, offset = config.SCORE_LEN, config.OFFSET
+            shape = (config.B, config.S, length)
         else:
             if hasattr(config, "TOPK"):
                 length = config.TOPK
@@ -114,15 +149,16 @@ def comparator_examples(name, rule, config):
             else:
                 length = config.INDICES_SHAPE[-1]
             offset = 0
-        expected = (torch.arange(length, dtype=torch.int32) + offset).reshape(1, -1)
+            shape = (1, length)
+        expected = (torch.arange(length, dtype=torch.int32) + offset).expand(shape).clone()
         rejected = expected.clone()
         if length >= 2:
-            rejected[:, :2] = rejected[:, :2].flip(-1)
+            rejected.reshape(-1, length)[:, :2] = rejected.reshape(-1, length)[:, :2].flip(-1)
         else:
             # The declared K=1 has no adjacent ordering constraint. Exercise
             # shape rejection rather than inventing a two-element output.
             rejected = torch.cat((expected, expected), dim=-1)
-        scores = torch.arange(length, 0, -1, dtype=torch.float32).reshape(1, -1)
+        scores = torch.arange(length, 0, -1, dtype=torch.float32).expand(shape).clone()
         if not rule["descending"]:
             scores = scores.flip(-1)
         # Indexed callbacks gather scores using indices. Other callbacks see
@@ -182,7 +218,10 @@ def comparator_examples(name, rule, config):
         extras.append(("nonfinite active value", nonfinite, False, {}))
     elif rule["name"] == "mapped_pool_ratio_allclose":
         block_size = rule["block_size"]
-        expected = torch.ones((2, block_size, 2), dtype=torch.float32)
+        ranked = rule.get("leading_rank_axis", False)
+        ranks = rule.get("mapping_shape", [1])[0] if ranked else 1
+        shape = (ranks, 2, block_size, 2) if ranked else (2, block_size, 2)
+        expected = torch.ones(shape, dtype=torch.float32)
         mapping = torch.full(rule["mapping_shape"], -1, dtype=torch.int32)
         mapping.reshape(-1)[:2] = torch.tensor([0, block_size])
         binding = rule["mapping"] if "mapping" in rule else rule["mapping_name"]
@@ -253,25 +292,39 @@ def comparator_examples(name, rule, config):
                            {"inputs": {**inputs, binding: invalid_tail}}))
     elif rule["name"] == "mapped_active_rows_ratio_allclose":
         dtype = torch.int8 if name == "idx_kv_cache" else torch.float32
-        expected = torch.ones((2,) * rule["flatten_leading_dims"] + (1, 2), dtype=dtype)
+        block_count = config.PREFILL_IDX_BLOCK_NUM
+        block_size = rule.get("block_size", config.BLOCK_SIZE)
+        width = config.IDX_HEAD_DIM if name == "idx_kv_cache" else 1
+        expected = torch.ones((block_count, block_size, 1, width), dtype=dtype)
         rejected = expected.clone()
         rejected.reshape(-1, 2)[0] = 100
-        inputs[rule["mapping_input"]] = torch.tensor([0, -1], dtype=torch.int32)
+        mapping_name = rule.get("mapping_input", rule.get("mapping_name"))
+        mapping_shape = rule.get("mapping_shape", [2])
+        inputs[mapping_name] = torch.full(mapping_shape, -1, dtype=torch.int64)
         inactive = expected.clone()
         inactive.reshape(-1, 2)[-1] = 100
         extras.extend([
             ("inactive mapped row changed", inactive, False, {}),
             ("missing mapping", expected.clone(), False, {"inputs": {}}),
         ])
-    elif rule["name"] == "valid_ratio_reldiff" and "chunk_lens_input" in rule:
-        ranks = config.N_RANKS
-        expected = torch.ones((ranks, 4, 1, 2), dtype=torch.bfloat16)
+    elif rule["name"] in {"valid_ratio_reldiff", "packed_valid_ratio_reldiff"} and "chunk_lens_input" in rule:
+        shape = _fixed_output_shape(name, config)
+        if shape is None:
+            shape = (config.N_RANKS, config.T, config.HC_MULT, config.D)
+        ranks = shape[0]
+        chunks = getattr(config, "USER_BATCH", 2)
+        axis = rule.get("valid_axis", 1)
+        axis_size = shape[axis]
+        chunks = max(1, min(chunks, axis_size))
+        expected = torch.ones(shape, dtype=torch.bfloat16)
         rejected = expected.clone()
-        rejected[:, 0] = 100
-        inputs[rule["chunk_lens_input"]] = torch.tensor([[1, 1]] * ranks, dtype=torch.int32)
-        inputs[rule["chunk_offsets_input"]] = torch.tensor([[0, 2]] * ranks, dtype=torch.int32)
+        rejected.select(axis, 0).fill_(100)
+        lengths = torch.ones((ranks, chunks), dtype=torch.int32)
+        offsets = torch.arange(chunks, dtype=torch.int32).expand(ranks, -1).clone()
+        inputs[rule["chunk_lens_input"]] = lengths
+        inputs[rule["chunk_offsets_input"]] = offsets
         padding_changed = expected.clone()
-        padding_changed[:, 1] = 100
+        padding_changed.select(axis, min(chunks, axis_size - 1)).fill_(100)
         padding_policy = rule.get("padding_policy", "ignore")
         if padding_policy not in {"exact", "ignore"}:
             raise AssertionError(f"Unsupported padding policy: {padding_policy}")
@@ -279,16 +332,39 @@ def comparator_examples(name, rule, config):
             ("unselected chunk rows", padding_changed, padding_policy == "ignore", {}),
             ("missing chunk metadata", expected.clone(), False, {"inputs": {}}),
         ])
+    elif rule["name"] == "score_valid_region_compare":
+        shape = ((config.B, config.S, config.SCORE_LEN)
+                 if all(hasattr(config, key) for key in ("B", "S", "SCORE_LEN"))
+                 else (1, 1, 4))
+        expected = torch.full(shape, rule["invalid_value"], dtype=torch.float32)
+        expected[..., :2] = 1
+        rejected = expected.clone()
+        rejected[..., : min(4, expected.shape[-1])] = 100
+        changed_tail = expected.clone()
+        changed_tail[..., -1] = 100
+        nonfinite = expected.clone()
+        nonfinite[..., 0] = torch.nan
+        extras.extend([
+            ("invalid-value tail is ignored", changed_tail, True, {}),
+            ("nonfinite active score", nonfinite, False, {}),
+        ])
     elif rule["name"] in {"score_valid_region_ratio_allclose", "score_valid_rows_ratio_allclose"}:
         token_rows = rule["name"] == "score_valid_rows_ratio_allclose"
-        expected = torch.full((3, 4) if token_rows else (1, 1, 4), rule["tail_sentinel"])
+        if token_rows:
+            shape = (config.T, config.INDEXER_SCORE_CAP)
+        elif all(hasattr(config, key) for key in ("B", "S", "SCORE_LEN")):
+            shape = (config.B, config.S, config.SCORE_LEN)
+        else:
+            shape = (1, 1, 4)
+        expected = torch.full(shape, rule["tail_sentinel"])
         if token_rows:
             inputs["num_tokens"] = torch.tensor(2, dtype=torch.int32)
             expected[:2] = 1
         else:
             expected[..., :2] = 1
         rejected = expected.clone()
-        rejected.reshape(-1)[0] = 100
+        allowance = round(rule["max_error_ratio"] * (2 * config.INDEXER_SCORE_CAP if token_rows else expected.numel()))
+        rejected.reshape(-1)[:allowance + 1] = 100
         changed_tail = expected.clone()
         changed_tail.reshape(-1)[-1] = 100
         nonfinite = expected.clone()
@@ -301,10 +377,19 @@ def comparator_examples(name, rule, config):
             extras.append(("missing token count", expected.clone(), False, {"inputs": {}}))
     elif rule["name"] == "valid_ratio_reldiff" and (
         rule.get("valid_rows_from") == "num_tokens" or rule.get("valid_prefix") == "num_tokens"
+        or rule.get("valid_rows") == "num_tokens"
     ):
-        expected = torch.zeros((3, 2), dtype=torch.bfloat16)
-        expected[:2] = 1
-        inputs["num_tokens"] = torch.tensor(2, dtype=torch.int32)
+        axis = rule.get("valid_axis", 0)
+        shape = [2, 2, 2]
+        shape[axis] = 3
+        shape = _fixed_output_shape(name, config) or tuple(shape)
+        shape = list(shape)
+        rows = min(2, shape[axis])
+        expected = torch.zeros(shape, dtype=torch.float32)
+        active = [slice(None)] * len(shape)
+        active[axis] = slice(0, rows)
+        expected[tuple(active)] = 1
+        inputs["num_tokens"] = torch.tensor(rows, dtype=torch.int32)
         rejected = expected.clone()
         rejected[0] = 100
         nonzero_tail = expected.clone()
@@ -313,15 +398,42 @@ def comparator_examples(name, rule, config):
             ("inactive token must remain zero", nonzero_tail, False, {}),
             ("missing token count", expected.clone(), False, {"inputs": {}}),
             ("token count out of bounds", expected.clone(), False,
-             {"inputs": {"num_tokens": torch.tensor(4, dtype=torch.int32)}}),
+             {"inputs": {"num_tokens": torch.tensor(shape[axis] + 1, dtype=torch.int32)}}),
         ])
     elif rule["name"] in {"ratio_reldiff", "valid_ratio_reldiff"}:
         rows = rule.get("valid_rows")
-        rank = {"sh": 2, "recv_y": 3, "x_out": 3, "x_next": 4}[name]
-        shape = [2] * rank
+        if rule.get("num_tokens") is not None:
+            rows = rule["num_tokens"]
+            shape = _fixed_output_shape(name, config) or (config.T, 2, 2)
+            expected = torch.zeros(shape, dtype=torch.float32)
+            expected[:rows] = 1
+            rejected = expected.clone()
+            rejected[:rows] = 100
+            inputs["num_tokens"] = torch.tensor(rows, dtype=torch.int32)
+            examples = [("equal", expected.clone(), True, {}),
+                        ("different", rejected, False, {})]
+            for label, actual, passed, updates in examples:
+                yield label, actual, expected, {
+                    "actual_outputs": {**actual_outputs, name: actual},
+                    "expected_outputs": {**expected_outputs, name: expected},
+                    "inputs": inputs, "rtol": 1e10, "atol": 1e10, **updates,
+                }, passed
+            return
+        rank = {"sh": 2, "recv_y": 3, "x_out": 3, "x_next": 4,
+                "x_attn_active": 3, "x_moe_next": 3}.get(name, 3)
+        shape = list(_fixed_output_shape(name, config) or (2,) * rank)
         if rows is not None:
-            shape[rule["valid_axis"]] = max(1, rows)
+            axis = rule.get("valid_axis", 0)
+            if isinstance(rows, str):
+                rows = 2
+                inputs["num_tokens"] = torch.tensor(rows, dtype=torch.int32)
+            if rule.get("zero_tail") and _fixed_output_shape(name, config) is None:
+                shape[axis] = max(shape[axis], rows + 1)
         expected = torch.ones(shape, dtype=torch.bfloat16)
+        if rows is not None and rule.get("zero_tail"):
+            active = [slice(None)] * rank
+            active[axis] = slice(rows, None)
+            expected[tuple(active)] = 0
         rejected = torch.full_like(expected, 100)
     elif rule["name"] == "int8_lsb":
         expected = torch.zeros((1, 2), dtype=torch.int8)
@@ -346,6 +458,7 @@ def comparator_examples(name, rule, config):
             **updates,
         }
         yield label, actual, expected, kwargs, passed
+
 
 
 class CaseComparatorTest(unittest.TestCase):

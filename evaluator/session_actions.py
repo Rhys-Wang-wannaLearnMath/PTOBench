@@ -42,11 +42,15 @@ class ActionResult:
     message: str | None = None
     integrity_passed: bool | None = None
     _omit_correctness: bool = False
+    failure_diagnostic: dict | None = None
+    attempt_id: int | None = None
 
     def to_dict(self):
         value = asdict(self)
         if value.pop("_omit_correctness"):
             value.pop("correctness")
+        if value['failure_diagnostic'] is None:
+            value.pop('failure_diagnostic')
         return value
 
 
@@ -97,10 +101,11 @@ def _postcheck_action(root, frozen, manifest):
     repair = _repair_for_action(root)
     state = session.read_session(root)
     violations.update((state['active_action'] or {}).get('integrity_violations', []))
-    violations.update(report.changed_paths)
-    violations.update(repair.changed_paths)
+    violations.update(set(report.changed_paths) - set(report.blocked_paths))
+    violations.update(set(repair.changed_paths) - set(repair.blocked_paths))
+    observed = set(report.blocked_paths) | set(repair.blocked_paths)
     repaired = sorted(violations | set(repair.restored_paths))
-    return report.passed and source_intact and not violations, repaired
+    return report.passed and source_intact and not violations, repaired, sorted(observed)
 
 
 def _marker_path():
@@ -213,8 +218,36 @@ def recover_global_action():
         raise integrity.InfrastructureError('global marker does not match the protected action')
     identity = marker.get('process')
     if identity is None and marker.get('state') == 'starting':
-        session.fail_session(root, 'unattributed_spawn')
-        raise integrity.InfrastructureError('spawn interrupted before PID binding; execution blocked')
+        # The owner writes the marker before Popen()/PID binding.  If that
+        # owner dies in this narrow window, the old implementation left the
+        # marker and the reserved action behind forever, blocking every later
+        # Session.  Recover only when the marker's owner is no longer the
+        # same live process; a live or ambiguous owner remains fail-closed.
+        owner = marker.get('owner')
+        if (not isinstance(owner, dict) or set(owner) != {'pid', 'pgid', 'start_ticks'}
+                or any(type(value) is not int or value <= 0 for value in owner.values())):
+            session.fail_session(root, 'unattributed_spawn')
+            raise integrity.InfrastructureError('spawn interrupted before PID binding; execution blocked')
+        current_owner = session.process_identity(owner['pid'])
+        if current_owner == owner:
+            session.fail_session(root, 'unattributed_spawn')
+            raise integrity.InfrastructureError('spawn interrupted before PID binding; execution blocked')
+        # Reconcile_active_action deliberately treats process_state=starting
+        # as ambiguous.  Here the durable global marker and matching Session
+        # record prove that no child PID was ever bound, and the owner birth
+        # identity is gone, so downgrade it to the safe pre-spawn state before
+        # using the normal one-time interrupted-action reconciliation.
+        with session._session_lock(root):
+            record, _ = session._load_locked(root)
+            pending = record['active_action']
+            if (pending is None or pending['event_seq'] != marker['event_seq']
+                    or pending['owner'] != owner or pending['process'] is not None):
+                raise integrity.InfrastructureError('unattributed spawn does not match the protected action')
+            pending['process_state'] = 'not_started'
+            session._commit(root, record)
+        session.reconcile_active_action(root)
+        _clear_marker()
+        return
     if identity is not None and active['process'] not in (None, identity):
         raise integrity.InfrastructureError('global and Session process identities disagree')
     _stop_recovered_group(root, identity)
@@ -226,11 +259,12 @@ def recover_global_action():
         # Recover the protected manifest before loading it, retaining witnesses.
         session.read_session(root)
         manifest = session._read(frozen.parent / 'source_manifest.json')
-    intact, repaired = _postcheck_action(root, frozen, manifest)
+    intact, repaired, observed_mode_changes = _postcheck_action(root, frozen, manifest)
     session.close_exploration(root, 'interrupted')
     session.complete_action(root, active['event_seq'], exit_code=130, error_code='interrupted',
                             integrity_passed=intact, repaired_paths=repaired,
                             action_started=marker.get('process') is not None,
+                            observed_mode_changes=observed_mode_changes,
                             artifact_index=action_records.archive(root, active['event_seq'], action_dir))
     _clear_marker()
 
@@ -466,6 +500,169 @@ def _positive(value):
         return False
 
 
+def _attempt_metadata(action_dir, kind, error_code, observation, raw, artifact_index):
+    """Flatten the trusted Evaluator result into fields useful for offline analysis."""
+    execution_path = action_dir / 'execution.json'
+    try:
+        execution = session._read(execution_path)
+    except (integrity.InfrastructureError, OSError):
+        execution = None
+    worker_diagnostics = action_dir / 'worker_diagnostics'
+    worker_records = []
+    worker_executions = []
+    if worker_diagnostics.is_dir():
+        for path in sorted(worker_diagnostics.glob('*/worker_process.json')):
+            try:
+                worker_records.append(session._read(path))
+            except (integrity.InfrastructureError, OSError):
+                continue
+        for path in sorted(worker_diagnostics.glob('*/worker_execution.json')):
+            try:
+                worker_executions.append(session._read(path))
+            except (integrity.InfrastructureError, OSError):
+                continue
+    stage_sources = worker_executions or ([execution] if execution else [])
+    stages = [event for source in stage_sources for event in source.get('events', [])
+              if event.get('stage') and event.get('event_type') == 'stage']
+
+    def stage_status(name):
+        completed = False
+        for source in stage_sources:
+            events = [event for event in source.get('events', [])
+                      if event.get('stage') == name and event.get('event_type') == 'stage']
+            if not events:
+                continue
+            status = events[-1].get('status')
+            if status == 'failed':
+                return 'fail'
+            if status == 'started':
+                return 'error'
+            completed |= status == 'passed'
+        if completed:
+            return 'pass'
+        order = ('compile', 'runtime', 'validate', 'benchmark')
+        if name == 'benchmark' and kind == 'profile':
+            return 'not_run'
+        if name == 'validate' and skipped:
+            return 'not_run'
+        if name in order:
+            earlier = order[:order.index(name)]
+            if any(stage_status(stage) in {'fail', 'error'} for stage in earlier):
+                return 'not_run'
+        return None
+
+    skipped = any(source.get('skip_correctness') is True for source in stage_sources)
+    compile_status = stage_status('compile') or 'unavailable'
+    runtime_status = stage_status('runtime') or 'unavailable'
+    benchmark_status = stage_status('benchmark') or 'unavailable'
+    validation = stage_status('validate')
+    try:
+        evaluator_result = raw or session._read(action_dir / 'result.json')
+    except (integrity.InfrastructureError, OSError):
+        evaluator_result = {}
+    result_runs = evaluator_result.get('runs', []) if isinstance(evaluator_result, dict) else []
+    result_passed = (evaluator_result.get('verdict') == 'PASS' and result_runs
+                     and all(run.get('passed') is True for run in result_runs))
+    if result_passed:
+        compile_status = 'pass' if compile_status == 'unavailable' else compile_status
+        runtime_status = 'pass' if runtime_status == 'unavailable' else runtime_status
+    if skipped:
+        correctness_status = 'not_run'
+    elif validation:
+        correctness_status = validation
+    elif compile_status in {'fail', 'error'} or runtime_status in {'fail', 'error'}:
+        correctness_status = 'not_run'
+    elif result_passed:
+        correctness_status = 'pass'
+    elif validation == 'fail' or evaluator_result.get('verdict') == 'FAIL':
+        correctness_status = 'fail'
+    else:
+        correctness_status = 'unavailable'
+
+    failed_stage = next((event['stage'] for event in reversed(stages)
+                         if event.get('status') == 'failed'), None)
+    if failed_stage is None:
+        failed_stage = next((name for name in ('compile', 'runtime', 'validate', 'benchmark')
+                             if stage_status(name) == 'error'), None)
+    failure_stage = {'validate': 'correctness', 'compute golden': 'oracle',
+                     'generate inputs': 'input_setup'}.get(failed_stage, failed_stage)
+    worker_missing_result = any(not item.get('summary_present') for item in worker_records)
+    if failure_stage is None and worker_missing_result:
+        failure_stage = 'worker'
+    if failure_stage is None and error_code:
+        failure_stage = 'unavailable'
+    runs = raw.get('runs', []) if isinstance(raw, dict) else []
+    measured = (kind in {'evaluate', 'finish'} and correctness_status == 'pass'
+                and raw and raw.get('verdict') == 'PASS'
+                and all(run.get('passed') is True for run in runs))
+    performance = {}
+    flattened_samples = []
+    device_samples = {}
+    measurements = {}
+    device_time = None
+    latency = speedup = None
+    if measured:
+        for run in runs:
+            fixture = run['fixture_id']
+            samples = list(run.get('samples_effective_us', []))
+            performance[fixture] = samples
+            flattened_samples.extend(samples)
+            measurements[fixture] = run.get('measurement_config')
+            samples = run.get('samples_device_us', [])
+            device_samples[fixture] = list(samples)
+        aggregate = common.fixture_aggregate(runs)
+        latency, speedup = aggregate['latency_us'], aggregate['speedup']
+        device_values = [value for samples in device_samples.values() for value in samples
+                         if _positive(value)]
+        device_time = sum(device_values) if device_values else None
+
+    artifact_root = str(Path(artifact_index).parent) if artifact_index else None
+    worker_log_paths = []
+    if artifact_root and worker_diagnostics.is_dir():
+        worker_log_paths = [str(Path(artifact_root) / path.relative_to(action_dir))
+                            for path in sorted(worker_diagnostics.glob('*/*.log'))]
+    runtime_dispatch_entries = None
+    if execution:
+        runtime_dispatch_entries = sum(event.get('stage') == 'runtime_dispatch_entered'
+                                        for event in execution.get('events', []))
+    if kind == 'profile':
+        benchmark_status = 'not_run'
+    elif measured:
+        benchmark_status = 'pass'
+    elif benchmark_status == 'pass' and not flattened_samples:
+        benchmark_status = 'unavailable'
+    elif benchmark_status == 'not_run' and result_passed:
+        benchmark_status = 'unavailable'
+    return {
+        'compile_status': compile_status,
+        'runtime_status': runtime_status,
+        'correctness_status': correctness_status,
+        'failure_stage': failure_stage,
+        'worker_status': ('missing_result' if worker_missing_result else
+                          'result_written' if worker_records else 'unavailable'),
+        'worker_exit_codes': [item.get('exit_code') for item in worker_records],
+        'worker_log_paths': worker_log_paths,
+        'bench_status': benchmark_status,
+        'diagnostic_path': artifact_root,
+        'latency_samples': flattened_samples,
+        'latency_samples_by_fixture': performance,
+        'latency_us': latency,
+        'speedup': speedup,
+        'measurement_config': measurements,
+        'device_latency_samples_us': device_samples,
+        'bench_sampled_device_time_us': device_time,
+        'runtime_dispatch_entries': runtime_dispatch_entries,
+        'bench_sampled_rounds': sum(len(samples) for samples in device_samples.values()) or None,
+        'profile_artifacts_path': artifact_root if kind == 'profile' else None,
+        'effective_compile_options': raw.get('effective_tuning') if isinstance(raw, dict) else None,
+        'agent_session_path': 'agent/session.json',
+        'agent_dispatch_id': os.environ.get('PTOBENCH_AGENT_DISPATCH_ID'),
+        'agent_parent_tool_call_id': os.environ.get('PTOBENCH_AGENT_PARENT_TOOL_CALL_ID'),
+        'agent_parent_tool_call_id_status': ('available' if os.environ.get('PTOBENCH_AGENT_PARENT_TOOL_CALL_ID')
+                                             else 'unavailable'),
+    }
+
+
 def validate_result(path, record, frozen, kind, internal_mode, exit_code):
     value = session._read(path)
     try:
@@ -479,39 +676,57 @@ def validate_result(path, record, frozen, kind, internal_mode, exit_code):
             or value.get('official_score') is not (kind == 'evaluate')
             or value.get('diagnostic_only') is not (kind != 'evaluate')
             or value.get('verdict') not in {'PASS', 'FAIL'}
-            or not isinstance(value.get('runs'), list) or len(value['runs']) != 1):
+            or not isinstance(value.get('runs'), list) or not value['runs']):
         raise session.SessionError('invalid Evaluator result identity/schema', 'action_failed')
-    run = value['runs'][0]
-    if not isinstance(run, dict) or run.get('fixture_id') != 'fixture_000' or type(run.get('passed')) is not bool:
-        raise session.SessionError('invalid fixture result', 'action_failed')
-    passed = value['verdict'] == 'PASS' and run['passed'] and exit_code == 0
+    declared = common.declared_fixture_ids(session._read(Path(record['case_dir']) / 'case.json'))
+    runs = value['runs']
+    if (any(not isinstance(run, dict) or type(run.get('passed')) is not bool for run in runs)
+            or len(runs) != len(declared) or {run.get('fixture_id') for run in runs} != set(declared)):
+        raise session.SessionError('invalid or incomplete fixture result set', 'action_failed')
+    passed = value['verdict'] == 'PASS' and all(run['passed'] for run in runs) and exit_code == 0
     if not passed:
         raise session.SessionError('Evaluator/correctness failed', 'action_failed')
     diagnostic_only = kind == 'profile' and record['optimizer']['backend'] != 'maintenance'
-    latency = run.get('median_effective_us')
-    if kind == 'evaluate' and (not _positive(latency) or not _positive(run.get('speedup'))):
-        raise session.SessionError('clean result requires finite positive latency and speedup', 'action_failed')
+    for run in runs:
+        expected = common.fixture_input_identity(Path(record['sealed_dir'])/'fixtures'/run['fixture_id'])
+        if run.get('input_identity_sha256') != expected:
+            raise session.SessionError('fixture input identity does not match sealed inputs', 'action_failed')
+        if kind == 'evaluate':
+            if not _positive(run.get('median_effective_us')) or not _positive(run.get('speedup')):
+                raise session.SessionError('clean result requires finite positive latency and speedup', 'action_failed')
+            samples = run.get('samples_effective_us')
+            raw_samples = run.get('raw_samples_effective_us')
+            config = run.get('measurement_config')
+            if (not isinstance(samples, list) or not samples or not all(_positive(sample) for sample in samples)
+                    or not isinstance(raw_samples, list) or raw_samples != samples
+                    or not isinstance(config, dict) or config.get('unit') != 'us' or config.get('metric') != 'effective'):
+                raise session.SessionError('clean result must retain original timing samples and settings', 'action_failed')
     if kind == 'evaluate':
-        samples = run.get('samples_effective_us')
-        raw_samples = run.get('raw_samples_effective_us')
-        config = run.get('measurement_config')
-        if (not isinstance(samples, list) or not samples or not all(_positive(sample) for sample in samples)
-                or not isinstance(raw_samples, list) or not raw_samples
-                or not isinstance(config, dict) or config.get('unit') != 'us' or config.get('metric') != 'effective'):
-            raise session.SessionError('clean result must retain original timing samples and settings', 'action_failed')
+        aggregate = common.fixture_aggregate(runs)
+        latency, metric = aggregate['latency_us'], aggregate['metric_name']
+    else:
+        # Maintenance diagnostic selection is meaningful only for one fixture;
+        # diagnostic timing is never pooled into a multi-input performance score.
+        latency = runs[0].get('median_effective_us') if len(runs) == 1 else None
+        metric = 'median_effective_us'
     latency = float(latency) if not diagnostic_only and _positive(latency) else None
     observation = {'kind': kind, 'mode': None if kind == 'evaluate' else next(k for k, v in session.PUBLIC_MODES.items() if v == internal_mode),
                    'latency_us': latency,
-                   'metric_name': 'median_effective_us' if latency is not None else None,
+                   'metric_name': metric if latency is not None else None,
                    'unit': 'us' if latency is not None else None}
     if not diagnostic_only:
         observation['correctness'] = 'PASS'
+    if len(runs) > 1:
+        observation.update(fixture_count=len(runs),
+            fixture_metrics=[{'fixture_id':r['fixture_id'], 'latency_us':r.get('median_effective_us')
+                              if kind == 'evaluate' else None} for r in runs], end_to_end=False)
     return value, observation
 
 
-def _publish_diagnostics(original, frozen, internal_mode, action_result, raw_result):
+def _publish_diagnostics(original, frozen, internal_mode, action_result, raw_result, *, root, artifact_index):
     """Replace complete output sets, removing links themselves without following."""
-    source = frozen / '.benchmark_outputs' / internal_mode
+    saved = action_records.verified_archive(root, artifact_index, event_seq=action_result.event_seq)
+    source = saved / '.benchmark_outputs' / internal_mode
     parent = original / '.benchmark_outputs'
     with file_tree.open_parent(parent) as (fd, name):
         try:
@@ -521,6 +736,24 @@ def _publish_diagnostics(original, frozen, internal_mode, action_result, raw_res
         if mode is not None and not stat.S_ISDIR(mode):
             file_tree.remove_at(fd, name)
     with file_tree.open_directory(parent, create=True) as fd:
+        previous = parent / internal_mode
+        previous_entries = file_tree.scan_tree(previous, excluded_names=frozenset())
+        if previous_entries.get('', {}).get('kind') == 'directory':
+            receipt = session._read(previous / 'capture_receipt.json')
+            if (not isinstance(receipt, dict) or receipt.get('mode') != internal_mode
+                    or not isinstance(receipt.get('artifact_index'), str)
+                    or type(receipt.get('event_seq')) is not int):
+                raise integrity.InfrastructureError('previous capture mode mismatch; originals retained')
+            old = action_records.verified_archive(root, receipt['artifact_index'], event_seq=receipt['event_seq'])
+            old_entries = file_tree.scan_tree(old / '.benchmark_outputs' / internal_mode, excluded_names=frozenset())
+            # Ignore only the public publication metadata, never trace content.
+            metadata = {'latest_result.json', 'latest_session_result.json', 'capture_receipt.json'}
+            def content(entries):
+                return {p: {k: v for k, v in e.items() if k != 'mode'}
+                        for p, e in entries.items() if p not in metadata}
+            old_content = content(old_entries)
+            if {p: e for p, e in content(previous_entries).items() if p in old_content} != old_content:
+                raise integrity.InfrastructureError('previous capture differs from saved originals; retained')
         temporary = parent / f'.{internal_mode}.publish_{uuid.uuid4().hex}'
         with file_tree.open_directory(temporary, create=True):
             pass
@@ -533,7 +766,13 @@ def _publish_diagnostics(original, frozen, internal_mode, action_result, raw_res
                     except FileNotFoundError:
                         pass
                     else:
-                        workspace.copy_candidate_tree(source, temporary)
+                        workspace.copy_tree(source, temporary)
+                        prefix = '.benchmark_outputs/' + internal_mode + '/'
+                        for item in session._read(saved / 'index.json')['files']:
+                            if item['kind'] == 'file' and item['path'].startswith(prefix):
+                                # Publication retains original toolchain modes;
+                                # the durable archive itself stays readonly.
+                                os.chmod(temporary / item['path'][len(prefix):], item['mode'])
             except FileNotFoundError:
                 pass
             if raw_result is None:
@@ -545,6 +784,9 @@ def _publish_diagnostics(original, frozen, internal_mode, action_result, raw_res
             file_tree.atomic_bytes(temporary / 'latest_session_result.json', session._bytes(action_result.to_dict()))
             if raw_result is not None:
                 file_tree.atomic_bytes(temporary / 'latest_result.json', session._bytes(raw_result))
+            file_tree.atomic_bytes(temporary / 'capture_receipt.json', session._bytes({
+                'schema_version': 1, 'event_seq': action_result.event_seq,
+                'mode': internal_mode, 'artifact_index': artifact_index}))
             file_tree.remove_at(fd, internal_mode)
             os.rename(temporary.name, internal_mode, src_dir_fd=fd, dst_dir_fd=fd)
             os.fsync(fd)
@@ -564,6 +806,7 @@ def reject_request(session_root, action, error, *, path=None, mode=None):
                      error_code=code, exit_code=EXIT_CODES[code], result={'message': str(error)})
             result = _error_result(error, event['seq'], path, _remaining(record))
             result.status = 'REJECTED'
+            result.attempt_id = event.get('attempt_id')
             return result
     except (session.SessionError, integrity.InfrastructureError, OSError, ValueError) as failure:
         return _error_result(failure)
@@ -574,7 +817,8 @@ def run_evaluate(session_root, workspace_path):
 
 
 def run_profile(session_root, workspace_path, public_mode):
-    return _run_action(session_root, workspace_path, 'profile', public_mode)
+    result = _run_action(session_root, workspace_path, 'profile', public_mode)
+    return result
 
 
 def _run_action(session_root, workspace_path, kind, mode):
@@ -586,10 +830,12 @@ def _run_action(session_root, workspace_path, kind, mode):
             accepted = False
             frozen = None
             repaired = []
+            observed_mode_changes = []
             record = None
             try:
                 repairs = _repair_for_action(root)
                 repaired += repairs.restored_paths
+                observed_mode_changes += repairs.blocked_paths
                 _recover_unmarked_action(root)
                 record = session.read_session(root)
                 session._open_exploration(record)
@@ -601,8 +847,12 @@ def _run_action(session_root, workspace_path, kind, mode):
                 with file_tree.open_directory(action_dir, create=True):
                     pass
                 frozen = action_dir / 'workspace'
-                manifest = workspace.copy_candidate_tree(original, frozen)
+                manifest = workspace.copy_candidate_tree(original, frozen / 'candidate')
                 case = session._read(Path(record['case_dir']) / 'case.json')
+                try:
+                    compile_config = common.read_tuning(frozen, case)
+                except ValueError as error:
+                    raise session.SessionError(str(error)) from error
                 workspace.write_context(Path(record['case_dir']), Path(record['sealed_dir']), case, frozen,
                                         parent_workspace=original, **session.context_options(record))
                 integrity.register_roots(root / 'protection', {
@@ -613,14 +863,18 @@ def _run_action(session_root, workspace_path, kind, mode):
                 with session._session_lock(root):
                     session._load_locked(root)
                     integrity.commit_records(root / 'protection', {f'action_source_{seq}': session._bytes(manifest)})
-                session.reserve_action(root, seq, kind, workspace_path=original, mode=mode, source_manifest=manifest)
+                session.reserve_action(root, seq, kind, workspace_path=original, mode=mode,
+                                       source_manifest=manifest,
+                                       observed_mode_changes=observed_mode_changes,
+                                       compile_config=compile_config)
                 accepted = True
             except (session.SessionError, workspace.InvalidWorkspaceError) as error:
                 event = session.record_nonhardware_event(root, kind, mode=mode,
                          error_code=error.error_code, exit_code=EXIT_CODES[error.error_code], repaired_paths=repaired,
-                         result={'message': str(error)})
+                         observed_mode_changes=observed_mode_changes, result={'message': str(error)})
                 result = _error_result(error, event['seq'], workspace_path, _remaining(session.read_session(root)))
                 result.status = 'REJECTED'
+                result.attempt_id = event.get('attempt_id')
                 return result
             internal_mode = 'clean' if kind == 'evaluate' else session.PUBLIC_MODES[mode]
             argv = [sys.executable, str(common.BENCHMARK_ROOT / 'evaluator/evaluate.py'),
@@ -634,6 +888,8 @@ def _run_action(session_root, workspace_path, kind, mode):
             environment = os.environ.copy()
             environment.pop('PYPTO_BENCH_ENV', None)
             environment.pop('PYPTO_BENCH_PROFILE', None)
+            environment.pop('PTOBENCH_INCORE_KERNEL', None)
+            environment.pop('PTOBENCH_INCORE_INPUTS', None)
             raw = None
             observation = None
             error_code = None
@@ -661,8 +917,9 @@ def _run_action(session_root, workspace_path, kind, mode):
                 # The execution helper has stopped every owned process before
                 # returning/raising. Always inspect before repairing evidence.
                 if not unsafe_stop:
-                    intact, changes = _postcheck_action(root, frozen, manifest)
+                    intact, changes, observed_changes = _postcheck_action(root, frozen, manifest)
                     repaired += changes
+                    observed_mode_changes += observed_changes
                     if not intact and error_code != 'interrupted':
                         error_code = 'integrity_failed'
                         message = 'protected content or frozen source changed during execution'
@@ -671,7 +928,8 @@ def _run_action(session_root, workspace_path, kind, mode):
                 session.close_exploration(root, 'interrupted')
             if error_code is None:
                 try:
-                    raw, observation = validate_result(action_dir / 'result.json', record, frozen, kind, internal_mode, evaluator_exit)
+                    raw, observation = validate_result(action_dir / 'result.json', record, frozen, kind, internal_mode,
+                                                       evaluator_exit)
                 except (session.SessionError, integrity.InfrastructureError, OSError, ValueError) as error:
                     error_code, message = 'action_failed', str(error)
             snapshot_id = None
@@ -688,15 +946,18 @@ def _run_action(session_root, workspace_path, kind, mode):
                     session._load_locked(root)
                     integrity.commit_records(root / 'protection', {f'action_result_{seq}': original_result})
             artifact_index = action_records.archive(root, seq, action_dir)
+            attempt_metadata = _attempt_metadata(action_dir, kind, error_code, observation, raw, artifact_index)
             if error_code is None and observation.get('correctness') == 'PASS':
                 snapshot_id = snapshots.create_snapshot(root, frozen, {
                     'seq': seq, 'workspace': str(original), 'content_sha256': manifest['content_sha256'],
                     'exit_code': evaluator_exit, 'correctness': 'PASS', 'integrity_passed': intact,
                     'observation': observation,
                 })
-            session.complete_action(root, seq, exit_code=evaluator_exit, error_code=error_code,
+            event = session.complete_action(root, seq, exit_code=evaluator_exit, error_code=error_code,
                     integrity_passed=intact, result=raw, repaired_paths=repaired, snapshot_id=snapshot_id,
-                    action_started=started, observation=observation, artifact_index=artifact_index)
+                    action_started=started, observation=observation,
+                    observed_mode_changes=observed_mode_changes, artifact_index=artifact_index,
+                    attempt_metadata=attempt_metadata)
             _clear_marker()
             current = session.read_session(root)
             result = ActionResult('PASS' if error_code is None else 'FAIL', error_code, EXIT_CODES[error_code], seq,
@@ -705,10 +966,11 @@ def _run_action(session_root, workspace_path, kind, mode):
                                   _remaining(current), message)
             result._omit_correctness = kind == 'profile' and record['optimizer']['backend'] != 'maintenance'
             result.integrity_passed = intact
+            result.attempt_id = event.get('attempt_id')
             if error_code == 'infrastructure_error':
                 session.fail_session(root, 'action_infrastructure_failure')
             try:
-                _publish_diagnostics(original, frozen, internal_mode, result, raw)
+                _publish_diagnostics(original, frozen, internal_mode, result, raw, root=root, artifact_index=artifact_index)
             except (OSError, ValueError, integrity.InfrastructureError) as error:
                 # Diagnostic publication cannot change already committed evidence.
                 result.message = f'diagnostics unavailable: {error}'
@@ -731,13 +993,25 @@ def fork_workspace(session_root, parent_path):
         with session.execution_lock():
             recover_global_action()
             record = session.read_session(session_root)
-            _repair_for_action(record['session_root'])
+            repairs = _repair_for_action(record['session_root'])
             _recover_unmarked_action(record['session_root'])
             try:
+                parent_id, parent, _ = session.resolve_workspace(session_root, parent_path)
+                with session._session_lock(Path(record['session_root'])):
+                    _, previous_events = session._load_locked(Path(record['session_root']))
+                parent_attempt_id = next((event.get('attempt_id') for event in reversed(previous_events)
+                    if event.get('workspace') == parent_id and event.get('source_snapshot') is not None
+                    and event.get('attempt_id') is not None), None)
                 name = session.fork_workspace_locked(session_root, parent_path)
                 child = Path(record['session_root']) / 'workspaces' / name
                 event = session.record_nonhardware_event(session_root, 'fork', workspace_id=name,
-                                                        result={'workspace': str(child)})
+                                                        repaired_paths=repairs.restored_paths,
+                                                        observed_mode_changes=repairs.blocked_paths,
+                                                        result={'workspace': str(child),
+                                                                'child_workspace_id': name,
+                                                                'parent_workspace_id': parent_id,
+                                                                'parent_attempt_id': parent_attempt_id,
+                                                                'source_snapshot': str((child / '.benchmark_context' / 'starting_point').relative_to(record['session_root']))})
                 return ActionResult('PASS', None, 0, event['seq'], str(child), remaining_hardware_actions=_remaining(record))
             except (session.SessionError, workspace.InvalidWorkspaceError) as error:
                 event = session.record_nonhardware_event(session_root, 'fork', error_code=error.error_code,

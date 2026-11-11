@@ -1,0 +1,17 @@
+{
+  "card_ids": [
+    "benchmark_effective_us",
+    "chip_swimlane_dependency_artifacts",
+    "incore_pmu_alignment_and_escape",
+    "numerical_debugging_and_validation",
+    "pass_artifacts_and_compiler_diagnostics"
+  ],
+  "id": "validation_pack",
+  "keywords": [
+    "validation",
+    "PyPTO",
+    "source optimization"
+  ],
+  "summary": "PyPTO source-level mechanisms, conditions, and risks for the validation domain.",
+  "title": "Validation source optimization knowledge"
+}

@@ -1,0 +1,17 @@
+{
+  "card_ids": [
+    "jit_program_authoring_and_compile_inspection",
+    "l2_prefetch_and_weight_residency",
+    "loop_forms_carried_state",
+    "programming_model_levels_and_planes",
+    "software_pipeline_and_slots"
+  ],
+  "id": "programming_pack",
+  "keywords": [
+    "programming",
+    "PyPTO",
+    "source optimization"
+  ],
+  "summary": "PyPTO source-level mechanisms, conditions, and risks for the programming domain.",
+  "title": "Programming source optimization knowledge"
+}

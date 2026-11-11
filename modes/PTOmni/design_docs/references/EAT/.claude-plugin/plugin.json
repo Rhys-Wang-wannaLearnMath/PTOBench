@@ -1,0 +1,10 @@
+{
+  "name": "eat",
+  "version": "1.0.0",
+  "description": "EAT (Evolving Agent Teams, NeurIPS'26): a supervisor agent designs, runs and evolves teams of Claude Code agents that optimize a score on your repository.",
+  "author": { "name": "the EAT authors" },
+  "homepage": "https://github.com/caoshiyi/EAT",
+  "repository": "https://github.com/caoshiyi/EAT",
+  "license": "Apache-2.0",
+  "keywords": ["agents", "optimization", "gpu-kernels", "multi-agent"]
+}

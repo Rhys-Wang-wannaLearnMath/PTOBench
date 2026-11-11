@@ -4,5 +4,21 @@
   "case_id": "deepseek_v4.moe_router_pro",
   "ref_output_cache": "ready",
   "cpu_oracle_role": "one_time_ref_certification",
-  "comparator_sha256": "9e5be30eedeb0ca9aa3b166efbf559d2c8fe617e126450683c0909d97841ed95"
+  "timing_policy": {
+    "version": "ptobench-execution-boundary-20261108-v3",
+    "input_upload": "outside_execution_window",
+    "initial_state_restore": "outside_execution_window",
+    "final_validation_readback": "outside_execution_window",
+    "required_execution_communication": "inside_execution_window"
+  },
+  "comparator_sha256": "9e5be30eedeb0ca9aa3b166efbf559d2c8fe617e126450683c0909d97841ed95",
+  "tuning_identity": {
+    "source_sha256": "fa5ac93c845a82e1bf55c029878cc0d43489084d7885d8506c9c15e980ebd951",
+    "case_sha256": "02c9749854c7eca02f64f2b716942b2e05d60d5fb66820874cd9acf8fff697f0",
+    "config_sha256": "e8d770536e2075b1fd03db5e7c94f7205ac16bf495fef9a95cc45a5435158072",
+    "comparator_sha256": "9e5be30eedeb0ca9aa3b166efbf559d2c8fe617e126450683c0909d97841ed95",
+    "environment_sha256": "12769f86e1ac3012fd9dea35d72fe9003bd1c163c81e00531e2fb72e11392bbe",
+    "tuning_policy_sha256": "365a6e7841338607cb27c905bbd6100a49eecbaf47314b88a312e9074d1eb047"
+  },
+  "tuning_evidence": "runs/all_case_boundary_repair_20261108/case_results/deepseek_v4__moe_router_pro.json"
 }

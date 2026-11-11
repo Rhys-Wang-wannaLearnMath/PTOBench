@@ -1,0 +1,1 @@
+{"tasks":[{"task_id":"4294967297","scope":"auto","early_dispatch":false,"kernel_ids":[0,-1,-1],"block_num":1,"args":[]},{"task_id":"4294967298","scope":"auto","early_dispatch":false,"kernel_ids":[1,-1,-1],"block_num":1,"args":[]}],"tensors":[],"edges":[{"pred":"4294967297","succ":"4294967298","arg":0,"source":"creator","flags":["wait"]}]}

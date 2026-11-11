@@ -207,7 +207,7 @@ class BudgetTest(SessionTestBase):
             for kind, mode, path, value, seq in cases:
                 with self.subTest(kind=kind, mode=mode, seq=seq), self.assertRaises(session.SessionError):
                     session.reserve_action(handle.session_root, seq, kind, workspace_path=path, mode=mode, source_manifest=value)
-            rogue = handle.initial_workspace / 'link.py'
+            rogue = handle.initial_workspace / 'candidate/link.py'
             rogue.symlink_to(self.repo / 'outside')
             with self.assertRaises(workspace.InvalidWorkspaceError):
                 session.reserve_action(handle.session_root, 1, 'evaluate', workspace_path=handle.initial_workspace, source_manifest=manifest)
@@ -275,7 +275,7 @@ class BudgetTest(SessionTestBase):
 
     def test_disabled_profile_is_frozen_in_session_and_not_from_metadata(self):
         with mock.patch.object(session.profile_modes, 'enabled_modes', return_value={'runtime': {'description': 'Runtime diagnostics'}}):
-            handle = self.create()
+            handle = self.create(profile_strategy='split')
         with session.execution_lock():
             with self.assertRaises(session.SessionError):
                 self.reserve(handle, 'profile', 'pmu')
@@ -376,7 +376,7 @@ class BudgetTest(SessionTestBase):
                 print(f'S2 completion crash: {point}, used=1, active={record["active_action"] is not None}, events={len(lines)}')
 
     def test_all_public_profiles_charge_once_and_old_modes_never_reserve(self):
-        handle = self.create(budget=3)
+        handle = self.create(budget=3, profile_strategy='split')
         for seq, mode in enumerate(('runtime', 'pmu', 'compiler'), 1):
             with session.execution_lock():
                 self.reserve(handle, 'profile', mode)

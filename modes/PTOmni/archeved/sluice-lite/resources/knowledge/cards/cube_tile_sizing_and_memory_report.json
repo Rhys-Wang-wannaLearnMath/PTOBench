@@ -1,0 +1,60 @@
+{
+  "applicability": [
+    "A cube scope is important to end-to-end time and its M/N/K tile is still a free variable.",
+    "A grouped or MoE GEMM repeatedly restreams the same weight because a typical group spans more rows than one row tile.",
+    "Cube and vector consumers want different output fragments but share one constant.",
+    "The build report shows that one shared fragment is forcing both cube and vector phases to a smaller value."
+  ],
+  "directions": [
+    "Give each matmul its own `M_TILE`, `N_TILE`, and `K_TILE` constants; do not share one global tile across unrelated tasks.",
+    "When N or K hits Mat, reduce K to buy room, reduce simultaneously live weights, or reduce N; when M or N hits Acc, check for compiler sub-tiling and its FIXPIPE cost.",
+    "Widen the innermost K transfer until `K_tile * input_bytes >= 512` on A2/A3, then re-check the Mat footprint.",
+    "When cube and vector fragments conflict, use distinct constants; split the phases through a GM intermediate only when independent tuning is worth the extra traffic."
+  ],
+  "domain": "memory",
+  "effects": [
+    "Larger tiles improve utilization and reduce small MTE transactions but consume L1/L0C and can force sub-tiling or fail to compile.",
+    "Covering a whole MoE group in one row tile avoids weight restreaming but raises the row footprint.",
+    "Decoupling cube and vector fragments exposes independent tuning axes but may be neutral or add GM traffic.",
+    "A shared fragment is simpler and may be sufficient when one consumer is not on the critical path."
+  ],
+  "evidence_status": "documented",
+  "id": "cube_tile_sizing_and_memory_report",
+  "invariants": [
+    "Mat 512 KiB, Acc 128 KiB, Vec compiler-safe 184 KiB within 192 KiB UB, and Left/Right 64 KiB each are local 910B4 capacities, not performance results.",
+    "L0C sub-tiling is not guaranteed for `matmul_acc`, vector or PV left operands, or mixed on-chip consumers; compile the exact candidate program.",
+    "A K-contiguous transfer below the target's cache-line size may still be correct but inefficient.",
+    "Changing the M/N/K fragment changes Mat, Acc, and sometimes Vec; Left/Right are derived underneath it.",
+    "A GM split for independent cube and vector fragments may add traffic or be performance-neutral; confirm end to end.",
+    "Under the default PYPTO planner, read the build memory report. Under PTOAS, address allocation is skipped, so do not rely on address-dependent artifacts and judge the exact compile or run."
+  ],
+  "principle": "Record the full M x N x K, operand and accumulator element sizes, the row tile, N fragment, K fragment, number of live weights and accumulators, whether the weight is K-contiguous (`[N, K]`, often with `b_trans=True`) or N-contiguous (`[K, N]`), pipeline depth, and production row occupancy. Use separate tile constants for unrelated matmuls; one shared constant lets the most constrained task cap every other task and makes a sweep hard to interpret. Cube fragments are constrained mainly by Mat and Acc; vector fragments by Vec and transfer pattern. If one shared fragment forces both tasks to the smaller value, give each its own tile constants. When program structure permits, split the scopes through a GM intermediate so each phase can choose its own fragment, but count the added traffic and confirm the end-to-end result. Under the default planner, the compiler memory report at `build_output/<case>/report/memory_after_AllocateMemoryAddr.txt` is ground truth. `Mat` is L1 operand storage and a hard user-visible constraint. `Acc` is L0C and is often a soft boundary because a plain matmul output can be compiler-subtiled, but each extra output tile adds a FIXPIPE drain and may restream operands. `Vec` is the UB/vector constraint. `Left` and `Right` are compiler-derived L0 staging; do not shrink a DSL tile merely to reduce their percentages. Useful estimates are `Acc bytes ~= M_tile * N_tile * accumulator_bytes * live_accumulators` and `Mat bytes ~= (M_tile + N_tile * live_weights) * K_tile * input_bytes * buffering_factor`; a contiguous weight fragment is `K_tile * input_bytes`. The real allocation includes alignment, padding, liveness, and backend transforms. On A2/A3, an innermost transfer below 512 bytes can move a full cache line while using only part of it; for a K-contiguous weight, keep `K_tile * input_bytes >= 512` when feasible. For grouped or MoE GEMMs, the row tile controls how often a weight is restreamed: cover a typical group in one row tile if Mat and Acc allow. Sweep in rounds: isolate row, N, K, or grouping; combine the best two or three; push the remaining axis until the report or compile failure identifies the wall; stop when a complete round does not improve beyond noise. Use identical seeded inputs and compare one benchmark's mean field with the same warmup and rounds.",
+  "questions": [
+    "The best M/N/K for a concrete production occupancy depends on the exact build report and device run; no local sweep was performed."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Tuning against an unrealistically small test input that does not represent production row occupancy.",
+    "Using one shared tile constant and concluding the most constrained task's limit applies to all matmuls.",
+    "Shrinking a tile to lower `Left`/`Right` percentages rather than reading `Mat`, `Acc`, and `Vec`.",
+    "Treating a formula as proof of optimality; the actual build report and repeated device measurement are authoritative.",
+    "Assuming decoupling cube and vector fragments always improves end-to-end time; the split can cost more than the smaller fragment did."
+  ],
+  "source_features": [
+    "[N, K]",
+    "b_trans=True",
+    "[K, N]",
+    "build_output/<case>/report/memory_after_AllocateMemoryAddr.txt",
+    "Mat",
+    "Acc",
+    "Vec",
+    "Left",
+    "Right",
+    "Acc bytes ~= M_tile * N_tile * accumulator_bytes * live_accumulators",
+    "Mat bytes ~= (M_tile + N_tile * live_weights) * K_tile * input_bytes * buffering_factor",
+    "K_tile * input_bytes"
+  ],
+  "summary": "Choose M, N, and K by ranking shapes, rejecting them against the compiler's Mat/Acc/Vec report, then measuring survivors. Growing N or K increases the L1 weight fragment; growing M or N increases the L0C accumulator; a K-contiguous transfer below the cache-line floor can lose more than a wider N gains.",
+  "title": "Cube Tile Sizing Against Mat, Acc, Vec, and the 512-Byte Line"
+}

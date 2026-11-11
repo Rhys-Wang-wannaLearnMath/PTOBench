@@ -77,6 +77,12 @@ class OutputValidationTest(unittest.TestCase):
 
 
 class AgentProfilePolicyTest(ActionTestBase):
+    def setUp(self):
+        super().setUp()
+        # These tests exercise the legacy per-mode interface explicitly.
+        self.handle = self.create(budget=20, profile_strategy='split')
+        self.env['PTOBENCH_SESSION_ROOT'] = str(self.handle.session_root)
+
     def test_old_sessions_remain_readable_but_cannot_restore_the_old_evaluator(self):
         marker = self.bench / 'evaluator/profile_execution.py'
         current_bytes = marker.read_bytes()
@@ -88,7 +94,7 @@ class AgentProfilePolicyTest(ActionTestBase):
                 else:
                     marker.write_bytes(previous_policy)
                 try:
-                    old = self.create(budget=2, optimizer=backend)
+                    old = self.create(budget=2, optimizer=backend, profile_strategy='split')
                 finally:
                     marker.write_bytes(current_bytes)
                 self.assertEqual(session.read_session(old.session_root)['optimizer']['backend'], backend)
@@ -134,7 +140,7 @@ class AgentProfilePolicyTest(ActionTestBase):
         self.assertEqual(session.read_session(self.handle.session_root)['usage']['hardware_actions'], 3)
 
     def test_maintenance_profiles_keep_original_correctness_and_snapshot_policy(self):
-        self.handle = self.create(budget=4, optimizer='maintenance')
+        self.handle = self.create(budget=4, optimizer='maintenance', profile_strategy='split')
         self.env['PTOBENCH_SESSION_ROOT'] = str(self.handle.session_root)
         for mode in ('runtime', 'pmu', 'compiler'):
             process, result = self.cli(['profile', mode])

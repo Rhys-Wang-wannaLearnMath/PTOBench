@@ -7,6 +7,9 @@ and Candidate result formatting. The Case-local evaluator supplies only the
 TensorSpec/ScalarSpec ABI, official entry, comparator, runner, output capture,
 and CPU-oracle callback extracted from that Case's source.
 
+Public tuning permissions, defaults, inheritance and configuration-only checks
+are defined in [TUNING.md](TUNING.md).
+
 Each Case-local evaluator provides two functions:
 
 ```python
@@ -59,13 +62,18 @@ restore stateful fixture inputs before every launch. State restoration is outsid
 the measured device interval. The internal evaluator's `--measurement-mode`
 selects this policy; Agent CLI users cannot override it.
 
-Optional profiling modes are configured in `profile_modes.py`:
+The participant's `mode.yaml` may select the profiling interface with
+`profile_strategy: split` or `profile_strategy: combined`. The default is
+`combined`, which uses one command:
 
 ```bash
-ptobench profile runtime ./workspace
-ptobench profile pmu ./workspace
-ptobench profile compiler ./workspace
+ptobench profile ./workspace
 ```
+
+This collects Runtime, PMU, and Compiler diagnostics in one CLI action,
+matching `evaluate`'s workspace syntax. Set `profile_strategy: split` to expose
+the three individual commands. Both strategies reuse the same diagnostic
+settings and artifact checks.
 
 Every profiling mode performs exactly one *logical* correctness invocation per
 Fixture. `ptobench profile` does not expose a phase override: profiling checks
@@ -73,13 +81,13 @@ availability and emitted diagnostics, not warmups, measured rounds, or
 performance. On a real device, runtime chip-swimlane collection may implement
 that invocation as separate native dependency-graph and clean-timing passes;
 those passes are diagnostic collection, not additional benchmark rounds. A
-mutating Case must restore its declared initial state before each native pass.
+mutating L3 Case restores its declared initial state between the dependency
+graph pass and the clean-timing pass.
 
-Session creation and fork write only enabled public modes to
-`.benchmark_context/profiling_modes.json` and lists only those modes in the
-generated README. If no mode is enabled, neither the file nor a profiling
-section is generated. Calling a mode absent from the protected Session reports that it
-is not enabled.
+Session creation and fork keep enabled public modes in the protected Session
+record and list the available commands in the generated README. Workspace
+context does not contain a separate Profile-mode manifest. Calling a mode absent
+from the protected Session reports that it is not enabled.
 
 Every Workspace owns its evaluator output:
 
@@ -90,7 +98,8 @@ Every Workspace owns its evaluator output:
 │   └── build_output/
 ├── runtime/
 ├── hardware/
-└── compile/
+├── compile/
+└── combined/
 ```
 
 The evaluator runs with the Workspace as its current directory and sets the

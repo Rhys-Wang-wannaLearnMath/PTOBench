@@ -7,6 +7,7 @@ import shutil
 import signal
 import subprocess
 import sys
+import time
 import unittest
 
 from action_test_support import ActionTestBase, SOURCE_BENCHMARK
@@ -20,16 +21,18 @@ from pathlib import Path
 if '--version' in sys.argv:
     print('fake-cannbot-native 1.0'); sys.exit()
 if '--help' in sys.argv:
-    print('--skip-git-repo-check --dangerously-bypass-approvals-and-sandbox --print --json --model --provider --thinking --mode --session-dir'); sys.exit()
-config=json.loads(Path(os.environ['CANNBOT_CONFIG']).read_text())
-control=json.loads(Path(os.environ['S5_CONTROL']).read_text())
-root=Path(config['run_root'])
-references=json.loads((root/'method/knowledge.json').read_text())
-assert (root/references['snapshot']/'README.md').read_text()
-assert str(root/'method/README.md') in Path(root/'method/dispatches',os.environ['CANNBOT_DISPATCH'],'prompt.txt').read_text()
-dispatch=os.environ['CANNBOT_DISPATCH']
-primary=os.environ['CANNBOT_ALLOW_TASK']=='1'
-backend=config['profile']['backend']
+    print('--skip-git-repo-check --dangerously-bypass-approvals-and-sandbox --print --json --model --provider --thinking --mode --session-dir --test-control-json'); sys.exit()
+backend='pi' if '--extension' in sys.argv else 'codex'
+if backend=='pi':
+    control=json.loads(sys.argv[sys.argv.index('--test-control-json')+1])
+    primary=os.environ['PTOBENCH_CANNBOT_ALLOW_TASK']=='1'
+    assert os.environ.get('PTOBENCH_CANNBOT_SOCKET') == '/ptobench/cannbot.sock', repr(os.environ.get('PTOBENCH_CANNBOT_SOCKET'))
+    system_prompt=Path(sys.argv[sys.argv.index('--append-system-prompt')+1])
+    assert system_prompt.is_file()
+else:
+    config=json.loads(Path(os.environ['CANNBOT_CONFIG']).read_text())
+    control=json.loads(Path(os.environ['S5_CONTROL']).read_text())
+    primary=os.environ['CANNBOT_ALLOW_TASK']=='1'
 identity=str(uuid.uuid4())
 native=None
 if not (control.get('missing_child') and not primary):
@@ -70,20 +73,30 @@ if primary:
         script="""
 import { pathToFileURL } from 'node:url';
 import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 const {default: extension} = await import(pathToFileURL(process.argv[1]).href);
 const registered = new Map();
 extension({registerTool: tool => registered.set(tool.name,tool)});
 const requests=JSON.parse(process.argv[2]);
 const control=JSON.parse(process.argv[3]);
+if (registered.has('Task') !== (process.env.PTOBENCH_CANNBOT_ALLOW_TASK==='1'))
+  throw new Error('CANNBot Task availability does not match the role');
 for (let i=0;i<requests.length;i++) {
  const request=requests[i];
  const controller=new AbortController();
- let interval;
+ let interval, fallback;
  if (control.cancel_child && request.name==='Task' && request.arguments.prompt==='evaluate') {
-   interval=setInterval(()=>{if(existsSync(control.ready)) controller.abort();},30);
+   fallback=setTimeout(()=>controller.abort(),15000);
+   interval=setInterval(()=>{
+     if (existsSync(join(process.cwd(),'candidate','.fake-agent-control.py'))) {
+       clearTimeout(fallback);
+       controller.abort();
+     }
+   },20);
  }
  const value=await registered.get(request.name).execute(String(i+1),request.arguments,controller.signal);
  if (interval) clearInterval(interval);
+ if (fallback) clearTimeout(fallback);
  console.log(JSON.stringify({request,value}));
 }
 """
@@ -119,23 +132,73 @@ for (let i=0;i<requests.length;i++) {
         sys.exit(0)
     reply('Original main answer')
 else:
-    task=Path(root/'method/dispatches'/dispatch/'task.txt').read_text()
-    listed=subprocess.run([config['python'],os.environ['CANNBOT_TOOLS'],'list','--config',os.environ['CANNBOT_CONFIG'],'--dispatch',dispatch],capture_output=True,text=True,check=True)
-    assert 'Task' not in [tool['name'] for tool in json.loads(listed.stdout)]
+    workspace=Path.cwd()
+    candidate=workspace/'candidate'
+    assert candidate.is_dir(), 'Candidate workspace link is unavailable in the Agent sandbox'
+    probe=candidate/'.sandbox-write-probe.py'
+    probe.write_text('pass\n')
+    probe.unlink()
+    if os.environ.get('PTOBENCH_SANDBOX') == '1':
+        try:
+            (workspace/'.sandbox-root-write-probe').write_text('must fail\n')
+        except OSError:
+            pass
+        else:
+            raise AssertionError('Agent workspace root is writable')
+        for name in ('candidate', '.benchmark_context', '.benchmark_outputs'):
+            path = workspace/name
+            moved = workspace/(name + '.replacement-probe')
+            try:
+                path.rename(moved)
+            except OSError:
+                continue
+            moved.rename(path)
+            raise AssertionError('Agent replaced protected workspace entry: '+name)
+        tuning = candidate/'tuning.json'
+        tuning_contents = tuning.read_text()
+        tuning.write_text(tuning_contents)
+    if backend=='pi':
+        task='profiles' if sys.argv[-1].strip().endswith('profiles') else 'evaluate'
+    else:
+        task=Path(config['run_root'],'method/dispatches',os.environ['CANNBOT_DISPATCH'],'task.txt').read_text()
+        listed=subprocess.run([config['python'],os.environ['CANNBOT_TOOLS'],'list','--config',os.environ['CANNBOT_CONFIG'],'--dispatch',os.environ['CANNBOT_DISPATCH']],capture_output=True,text=True,check=True)
+        assert 'Task' not in [tool['name'] for tool in json.loads(listed.stdout)]
     if task=='evaluate':
-        (Path.cwd()/'helper.py').write_text('VALUE = 42\n')
+        (Path.cwd()/'candidate/helper.py').write_text('VALUE = 42\n')
         cli(['evaluate'])
+        if os.environ.get('PTOBENCH_SANDBOX') == '1':
+            result = Path.cwd()/'.benchmark_outputs/clean/latest_session_result.json'
+            assert result.is_file(), 'Broker feedback did not appear in the live Agent sandbox'
+            result_contents = result.read_text()
+            for action in (lambda: result.write_text('{}\n'), lambda: result.unlink(),
+                           lambda: result.rename(result.with_name('replacement.json'))):
+                try:
+                    action()
+                except OSError:
+                    continue
+                raise AssertionError('Agent modified read-only result feedback')
+            assert result.read_text() == result_contents
         if control.get('hang_child') or control.get('budget_child') or control.get('cancel_child'):
             if control.get('cancel_child'):
-                worker=subprocess.Popen([sys.executable,'-c','import signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); time.sleep(60)'])
-                Path(control['worker_pid']).write_text(str(worker.pid))
-            Path(control['ready']).write_text('ready')
-            Path(control['child_pid']).write_text(str(os.getpid()))
+                if backend == 'pi':
+                    heartbeat=native.with_suffix('.worker-heartbeat')
+                    ready=Path.cwd()/'candidate/.fake-agent-control.py'
+                    worker_code=('import pathlib,signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); '
+                        'p=pathlib.Path('+repr(str(heartbeat))+'); p.write_text("started"); '
+                        'pathlib.Path('+repr(str(ready))+').write_text("ready"); '
+                        '\nwhile True: p.write_text(str(time.monotonic())); time.sleep(.05)')
+                    worker=subprocess.Popen([sys.executable,'-c',worker_code])
+                else:
+                    worker=subprocess.Popen([sys.executable,'-c','import signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); time.sleep(60)'])
+                    Path(control['worker_pid']).write_text(str(worker.pid))
+            if backend != 'pi':
+                Path(control['ready']).write_text('ready')
+                Path(control['child_pid']).write_text(str(os.getpid()))
             while True: time.sleep(.02)
         if control.get('fail_child'): reply('Original failed stage answer',7)
         reply('Original evaluate stage answer')
     if task=='profiles':
-        for mode in ('runtime','pmu','compiler'): cli(['profile',mode])
+        cli(['profile'])
         reply('Original profile stage answer')
     reply('Unknown test Task',3)
 '''
@@ -150,7 +213,7 @@ class CANNBotTests(ActionTestBase):
 
     def setUp(self):
         super().setUp()
-        self.python = str(Path(sys.executable).absolute())
+        self.python = os.path.abspath(sys.executable)
         shutil.rmtree(self.bench / 'launcher')
         shutil.copytree(SOURCE_BENCHMARK / 'launcher', self.bench / 'launcher', ignore=shutil.ignore_patterns('__pycache__'))
         shutil.copyfile(SOURCE_BENCHMARK / 'pto-launcher', self.bench / 'pto-launcher')
@@ -168,7 +231,19 @@ class CANNBotTests(ActionTestBase):
         self.node = shutil.which('node')
 
     def cannbot_config(self, backend='codex', budget=6, **options):
+        import yaml
         self.launcher_config(backend, budget, experiment_mode='cannbot', node=self.node, **options)
+        if backend == 'pi':
+            self.env['PTOBENCH_SANDBOX'] = '1'
+            control = json.loads(self.launcher_control.read_text())
+            for key in ('seen', 'ready', 'go', 'child_pid', 'worker_pid'):
+                control.pop(key, None)
+            profile_path = self.bench / 'modes/_shared/profiles/pi/default.yaml'
+            profile = yaml.safe_load(profile_path.read_text())
+            control = json.dumps(control, separators=(',', ':'))
+            position = profile['argv'].index('{prompt}')
+            profile['argv'][position:position] = ['--test-control-json', control]
+            profile_path.write_text(yaml.safe_dump(profile))
 
     def dispatches(self, root):
         return [json.loads(path.read_text()) for path in (root / 'method/dispatches').glob('*/dispatch.json')]
@@ -185,22 +260,21 @@ class CANNBotTests(ActionTestBase):
         self.cannbot_config(backend)
         process, value = self.launch()
         self.assertEqual(process.returncode, 0, (value, process.stderr.decode()))
-        root, _ = self.assert_final(value, 4)
+        root, _ = self.assert_final(value, 2)
         self.assertEqual(session.read_session(root)['mode']['id'], 'cannbot')
         lock = json.loads((root / 'method/upstream.json').read_text())
         for relative, digest in lock['files'].items():
             self.assertEqual(hashlib.sha256((root / 'method/resources/upstream' / relative).read_bytes()).hexdigest(), digest)
         self.assertNotIn('First run ptobench evaluate', (root / 'prompt.txt').read_text())
-        references=json.loads((root/'method/knowledge.json').read_text())
-        knowledge_root=root/references['snapshot']
-        self.assertEqual(references['content_sha256'], json.loads(
-            (self.bench/'modes/cannbot/knowledge/knowledge.lock.json').read_text())['content_sha256'])
-        self.assertEqual(knowledge_root.stat().st_mode & 0o222, 0)
         protection=json.loads((root/'protection/manifest.json').read_text())
-        self.assertIn('raw_wiki/README.md', protection['roots']['participant_cannbot_resources']['entries'])
+        self.assertNotIn('raw_wiki', protection['roots']['participant_cannbot_resources']['entries'])
+        self.assertFalse((root/'method/knowledge.json').exists())
+        self.assertFalse((root/'method/README.md').exists())
+        self.assertFalse((root/'method/resources/raw_wiki').exists())
         states = self.dispatches(root)
         self.assertEqual(len(states), 3)
         parent = next(state for state in states if state['parent_dispatch_id'] is None)
+        dispatch_by_id = {state['id']: state for state in states}
         for state in states:
             self.assertEqual(state['status'], 'completed')
             self.assertEqual(state['session_root'], str(root))
@@ -210,13 +284,28 @@ class CANNBotTests(ActionTestBase):
             self.assertTrue((root / 'method/dispatches' / state['id'] / 'system.md').read_text().startswith(original))
             prompt=(root/'method/dispatches'/state['id']/'prompt.txt').read_text()
             self.assertIn('.benchmark_context/README.md', prompt)
-            self.assertIn(str(root/'method/README.md'), prompt)
+            self.assertIn('.benchmark_context/tuning_capabilities.json', prompt)
+            self.assertIn('complete defaults vary by Case', prompt)
+            self.assertIn('PYPTO + false', prompt)
+            self.assertIn('ptobench evaluate .', prompt)
+            self.assertNotIn(str(root/'method/README.md'), prompt)
             self.assertNotIn('5 + 10', prompt)
             if state is not parent:
                 self.assertEqual(state['parent_dispatch_id'], parent['id'])
                 self.assertIsNotNone(state['tool_call_id'])
                 self.assertIn((root / 'method/dispatches' / state['id'] / 'task.txt').read_text(), ('evaluate', 'profiles'))
             self.assertIsNone(session.process_identity(state['process']['pid']))
+        events = [json.loads(line) for line in (root / 'events.jsonl').read_text().splitlines()]
+        linked = [event for event in events if event['action'] in {'evaluate', 'profile'}]
+        self.assertTrue(linked)
+        for event in linked:
+            dispatch = dispatch_by_id[event['agent_dispatch_id']]
+            self.assertEqual(dispatch['session_root'], str(root))
+            if dispatch['tool_call_id'] is None:
+                self.assertEqual(event['agent_parent_tool_call_id_status'], 'unavailable')
+            else:
+                self.assertEqual(event['agent_parent_tool_call_id'], dispatch['tool_call_id'])
+                self.assertEqual(event['agent_parent_tool_call_id_status'], 'available')
         archive = json.loads((root / 'agent/session.json').read_text())
         self.assertEqual(archive['status'], 'recorded')
         self.assertEqual(len(set(archive['native_session_ids'])), 3)
@@ -227,9 +316,13 @@ class CANNBotTests(ActionTestBase):
         self.assertIn('Original evaluate stage answer', logs)
         self.assertIn('Original profile stage answer', logs)
         self.assertEqual(json.loads((root / 'method/work/todos.json').read_text())[0]['content'], 'opaque upstream todo')
-        calls = [json.loads(line) for line in self.counter.read_text().splitlines()]
-        # One requested evaluation + three profiles + common final; no extra baseline.
-        self.assertEqual([call['profile_mode'] for call in calls], ['clean', 'runtime', 'hardware', 'compile', 'clean'])
+        # Isolated CLI children intentionally receive a scrubbed environment;
+        # assert the public event records instead of relying on the test-only
+        # S3_COUNTER variable being forwarded into that boundary.
+        measured = [(event['action'], event['result'].get('profiling_mode'))
+                    for event in events
+                    if event['action'] in {'evaluate', 'profile', 'finish'}]
+        self.assertEqual(measured, [('evaluate', 'clean'), ('profile', 'combined'), ('finish', 'clean')])
         self.assertEqual(len(list((root / 'method/tools').glob('*/input.json'))), 5)
         self.assertEqual(len(list((root / 'method/tools').glob('*/result.json'))), 5)
 
@@ -237,7 +330,8 @@ class CANNBotTests(ActionTestBase):
         self.cannbot_config(fork_child=True)
         process, value = self.launch()
         self.assertEqual(process.returncode, 0, (value, process.stderr.decode()))
-        root, _ = self.assert_final(value, 4)
+        root, _ = self.assert_final(value, 2)
+        self.assertIn('candidate/tuning.json', (root / 'prompt.txt').read_text())
         states = self.dispatches(root)
         self.assertEqual(len({state['workspace'] for state in states}), 2)
         self.assertEqual({state['session_root'] for state in states}, {str(root)})
@@ -246,7 +340,7 @@ class CANNBotTests(ActionTestBase):
         self.cannbot_config(fail_child=True)
         process, value = self.launch()
         self.assertEqual(process.returncode, 0, (value, process.stderr.decode()))
-        root, _ = self.assert_final(value, 4)
+        root, _ = self.assert_final(value, 2)
         failed = next(state for state in self.dispatches(root) if state['status'] == 'failed')
         result = json.loads((root / 'method/dispatches' / failed['id'] / 'result.json').read_text())
         self.assertEqual(result['answer'], 'Original failed stage answer')
@@ -260,7 +354,7 @@ class CANNBotTests(ActionTestBase):
         self.cannbot_config(missing_child=True)
         process, value = self.launch()
         self.assertNotEqual(process.returncode, 0, value)
-        root, _ = self.assert_final(value, 4)
+        root, _ = self.assert_final(value, 2)
         self.assertEqual(json.loads((root / 'agent/session.json').read_text())['status'], 'missing')
         self.assertEqual(value['error_code'], 'recording_incomplete')
 
@@ -271,7 +365,7 @@ class CANNBotTests(ActionTestBase):
         self.assertEqual(process.returncode, 0, value)
         self.assertEqual(value['optimizer_exit_code'], 1)
         self.assertEqual(value['close_reason'], 'optimizer_nonzero_exit')
-        root, _ = self.assert_final(value, 4)
+        root, _ = self.assert_final(value, 2)
         main = next(state for state in self.dispatches(root) if state['parent_dispatch_id'] is None)
         result = json.loads((root / 'method/dispatches' / main['id'] / 'result.json').read_text())
         self.assertEqual(result['exit_code'], 0)
@@ -315,13 +409,24 @@ class CANNBotTests(ActionTestBase):
                 self.cannbot_config(backend, cancel_child=True, child_pid=str(child), worker_pid=str(worker))
                 process, value = self.launch()
                 self.assertEqual(process.returncode, 0, (value, process.stderr.decode()))
-                root, _ = self.assert_final(value, 4)
+                root, _ = self.assert_final(value, 2)
                 cancelled = next(state for state in self.dispatches(root) if state['status'] == 'cancelled')
+                if backend == 'pi':
+                    heartbeat, = (root / 'method/dispatches' / cancelled['id'] / 'agent/native').glob(
+                        '*.worker-heartbeat')
+                    last_value, last_update = heartbeat.read_text(), heartbeat.stat().st_mtime_ns
+                    time.sleep(.15)
+                    self.assertEqual(heartbeat.read_text(), last_value)
+                    self.assertEqual(heartbeat.stat().st_mtime_ns, last_update)
+                else:
+                    child_pid, worker_pid = int(child.read_text()), int(worker.read_text())
                 result = json.loads((root / 'method/dispatches' / cancelled['id'] / 'result.json').read_text())
                 self.assertTrue(result['cancelled'])
                 self.assertTrue(result['is_error'])
-                self.assertIsNone(session.process_identity(int(child.read_text())))
-                self.assertIsNone(session.process_identity(int(worker.read_text())))
+                self.assertIsNone(session.process_identity(cancelled['process']['pid']))
+                if backend == 'codex':
+                    self.assertIsNone(session.process_identity(child_pid))
+                    self.assertIsNone(session.process_identity(worker_pid))
                 self.assertEqual(len(self.dispatches(root)), 3)
 
 

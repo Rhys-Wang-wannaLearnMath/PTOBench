@@ -22,31 +22,57 @@ SPEC.loader.exec_module(evaluate)
 class MeasurementPolicyTest(unittest.TestCase):
     def test_exploration_and_formal_settings_reach_runtime_and_raw_records(self):
         import common
+        import timing_policy
         import workflow
+        import numpy as np
 
         profile = {"platform": "a2a3", "device": 0,
                    "benchmark": {"warmup": 5, "rounds": 10}}
-        for mode, case_settings, expected in (
-            ("exploration", {"warmup": 9, "rounds": 20}, (2, 3)),
-            (None, None, (5, 10)),
-            ("formal", {"warmup": 6, "rounds": 12}, (6, 12)),
+        for mode, case_settings, expected, compile_failure in (
+            ("exploration", {"warmup": 9, "rounds": 20}, (2, 3), False),
+            (None, None, (5, 10), False),
+            ("formal", {"warmup": 6, "rounds": 12}, (6, 12), False),
+            (None, None, (5, 10), True),
         ):
-            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as temporary:
+            with self.subTest(mode=mode, compile_failure=compile_failure), tempfile.TemporaryDirectory() as temporary:
                 root = Path(temporary)
                 candidate = root / "candidate"
                 candidate.mkdir()
                 sealed = root / "sealed"
                 sealed.mkdir()
+                inputs = sealed / 'fixtures/fixture_000/in'
+                inputs.mkdir(parents=True)
+                np.save(inputs / 'input.npy', np.array([1.0, 2.0], dtype=np.float32))
                 case = {"case_id": "test.case", "workspace": "candidate",
                         "fixture_ids": ["fixture_000"]}
                 if case_settings is not None:
                     case["benchmark"] = case_settings
+                runtime = SimpleNamespace(platform='cpu')
+                expected_policy = timing_policy.policy(case)
+                reference_spec = SimpleNamespace(
+                    name="output", shape=[1], dtype="torch.float32",
+                    resident=None, direction="out",
+                )
+                contract = timing_policy.execution_contract(
+                    case, [reference_spec], runtime, common.fixture_input_identity(inputs.parent),
+                )
                 common.write_json(sealed / "certification.json", {
-                    "status": "ready", "comparator_sha256": "test-comparator"})
-                common.write_json(sealed / "ref_performance.json", {"fixtures": {
-                    "fixture_000": {"median_effective_us": 20.0, "mean_effective_us": 20.0}}})
+                    "status": "ready", "comparator_sha256": "test-comparator",
+                    "timing_policy": expected_policy})
+                common.write_json(sealed / "ref_performance.json", {
+                    "timing_policy": expected_policy,
+                    "fixtures": {"fixture_000": {
+                        "execution_contract": contract,
+                        "median_effective_us": 20.0, "mean_effective_us": 20.0,
+                    }},
+                })
 
                 def run(**_kwargs):
+                    if compile_failure:
+                        return SimpleNamespace(passed=False, error="compiler rejected candidate",
+                                               work_dir=None, bench=None)
+                    # The production runner stamps direction from the compiled artifact.
+                    candidate_spec.direction = "out"
                     warmup = int(os.environ["PYPTO_BENCH_WARMUP"])
                     rounds = int(os.environ["PYPTO_BENCH_ROUNDS"])
                     self.assertEqual((warmup, rounds), expected)
@@ -55,11 +81,16 @@ class MeasurementPolicyTest(unittest.TestCase):
                                             per_round=lambda _metric: [10.0 + i for i in range(rounds)])
                     return SimpleNamespace(passed=True, error=None, work_dir=None, bench=bench)
 
+                candidate_spec = SimpleNamespace(
+                    name="output", shape=[1], dtype="torch.float32",
+                    resident=None, direction=None,
+                )
+
                 def adapter(case_dir, assets, runtime_case, workspace, platform, phase):
                     return workflow.evaluate_candidate(
                         case_dir=case_dir, sealed=assets, case=runtime_case,
                         candidate_workspace=workspace, platform=platform, phase=phase,
-                        build_specs=lambda _fixture: [], load_candidate=lambda: None,
+                        build_specs=lambda _fixture: [candidate_spec], load_candidate=lambda: None,
                         make_program=lambda _module, _case: None,
                         make_compare=lambda: None, run=run,
                     )
@@ -77,14 +108,23 @@ class MeasurementPolicyTest(unittest.TestCase):
                             patch.object(common, "resolve_case", return_value=(root, sealed, case)), \
                             patch.object(common, "bootstrap_environment"), \
                             patch.object(common, "_environment_profile", return_value=profile), \
-                            patch.object(common, "environment", return_value=({}, None)), \
+                            patch.object(common, "environment", return_value=({}, runtime)), \
+                            patch.object(workflow.isolation, "enabled", return_value=False), \
                             patch.object(common, "comparator_sha256", return_value="test-comparator"), \
                             patch.object(common, "load_case_evaluator", return_value=SimpleNamespace(evaluate_candidate=adapter)), \
                             patch.object(evaluate.execution_record, "observe_runtime", return_value=contextlib.nullcontext()):
-                        self.assertEqual(evaluate.main(), 0)
+                        self.assertEqual(evaluate.main(), 1 if compile_failure else 0)
                 finally:
                     os.chdir(original_cwd)
                 recorded = common.read_json(result_path)["runs"][0]
+                self.assertEqual(recorded['passed'], not compile_failure)
+                if compile_failure:
+                    self.assertEqual(recorded['error'], "compiler rejected candidate")
+                    self.assertIsNone(recorded['measurement_config']['execution_contract_sha256'])
+                    self.assertEqual(recorded['samples_effective_us'], [])
+                    continue
+                self.assertEqual(recorded['input_identity_sha256'],
+                                 common.fixture_input_identity(inputs.parent))
                 self.assertEqual(
                     common.read_json(result_path)["effective_tuning"],
                     common.TUNING_DEFAULTS,
@@ -114,6 +154,7 @@ class RunIsolationTest(unittest.TestCase):
                     def adapter(*_args):
                         self.assertIsNone(runner._compute_golden())
                         return [{'fixture_id': 'fixture_000', 'passed': passed,
+                                 '_build_dir':str(root/'build'),
                                  'error': '' if passed else 'runtime failed'}]
 
                     argv = ['evaluate.py', '--case', 'test.case', '--candidate', str(candidate),
@@ -126,7 +167,8 @@ class RunIsolationTest(unittest.TestCase):
                                 patch.object(common, 'resolve_case', return_value=(root, root, case)), \
                                 patch.object(common, 'bootstrap_environment'), \
                                 patch.object(common, '_environment_profile', return_value={'platform': 'cpu'}), \
-                                patch.object(common, 'load_case_evaluator', return_value=SimpleNamespace(evaluate_candidate=adapter)):
+                                patch.object(common, 'load_case_evaluator', return_value=SimpleNamespace(evaluate_candidate=adapter)), \
+                                patch('profile_modes.validate_artifacts', return_value={'status':'complete'}):
                             self.assertEqual(evaluate.main(), 0 if passed else 1)
                     finally:
                         os.chdir(original_cwd)

@@ -1,0 +1,56 @@
+{
+  "applicability": [
+    "A required ordering is not visible as a buffer overlap.",
+    "A consumer must wait on a loop's worth of producers or on a producer created inside a manual scope.",
+    "A non-critical sibling is taking a speculative early-dispatch window that a critical-path task needs."
+  ],
+  "directions": [
+    "Capture a producer with `with pl.at(level=pl.Level.CORE_GROUP, name_hint='producer') as first:` and declare the consumer with `deps=[first]`.",
+    "Use `gate = pl.system.task_dummy(deps=[tid_a, tid_b])` to join producers, or `pl.system.task_dummy(deps=[])` as a placeholder when no fused-path producer exists.",
+    "Use `late = pl.system.task_dummy(deps=[rms_tid])` to delay one non-critical consumer by a dispatch hop.",
+    "Hoist `pl.array.create(N, pl.TASK_ID)` outside a manual scope and use `deps=[down_tids[k] for k in range(N)]` for the fan-in if the whole-array form does not produce the expected edges."
+  ],
+  "domain": "scheduling",
+  "effects": [
+    "Explicit edges recover correctness or concurrency that inference cannot see, but each edge adds scheduler bookkeeping and can serialize independent work.",
+    "A dummy join reduces multiple handles to one but adds a dispatch hop.",
+    "A deliberate delay can protect a critical task's early-dispatch window, but it costs one dispatch and is only justified by before/after evidence."
+  ],
+  "evidence_status": "documented",
+  "id": "explicit_edges_taskids_and_task_dummy",
+  "invariants": [
+    "`deps=` entries must be TaskId scalars, arrays, or accepted sentinels; tensor arguments use `no_dep_args`/`pl.no_dep`, not `deps=`.",
+    "A TaskId names one task. For an SPMD fan-out it names the whole launch, so a consumer cannot wait on one logical block.",
+    "`pl.system.task_dummy` is a parser construct and is not callable outside a decorated body.",
+    "A dummy with `deps=[c_tid]` adds a hop after `c`; a dummy with `deps=[]` is ready immediately. Adding the wrong one changes the schedule for a different reason.",
+    "The registered documents conflict on whether non-`as tid` `pl.spmd` forms accept `deps=`; use the `as tid` spelling until locally verified."
+  ],
+  "principle": "A `pl.at` scope can be named with `as tid`; `pl.submit` and `pl.spmd_submit` return a result plus a producer TaskId. `deps=` accepts TaskIds, and a fan-in can be passed as an array of `pl.TASK_ID` created with `pl.array.create(N, TASK_ID)`. When a TaskId array must cross a manual-scope boundary, hoist the array into orchestration scope before the manual region so a later outside consumer can read it. Some models rely on a per-index list of TaskIds rather than passing the whole array; both spellings are documented, and the hoisted-across-scope case is the one where the per-index form is known to work. `pl.system.task_dummy(deps=[...])` is a join with no kernel work: it collapses several producers into one handle. With `deps=[]` it is a ready-on-submit placeholder that satisfies a shared signature. With one real producer plus a hop it deliberately delays a consumer, which is useful when a non-critical sibling resolves at the same instant as a critical one. A dummy has no `allow_early_resolve` parameter and accepts only `deps=`. Explicit edges are ordering, not a lifetime extension in the L3 host path: a host `deps=[producer]` lowers to `add_dep_wait` so the consumer waits without extending the producer's resource lifetime.",
+  "questions": [
+    "Whether a hoisted whole-array `deps=` is normalized to the same edges as the per-index list in every outliner path."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Adding a dummy to the shared producer rather than to the non-critical sibling, delaying both consumers.",
+    "Adding an unflagged dummy to the critical consumer itself, making it structurally ineligible for the window it needed.",
+    "Assuming a whole-array `deps=` works identically to a per-index list across a hoisted manual-scope boundary.",
+    "Treating `deps=` as a replacement for correct buffer directions; it only adds edges."
+  ],
+  "source_features": [
+    "pl.at",
+    "as tid",
+    "pl.submit",
+    "pl.spmd_submit",
+    "deps=",
+    "pl.TASK_ID",
+    "pl.array.create(N, TASK_ID)",
+    "pl.system.task_dummy(deps=[...])",
+    "deps=[]",
+    "allow_early_resolve",
+    "deps=[producer]",
+    "add_dep_wait"
+  ],
+  "summary": "`deps=` names producer TaskIds so a consumer waits on work that may have no buffer overlap. TaskIds can be captured from `pl.at`, `submit`, `spmd`, or `spmd_submit`, collected in arrays, joined with `pl.system.task_dummy`, or used to delay a non-critical consumer by one hop.",
+  "title": "Explicit Edges, TaskIds, Fan-In Arrays, and Dummy Tasks"
+}

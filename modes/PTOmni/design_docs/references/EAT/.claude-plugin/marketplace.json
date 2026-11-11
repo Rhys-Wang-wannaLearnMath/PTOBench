@@ -1,0 +1,12 @@
+{
+  "name": "eat",
+  "description": "EAT: Evolving Agent Teams",
+  "owner": { "name": "the EAT authors" },
+  "plugins": [
+    {
+      "name": "eat",
+      "source": "./",
+      "description": "Set up and run EAT on your repository or an EAT Gym task: a supervisor agent evolves teams of coding agents to maximize a score."
+    }
+  ]
+}

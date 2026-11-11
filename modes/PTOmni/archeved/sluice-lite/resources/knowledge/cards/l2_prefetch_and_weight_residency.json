@@ -1,0 +1,48 @@
+{
+  "applicability": [
+    "A stage re-reads the same weight every layer and the reload is MTE2-bound.",
+    "A large unrelated stage between reuses is suspected of evicting the weight set.",
+    "A cold-cache change is being evaluated against a benchmark that always replays the same weights."
+  ],
+  "directions": [
+    "Locate the installed `pl.prefetch` surface and insert a warm before the consumer only where a fixed weight set is reread after a likely eviction.",
+    "Keep the warm size and extent matched to the weight set actually consumed; do not prefetch a superset or a partial tile.",
+    "Evaluate against a cold-cache workload or a benchmark that does not replay a permanently warm weight set.",
+    "Use `pl.set_cache_policy` separately when the goal is to prevent a streaming operand from polluting cache."
+  ],
+  "domain": "programming",
+  "effects": [
+    "A successful warm hides a reload behind compute, but a mistimed or oversized warm adds traffic.",
+    "Warming fixed weights is cheap to try but workload-dependent.",
+    "Cache-policy BYPASS preserves a reread working set but is currently a no-op in the installed toolchain."
+  ],
+  "evidence_status": "documented",
+  "id": "l2_prefetch_and_weight_residency",
+  "invariants": [
+    "The concrete `pl.prefetch` API is not part of the registered installed API extracts; do not assume a method name.",
+    "A prefetch writes no tensor and therefore does not change numerical results, but it still consumes bandwidth and can delay real work.",
+    "A partial or oversized warm can lose more than it saves.",
+    "The standard benchmark loop warms L2 by replay and cannot establish a cold-cache benefit."
+  ],
+  "principle": "The performance guide identifies the pattern: a stage re-reads the same weights every layer, is MTE2-bound, and has a large unrelated stage between uses. An SDMA cache warm can hide the reload behind compute that is already running. The documented surface is `pl.prefetch`; it writes no tensor, so it is free to try and free to delete. A partial or oversized warm can cost more than it saves. Use it only when the weight set is fixed, reused soon, and likely evicted. The concrete prefetch method names and arguments are not exposed in the registered API extracts, so they must be checked in the installed package rather than invented. The `PYPTO_BENCH` loop replays the same weights every round, so its L2 is already warm and a prefetch or cold-cache change is both flattered and diluted. Evaluate the change on a workload pattern that actually encounters the eviction, or use an unprofiled benchmark with a cold-cache sequence. `pl.set_cache_policy` and `pl.load(cache=...)` are a different mechanism: they declare a streaming read or cached read for reuse/coherence, not a prefetch.",
+  "questions": [
+    "What exact `pl.prefetch` methods and arguments are installed in PyPTO 0.1.0.",
+    "Whether the local 910B4 workload actually exhibits the eviction pattern the prefetch is meant to address."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Inventing a `pl.prefetch` signature from the class names `PrefetchAsyncContext`, `AsyncEvent`, or `AsyncSession`; those are context types, not method signatures.",
+    "Measuring a cold-cache improvement with the warm-replay benchmark.",
+    "Prefetching the whole weight region when only a small tile is consumed soon.",
+    "Confusing a cache warm with a cache-policy declaration; they solve opposite problems."
+  ],
+  "source_features": [
+    "pl.prefetch",
+    "PYPTO_BENCH",
+    "pl.set_cache_policy",
+    "pl.load(cache=...)"
+  ],
+  "summary": "A fixed weight set reread every layer can be evicted by an unrelated large stage. A cache warm may hide the reload behind existing compute, but its concrete `pl.prefetch` method surface is not present in the registered API extracts, and a benchmark that replays warm weights cannot prove a cold-cache benefit.",
+  "title": "L2 Prefetch and Weight Residency"
+}

@@ -1,0 +1,7 @@
+QUEUE START 20261028_deepseek_flash_max_100_restart07 at 2026-10-28T03:49:37+00:00
+Mode: sluice-lite | Pi profile: deepseek-flash-max | reasoning: max
+Execution: serial | each case: 100 exploration actions + 1 final verification action
+
+===== START deepseek_v4.synthetic_token_loop_prefill_flash 2026-10-28T03:49:37+00:00 =====
+
+QUEUE PAUSED at 2026-10-28T04:58:07+00:00 by user request.

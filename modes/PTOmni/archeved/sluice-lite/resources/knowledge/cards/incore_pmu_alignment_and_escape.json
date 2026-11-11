@@ -1,0 +1,58 @@
+{
+  "applicability": [
+    "A single kernel dominates the swimlane and the schedule is otherwise balanced.",
+    "A kernel is all MTE2, all Vector, or shows a large gap between compute and transfer utilization.",
+    "A matmul has small M and N but a long K, leaving the Cube underfilled."
+  ],
+  "directions": [
+    "Collect `--enable-pmu 2` where supported, or pass `config={'enable_pmu': 2}` to `run`; read the bottleneck pipe and its fraction of `pmu_total_cycles`.",
+    "Use the `incore-profiling` workflow and `python -m pypto.tools.clean_sim_trace <OPPROF_*>` to produce `trace.clean.json` and `instr_metrics.json`.",
+    "Widen a flagged tile's innermost axis so a BF16 transfer is a multiple of 256 elements, FP32 of 128, and INT8 of 512, corresponding to 512 bytes.",
+    "For small M/N and long K, use a `pl.parallel(SPLITS)` split-K reduction in orchestration and atomic-add into a zeroed output, or combine partials explicitly.",
+    "Use `@pl.function(type=pl.FunctionType.AIV, external_source=...)` only when an existing tuned kernel or a codegen gap justifies leaving the compiler."
+  ],
+  "domain": "validation",
+  "effects": [
+    "PMU counters identify the busy pipe on device; the L0 instruction trace comes from the simulator and explains instruction mix, not production wall time.",
+    "A wider innermost transfer improves MTE efficiency but can increase the tile footprint or reduce the number of tiles.",
+    "Split-K exposes reduction parallelism but changes accumulation order and adds atomic or combine traffic.",
+    "Escaping to hand-written C++ buys control but gives up the safety and portability of PyPTO lowering."
+  ],
+  "evidence_status": "documented",
+  "id": "incore_pmu_alignment_and_escape",
+  "invariants": [
+    "Not every entry exposes `--enable-pmu`; passing `enable_pmu` through `RunConfig` is the fallback.",
+    "The L0 simulator workflow needs a built case with ptoas kernels, a TL-capable CANN, and the `msopprof` worker.",
+    "PH001's threshold is backend-specific; 512 bytes is the A2/A3 cache-line granularity, not a universal constant.",
+    "Atomic-add order is non-deterministic, so split-K results can differ in last place.",
+    "An external C++ kernel has a hand-maintained signature and loses compiler diagnostics and planning."
+  ],
+  "principle": "PMU counters per kernel include `pmu_total_cycles`, `vec_busy_cycles`, `cube_busy_cycles`, `scalar_busy_cycles`, `mte1_busy_cycles`, `mte2_busy_cycles`, `mte3_busy_cycles`, and `fixpipe_cycles`. For a Cube kernel, either the L1 load (MTE2) or the Cube compute should saturate the total; for a Vector kernel, either GM-to-UB load or vector compute should, with MTE3 sometimes dominating a store-heavy kernel. If both compute and MTE2 are well below 100 percent, look for a missing pipeline, poor instruction scheduling, or misplaced synchronization. The L0 instruction trace orders pipelines as MTE2 -> MTE1 -> CUBE -> VECTOR -> FIXPIPE -> MTE3 and adds per-instruction pipe, cycles, and vector utilization. A trace that is all MTE2 is transfer-bound; a matmul trace with zero CUBE cycles is degenerate, not free. PH001 (`TileInnermostDimGranularity`) flags a `tile.load` or `tile.store` whose innermost dimension is below the backend's transfer granularity, 512 bytes on A2/A3. Rank hints by the `moves ...` byte clause rather than by count. Widening the innermost axis or transposing so the contiguous axis is the moved one is the fix; if the tiling is deliberate and measured, silence the check with `disabled_diagnostics`. A split-K matmul turns a long reduction into parallel partial products, then combines them; `pl.store(..., atomic=pl.AtomicType.Add)` can accumulate into a zeroed output, but the accumulation order is not fixed and floating-point results are non-deterministic. When PyPTO codegen cannot reach a hand-written kernel, `@pl.function(type=pl.FunctionType.AIV, external_source='kernels/my_kernel.cpp')` backs an AIC or AIV function with a C++ source. The body is `...`, relative paths resolve from the defining file, and orchestration calls it like any other kernel. This gives up PyPTO layout inference, memory planning, perf hints, and protection when surrounding IR changes.",
+  "questions": [
+    "Whether the local CANN installation and `msopprof` worker satisfy the L0 simulator prerequisites was not tested."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Tuning a kernel while the inter-task schedule, not the kernel, is the bottleneck.",
+    "Judging PH001 hints by count rather than by the bytes moved.",
+    "Treating `CUBE=0` on a matmul trace as evidence that the matmul is free rather than a degenerate trace.",
+    "Using split-K with atomics without zero-initializing the destination or checking the changed reduction order."
+  ],
+  "source_features": [
+    "pmu_total_cycles",
+    "vec_busy_cycles",
+    "cube_busy_cycles",
+    "scalar_busy_cycles",
+    "mte1_busy_cycles",
+    "mte2_busy_cycles",
+    "mte3_busy_cycles",
+    "fixpipe_cycles",
+    "TileInnermostDimGranularity",
+    "tile.load",
+    "tile.store",
+    "moves ..."
+  ],
+  "summary": "Once the inter-task schedule is balanced, tune the bar itself: use PMU counters to identify the saturated pipe, the L0 trace to see per-pipe cycles, PH001 to widen sub-cache-line transfers, and algorithmic split-K when M/N cannot fill the Cube. A hand-written C++ kernel is the last escape hatch.",
+  "title": "InCore PMU, Instruction Traces, Transfer Granularity, and Hand-Written Escape"
+}

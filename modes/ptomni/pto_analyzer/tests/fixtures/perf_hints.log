@@ -1,0 +1,2 @@
+[perf_hint PH001 TileInnermostDimGranularity] Fixture-only compiler hint. at fixture.py:1
+[perf_hint PH-MR-001] MemoryReuse: fixture-only observation. at fixture.py:2

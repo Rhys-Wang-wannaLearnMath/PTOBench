@@ -1,0 +1,57 @@
+{
+  "applicability": [
+    "A schedule has gaps and the cause could be producer FIN detection, ready-but-undispatched delay, or pickup.",
+    "A source-level early-dispatch hint needs proof that staging occurred.",
+    "A distributed capture must be validated before its makespan is trusted."
+  ],
+  "directions": [
+    "Collect a real-device capture with `--enable-chip-swimlane 4` and add `--enable-dep-gen` for the graph; join streams with `swimlane_converter.read_perf_data()` rather than by hand.",
+    "Validate counts and the `block_num * active kernel_ids slots` identity before quoting a result.",
+    "Use `python -m simpler_setup.tools.critical_path <work_dir> --stdout` to reconstruct static and observed paths.",
+    "Split every critical-path gap into FIN detection, undispatched, and pickup before choosing an early-dispatch, dummy, or occupancy fix.",
+    "Take production numbers from an unprofiled benchmark; use level 4 for causal evidence only."
+  ],
+  "domain": "validation",
+  "effects": [
+    "Level 4 gives the causal detail needed for dispatch attribution but changes timing; level 1 is lighter but insufficient for gap attribution.",
+    "Separating topology from timing lets one graph serve many runs but requires an offline join and validation.",
+    "Observed critical path explains the actual run; static CPM explains the graph's lower structure under unlimited cores."
+  ],
+  "evidence_status": "documented",
+  "id": "chip_swimlane_dependency_artifacts",
+  "invariants": [
+    "Runtime task IDs are capture-local execution instances, not source identifiers; they do not survive a rebuild.",
+    "`deps.json` edge sources are `creator`, `tensormap`, and `explicit`; an edge absent from the graph does not exist at run time.",
+    "Simulator platforms emit records but skip merged conversion because metadata is incomplete.",
+    "Level 4 collection has observer cost and perturbs the schedule it measures.",
+    "A capture with missing SPMD or MIX rows cannot support a full-count claim."
+  ],
+  "principle": "The runtime writes `deps.json` with the task graph: tasks, `kernel_ids`, `block_num`, `early_dispatch`, and annotated edges. It writes `chip_swimlane_records.json` with per-task timing and scheduler/orchestrator phases but no edges. `name_map*.json` maps callable ids to source names, `dispatch_program.json` identifies which program a dispatch directory belongs to, and `swimlane_converter` joins topology and timing into a Perfetto-viewable merge. Joining timing to fanout on the device hot path would cost a GM store and linked-list walk per task, so the join is offline and one `deps.json` can serve many timing runs of the same topology. Capture levels add: level 1 AICore start/end; level 2 AICPU dispatch/finish; level 3 scheduler phase records; level 4 orchestrator phase records. Dispatch attribution, gap attribution, and early-dispatch proof need level 4. A bare `--enable-chip-swimlane` means level 1; request level 4 explicitly. Before trusting a capture, require `chip_swimlane_level == 4`, equal counts for raw AICore rows, raw AICPU rows, and joined rows, and for every timed task `joined physical rows == deps.block_num * active kernel_ids slots`. A dropped SPMD or MIX row can turn a partial early-dispatch result into a false full count. The identity chain is `dispatch_program.json -> next_levels/<program>/kernel_config.py -> name_map*.json::callable_id_to_name -> deps.json::tasks[task_id].kernel_ids -> source name_hint or submitted callee`. A MIX task maps to more than one callable name, and compiler suffixes can be inlined copies of one source hint, so one source site may own several runtime occurrences. The Observed critical path is the as-executed backward blame path through data and same-core predecessors; its task compute plus stalls tile the measured AICore makespan. Static CPM is the duration-weighted longest dependency path assuming unlimited cores. Use Observed to decide where time went and Static CPM as a cross-check; a large gap indicates a scheduling problem, not a graph problem. The makespan covers first AICore start through last AICore end, excluding host/orchestrator front time and the AICPU tail. For a gap before a task, define `data_ready(C) = max(pred.end_time_us)`, `observed_ready(C) = max(pred.finish_time_us)`, `dispatch(C) = min(C block dispatch_time_us)`, and `start(C) = min(C block start_time_us)`. Producer end to producer finish is FIN detection; last producer finish to dispatch is ready-but-undispatched; dispatch to start is pickup/gate. A ready-but-undispatched gap is a scheduler/occupancy claim and requires proving every compatible core lacked a free slot throughout; level-4 scheduler phase records carry counts, not causal task IDs. A pickup gap can be same-core contention only if the occupying task ran until `start(C)`. If dispatch precedes observed readiness, the task was speculatively early-staged and the remaining wait is a gate, not a queue. For early dispatch, structural eligibility requires every direct producer to be an allocation source or carry `early_dispatch=true`, with at least one non-allocation producer; temporal evidence requires `dispatch_time_us + tolerance < max(producer finish_time_us)`, with tolerance about two clock ticks. Report `full N/N`, `partial N/M`, or `none`. If timestamps look early but the graph is not structurally eligible, suspect a stale artifact.",
+  "questions": [
+    "The local runtime's exact level-4 phase schema and whether a real-device capture is possible without an assigned device were not tested."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Treating `deps.json::tasks[].early_dispatch` as proof that a task was staged.",
+    "Using temporal proximity to blame a specific blocking task without proving compatible-core occupancy.",
+    "Joining raw cycle-domain streams by hand or skipping equal-count validation.",
+    "Using a `store_true` flag for a capture level that needs an integer; its `True` silently binds to level 1 or the most expensive level depending on the declaration."
+  ],
+  "source_features": [
+    "deps.json",
+    "kernel_ids",
+    "block_num",
+    "early_dispatch",
+    "chip_swimlane_records.json",
+    "name_map*.json",
+    "dispatch_program.json",
+    "swimlane_converter",
+    "--enable-chip-swimlane",
+    "chip_swimlane_level == 4",
+    "joined physical rows == deps.block_num * active kernel_ids slots",
+    "data_ready(C) = max(pred.end_time_us)"
+  ],
+  "summary": "Chip swimlane timing and dependency topology are separate artifacts joined offline. Level 4 adds scheduler and orchestrator records; `deps.json` proves edges; the critical path and gap attribution explain where makespan went and whether an early-dispatch flag actually staged a task.",
+  "title": "Chip Swimlane, Dependency Artifacts, and Critical-Path Attribution"
+}

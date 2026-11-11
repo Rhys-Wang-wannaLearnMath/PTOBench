@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import sys
+import shutil
 
 sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[2]
@@ -12,12 +13,12 @@ sys.path[:0] = [str(ROOT), str(ROOT / 'evaluator')]
 
 from modes._shared.adapters import BackendUnavailable, get_adapter
 from modes._shared.config import ConfigError, load_profile, render
-from modes._shared import recording, provenance, knowledge, provider
+from modes._shared import recording, provenance, provider
+import isolation
 from modes.cannbot import resources
 
 
 def preflight(request):
-    knowledge.validate(Path(__file__).parent)
     optimizer = request['experiment']['optimizer']
     if optimizer['backend'] not in ('pi', 'codex'):
         raise ConfigError('CANNBot supports Pi and Codex backends')
@@ -35,8 +36,15 @@ def preflight(request):
 def prepare(request):
     context, ready = request['context'], request['preflight']
     root, candidate = Path(context['session_root']), Path(context['workspace'])
-    ready = {**ready, 'profile': provider.prepare(ready['profile'], root)}
-    references = knowledge.freeze(Path(__file__).parent, root)
+    prepared = ready['profile']
+    gateway = (isolation.enabled() and prepared['backend'] == 'pi'
+               and bool(prepared.get('mode_provider')))
+    ready = {**ready, 'profile': provider.prepare(prepared, root, gateway=gateway)}
+    extension = None
+    if ready['profile']['backend'] == 'pi':
+        extension = Path(ready['profile']['env']['PI_CODING_AGENT_DIR']) / 'cannbot-tools.ts'
+        shutil.copyfile(resources.DIRECTORY / 'bridge/pi_task.ts', extension)
+        extension.chmod(0o444)
     upstream = root / 'method/resources/upstream'
     lock = resources.freeze(upstream)
     implementation = {}
@@ -53,11 +61,13 @@ def prepare(request):
     prompt = f"""Optimize Case {context['case']['case_id']} within the experiment budget.
 Minimize verified latency while preserving the public contract and correctness.
 Candidate workspace: {candidate}
+Edit Candidate source under `candidate/` and tuning options in `candidate/tuning.json`.
 Entry: {context['case']['module']}::{context['case']['entry']}
 Read .benchmark_context/README.md for the Case contract, Bench CLI and result locations.
-Compiler tuning is editable in workspace-root tuning.json; its defaults are PYPTO + false.
+Read .benchmark_context/tuning_capabilities.json for this Case's editable compiler and runtime scheduling options, allowed values and restrictions.
+The compiler defaults remain PYPTO + false, and the complete defaults vary by Case.
+After changing source or settings, use ptobench evaluate . to check correctness and clean latency.
 PATH and the Bench Session environment are already set.
-{knowledge.notice(root)}
 Hardware budget: {context['budget']['max_hardware_actions']} accepted exploration actions,
 shared by all workspaces and Agent conversations in this Bench Session.
 Frozen upstream root: {upstream}
@@ -73,6 +83,7 @@ Do not dispatch profiling, fork, or performance-tuning stages in this smoke sess
     config = {'schema_version': 1, 'run_root': str(root), 'workspace': str(candidate),
               'profile': ready['profile'], 'upstream': str(upstream), 'roles': resources.ROLES,
               'skills': resources.skills(upstream), 'python': sys.executable,
+              'agent_extension': str(extension) if extension else None,
               'prompt_path': str(root / 'prompt.txt'), 'work_dir': str(work),
               'hardware_budget': context['budget']['max_hardware_actions']}
     _, additions = render(ready['profile'], candidate, root, prompt)
@@ -85,8 +96,7 @@ Do not dispatch profiling, fork, or performance-tuning stages in this smoke sess
                          'profile_sha256': ready['profile']['sha256'],
                          'argv_source': 'method/dispatches/*/dispatch.json'},
         'agent/configuration.json': configuration,
-        'method/config.json': config, 'method/upstream.json': lock,
-        'method/README.md': knowledge.guide(root), 'method/knowledge.json': references},
+        'method/config.json': config, 'method/upstream.json': lock},
         'archives': {'cannbot_resources': 'method/resources', 'agent_configuration': 'agent/config'}}
 
 

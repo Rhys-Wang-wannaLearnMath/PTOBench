@@ -5,36 +5,188 @@
   "iterations": 10,
   "compiler_tuning": {
     "memory_planner": "PYPTO",
-    "analyze_auto_scopes_for_deps": false
+    "analyze_auto_scopes_for_deps": false,
+    "ring_task_window": 16384
   },
   "fixtures": {
     "fixture_000": {
+      "execution_contract": {
+        "timing_policy": {
+          "version": "ptobench-execution-boundary-20261108-v3",
+          "input_upload": "outside_execution_window",
+          "initial_state_restore": "outside_execution_window",
+          "final_validation_readback": "outside_execution_window",
+          "required_execution_communication": "inside_execution_window"
+        },
+        "logical_workers": 2,
+        "rank_layout": "case-defined",
+        "fixture_input_identity_sha256": "a13b4b76e39be760f0b0581b77443567333fd05bf7ba25d33b4cd336adf518cf",
+        "initial_state_names": [],
+        "restore_before_each_launch": false,
+        "tensors": [
+          {
+            "name": "hidden_states",
+            "shape": [
+              2,
+              256,
+              7168
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": null,
+            "direction": "in"
+          },
+          {
+            "name": "lm_head_weight",
+            "shape": [
+              2,
+              64640,
+              7168
+            ],
+            "dtype": "torch.bfloat16",
+            "resident": "stacked",
+            "direction": "in"
+          },
+          {
+            "name": "logits",
+            "shape": [
+              2,
+              128,
+              129280
+            ],
+            "dtype": "torch.float32",
+            "resident": null,
+            "direction": "out"
+          },
+          {
+            "name": "sampled_ids",
+            "shape": [
+              2,
+              128,
+              8
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "out"
+          },
+          {
+            "name": "logit_row_indices",
+            "shape": [
+              2,
+              128
+            ],
+            "dtype": "torch.int32",
+            "resident": null,
+            "direction": "in"
+          }
+        ],
+        "sha256": "4a0b11b254b1a11a896a0d696fd6ff399ca6d9677e2b9945cc5f61af663ca2ee"
+      },
       "raw_samples_effective_us": [
-        6687.76,
-        6693.338,
-        6706.32,
-        6651.619,
-        6723.42,
-        6670.08,
-        6676.54,
-        6663.32,
-        6710.821,
-        6680.16
+        6896.44,
+        6958.179,
+        7014.959,
+        7006.0,
+        6957.599,
+        6860.86,
+        6883.778,
+        6965.898,
+        6909.68,
+        6882.62
       ],
       "samples_effective_us": [
-        6687.76,
-        6693.338,
-        6706.32,
-        6651.619,
-        6723.42,
-        6670.08,
-        6676.54,
-        6663.32,
-        6710.821,
-        6680.16
+        6896.44,
+        6958.179,
+        7014.959,
+        7006.0,
+        6957.599,
+        6860.86,
+        6883.778,
+        6965.898,
+        6909.68,
+        6882.62
       ],
-      "median_effective_us": 6683.96,
-      "mean_effective_us": 6686.337799999999
+      "median_effective_us": 6933.6395,
+      "mean_effective_us": 6933.6013
+    }
+  },
+  "timing_policy": {
+    "version": "ptobench-execution-boundary-20261108-v3",
+    "input_upload": "outside_execution_window",
+    "initial_state_restore": "outside_execution_window",
+    "final_validation_readback": "outside_execution_window",
+    "required_execution_communication": "inside_execution_window"
+  },
+  "tuning_identity": {
+    "source_sha256": "979f1ff634a3decb5b2f1aee242c5313baed4b02a0988be55db7a640e3e5f296",
+    "case_sha256": "6042cf46998da67199b9f5b2827845e90d561caa2f51cfe701c3eb742f22936c",
+    "config_sha256": "8fd1a6c6b920ee7b3a79da3e31a93bff5c15b51b262820ca34bcfb167a000871",
+    "comparator_sha256": "0351e2e37bb422f14439e767449b338dfe230b87a7a964e87bf4e1a84d96ccae",
+    "environment_sha256": "5ccd1ee8e99914b7aa4e48c637eedf97a0ce218bfb463edf2fcbfee58b4be39f",
+    "tuning_policy_sha256": "c34ae6e85f8e1fbaa56cd300a25dfa491b9b8fa38bb566c636f3abe7f0d01a07"
+  },
+  "tuning_evidence": "runs/all_case_boundary_repair_20261108/case_results/deepseek_v4_flash_dspark__lm_head_pro.json",
+  "resolved_tuning": {
+    "requested": {
+      "memory_planner": "PYPTO",
+      "analyze_auto_scopes_for_deps": false,
+      "ring_task_window": 16384
+    },
+    "resolved_run_config": {
+      "memory_planner": "PYPTO",
+      "analyze_auto_scopes_for_deps": false,
+      "strategy": "Default",
+      "ring_task_window": 16384,
+      "ring_heap": null,
+      "ring_dep_pool": null,
+      "aicpu_thread_num": null
+    },
+    "unresolved_runtime_defaults": [
+      "ring_heap",
+      "ring_dep_pool",
+      "aicpu_thread_num"
+    ],
+    "diagnostics": {
+      "dump_passes": false,
+      "dump_ptoas_passes": false,
+      "compile_profiling": false,
+      "enable_pmu": 0,
+      "enable_chip_swimlane": 0,
+      "enable_dep_gen": false,
+      "enable_scope_stats": false,
+      "enable_dump_args": 0
+    }
+  },
+  "resolved_tuning_by_fixture": {
+    "fixture_000": {
+      "requested": {
+        "memory_planner": "PYPTO",
+        "analyze_auto_scopes_for_deps": false,
+        "ring_task_window": 16384
+      },
+      "resolved_run_config": {
+        "memory_planner": "PYPTO",
+        "analyze_auto_scopes_for_deps": false,
+        "strategy": "Default",
+        "ring_task_window": 16384,
+        "ring_heap": null,
+        "ring_dep_pool": null,
+        "aicpu_thread_num": null
+      },
+      "unresolved_runtime_defaults": [
+        "ring_heap",
+        "ring_dep_pool",
+        "aicpu_thread_num"
+      ],
+      "diagnostics": {
+        "dump_passes": false,
+        "dump_ptoas_passes": false,
+        "compile_profiling": false,
+        "enable_pmu": 0,
+        "enable_chip_swimlane": 0,
+        "enable_dep_gen": false,
+        "enable_scope_stats": false,
+        "enable_dump_args": 0
+      }
     }
   }
 }

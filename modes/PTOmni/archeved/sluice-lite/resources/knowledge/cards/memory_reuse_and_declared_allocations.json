@@ -1,0 +1,58 @@
+{
+  "applicability": [
+    "Lifetime-disjoint tiles occupy separate buffers and exhaust L0C, L1, or UB.",
+    "Reuse silently adds a WAR ordering that serializes work the scheduler could overlap.",
+    "A ping-pong or accumulator buffer must not be coalesced with anything else.",
+    "An author wants to isolate one allocation from the opportunistic packer."
+  ],
+  "directions": [
+    "Let lifetime-disjoint tiles reuse memory by default; inspect a memory map before forcing more reuse.",
+    "Declare `scratch = pl.MemRef()` and annotate tiles with it when an allocation must remain independent of the packer.",
+    "Use `l0c = pl.MemRef(slots=2)` and `l0c[i % 2]` for an explicit ping-pong, keeping one slot live per iteration for PTOAS portability.",
+    "Do not pin every buffer: pinning trades capacity for scheduling independence and surfaces as a hard allocation overflow rather than being coalesced back."
+  ],
+  "domain": "memory",
+  "effects": [
+    "Reuse saves on-chip capacity but may add WAR ordering and serialize work the scheduler could overlap.",
+    "Pinning preserves independence and makes a hand-managed ping-pong stable but consumes capacity and can cause a hard overflow.",
+    "Largest-first packing improves capacity relative to a definition-order greedy, but it changes which representative supplies the buffer identity."
+  ],
+  "evidence_status": "documented",
+  "id": "memory_reuse_and_declared_allocations",
+  "invariants": [
+    "Reuse requires non-overlapping lifetime and the same memory space; different shapes, dtypes, or views are permitted.",
+    "A declared allocation's co-live tiles must agree on memory space.",
+    "A `pl.MemRef` allocation inside a `pl.pipeline(stage=2)` body is rejected.",
+    "`memory_planner=PTOAS` skips `MemoryReuse`; a non-slotted author-declared isolation allocation is documented as rejected under PTOAS because its isolation cannot be enforced. The PTOAS multi-slot pipeline path is separate and subject to the one-live-slot restriction. `DSA_RP` also skips the pass but preserves hard separation in its allocation problem.",
+    "Two co-live tiles independently bound to the same static slot are an error; a runtime slot index bypasses the static check."
+  ],
+  "principle": "`MemoryReuse` computes lifetimes by def-use analysis, including nested control flow and loop-aware extension. Two tiles are non-overlapping when the previous tile's last use is at or before the next tile's definition; inputs are read before outputs are written in one statement. Same-space, lifetime-disjoint intervals can share a MemRef. The packer is global largest-first, and a buffer's size is fixed by its largest member, so a later smaller interval can join an earlier larger buffer and a later larger interval can host an earlier smaller one. Shape, dtype, and `TileView` need not match: each variable keeps its own static descriptor on the shared base. The pass removes alloc statements whose MemRef is no longer referenced. A no-alias guard forbids a reused output from sharing the physical buffer of an operand that is read while the output is written. It covers `tile.recip`, `tile.rsqrt`, row reductions, `tile.mrgsort_format1`, `tile.move`, remainder ops, `tile.transpose`, `tile.sel` and `tile.sels`, `tile.prelu`, row/column expands, and widening `tile.cast`. The guard resolves operands through both reuse-map coalescing and view inheritance, so a forbidden operand reached indirectly is still caught. A pipeline guard keeps concurrent cloned stages in distinct buffers up to an affordable depth; collapsing concurrent clones onto one buffer injects a false WAR and serializes stages. The capacity gate uses an exact per-space footprint and emits `PH-MR-001` when it reduces depth. The pipeline guard applies to the replication path; under PTOAS an eligible loop is claimed earlier by slot rotation and `MemoryReuse` is skipped for that pipeline. A declared allocation is written as `scratch = pl.MemRef()` and referenced by variable in a tile annotation. InitMemRef makes it `tile.alloc(..., pinned=True)`, and `MemoryReuse` treats it as closed: a pinned interval opens its own slot and that slot is skipped for every later candidate program. Tiles bound to different declared buffers are never coalesced; tiles bound to the same buffer already share a base. On a `slots=N` declaration, co-liveness is checked per slot: two tiles on different slots are meant to be live together, only two tiles on the same slot corrupt each other. A runtime slot index has no static slot to attribute, so that check is skipped; the rotation is the author's responsibility. Declared allocations are rejected under PTOAS and hard-separated in DSA_RP, subject to the multi-slot caveat above. On Ascend910B AIV functions with a non-`None` split mode, a writer that consumes both a load result and a `tile.tpop_from_aic` value must not place its output in the same physical buffer as the load result; the pass guards that hardware hazard.",
+  "questions": [
+    "The exact compaction and reuse decisions for a concrete kernel require its pass dump or memory map; the prose does not enumerate the final buffers.",
+    "Whether author-declared `pl.MemRef` slots are fully supported under the local PTOAS release is not settled: the memory-reuse pass describes rejection of declared allocations while the pipeline-slot documentation describes a supported multi-slot path."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Assuming different shapes or dtypes prevent reuse; they do not, and a later op may read a buffer another tile still needs.",
+    "Pinning a single-buffer isolation allocation under PTOAS and expecting isolation; the pass documentation says it is rejected rather than honored without enforcement.",
+    "Putting two co-live tiles on the same static slot of one declaration.",
+    "Ignoring the Ascend910B load-plus-`tpop_from_aic` hazard in split-AIV code; in-place reuse there can be silently wrong."
+  ],
+  "source_features": [
+    "MemoryReuse",
+    "TileView",
+    "tile.recip",
+    "tile.rsqrt",
+    "tile.mrgsort_format1",
+    "tile.move",
+    "tile.transpose",
+    "tile.sel",
+    "tile.sels",
+    "tile.prelu",
+    "tile.cast",
+    "PH-MR-001"
+  ],
+  "summary": "`MemoryReuse` coalesces tiles with non-overlapping lifetimes in the same space, subject to no-alias constraints and a pipeline-stage capacity guard. Author-declared `pl.MemRef` allocations are pinned and isolated; they trade capacity for scheduling independence and have planner-specific restrictions.",
+  "title": "Opportunistic Memory Reuse and Author-Declared Allocations"
+}

@@ -20,24 +20,34 @@ import integrity
 class WorkspaceDocumentationTest(unittest.TestCase):
     def test_public_guide_covers_visible_files_commands_and_feedback_only(self):
         guide = workspace._readme({'case_id': 'test.case', 'module': 'candidate.py', 'entry': 'entry'},
-                                  workspace.profile_modes.public_enabled_modes(), mode={'id': 'basic'})
+                                  workspace.profile_modes.public_enabled_modes('combined'))
         for filename in ('case.json', 'config.py', 'comparator.json', 'reference.json',
-                         'environment.json', 'workspace.json', 'mode.json', 'profiling_modes.json',
+                         'environment.json', 'workspace.json',
                          'starting_point/', 'latest_result.json', 'latest_session_result.json',
                          'tuning.json'):
             self.assertIn(filename, guide)
-        for command in ('evaluate', 'profile runtime', 'profile pmu', 'profile compiler', 'fork'):
+        self.assertNotIn('mode.json', guide)
+        self.assertNotIn('Do not inspect hidden test/reference assets', guide)
+        self.assertIn('candidate/candidate.py', guide)
+        self.assertIn('candidate/tuning.json', guide)
+        self.assertIn('Candidate Python files and local helpers', guide)
+        self.assertIn('read-only result and diagnostic copies', guide)
+        for command in ('evaluate', 'profile', 'fork'):
             self.assertIn('ptobench ' + command, guide)
-        for path in ('clean/', 'runtime/', 'hardware/', 'compile/'):
+        for path in ('clean/', 'combined/'):
             self.assertIn('.benchmark_outputs/' + path, guide)
         for field in ('status', 'error_code', 'message', 'latency_us', 'remaining_hardware_actions'):
             self.assertIn(field, guide)
+        self.assertIn(
+            'Profile does not check output correctness. Use `ptobench evaluate` to check correctness and clean latency.',
+            guide,
+        )
         for private_detail in ('warmup', 'measured launches', 'final verification', 'Snapshot',
                                'finish budget', 'protection/', 'staging/', 'raw_wiki'):
             self.assertNotIn(private_detail, guide)
         self.assertFalse(any('\u4e00' <= character <= '\u9fff' for character in guide))
 
-    def test_disabled_profiling_is_absent_from_context_and_readme(self):
+    def test_workspace_omits_fixture_and_profile_manifests(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             case_dir = root / "case"
@@ -46,6 +56,9 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             seed = case_dir / "public/candidate_seed"
             seed.mkdir(parents=True)
             sealed.mkdir()
+            inputs = sealed / "fixtures/fixture_000/in"
+            inputs.mkdir(parents=True)
+            (inputs / "x.pt").write_bytes(b"fixed test input")
             (seed / "candidate.py").write_text("def entry():\n    pass\n", encoding="utf-8")
             (case_dir / "case.json").write_text("{}\n", encoding="utf-8")
             (case_dir / "public/config.py").write_text("VALUE = 1\n", encoding="utf-8")
@@ -55,6 +68,7 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             )
             case = {
                 "case_id": "test.case",
+                "fixture_ids": ["fixture_000"],
                 "workspace": "public/candidate_seed",
                 "module": "candidate.py",
                 "entry": "entry",
@@ -68,14 +82,17 @@ class WorkspaceDocumentationTest(unittest.TestCase):
                 workspace.init_workspace(case_dir, sealed, case, destination)
 
             context = destination / ".benchmark_context"
+            self.assertFalse((context / "mode.json").exists())
+            self.assertFalse((context / "fixture_catalog.json").exists())
             self.assertFalse((context / "profiling_modes.json").exists())
             self.assertNotIn("profil", (context / "README.md").read_text().lower())
+            self.assertTrue((destination / "candidate" / "candidate.py").is_file())
             self.assertEqual(
-                (context / "starting_point" / "candidate.py").read_text(encoding="utf-8"),
+                (context / "starting_point" / "candidate" / "candidate.py").read_text(encoding="utf-8"),
                 "def entry():\n    pass\n",
             )
             self.assertEqual(
-                common.read_json(destination / "tuning.json"),
+                common.read_json(destination / "candidate" / "tuning.json"),
                 {"memory_planner": "PYPTO", "analyze_auto_scopes_for_deps": False},
             )
 
@@ -98,6 +115,9 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             seed = case_dir / "public/candidate_seed"
             seed.mkdir(parents=True)
             sealed.mkdir()
+            inputs = sealed / "fixtures/fixture_000/in"
+            inputs.mkdir(parents=True)
+            (inputs / "x.pt").write_bytes(b"fixed test input")
             (seed / "candidate.py").write_text("VALUE = 1\n", encoding="utf-8")
             (case_dir / "case.json").write_text("{}\n", encoding="utf-8")
             (case_dir / "public/config.py").write_text("VALUE = 1\n", encoding="utf-8")
@@ -107,6 +127,7 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             )
             case = {
                 "case_id": "test.case",
+                "fixture_ids": ["fixture_000"],
                 "workspace": "public/candidate_seed",
                 "module": "candidate.py",
                 "entry": "entry",
@@ -117,7 +138,7 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             with mock.patch.object(workspace.profile_modes, "enabled_modes", return_value={}), \
                  mock.patch.object(common, "resolve_case", return_value=(case_dir, sealed, case)):
                 workspace.init_workspace(case_dir, sealed, case, parent)
-                (parent / "candidate.py").write_text("VALUE = 2\n", encoding="utf-8")
+                (parent / "candidate" / "candidate.py").write_text("VALUE = 2\n", encoding="utf-8")
                 (parent / ".benchmark_outputs").mkdir()
                 (parent / ".benchmark_outputs" / "latest_result.json").write_text("{}\n")
                 result = workspace.fork_workspace(
@@ -126,10 +147,10 @@ class WorkspaceDocumentationTest(unittest.TestCase):
 
             self.assertEqual(result["parent_workspace"], str(parent.resolve()))
             self.assertEqual(
-                (child / "candidate.py").read_text(encoding="utf-8"), "VALUE = 2\n",
+                (child / "candidate" / "candidate.py").read_text(encoding="utf-8"), "VALUE = 2\n",
             )
             self.assertEqual(
-                (child / ".benchmark_context" / "starting_point" / "candidate.py").read_text(
+                (child / ".benchmark_context" / "starting_point" / "candidate" / "candidate.py").read_text(
                     encoding="utf-8"
                 ),
                 "VALUE = 2\n",
@@ -146,13 +167,16 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             seed = case_dir / "public/candidate_seed"
             seed.mkdir(parents=True)
             sealed.mkdir()
+            inputs = sealed / "fixtures/fixture_000/in"
+            inputs.mkdir(parents=True)
+            (inputs / "x.pt").write_bytes(b"fixed test input")
             (seed / "candidate.py").write_text("VERSION = 1\n")
             (seed / "helper.py").write_text("VALUE = 'initial'\n")
             for path in (case_dir / "case.json", case_dir / "public/comparator.json"):
                 path.write_text("{}\n")
             (case_dir / "public/config.py").write_text("WIDTH = 2\n")
             (sealed / "certification.json").write_text('{"status":"ready"}')
-            case = {"case_id": "fake.case", "workspace": "public/candidate_seed",
+            case = {"case_id": "fake.case", "fixture_ids": ["fixture_000"], "workspace": "public/candidate_seed",
                     "module": "candidate.py", "entry": "entry", "config": "public/config.py",
                     "comparator": "public/comparator.json", "environment": "fake"}
             with mock.patch.object(workspace, "_environment_summary", return_value={"profile": "original"}), \
@@ -163,11 +187,11 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             integrity.capture_protection(protection, {
                 "context": integrity.ProtectionRoot(context, "context", readonly=True),
             })
-            (candidate / "candidate.py").write_text("VERSION = 2\n")
-            (candidate / "helper.py").write_text("VALUE = 'optimized'\n")
+            (candidate / "candidate" / "candidate.py").write_text("VERSION = 2\n")
+            (candidate / "candidate" / "helper.py").write_text("VALUE = 'optimized'\n")
             (case_dir / "public/config.py").write_text("WIDTH = 999\n")
             original_candidate = workspace.source_manifest(candidate)
-            initial = context / "starting_point/candidate.py"
+            initial = context / "starting_point/candidate/candidate.py"
             initial.chmod(0o644)
             initial.write_text("fake initial\n")
             (context / "config.py").unlink()
@@ -177,7 +201,7 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             report = integrity.check_and_restore(protection, "context")
             self.assertTrue(report.restored_paths)
             self.assertEqual(initial.read_text(), "VERSION = 1\n")
-            self.assertEqual((context / "starting_point/helper.py").read_text(), "VALUE = 'initial'\n")
+            self.assertEqual((context / "starting_point/candidate/helper.py").read_text(), "VALUE = 'initial'\n")
             self.assertEqual(workspace.source_manifest(candidate), original_candidate)
             self.assertEqual((context / "config.py").read_text(), "WIDTH = 2\n")
             self.assertEqual((context / "environment.json").read_text(), '{\n  "profile": "original"\n}\n')
@@ -194,7 +218,6 @@ class CandidateCopyTest(unittest.TestCase):
         (self.source / "helpers/deep/empty").mkdir(parents=True)
         (self.source / "candidate.py").write_text("import helpers.kernel\n")
         (self.source / "helpers/kernel.py").write_text("VERSION = 1\n")
-        (self.source / "参数.bin").write_bytes(b"\x00\xff\x01")
 
     def test_complete_independent_copy_excludes_outputs_and_caches_recursively(self):
         for parent in (self.source, self.source / "helpers"):
@@ -208,8 +231,7 @@ class CandidateCopyTest(unittest.TestCase):
         self.assertEqual(manifest, workspace.source_manifest(self.source))
         self.assertEqual(manifest, workspace.source_manifest(self.target))
         self.assertEqual([item["path"] for item in manifest["files"]],
-                         ["candidate.py", "helpers/kernel.py", "参数.bin"])
-        self.assertEqual((self.target / "参数.bin").read_bytes(), b"\x00\xff\x01")
+                         ["candidate.py", "helpers/kernel.py"])
         self.assertTrue((self.target / "helpers/deep/empty").is_dir())
         self.assertNotEqual((self.target / "candidate.py").stat().st_ino,
                             (self.source / "candidate.py").stat().st_ino)
@@ -228,6 +250,21 @@ class CandidateCopyTest(unittest.TestCase):
         self.assertNotEqual(original, renamed)
         (self.source / "helpers/renamed.py").write_text("VERSION = 2\n")
         self.assertNotEqual(renamed, workspace.source_manifest(self.source)["content_sha256"])
+
+    def test_non_candidate_files_are_rejected_but_generic_artifacts_can_be_copied(self):
+        extra = self.source / 'notes.md'
+        extra.write_text('not Candidate source')
+        with self.assertRaisesRegex(workspace.InvalidWorkspaceError, 'outside the Candidate'):
+            workspace.copy_candidate_tree(self.source, self.target)
+        self.assertFalse(self.target.exists())
+        extra.unlink()
+        artifact = self.root / 'artifact'
+        artifact.mkdir()
+        (artifact / 'trace.json').write_text('{}\n')
+        (artifact / 'trace.bin').write_bytes(b'\\x00\\xff')
+        workspace.copy_tree(artifact, self.target)
+        self.assertEqual((self.target / 'trace.json').read_text(), '{}\n')
+        self.assertEqual((self.target / 'trace.bin').read_bytes(), b'\\x00\\xff')
 
     def test_source_links_and_fifos_fail_without_publishing_or_reading_outside(self):
         sentinel = self.root / "sentinel"

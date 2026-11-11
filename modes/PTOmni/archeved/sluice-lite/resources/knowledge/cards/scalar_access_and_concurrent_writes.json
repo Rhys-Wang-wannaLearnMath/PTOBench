@@ -1,0 +1,58 @@
+{
+  "applicability": [
+    "A routing table, row count, or slot cursor needs one value rather than a tile.",
+    "Several SPMD blocks or `pl.parallel` instances write different elements of one output.",
+    "A scatter must be coherent across cores."
+  ],
+  "directions": [
+    "Partition `pld`/tensor writes so each instance writes a contiguous run aligned to and sized in whole 64-byte lines.",
+    "Use `pl.spmd(1)` when only one instance should write a control tensor.",
+    "Use `pl.store(partial, [0, 0], out, atomic=pl.AtomicType.Add)` into a zeroed output for split-K-style cross-core accumulation.",
+    "Use `pl.array.create(N, pl.INT32)` for a per-instance cursor and `pl.array.create(N, pl.TASK_ID)` for a TaskId fan-in.",
+    "Cast a scalar read used as an offset or loop bound to `pl.INDEX`."
+  ],
+  "domain": "memory",
+  "effects": [
+    "Scalar access is convenient for control values but incurs cache-line granularity and per-access cost.",
+    "Whole-line partitioning may waste bytes at the end of a run but preserves correctness.",
+    "Atomics avoid line ownership but make floating-point accumulation order non-deterministic and require a zeroed destination."
+  ],
+  "evidence_status": "documented",
+  "id": "scalar_access_and_concurrent_writes",
+  "invariants": [
+    "Atomic-add destinations must be zero-initialized before the kernel.",
+    "Supported atomic-add tile dtypes are fp32, bf16, fp16, int32, int16, and int8; bf16 atomic-add is documented for 910B/A2/A3 but not A5.",
+    "A scalar loop over a tile-sized region is much slower than the corresponding vector op.",
+    "`pl.write` returns an IR expression; the DSL parser surfaces it as an `EvalStmt`.",
+    "`pl.array.create(extent, dtype)` supports integer, BOOL, or TASK_ID elements, requires a compile-time constant extent, is private to the creating block, and does not cross function boundaries."
+  ],
+  "principle": "`pl.load`/`pl.store` move a tile by DMA. `pl.read`/`pl.write` move one element through the issuing core's data cache. A scalar write reaches DDR as a whole 64-byte cache line when the kernel ends, and different cores' caches are not kept coherent within a task. Two instances that write different elements in the same 64-byte line can each write back their own copy of all 64 bytes, so the last write-back wins and the other store disappears. The rule is that each instance must own whole 64-byte lines: 16 elements for INT32/FP32, 32 for FP16/BF16, 8 for INT64, and 64 for INT8. Within one instance there is no hazard because it runs sequentially on one core. The hazard applies to `pl.spmd(n)` with `n > 1` and to `for ... in pl.parallel(n)` instances the runtime may overlap. `ScalarWriteLineShared` warns when the compiler cannot prove whole-line ownership; it names the measured stride when it can analyze the index, and reports that a runtime index is unanalyzable otherwise. The warning is a question for a runtime index, not a verdict; if the layout invariant is real and documented, it can be disabled with `disabled_diagnostics`. Two different tasks writing one tensor are not reported, because their temporal overlap is unknown. A write guarded by `if blk == 0` is still reported conservatively because the check does not read predicates. Use `pl.spmd(1)` for a handful of control values, a per-instance scratch row for partial results, or `pl.store(..., atomic=pl.AtomicType.Add)` into a zero-initialized destination for a true cross-core scatter. Atomic-add order is not fixed, so floating-point results are non-deterministic. `pl.array.create(extent, dtype)` creates a small core-local array for cursors or TaskId fan-in; its extent must be compile-time constant, and updates are functional. A scalar read of a tensor is also legal in orchestration, where a device-computed count can become a host-side loop bound after casting to `pl.INDEX`.",
+  "questions": [
+    "The exact cache coherence behavior for a particular mixed AIC/AIV handoff depends on the generated cache-maintenance sequence."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "A grid-stride loop where 16 blocks each write one element of the same INT32 line; most stores vanish and the surviving set varies between runs.",
+    "Believing `if blk == 0` suppresses `ScalarWriteLineShared`; the check is not predicate-aware.",
+    "Using a scalar read as a loop bound without an `INT64`/`pl.INDEX` cast.",
+    "Assuming scalar writes from different tasks are coherent without a cache publication/invalidation sequence.",
+    "Treating `pl.array` as shared across blocks or as mutable in place; it is block-local and updates rebind functionally."
+  ],
+  "source_features": [
+    "pl.load",
+    "pl.store",
+    "pl.read",
+    "pl.write",
+    "pl.spmd(n)",
+    "n > 1",
+    "for ... in pl.parallel(n)",
+    "ScalarWriteLineShared",
+    "disabled_diagnostics",
+    "if blk == 0",
+    "pl.spmd(1)",
+    "pl.store(..., atomic=pl.AtomicType.Add)"
+  ],
+  "summary": "`pl.read`/`pl.write` reach one element through the issuing core's data cache, and cache write-back happens in whole 64-byte lines. Concurrent task instances must own whole lines; disjoint element indices are not enough.",
+  "title": "Scalar Access and the 64-Byte Write Granularity"
+}

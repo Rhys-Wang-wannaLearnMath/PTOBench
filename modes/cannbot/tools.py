@@ -2,7 +2,9 @@
 """Local Pi/stdio-MCP transport for CANNBot's native stage sessions."""
 import argparse
 import json
+import os
 from pathlib import Path
+import socketserver
 import signal
 import sys
 import threading
@@ -31,6 +33,77 @@ def specifications(allow_task, config):
                                    'prompt': {'type': 'string'}, 'description': {'type': 'string'},
                                    'workspace': {'type': 'string'}}, ('subagent_type', 'prompt'))})
     return tools
+
+
+class ToolServer:
+    """Serve CANNBot tools to Pi over one run-local Unix socket."""
+    def __init__(self, config, dispatch, path, allow_task):
+        self.config, self.dispatch, self.path = config, dispatch, Path(path)
+        self.allow_task = allow_task
+        self.pending = {}
+        self.lock = threading.Lock()
+        owner = self
+
+        class Handler(socketserver.StreamRequestHandler):
+            def handle(self):
+                raw = self.rfile.readline(1024 * 1024 + 1)
+                try:
+                    if len(raw) > 1024 * 1024:
+                        raise ValueError('tool request is too large')
+                    request = json.loads(raw)
+                    action = request.get('action')
+                    if action == 'list' and set(request) == {'action'}:
+                        response = {'tools': specifications(owner.allow_task, owner.config)}
+                    elif action == 'cancel' and set(request) == {'action', 'tool_call_id'}:
+                        with owner.lock:
+                            event = owner.pending.get(request['tool_call_id'])
+                        if event:
+                            event.set()
+                        response = {'cancelled': event is not None}
+                    elif action == 'call' and set(request) == {
+                            'action', 'tool_call_id', 'name', 'arguments'}:
+                        call_id = request['tool_call_id']
+                        if not isinstance(call_id, str) or not call_id:
+                            raise ValueError('invalid tool call identity')
+                        event = threading.Event()
+                        with owner.lock:
+                            owner.pending[call_id] = event
+                        try:
+                            result = call(owner.config, owner.dispatch, request['name'],
+                                          request['arguments'], call_id, owner.allow_task,
+                                          event, request)
+                            response = {key: result[key] for key in ('content', 'isError')}
+                        finally:
+                            with owner.lock:
+                                owner.pending.pop(call_id, None)
+                    else:
+                        raise ValueError('unsupported tool request')
+                except Exception as error:
+                    response = tool_result(json.dumps(
+                        {'type': type(error).__name__, 'message': str(error)}, ensure_ascii=False),
+                        error=True)
+                self.wfile.write((json.dumps(response, ensure_ascii=False) + '\n').encode())
+
+        class Server(socketserver.ThreadingUnixStreamServer):
+            daemon_threads = True
+
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self.server = Server(str(self.path), Handler)
+        os.chmod(self.path, 0o600)
+        self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+        self.thread.start()
+
+    def close(self):
+        with self.lock:
+            for event in self.pending.values():
+                event.set()
+        self.server.shutdown()
+        self.server.server_close()
+        self.thread.join(timeout=5)
+        try:
+            self.path.unlink()
+        except FileNotFoundError:
+            pass
 
 
 def tool_result(text, *, error=False, details=None):

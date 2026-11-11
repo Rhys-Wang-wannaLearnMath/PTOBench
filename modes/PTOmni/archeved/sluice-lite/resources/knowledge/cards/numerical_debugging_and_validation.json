@@ -1,0 +1,56 @@
+{
+  "applicability": [
+    "A kernel fails a tolerance but the algorithm looks correct.",
+    "A quantized or low-magnitude output passes whole-tensor checks but fails per-element checks.",
+    "A large model has too many bindings for a full tensor dump."
+  ],
+  "directions": [
+    "Use `compare_fn={'x_next': error_distribution()}` to measure the error shape before choosing a gate.",
+    "Pin inputs with `golden_data=<dir>` and tag only a few suspect intermediates with `pl.dump_tag(t)` under `enable_dump_args=1`.",
+    "Walk dumped intermediates in dependency order and stop at the first distribution that blows up.",
+    "For real-weight validation, extract the converted checkpoint per layer, cast each tensor to its spec dtype, and override via `TensorSpec.init_value`; seed the test input."
+  ],
+  "domain": "validation",
+  "effects": [
+    "Selective dump keeps large workloads viable but can miss a value that never reaches a static whole-tensor Arg.",
+    "Matching golden operation order may require changing the golden or de-optimizing a kernel; the ground-truth numeric case should drive the choice.",
+    "Real weights expose data-dependent error but are more expensive and require checkpoint extraction."
+  ],
+  "evidence_status": "documented",
+  "id": "numerical_debugging_and_validation",
+  "invariants": [
+    "`error_distribution` always passes; it is not a correctness gate.",
+    "Full dump captures every binding and can trigger host-side timeouts on large workloads.",
+    "`pl.dump_tag` is only effective under partial dump; it is a no-op when dump is off and irrelevant under full dump.",
+    "The marker does not cover dynamic-offset reads, orchestration `pl.assemble` aliases, orchestration scalar reads, or L3 HOST-tier SubWorker tensors.",
+    "Dump tags are tracked by value identity, not by variable name. `pl.dump_tag` is valid only in orchestration or an inline helper, not in device kernel bodies."
+  ],
+  "principle": "The golden is the device-emulating reference, so it must mirror the kernel's operation order and its dtype at every step. Floating-point arithmetic is non-associative and lossy at each narrowing; an algebraically equivalent reorder, a folded scale, a different accumulation order, or a cast at a different point changes the last bits. When the golden deliberately reorders an algebraically equivalent op for the kernel's benefit, align the golden to the kernel's order; when the golden is ground truth, such as an RNE cast, fix the kernel. The `error_distribution` comparator is a measurement, never a failing gate. It prints whole-tensor rel-L2 and cosine, a `frac>thd` table, and percentiles of relative diff, absolute diff, and golden magnitude. The magnitude row distinguishes a large relative diff on a near-zero output from a real error. Custom levels use `error_distribution(diff_thds=(...), quantiles=(...))`. After seeing the shape, choose a real gate such as `ratio_allclose` or `ratio_reldiff` at the threshold and bad-point budget the distribution justifies. To localize a stage, pin inputs with `golden_data=<dir>`, tag suspects with `pl.dump_tag(t)`, run with `enable_dump_args=1`, and compare each dumped intermediate against its torch reference in dependency order. The first stage whose distribution blows up is the culprit; downstream stages inherit its error. `pl.dump_tag` is forward-sticky over the enclosing orchestration: it affects every subsequent kernel dispatch consuming that exact tensor value, tracked by Var identity. Rebinding the name after a tag produces a new value that the old tag does not cover. The marker only fires when the tagged Var reaches a dispatch as a static whole-tensor argument. It is silently not dumped for a dynamic-offset read that lowers to a gather, an orchestration-level `pl.assemble` that emits only a name alias, an orchestration-tier scalar read, or a host-tier distributed SubWorker tensor. `dumps=[...]` on `pl.submit` or `pl.at` is the explicit per-launch counterpart. Full dump captures every binding and can saturate the host collector; partial dump filters to tagged tensors. `golden_data` replay removes torch recomputation when only timing changes. Use seeded test input and real weights: random data can hide a dynamic-range quantization error, and per-element relative diff is meaningless near zero. Report rel-L2 or cosine for real-weight runs.",
+  "questions": [
+    "The exact dump collector throughput and timeout threshold on the local host are runtime-dependent and were not measured."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Using a single pass/fail tolerance and missing an error shape that a rel-L2 or cosine view would reveal.",
+    "Comparing per-element relative diff on near-zero outputs.",
+    "Tagging `q` before a rebinding `q = self.foo(q)` and expecting the new value to be dumped.",
+    "Running full dump on a large paged-attention workload and blaming the kernel when the host collector times out."
+  ],
+  "source_features": [
+    "error_distribution",
+    "frac>thd",
+    "error_distribution(diff_thds=(...), quantiles=(...))",
+    "ratio_allclose",
+    "ratio_reldiff",
+    "golden_data=<dir>",
+    "pl.dump_tag(t)",
+    "enable_dump_args=1",
+    "pl.dump_tag",
+    "pl.assemble",
+    "dumps=[...]",
+    "pl.submit"
+  ],
+  "summary": "A golden must compute the same operation order and dtype as the kernel. When it does not, use `error_distribution` to see the error shape, `golden_data` to pin inputs, and `pl.dump_tag` with partial dump to find the first divergent stage. Random test input and per-element relative differences can hide the real problem.",
+  "title": "Numerical Debugging with Error Distributions and Selective Dumps"
+}

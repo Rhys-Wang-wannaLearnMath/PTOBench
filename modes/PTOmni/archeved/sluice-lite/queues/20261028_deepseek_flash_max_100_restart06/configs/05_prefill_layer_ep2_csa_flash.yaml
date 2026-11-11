@@ -1,0 +1,12 @@
+case: deepseek_v4.prefill_layer_ep2_csa_flash
+mode: sluice-lite
+optimizer:
+  id: sluice_lite_deepseek_flash_max
+  backend: pi
+  profile: deepseek-flash-max
+output:
+  runs_root: ../../../../../runs/sluice-lite/20261028_deepseek_flash_max_100_restart06/deepseek_v4.prefill_layer_ep2_csa_flash
+  snapshots_root: ../../../../../snapshots/sluice-lite/20261028_deepseek_flash_max_100_restart06/deepseek_v4.prefill_layer_ep2_csa_flash
+budget:
+  max_hardware_actions: 100
+  finish_actions: 1

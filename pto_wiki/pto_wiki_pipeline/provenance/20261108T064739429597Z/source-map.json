@@ -1,0 +1,1464 @@
+{
+  "schema_version": 1,
+  "manifest_sha256": "6c3d50cfc1413beaeb226bff4bab5c05d20c98fdd21eee636d4ac0700bc69dd7",
+  "sources": [
+    {
+      "path": "01_pypto_lib/debug-and-tune/cce-incore-profiling.md",
+      "outputs": [
+        "topics/performance-and-optimization/source-01_pypto_lib--debug-and-tune--cce-incore-profiling.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/cube-tile-tuning.md",
+      "outputs": [
+        "topics/performance-and-optimization/source-01_pypto_lib--debug-and-tune--cube-tile-tuning.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/debugging.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-01_pypto_lib--debug-and-tune--debugging.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/dependency-and-scheduling.md",
+      "outputs": [
+        "topics/task-graphs-and-scheduling/source-01_pypto_lib--debug-and-tune--dependency-and-scheduling.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/incore-simulator-profiling.md",
+      "outputs": [
+        "topics/performance-and-optimization/source-01_pypto_lib--debug-and-tune--incore-simulator-profiling.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/index.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-01_pypto_lib--debug-and-tune--index.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/l2-prefetch.md",
+      "outputs": [
+        "topics/performance-and-optimization/source-01_pypto_lib--debug-and-tune--l2-prefetch.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/performance-tuning.md",
+      "outputs": [
+        "topics/performance-and-optimization/source-01_pypto_lib--debug-and-tune--performance-tuning.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/precision-tuning.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-01_pypto_lib--debug-and-tune--precision-tuning.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/debug-and-tune/ring-heap-and-scope-stats.md",
+      "outputs": [
+        "topics/performance-and-optimization/source-01_pypto_lib--debug-and-tune--ring-heap-and-scope-stats.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/examples/current-smoke.md",
+      "outputs": [
+        "topics/setup-and-first-kernels/source-01_pypto_lib--examples--current-smoke.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/examples/index.md",
+      "outputs": [
+        "topics/setup-and-first-kernels/source-01_pypto_lib--examples--index.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/get-started/first-kernel.md",
+      "outputs": [
+        "topics/setup-and-first-kernels/source-01_pypto_lib--get-started--first-kernel.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/get-started/index.md",
+      "outputs": [
+        "topics/setup-and-first-kernels/source-01_pypto_lib--get-started--index.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/get-started/installation.md",
+      "outputs": [
+        "topics/setup-and-first-kernels/source-01_pypto_lib--get-started--installation.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/index.md",
+      "outputs": [
+        "topics/setup-and-first-kernels/source-01_pypto_lib--index.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/models/deepseek_v4_1_flash/index.md",
+      "outputs": [
+        "topics/model-implementations/source-01_pypto_lib--models--deepseek_v4_1_flash--index.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/models/deepseek_v4_flash_dspark/index.md",
+      "outputs": [
+        "topics/model-implementations/source-01_pypto_lib--models--deepseek_v4_flash_dspark--index.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/models/deepseek_v4_flash_mtp/decode_optimization.md",
+      "outputs": [
+        "topics/model-implementations/source-01_pypto_lib--models--deepseek_v4_flash_mtp--decode_optimization.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/models/deepseek_v4_flash_mtp/index.md",
+      "outputs": [
+        "topics/model-implementations/source-01_pypto_lib--models--deepseek_v4_flash_mtp--index.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/models/deepseek_v4_pro/index.md",
+      "outputs": [
+        "topics/model-implementations/source-01_pypto_lib--models--deepseek_v4_pro--index.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/models/index.md",
+      "outputs": [
+        "topics/model-implementations/source-01_pypto_lib--models--index.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/models/qwen3_14b/index.md",
+      "outputs": [
+        "topics/model-implementations/source-01_pypto_lib--models--qwen3_14b--index.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/models/qwen3_14b/optimization.md",
+      "outputs": [
+        "topics/model-implementations/source-01_pypto_lib--models--qwen3_14b--optimization.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/models/qwen3_14b/paged_attention_pypto.md",
+      "outputs": [
+        "topics/model-implementations/source-01_pypto_lib--models--qwen3_14b--paged_attention_pypto.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/pypto-coding/cce-extern-kernel.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-01_pypto_lib--pypto-coding--cce-extern-kernel.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/pypto-coding/golden-and-run.md",
+      "outputs": [
+        "topics/execution-and-runtime/source-01_pypto_lib--pypto-coding--golden-and-run.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/pypto-coding/index.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-01_pypto_lib--pypto-coding--index.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/pypto-coding/l2-programming.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-01_pypto_lib--pypto-coding--l2-programming.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/pypto-coding/l3-programming.md",
+      "outputs": [
+        "topics/distributed-programming/source-01_pypto_lib--pypto-coding--l3-programming.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/pypto-coding/loops.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-01_pypto_lib--pypto-coding--loops.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/pypto-coding/naming-and-comments.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-01_pypto_lib--pypto-coding--naming-and-comments.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/pypto-coding/operations.md",
+      "outputs": [
+        "topics/api-and-operations-reference/source-01_pypto_lib--pypto-coding--operations.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/run-and-validate/compile-runtime-workflow.md",
+      "outputs": [
+        "topics/execution-and-runtime/source-01_pypto_lib--run-and-validate--compile-runtime-workflow.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/run-and-validate/golden-harness.md",
+      "outputs": [
+        "topics/execution-and-runtime/source-01_pypto_lib--run-and-validate--golden-harness.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/run-and-validate/index.md",
+      "outputs": [
+        "topics/execution-and-runtime/source-01_pypto_lib--run-and-validate--index.md"
+      ]
+    },
+    {
+      "path": "01_pypto_lib/run-and-validate/save-and-replay.md",
+      "outputs": [
+        "topics/execution-and-runtime/source-01_pypto_lib--run-and-validate--save-and-replay.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/api/index.md",
+      "outputs": [
+        "topics/api-and-operations-reference/source-02_pypto--en--api--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/00-ecosystem.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--00-ecosystem.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/01-compile-profiling.md",
+      "outputs": [
+        "topics/performance-and-optimization/source-02_pypto--en--dev--01-compile-profiling.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/02-error-handling.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-02_pypto--en--dev--02-error-handling.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/03-logging.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-02_pypto--en--dev--03-logging.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/03-runtime-dfx.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-02_pypto--en--dev--03-runtime-dfx.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/03-runtime-replay.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-02_pypto--en--dev--03-runtime-replay.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/04-simulator-trace-cleaning.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-02_pypto--en--dev--04-simulator-trace-cleaning.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/05-runtime-ring-sizing.md",
+      "outputs": [
+        "topics/execution-and-runtime/source-02_pypto--en--dev--05-runtime-ring-sizing.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/06-persistent-l3.md",
+      "outputs": [
+        "topics/execution-and-runtime/source-02_pypto--en--dev--06-persistent-l3.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/07-ir-lower-trace.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-02_pypto--en--dev--07-ir-lower-trace.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/07-memory-map.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-02_pypto--en--dev--07-memory-map.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/08-artifact-identity.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-02_pypto--en--dev--08-artifact-identity.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/08-entry-points.md",
+      "outputs": [
+        "topics/execution-and-runtime/source-02_pypto--en--dev--08-entry-points.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/backend/00-backend_handler.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--backend--00-backend_handler.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/backend/index.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--backend--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/codegen/00-pto_codegen.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--codegen--00-pto_codegen.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/codegen/01-orchestration_codegen.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--codegen--01-orchestration_codegen.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/codegen/index.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--codegen--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/debug/00-torch_codegen.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--debug--00-torch_codegen.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/debug/index.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-02_pypto--en--dev--debug--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/distributed_ops.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--dev--distributed_ops.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/index.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/ir/00-overview.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--ir--00-overview.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/ir/01-hierarchy.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--ir--01-hierarchy.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/ir/02-types.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--ir--02-types.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/ir/03-structural_comparison.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--ir--03-structural_comparison.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/ir/04-serialization.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--ir--04-serialization.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/ir/05-operators.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--ir--05-operators.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/ir/06-builder.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--ir--06-builder.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/ir/07-parser.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--ir--07-parser.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/ir/08-param-directions.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--ir--08-param-directions.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/ir/09-multi_output_ops.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--ir--09-multi_output_ops.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/ir/index.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--ir--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/language/00-python_syntax.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--language--00-python_syntax.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/language/01-statements.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--language--01-statements.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/language/02-manual_dependencies.md",
+      "outputs": [
+        "topics/task-graphs-and-scheduling/source-02_pypto--en--dev--language--02-manual_dependencies.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/language/03-functions.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--language--03-functions.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/language/04-external-kernels.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--language--04-external-kernels.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/language/05-cache-policy.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--language--05-cache-policy.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/language/index.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--language--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/00-pass_manager.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--00-pass_manager.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/01-inline_functions.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--01-inline_functions.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/02-unroll_loops.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--02-unroll_loops.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/03-ctrl_flow_transform.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--03-ctrl_flow_transform.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/04-convert_to_ssa.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--04-convert_to_ssa.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/05-simplify.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--05-simplify.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/06-flatten_call_expr.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--06-flatten_call_expr.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/07-outline_hierarchy_scopes.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--07-outline_hierarchy_scopes.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/08-outline_graph_scopes.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--08-outline_graph_scopes.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/09-outline_incore_scopes.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--09-outline_incore_scopes.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/10-outline_cluster_scopes.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--10-outline_cluster_scopes.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/11-convert_tensor_to_tile_ops.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--11-convert_tensor_to_tile_ops.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/12-optimize_orch_tensors.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--12-optimize_orch_tensors.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/13-lower_composite_ops.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--13-lower_composite_ops.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/14-flatten_tile_nd_to_2d.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--14-flatten_tile_nd_to_2d.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/15-block_nz_tensor_views.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--15-block_nz_tensor_views.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/16-block_mx_scale_tensor_views.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--16-block_mx_scale_tensor_views.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/17-legalize_tile_cast.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--17-legalize_tile_cast.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/18-auto_tile_matmul_l0.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--18-auto_tile_matmul_l0.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/19-canonicalize_tile_slice.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--19-canonicalize_tile_slice.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/20-infer_tile_memory_space.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--20-infer_tile_memory_space.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/21-insert_mx_scale_addr.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--21-insert_mx_scale_addr.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/22-resolve_backend_op_layouts.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--22-resolve_backend_op_layouts.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/23-lower_auto_vector_split.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--23-lower_auto_vector_split.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/24-expand_mixed_kernel.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--24-expand_mixed_kernel.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/25-inject_gm_pipe_buffer.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--25-inject_gm_pipe_buffer.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/26-split_vector_kernel.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--26-split_vector_kernel.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/27-stamp_tfree_split.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--27-stamp_tfree_split.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/28-normalize_return_order.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--28-normalize_return_order.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/29-skew_cross_core_pipeline.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--29-skew_cross_core_pipeline.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/30-lower_pipeline_to_slots.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--30-lower_pipeline_to_slots.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/31-lower_pipeline_loops.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--31-lower_pipeline_loops.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/32-canonicalize_io_order.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--32-canonicalize_io_order.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/33-materialize_tensor_strides.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--33-materialize_tensor_strides.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/34-init_memref.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--34-init_memref.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/35-materialize_semantic_aliases.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--35-materialize_semantic_aliases.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/36-memory_reuse.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--36-memory_reuse.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/37-allocate_memory_addr.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--37-allocate_memory_addr.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/38-fold_no_op_reshape.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--38-fold_no_op_reshape.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/39-fuse_create_assemble_to_slice.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--39-fuse_create_assemble_to_slice.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/40-lower_l2_tensor_collectives.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--40-lower_l2_tensor_collectives.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/41-derive_call_directions.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--41-derive_call_directions.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/42-auto_derive_task_dependencies.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--42-auto_derive_task_dependencies.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/43-expand_manual_phase_fence.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--43-expand_manual_phase_fence.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/44-synthesize_allreduce_signals.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--44-synthesize_allreduce_signals.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/45-materialize_comm_domain_scopes.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--45-materialize_comm_domain_scopes.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/46-lower_host_tensor_collectives.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--46-lower_host_tensor_collectives.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/47-materialize_dist_tensor_ctx.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--47-materialize_dist_tensor_ctx.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/48-legalize_graph_boundary.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--48-legalize_graph_boundary.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/49-materialize_runtime_scopes.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--49-materialize_runtime_scopes.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/50-classify_iter_arg_carry.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--50-classify_iter_arg_carry.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/51-insert_comm_fence.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--51-insert_comm_fence.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/52-materialize_valid_shape_symbols.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--52-materialize_valid_shape_symbols.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/91-utility_passes.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--91-utility_passes.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/92-diagnostics.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--92-diagnostics.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/99-verifier.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--99-verifier.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/index.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/loop-carried-dep-compression.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--loop-carried-dep-compression.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/passes/utils.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--passes--utils.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/dev/ptoas-op-status.md",
+      "outputs": [
+        "topics/compiler-and-ir-internals/source-02_pypto--en--dev--ptoas-op-status.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/index.md",
+      "outputs": [
+        "topics/setup-and-first-kernels/source-02_pypto--en--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/reference/index.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-02_pypto--en--reference--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/reference/pto-isa/00-cluster_architecture.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-02_pypto--en--reference--pto-isa--00-cluster_architecture.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/reference/pto-isa/01-tpush_tpop.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-02_pypto--en--reference--pto-isa--01-tpush_tpop.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/reference/pto-isa/02-buffer_management.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-02_pypto--en--reference--pto-isa--02-buffer_management.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/reference/pto-isa/index.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-02_pypto--en--reference--pto-isa--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/00-getting_started.md",
+      "outputs": [
+        "topics/setup-and-first-kernels/source-02_pypto--en--user--00-getting_started.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/01-installation.md",
+      "outputs": [
+        "topics/setup-and-first-kernels/source-02_pypto--en--user--01-installation.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/02-quickstart.md",
+      "outputs": [
+        "topics/setup-and-first-kernels/source-02_pypto--en--user--02-quickstart.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/03-programming-model.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-02_pypto--en--user--03-programming-model.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/appendix/00-feature-matrix.md",
+      "outputs": [
+        "topics/setup-and-first-kernels/source-02_pypto--en--user--appendix--00-feature-matrix.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/appendix/01-faq.md",
+      "outputs": [
+        "topics/setup-and-first-kernels/source-02_pypto--en--user--appendix--01-faq.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/appendix/index.md",
+      "outputs": [
+        "topics/setup-and-first-kernels/source-02_pypto--en--user--appendix--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/00-model.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--00-model.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/01-collectives.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--01-collectives.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/02-primitives.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--02-primitives.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/03-execution.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--03-execution.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/04-debugging.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--04-debugging.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/05-tutorials.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--05-tutorials.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/06-hello_rank.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--06-hello_rank.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/07-programming_model.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--07-programming_model.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/08-window_buffer.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--08-window_buffer.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/09-barrier.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--09-barrier.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/10-remote_load_store.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--10-remote_load_store.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/11-put_get.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--11-put_get.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/12-dynamic_rank_count.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--12-dynamic_rank_count.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/13-allreduce_mesh.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--13-allreduce_mesh.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/14-allreduce_two_phase.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--14-allreduce_two_phase.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/15-allreduce_ring.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--15-allreduce_ring.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/16-allreduce_reveal.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--16-allreduce_reveal.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/17-broadcast.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--17-broadcast.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/18-allgather.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--18-allgather.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/19-reduce_scatter.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--19-reduce_scatter.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/20-all_to_all.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--20-all_to_all.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/21-putting_it_together.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--21-putting_it_together.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/distributed/index.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--en--user--distributed--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/execution/00-compile.md",
+      "outputs": [
+        "topics/execution-and-runtime/source-02_pypto--en--user--execution--00-compile.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/execution/01-run.md",
+      "outputs": [
+        "topics/execution-and-runtime/source-02_pypto--en--user--execution--01-run.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/execution/index.md",
+      "outputs": [
+        "topics/execution-and-runtime/source-02_pypto--en--user--execution--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/index.md",
+      "outputs": [
+        "topics/setup-and-first-kernels/source-02_pypto--en--user--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/language/00-types.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-02_pypto--en--user--language--00-types.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/language/01-functions.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-02_pypto--en--user--language--01-functions.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/language/02-control-flow.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-02_pypto--en--user--language--02-control-flow.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/language/03-memory.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-02_pypto--en--user--language--03-memory.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/language/04-scopes.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-02_pypto--en--user--language--04-scopes.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/language/05-directives.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-02_pypto--en--user--language--05-directives.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/language/06-syntax.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-02_pypto--en--user--language--06-syntax.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/language/index.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-02_pypto--en--user--language--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/ops/00-dispatch.md",
+      "outputs": [
+        "topics/api-and-operations-reference/source-02_pypto--en--user--ops--00-dispatch.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/ops/01-catalog.md",
+      "outputs": [
+        "topics/api-and-operations-reference/source-02_pypto--en--user--ops--01-catalog.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/ops/index.md",
+      "outputs": [
+        "topics/api-and-operations-reference/source-02_pypto--en--user--ops--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/performance/00-swimlane.md",
+      "outputs": [
+        "topics/performance-and-optimization/source-02_pypto--en--user--performance--00-swimlane.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/performance/01-task-granularity.md",
+      "outputs": [
+        "topics/performance-and-optimization/source-02_pypto--en--user--performance--01-task-granularity.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/performance/02-runtime-overhead.md",
+      "outputs": [
+        "topics/performance-and-optimization/source-02_pypto--en--user--performance--02-runtime-overhead.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/performance/03-dependencies.md",
+      "outputs": [
+        "topics/task-graphs-and-scheduling/source-02_pypto--en--user--performance--03-dependencies.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/performance/04-incore.md",
+      "outputs": [
+        "topics/performance-and-optimization/source-02_pypto--en--user--performance--04-incore.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/performance/05-memory.md",
+      "outputs": [
+        "topics/performance-and-optimization/source-02_pypto--en--user--performance--05-memory.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/performance/06-host.md",
+      "outputs": [
+        "topics/performance-and-optimization/source-02_pypto--en--user--performance--06-host.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/performance/index.md",
+      "outputs": [
+        "topics/performance-and-optimization/source-02_pypto--en--user--performance--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/precision/00-workflow.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-02_pypto--en--user--precision--00-workflow.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/precision/01-cases.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-02_pypto--en--user--precision--01-cases.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/precision/index.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-02_pypto--en--user--precision--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/tasks/00-model.md",
+      "outputs": [
+        "topics/task-graphs-and-scheduling/source-02_pypto--en--user--tasks--00-model.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/tasks/01-scopes.md",
+      "outputs": [
+        "topics/task-graphs-and-scheduling/source-02_pypto--en--user--tasks--01-scopes.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/tasks/02-submit.md",
+      "outputs": [
+        "topics/task-graphs-and-scheduling/source-02_pypto--en--user--tasks--02-submit.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/tasks/03-tuning.md",
+      "outputs": [
+        "topics/task-graphs-and-scheduling/source-02_pypto--en--user--tasks--03-tuning.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/tasks/index.md",
+      "outputs": [
+        "topics/task-graphs-and-scheduling/source-02_pypto--en--user--tasks--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/tools/00-debugging.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-02_pypto--en--user--tools--00-debugging.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/tools/01-torch-codegen.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-02_pypto--en--user--tools--01-torch-codegen.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/tools/02-memory-map.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-02_pypto--en--user--tools--02-memory-map.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/tools/index.md",
+      "outputs": [
+        "topics/debugging-correctness-and-precision/source-02_pypto--en--user--tools--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/tutorials/00-elementwise.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-02_pypto--en--user--tutorials--00-elementwise.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/tutorials/01-reduction-softmax.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-02_pypto--en--user--tutorials--01-reduction-softmax.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/tutorials/02-matmul.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-02_pypto--en--user--tutorials--02-matmul.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/tutorials/03-mixed-kernel.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-02_pypto--en--user--tutorials--03-mixed-kernel.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/tutorials/04-task-graph.md",
+      "outputs": [
+        "topics/task-graphs-and-scheduling/source-02_pypto--en--user--tutorials--04-task-graph.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/tutorials/05-scheduling-tuning.md",
+      "outputs": [
+        "topics/task-graphs-and-scheduling/source-02_pypto--en--user--tutorials--05-scheduling-tuning.md"
+      ]
+    },
+    {
+      "path": "02_pypto/en/user/tutorials/index.md",
+      "outputs": [
+        "topics/kernel-authoring-and-tutorials/source-02_pypto--en--user--tutorials--index.md"
+      ]
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.array.md",
+      "outputs": [
+        "topics/api-and-operations-reference/source-02_pypto--static_api--pypto.language.array.md"
+      ]
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.distributed.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--static_api--pypto.language.distributed.md"
+      ]
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.distributed.system.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--static_api--pypto.language.distributed.system.md"
+      ]
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.distributed.tensor.md",
+      "outputs": [
+        "topics/distributed-programming/source-02_pypto--static_api--pypto.language.distributed.tensor.md"
+      ]
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.md",
+      "outputs": [
+        "topics/api-and-operations-reference/source-02_pypto--static_api--pypto.language.md"
+      ]
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.optimizations.md",
+      "outputs": [
+        "topics/api-and-operations-reference/source-02_pypto--static_api--pypto.language.optimizations.md"
+      ]
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.prefetch.md",
+      "outputs": [
+        "topics/api-and-operations-reference/source-02_pypto--static_api--pypto.language.prefetch.md"
+      ]
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.system.md",
+      "outputs": [
+        "topics/api-and-operations-reference/source-02_pypto--static_api--pypto.language.system.md"
+      ]
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.tensor.md",
+      "outputs": [
+        "topics/api-and-operations-reference/source-02_pypto--static_api--pypto.language.tensor.md"
+      ]
+    },
+    {
+      "path": "02_pypto/static_api/pypto.language.tile.md",
+      "outputs": [
+        "topics/api-and-operations-reference/source-02_pypto--static_api--pypto.language.tile.md"
+      ]
+    },
+    {
+      "path": "02_pypto/static_api/pypto.runtime.md",
+      "outputs": [
+        "topics/api-and-operations-reference/source-02_pypto--static_api--pypto.runtime.md"
+      ]
+    },
+    {
+      "path": "03_npu_910b/en/alloc_event_id.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-03_npu_910b--en--alloc_event_id.md"
+      ]
+    },
+    {
+      "path": "03_npu_910b/en/architecture_220x.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-03_npu_910b--en--architecture_220x.md"
+      ]
+    },
+    {
+      "path": "03_npu_910b/en/bank_conflicts_220x.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-03_npu_910b--en--bank_conflicts_220x.md"
+      ]
+    },
+    {
+      "path": "03_npu_910b/en/basic_architecture.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-03_npu_910b--en--basic_architecture.md"
+      ]
+    },
+    {
+      "path": "03_npu_910b/en/constraints_220x.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-03_npu_910b--en--constraints_220x.md"
+      ]
+    },
+    {
+      "path": "03_npu_910b/en/cpu_twin_debugging.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-03_npu_910b--en--cpu_twin_debugging.md"
+      ]
+    },
+    {
+      "path": "03_npu_910b/en/cross_core_setflag.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-03_npu_910b--en--cross_core_setflag.md"
+      ]
+    },
+    {
+      "path": "03_npu_910b/en/cross_core_waitflag.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-03_npu_910b--en--cross_core_waitflag.md"
+      ]
+    },
+    {
+      "path": "03_npu_910b/en/debugging_overview.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-03_npu_910b--en--debugging_overview.md"
+      ]
+    },
+    {
+      "path": "03_npu_910b/en/fetch_event_id.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-03_npu_910b--en--fetch_event_id.md"
+      ]
+    },
+    {
+      "path": "03_npu_910b/en/npu_debugging.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-03_npu_910b--en--npu_debugging.md"
+      ]
+    },
+    {
+      "path": "03_npu_910b/en/pipe_barrier.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-03_npu_910b--en--pipe_barrier.md"
+      ]
+    },
+    {
+      "path": "03_npu_910b/en/setflag_waitflag.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-03_npu_910b--en--setflag_waitflag.md"
+      ]
+    },
+    {
+      "path": "03_npu_910b/en/sync_control_overview.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-03_npu_910b--en--sync_control_overview.md"
+      ]
+    },
+    {
+      "path": "03_npu_910b/en/tiling_headers.md",
+      "outputs": [
+        "topics/npu-architecture-and-isa/source-03_npu_910b--en--tiling_headers.md"
+      ]
+    },
+    {
+      "path": "BASELINE.md",
+      "outputs": [
+        "topics/setup-and-first-kernels/source-BASELINE.md"
+      ]
+    }
+  ]
+}

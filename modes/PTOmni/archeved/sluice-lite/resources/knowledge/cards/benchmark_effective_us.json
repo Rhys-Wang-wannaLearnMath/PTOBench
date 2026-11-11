@@ -1,0 +1,57 @@
+{
+  "applicability": [
+    "A source change needs an end-to-end before/after number rather than a kernel-level guess.",
+    "A distributed program shows a persistent per-rank imbalance.",
+    "A change affects L2 weight residency and the benchmark's warm-cache replay would flatter it."
+  ],
+  "directions": [
+    "Run `PYPTO_BENCH=1 python models/.../entry.py -p <platform> -d <device>` and compare the `mean=` field for the generic Golden harness, not `min`, `median`, or a profile capture.",
+    "While iterating on a long prefill, reduce `PYPTO_BENCH_ROUNDS` and `PYPTO_BENCH_WARMUP` together, but compare only against runs with the same settings.",
+    "When only timing changes, save the golden once and replay with `golden_data=` to avoid recomputing the torch reference.",
+    "For a multi-dispatch distributed card, read the `slot` breakdown to identify which dispatch owns the time; do not infer it from the rank total."
+  ],
+  "domain": "validation",
+  "effects": [
+    "Repeated rounds reduce noise but multiply compile/input/golden cost and device time.",
+    "A full 100-round default is comparable across runs but costly for a long prefill; shortened loops are faster but only comparable within the same settings.",
+    "Level-4 chip-swimlane capture gives causal detail but has observer cost; use it for causality and the unprofiled benchmark for the production number."
+  ],
+  "evidence_status": "documented",
+  "id": "benchmark_effective_us",
+  "invariants": [
+    "A simulator platform has no device-domain spans and cannot produce `effective_us`.",
+    "The runtime must be built with profiling support.",
+    "A stepped scalar skips the timed loop.",
+    "The benchmark is an execution measurement, not a source-level correctness check; retain numerical validation separately.",
+    "A warm-cache replay does not represent cold-cache production behavior for L2-residency changes.",
+    "The generic Golden harness uses `mean=`; benchmark harness clean evaluation uses `median_effective_us` and profile-fixed rounds. Do not mix conventions."
+  ],
+  "principle": "`PYPTO_BENCH=1` enables a timed loop on every `run` call after the correctness dispatch. No `--benchmark` flag or model edit is needed. The printed `effective_us` is the framework's post-graph-build execution window on device, recovered from runtime markers. Quote the `mean=` field for a generic Golden per-case comparison; two runs are comparable only when both use the same warmup and measured round counts. `PYPTO_BENCH_ROUNDS` defaults to 100 and `PYPTO_BENCH_WARMUP` to 5; `PYPTO_BENCH_RAW=1` prints every measured dispatch sample in dispatch order. A malformed or out-of-range value warns and falls back to the default. The benchmark requires a real device; simulator platforms print `effective_us unavailable: no device-domain spans`. It also requires a runtime built with profiling support. A `runtime_dir=` replay times an existing build without recompiling; a spec with a stepped scalar skips the benchmark. In a distributed run the headline is the per-round maximum across ranks because the round ends when the slowest card finishes. The `rank N: eff_us` lines expose cross-card imbalance and sum that card's dispatches within a round. When a card dispatches more than once per round, nested `slot` lines show each dispatch's window and the orchestration function name; slot lines may be omitted when every card dispatches once or when dispatch order varies between rounds. `host_union_mean_us` is the cross-rank host-timeline window `max(end) - min(start)`, so it includes start skew, overlap, and host dispatch overhead. `fallback_flattened=1` means the dispatch count was not divisible by warmup plus rounds, so per-round segmentation was abandoned and the numbers are indicative pooled samples. The benchmark replays the same weights every round, so L2 is already warm; a change whose benefit depends on a cold cache is both flattered and diluted, and production numbers should come from an unprofiled benchmark.",
+  "questions": [
+    "Whether the local runtime build has profiling enabled and can execute the timed loop was not established from the snapshot."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Quoting a minimum or median when the comparison convention is the mean for the generic Golden harness.",
+    "Comparing a 10-round run against a 100-round run.",
+    "Using a benchmark capture to prove a production performance gain despite observer and warm-cache effects.",
+    "Assuming a CPU-only environment or an unassigned device can produce effective device time."
+  ],
+  "source_features": [
+    "PYPTO_BENCH=1",
+    "run",
+    "--benchmark",
+    "effective_us",
+    "mean=",
+    "PYPTO_BENCH_ROUNDS",
+    "PYPTO_BENCH_WARMUP",
+    "PYPTO_BENCH_RAW=1",
+    "effective_us unavailable: no device-domain spans",
+    "runtime_dir=",
+    "rank N: eff_us",
+    "slot"
+  ],
+  "summary": "`PYPTO_BENCH=1` times post-graph-build device execution after a correctness dispatch. Compare the printed `mean` field with identical warmup and rounds; distributed runs add per-rank and per-dispatch slots, where the headline is the slowest rank per round.",
+  "title": "Benchmarking Effective Device Time"
+}

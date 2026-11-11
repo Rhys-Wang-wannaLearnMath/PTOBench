@@ -32,7 +32,9 @@ class RuntimePreflightTest(unittest.TestCase):
                 with self.assertRaisesRegex(MethodError, "compiler environment.*GLIBCXX"):
                     preflight.preflight(root / "experiment.yaml")
                 check.assert_called_once_with(profile, exports)
-                hardware_query.assert_not_called()
+                queried_npu = [call for call in hardware_query.call_args_list
+                               if call.args and call.args[0][0] == 'npu-smi']
+                self.assertEqual(queried_npu, [])
                 agent_preflight.assert_not_called()
 
 

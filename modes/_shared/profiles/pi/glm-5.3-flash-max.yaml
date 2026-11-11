@@ -4,3 +4,5 @@ help_argv: [pi, --help]
 env: {}
 model: provider-default/glm-5.3-flash
 reasoning: max
+context_window: 1048576
+max_output_tokens: 131072  # Official model maximum; omitted API field may use a smaller default.

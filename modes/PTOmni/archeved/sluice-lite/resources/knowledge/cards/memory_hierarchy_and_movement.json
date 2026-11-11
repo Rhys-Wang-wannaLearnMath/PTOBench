@@ -1,0 +1,56 @@
+{
+  "applicability": [
+    "Writing a matmul that must stage operands through L1 into L0A/L0B.",
+    "Choosing between tensor-level code and explicit `pl.load`/`pl.move`/`pl.store`.",
+    "Diagnosing a rejected `target_memory=` or an on-chip capacity overflow."
+  ],
+  "directions": [
+    "Use `pl.load(a, [0, 0], [32, 32], target_memory=pl.Mem.Mat)` and `pl.move(a_l1, target_memory=pl.Mem.Left)` when writing the matmul chain explicitly.",
+    "Use the default `pl.load` target for elementwise Vec work; use `pl.store` directly from the producing on-chip space.",
+    "Hoist a loop-invariant load, or keep a matmul weight resident in `Mat` across the K loop, instead of reloading it per tile.",
+    "Use `pl.create_tile` for scratch on-chip storage and `pl.create_l1` when a tensor-typed value must be built in L1 for matmul."
+  ],
+  "domain": "memory",
+  "effects": [
+    "Explicit staging gives control over residency and layout but increases code and liveness.",
+    "Keeping operands on chip avoids reloads but consumes scarce L1/L0 capacity and can block a pipeline stage.",
+    "Letting the compiler insert moves is shorter and often sufficient, but hides where the transfer occurs."
+  ],
+  "evidence_status": "documented",
+  "id": "memory_hierarchy_and_movement",
+  "invariants": [
+    "`pl.load(..., target_memory=pl.Mem.Left)` is rejected; load to `Mat`, then `pl.move` to `Left`.",
+    "A tile-level `pl.matmul` requires operands in `Left`/`Right`; a tensor-level `pl.matmul` is lowered through the same chain.",
+    "DDR MemRefs are skipped by the on-chip allocator; their addresses are managed externally.",
+    "Each space has its own capacity and alignment; `Left` and `Right` percentages in a memory report reflect compiler-chosen L0 staging, not a DSL tile budget.",
+    "`Acc` is written by `pl.matmul`; `pl.move` targets documented by the API include Vec, Mat, Left, Right, LeftScale, and RightScale. Drain Acc with `pl.store`."
+  ],
+  "principle": "`pl.Tensor` lives in DDR. `Vec` is the Unified Buffer, `Mat` is L1, `Left` is L0A, `Right` is L0B, `Acc` is L0C, and `Bias` is the bias buffer on the AIC core. `pl.MemorySpace` and `pl.Mem` are the same enum under two names. The key hardware constraint is that a DDR-facing load can target only `Vec` or `Mat`; `pl.load` defaults to `Vec` and may pass `target_memory=pl.Mem.Mat`. `Left`, `Right`, and `Bias` are reached by `pl.move` from `Mat` or `Vec`; `Acc` is written by `pl.matmul`. `pl.store` moves any on-chip space back to DDR. The compiler's `InferTileMemorySpace` inserts a `tile.move` when a consumer needs a specialized space and the producer stopped at `Mat` or `Vec`; writing the move explicitly is how to control where the staging happens. The elementwise path is DDR -> Vec -> elementwise -> DDR. The matmul path is DDR -> Mat for each operand, Mat -> Left and Mat -> Right, `pl.matmul` -> Acc, then Acc -> DDR. `pl.create_tile(shape, dtype, target_memory=...)` allocates an on-chip buffer; `pl.create_l1` creates an L1/Mat-backed tensor for kernel-driven paged gather. Hoisting an invariant load out of a loop and keeping a reused matmul operand resident in `Mat` are the main residency optimizations. Local capacities are useful bounds, not measurements: Mat/L1 512 KiB, Acc/L0C 128 KiB, Left/L0A and Right/L0B 64 KiB each, Vec/UB 192 KiB with a compiler-safe 184 KiB budget, and Bias 1 KiB.",
+  "questions": [
+    "The exact per-instruction alignment and bank-conflict behavior is architecture-specific; see the hardware-constraints card."
+  ],
+  "related": [],
+  "requires": [],
+  "risks": [
+    "Trying to load directly from DDR into `Left`, `Right`, or `Acc`.",
+    "Hoisting a matmul accumulator into orchestration; it becomes a GM tensor and the accumulator load is rejected.",
+    "Shrinking a DSL tile merely to lower `Left`/`Right` percentages, which are compiler-derived.",
+    "Confusing the configured compiler budget with physical capacity or current allocation."
+  ],
+  "source_features": [
+    "pl.Tensor",
+    "Vec",
+    "Mat",
+    "Left",
+    "Right",
+    "Acc",
+    "Bias",
+    "pl.MemorySpace",
+    "pl.Mem",
+    "pl.load",
+    "target_memory=pl.Mem.Mat",
+    "pl.move"
+  ],
+  "summary": "DDR, Vec, Mat, Left, Right, Acc, and Bias are separate buffers, not nested regions. A DDR-facing load can land only in Vec or Mat; specialized matmul spaces are reached by `pl.move` or written by `pl.matmul`.",
+  "title": "Memory Hierarchy and Legal Data Movement"
+}
