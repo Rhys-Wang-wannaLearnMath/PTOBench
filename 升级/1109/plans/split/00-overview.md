@@ -1,3 +1,5 @@
+已被 1110 Dedicated Agent User 计划取代，仅供历史参考、不得执行。
+
 # PTOBench 真实目录 Workspace 修缮：Implementation Plan 拆分总览
 
 **完整主计划：** [`../PTOBench真实目录Workspace与沙箱简化Implementation Plan.md`](../PTOBench真实目录Workspace与沙箱简化Implementation Plan.md)（保留完整任务序列；宿主身份启动的最新执行要求以 Plan 01 为准）

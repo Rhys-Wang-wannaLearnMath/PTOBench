@@ -1,3 +1,5 @@
+已被 1110 Dedicated Agent User 计划取代，仅供历史参考、不得执行。
+
 # PTOBench 真实目录 Workspace 与沙箱简化 Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use `executing-plans` to implement this plan task by task.

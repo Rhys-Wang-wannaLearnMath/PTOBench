@@ -1,3 +1,5 @@
+已被 1110 Dedicated Agent User 计划取代，仅供历史参考、不得执行。
+
 # 真实 Pi Smoke 与 Formal/Held-out 最终验收 Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use `executing-plans` to implement this plan task by task.
