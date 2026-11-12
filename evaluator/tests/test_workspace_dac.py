@@ -4,9 +4,11 @@ import json
 import os
 from pathlib import Path
 import shutil
+import socket
 import stat
 import subprocess
 import sys
+import time
 from unittest import mock
 
 from action_test_support import ActionTestBase
@@ -14,6 +16,7 @@ import agent_launch
 import isolation
 import session
 import session_actions
+import sandbox_supervisor
 import snapshots
 import workspace
 
@@ -37,20 +40,137 @@ class WorkspaceDACTest(ActionTestBase):
     def _python_agent(self, script, *, workspace_path=None):
         return self._run_agent([sys.executable, '-c', script], mount_workspace=workspace_path)
 
+    def test_long_lived_shell_observes_worker_published_after_launch(self):
+        workspace_path = self.handle.initial_workspace
+        ready = workspace_path / 'candidate/live_shell_ready.py'
+        release = workspace_path / 'candidate/live_shell_release.py'
+        complete = workspace_path / 'candidate/live_shell_complete.py'
+        probe = workspace_path / 'candidate/live_shell_probe.py'
+        probe.write_text(r'''import json, os, pathlib, time
+workspace = pathlib.Path.cwd()
+workspaces = workspace.parent
+ready = workspace / 'candidate/live_shell_ready.py'
+release = workspace / 'candidate/live_shell_release.py'
+complete = workspace / 'candidate/live_shell_complete.py'
+ready.write_text(str(os.getpid()))
+deadline = time.monotonic() + 20
+while not release.exists() and time.monotonic() < deadline:
+    time.sleep(.02)
+assert release.exists(), 'Broker did not publish a Worker while Shell was alive'
+workers = [path for path in workspaces.iterdir() if path != workspace]
+assert len(workers) == 1, workers
+worker = workers[0]
+candidate = worker / 'candidate/candidate.py'
+assert candidate.read_text() == 'from helper import VALUE\n'
+assert (worker / '.benchmark_context/config.py').read_text() == 'SIZE = 2\n'
+output = worker / '.benchmark_outputs/clean/latest_session_result.json'
+assert json.loads(output.read_text()) == {'event_seq': 23}
+candidate.write_text('VALUE = 77\n')
+def denied(operation):
+    try:
+        operation()
+    except OSError:
+        return
+    raise AssertionError('published Workspace contract was writable')
+denied(lambda: (worker / '.benchmark_context/config.py').write_text('changed'))
+denied(lambda: output.write_text('{}'))
+denied(lambda: worker.rename(worker.with_name('worker-replaced')))
+assert (workspace / 'candidate/helper.py').read_text() == 'VALUE = 1\n'
+complete.write_text(json.dumps({'pid': os.getpid(), 'worker': str(worker)}))
+''')
+        shell = 'python3 candidate/live_shell_probe.py'
+        outer = (
+            'import subprocess\n'
+            f"result = subprocess.run(['/ptobench/pi-tools/ptobench-shell', '-c', {shell!r}], "
+            'capture_output=True, text=True)\n'
+            'assert result.returncode == 0, (result.returncode, result.stdout, result.stderr)\n'
+        )
+
+        endpoint_root = self.handle.session_root / 'broker-endpoints'
+        endpoint_root.mkdir(parents=True, exist_ok=True)
+        rpc, api = endpoint_root / 'rpc.sock', endpoint_root / 'api.sock'
+        endpoints = []
+        for path in (rpc, api):
+            endpoint = socket.socket(socket.AF_UNIX)
+            endpoint.bind(str(path))
+            endpoint.listen(1)
+            endpoints.append(endpoint)
+        transport_directory, transport = sandbox_supervisor._copy_cli_transport(
+            self.handle.session_root)
+        process = None
+        launch_environment = None
+        try:
+            argv, launch_environment = isolation.agent_command(
+                [str(Path(sys.prefix) / 'bin/python'), '-c', outer], cwd=workspace_path,
+                environment={'PATH': os.environ['PATH'], 'PTOBENCH_RPC_SOCKET': str(rpc),
+                             'PTOBENCH_API_PROXY_SOCKET': str(api),
+                             'PTOBENCH_CLIENT_PATH': str(transport)},
+                workspace=workspace_path, session_root=self.handle.session_root)
+            process = subprocess.Popen(argv, cwd=workspace_path, env=launch_environment,
+                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            deadline = time.monotonic() + 20
+            while not ready.exists() and process.poll() is None and time.monotonic() < deadline:
+                time.sleep(.02)
+            self.assertTrue(ready.exists(), 'nested Shell did not reach its publication barrier')
+            shell_pid = int(ready.read_text())
+            worker_id = session.fork_workspace(self.handle.session_root, workspace_path)
+            worker = self.handle.session_root / 'workspaces' / worker_id
+            output_directory = worker / '.benchmark_outputs/clean'
+            output_directory.mkdir()
+            share_gid = grp.getgrnam('ptobench-share').gr_gid
+            os.chown(output_directory, -1, share_gid)
+            output_directory.chmod(0o750)
+            output = output_directory / 'latest_session_result.json'
+            output.write_text('{"event_seq":23}\n')
+            os.chown(output, -1, share_gid)
+            output.chmod(0o440)
+            release.write_text('published')
+            stdout, stderr = process.communicate(timeout=30)
+            self.assertEqual(process.returncode, 0, stdout + stderr)
+            observed = json.loads(complete.read_text())
+            self.assertEqual(observed, {'pid': shell_pid, 'worker': str(worker)})
+            self.assertEqual((worker / 'candidate/candidate.py').read_text(), 'VALUE = 77\n')
+            self.assertEqual((workspace_path / 'candidate/helper.py').read_text(), 'VALUE = 1\n')
+        finally:
+            if process is not None:
+                if process.poll() is None:
+                    process.terminate()
+                    try:
+                        process.wait(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        process.kill()
+                        process.wait()
+                if launch_environment is not None:
+                    agent_launch.cleanup_request_after_process(launch_environment, process)
+            for endpoint in endpoints:
+                endpoint.close()
+            shutil.rmtree(transport_directory, ignore_errors=True)
+
     def test_agent_candidate_writes_are_broker_readable_and_snapshot_ready(self):
         node = shutil.which('node')
-        package = Path.home() / '.local/npm/lib/node_modules/@earendil-works/pi-coding-agent'
         self.assertIsNotNone(node)
-        self.assertTrue((package / 'dist/core/tools/write.js').is_file())
-        node_script = f'''import {{ createWriteToolDefinition }} from {json.dumps((package / 'dist/core/tools/write.js').as_uri())};
-import {{ createEditToolDefinition }} from {json.dumps((package / 'dist/core/tools/edit.js').as_uri())};
-const context = {{ cwd: process.cwd() }};
-const write = createWriteToolDefinition(process.cwd());
-const edit = createEditToolDefinition(process.cwd());
-await write.execute('write', {{ path: 'candidate/new_helper.py', content: 'VALUE = 1\\n' }}, undefined, undefined, context);
-await edit.execute('edit', {{ path: 'candidate/new_helper.py', edits: [{{ oldText: '1', newText: '2' }}] }}, undefined, undefined, context);
+        node_path = str(Path(node).resolve(strict=True))
+        node_script = '''import fs from 'node:fs';
+import path from 'node:path';
+const file = path.join(process.cwd(), 'candidate/new_helper.py');
+fs.writeFileSync(file, 'VALUE = 1\\n');
+fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace('1', '2'));
 '''
-        result = self._run_agent([node, '--input-type=module', '-e', node_script])
+        node_environment = isolation.clean_environment()
+        node_view = (isolation.View().system()
+                     .add(node_path, '/ptobench/runtime/node')
+                     .add(self.handle.initial_workspace, '/workspace', write=True))
+        bubblewrap = node_view.argv(
+            ['/ptobench/runtime/node', '--input-type=module', '-e', node_script],
+            cwd='/workspace', environment=node_environment)
+        launch, launch_environment = agent_launch.prepare(
+            bubblewrap, self.handle.initial_workspace, self.handle.session_root / 'agent/launcher')
+        try:
+            result = subprocess.run(
+                launch, cwd=self.handle.initial_workspace, env=launch_environment,
+                capture_output=True, text=True, timeout=30)
+        finally:
+            agent_launch.cleanup_request(launch_environment)
         self.assertEqual(result.returncode, 0, result.stderr)
 
         atomic_script = r'''import os

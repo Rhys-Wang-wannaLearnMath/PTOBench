@@ -26,9 +26,10 @@ Basic、CANNBot 和未来 PTOmni 分别读取自己的 `.env`，并保持三份�
 `LLM_API_KEY` 留空时使用进程环境的 `PYPTO_PROVIDER_API_KEY`，然后尝试已有的
 provider 认证。`.env` 被 Git 忽略，不写入 Run 记录。
 
-每个 Run 在 `agent/pi/` 生成自己的 `models.json` 和 `settings.json`，
-通过 `PI_CODING_AGENT_DIR` 交给 Pi；该目录允许 Pi 写入原生缓存，
-配置另行脱敏归档到 `agent/config/`。CANNBot 所有 Task 阶段继承同一目录与认证。
+隔离 Pi Run 在 `agent/pi-config/` 生成只读 `models.json` 和 `settings.json`，
+通过 `PI_CODING_AGENT_DIR` 交给 Pi。原生会话与锁文件保存在可归档的
+`agent/native/`；受信任工具和 CANNBot 扩展保存在只读 `agent/pi-tools/`。
+配置另行脱敏归档到 `agent/config/`。CANNBot 所有 Task 阶段继承同一配置与认证。
 provider、地址、协议、模型及已有的模型限制/compatibility 在 preflight 时确定，
 key 在启动时读取并仅通过进程环境传递。`.env` 被 Git 和配置保护备份排除，
 Run 只归档不包含 key 的有效配置。修改 `.env` 对随后启动的实验生效。

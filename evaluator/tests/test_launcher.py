@@ -7,6 +7,7 @@ import signal
 import subprocess
 import sys
 import time
+from unittest.mock import patch
 
 from action_test_support import ActionTestBase, SOURCE_BENCHMARK, write_json
 import session
@@ -165,6 +166,7 @@ class LauncherTests(ActionTestBase):
         profile_path.write_text(yaml.safe_dump(profile))
 
     def launch(self, asynchronous=False):
+        prepare_fake_pi_bundle(self)
         command = [self.python,str(self.bench / 'pto-launcher'),'run',str(self.config)]
         if asynchronous:
             p=subprocess.Popen(command,cwd='/',env=self.env,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
@@ -320,6 +322,23 @@ class LauncherTests(ActionTestBase):
             self.assertIn('started_at', event)
             index = json.loads((root/event['artifact_index']).read_text())
             self.assertTrue((root/index['candidate_snapshot']/'candidate/candidate.py').is_file())
+
+    def test_disabled_sandbox_stops_before_mode_runner_launch(self):
+        from launcher import methods
+
+        request = self.repo / 'method-request.json'
+        runner = self.repo / 'mode_runner.py'
+        marker = self.repo / 'mode-runner-started'
+        request.write_text(json.dumps({'preflight': {'profile': {'backend': 'pi'}}}))
+        runner.write_text(f"from pathlib import Path; Path({str(marker)!r}).write_text('started')\n")
+
+        with patch.dict(os.environ, {'PTOBENCH_SANDBOX': '0'}), \
+             patch.object(methods.subprocess, 'Popen') as spawn:
+            with self.assertRaisesRegex(RuntimeError, 'Pi Agent requires filesystem isolation'):
+                methods.start({'path': str(runner)}, str(request), str(self.repo), {})
+
+        spawn.assert_not_called()
+        self.assertFalse(marker.exists())
 
     def test_reserved_methods_fail_before_creating_run(self):
         for mode in ('ours',):

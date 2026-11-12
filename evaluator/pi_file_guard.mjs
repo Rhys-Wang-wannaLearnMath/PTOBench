@@ -104,7 +104,8 @@ export default function (pi) {
   pi.on('tool_call', (event, context) => {
     if (!fileTools.has(event.toolName)) return undefined;
 
-    const privateRoots = [process.env.PI_CODING_AGENT_DIR, process.env.PTOBENCH_AGENT_SESSION_DIR]
+    const privateRoots = [process.env.PI_CODING_AGENT_DIR, process.env.PTOBENCH_PI_TOOLS_DIR,
+      process.env.PTOBENCH_AGENT_SESSION_DIR]
       .filter((value) => typeof value === 'string' && value.length > 0)
       .map((value) => canonical(value));
     if (privateRoots.length === 0) {

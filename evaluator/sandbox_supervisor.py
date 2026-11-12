@@ -54,25 +54,18 @@ def copy_tree(source, target):
 class Broker:
     def __init__(self, root, private, *, cli_environment=None):
         self.root, self.private = Path(root), Path(private)
-        self.view = private / 'view'
-        self.public = private / 'public'
-        self.public.mkdir()
-        self.exports = self.view / 'workspaces'
-        self.exports.mkdir(parents=True)
-        self.candidates = self.view / 'candidates'
-        self.candidates.mkdir()
+        session.recover_pending_forks(root)
         self.record = session.read_session(root)
         self.ipc = tempfile.TemporaryDirectory(prefix='ptobench-cli-')
         self.sockpath = Path(self.ipc.name) / 'rpc'
         self.server = socket.socket(socket.AF_UNIX)
         self.server.bind(str(self.sockpath))
+        isolation._agent_shared_socket(self.sockpath)
         self.server.listen(8)
         self.server.settimeout(.2)
         self.stop = threading.Event()
         self.child = None
         self.cli_environment = cli_environment
-        for name in self.record['workspaces']:
-            self.export(name)
 
     def export(self, name):
         original = self.root / 'workspaces' / name
@@ -199,7 +192,6 @@ class Broker:
                         explicit = Path(argv[position])
                         explicit = explicit if explicit.is_absolute() else canonical / explicit
                         target_name, _, _ = session.resolve_workspace(self.root, str(explicit))
-                    self.sync_source(target_name)
                     env = {**os.environ, 'PTOBENCH_SESSION_ROOT': str(self.root),
                            'PTOBENCH_SANDBOX': '1'}
                     env.pop('PTOBENCH_RPC_SOCKET', None)
@@ -227,10 +219,6 @@ class Broker:
                             pass
                     code = self.child.wait()
                     self.child = None
-                    current = session.read_session(self.root)
-                    for worker in current['workspaces']:
-                        self.export(worker)
-                    self.feedback(target_name)
                     connection.sendall((json.dumps({'exit_code': code}) + '\n').encode())
                 except Exception as error:
                     try:
@@ -257,6 +245,26 @@ def wait_for_socket(process, path, name):
     raise RuntimeError(f'{name} did not become ready')
 
 
+def _copy_cli_transport(session_root):
+    """Copy the untrusted-side transport shim into a Broker-owned temp path."""
+    import agent_launch
+    import grp
+
+    request_directory = agent_launch.ensure_request_directories(Path(session_root))
+    share_gid = grp.getgrnam(agent_launch.SHARE_GROUP).gr_gid
+    directory = Path(tempfile.mkdtemp(prefix='ptobench-client-', dir=request_directory))
+    try:
+        isolation._agent_shared_directory(directory, 0o2710, share_gid)
+        client = directory / 'sandbox_client.py'
+        shutil.copyfile(common.BENCHMARK_ROOT / 'evaluator/sandbox_client.py', client)
+        os.chown(client, os.getuid(), share_gid)
+        client.chmod(0o550)
+        return directory, client
+    except Exception:
+        shutil.rmtree(directory, ignore_errors=True)
+        raise
+
+
 def run_private_pi(method_path, request_path, request):
     """Keep the Broker on the host; isolate only the interactive Pi Agent."""
     from modes._shared import provider
@@ -265,53 +273,56 @@ def run_private_pi(method_path, request_path, request):
     api_key = provider.api_key(profile)
     root = Path(request['context']['session_root'])
     private = common.BENCHMARK_ROOT / '.ptobench/isolation' / root.name
-    private.mkdir(parents=True, exist_ok=False, mode=0o700)
-    broker = Broker(root, private)
-    client = private / 'ptobench-client'
-    shutil.copyfile(common.BENCHMARK_ROOT / 'evaluator/sandbox_client.py', client)
-    client.chmod(0o755)
-
-    proxy_directory = tempfile.TemporaryDirectory(prefix='ptobench-model-gateway-')
-    api_socket = Path(proxy_directory.name) / 'api.sock'
-    gateway_environment = {'PATH': os.environ.get('PATH', '/usr/bin:/bin'),
-                           'LANG': 'C.UTF-8',
-                           'PTOBENCH_UPSTREAM_API_KEY': api_key}
-    gateway = subprocess.Popen([
-        sys.executable, str(common.BENCHMARK_ROOT / 'evaluator/network_proxy.py'),
-        'serve-api', '--socket', str(api_socket),
-        '--base-url', profile['mode_provider']['base_url'],
-        '--api', profile['mode_provider']['api'],
-    ], cwd=private, env=gateway_environment, stdin=subprocess.DEVNULL,
-       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    del api_key
-
-    bwrap = isolation.executable()
-    cli_environment = isolation.clean_environment(os.environ)
-    for name in ('PTOBENCH_RPC_SOCKET', 'PTOBENCH_PUBLIC_DIR', 'PTOBENCH_CLIENT_PATH',
-                 'PTOBENCH_API_PROXY_SOCKET', 'PTOBENCH_AGENT_WORKSPACE_ROOT',
-                 'PTOBENCH_PROVIDER_PREPARED', 'PTOBENCH_AGENT_BRIDGE_DIR'):
-        cli_environment.pop(name, None)
-    cli_environment.update(PTOBENCH_SESSION_ROOT=str(root), PTOBENCH_SANDBOX='1',
-                            PTOBENCH_BWRAP=bwrap)
-    broker.cli_environment = cli_environment
-
-    runner_environment = isolation.clean_environment(os.environ)
-    runner_environment.update(
-        PTOBENCH_SESSION_ROOT=str(root),
-        PTOBENCH_SANDBOX='1',
-        PTOBENCH_BWRAP=bwrap,
-        PTOBENCH_PROVIDER_PREPARED='1',
-        PTOBENCH_RPC_SOCKET=str(broker.sockpath),
-        PTOBENCH_PUBLIC_DIR=str(broker.public),
-        PTOBENCH_CLIENT_PATH=str(client),
-        PTOBENCH_API_PROXY_SOCKET=str(api_socket),
-        PTOBENCH_AGENT_WORKSPACE_ROOT=str(broker.exports),
-        PYPTO_PROVIDER_API_KEY=isolation.LOCAL_MODEL_KEY,
-    )
-
-    thread = threading.Thread(target=broker.serve, daemon=True)
+    private_created = False
+    broker = None
+    transport_directory = None
+    proxy_directory = None
+    gateway = None
+    thread = None
     process = None
     try:
+        private.mkdir(parents=True, exist_ok=False, mode=0o700)
+        private_created = True
+        broker = Broker(root, private)
+        transport_directory, client = _copy_cli_transport(root)
+
+        proxy_directory = tempfile.TemporaryDirectory(prefix='ptobench-model-gateway-')
+        api_socket = Path(proxy_directory.name) / 'api.sock'
+        gateway_environment = {'PATH': os.environ.get('PATH', '/usr/bin:/bin'),
+                               'LANG': 'C.UTF-8',
+                               'PTOBENCH_UPSTREAM_API_KEY': api_key}
+        gateway = subprocess.Popen([
+            sys.executable, str(common.BENCHMARK_ROOT / 'evaluator/network_proxy.py'),
+            'serve-api', '--socket', str(api_socket),
+            '--base-url', profile['mode_provider']['base_url'],
+            '--api', profile['mode_provider']['api'],
+        ], cwd=private, env=gateway_environment, stdin=subprocess.DEVNULL,
+           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        del api_key
+
+        bwrap = isolation.executable()
+        cli_environment = isolation.clean_environment(os.environ)
+        for name in ('PTOBENCH_RPC_SOCKET', 'PTOBENCH_PUBLIC_DIR', 'PTOBENCH_CLIENT_PATH',
+                     'PTOBENCH_API_PROXY_SOCKET', 'PTOBENCH_AGENT_WORKSPACE_ROOT',
+                     'PTOBENCH_PROVIDER_PREPARED', 'PTOBENCH_AGENT_BRIDGE_DIR'):
+            cli_environment.pop(name, None)
+        cli_environment.update(PTOBENCH_SESSION_ROOT=str(root), PTOBENCH_SANDBOX='1',
+                                PTOBENCH_BWRAP=bwrap)
+        broker.cli_environment = cli_environment
+
+        runner_environment = isolation.clean_environment(os.environ)
+        runner_environment.update(
+            PTOBENCH_SESSION_ROOT=str(root),
+            PTOBENCH_SANDBOX='1',
+            PTOBENCH_BWRAP=bwrap,
+            PTOBENCH_PROVIDER_PREPARED='1',
+            PTOBENCH_RPC_SOCKET=str(broker.sockpath),
+            PTOBENCH_CLIENT_PATH=str(client),
+            PTOBENCH_API_PROXY_SOCKET=str(api_socket),
+            PYPTO_PROVIDER_API_KEY=isolation.LOCAL_MODEL_KEY,
+        )
+
+        thread = threading.Thread(target=broker.serve, daemon=True)
         wait_for_socket(gateway, api_socket, 'model API gateway')
         thread.start()
         process = subprocess.Popen([sys.executable, method_path, 'run', str(request_path)],
@@ -326,28 +337,34 @@ def run_private_pi(method_path, request_path, request):
             except subprocess.TimeoutExpired:
                 process.kill()
                 process.wait()
-        broker.stop.set()
-        if broker.child is not None and broker.child.poll() is None:
+        if broker is not None:
+            broker.stop.set()
+        if broker is not None and broker.child is not None and broker.child.poll() is None:
             broker.child.terminate()
             try:
                 broker.child.wait(timeout=5)
             except subprocess.TimeoutExpired:
                 broker.child.kill()
                 broker.child.wait()
-        if thread.is_alive():
+        if thread is not None and thread.is_alive():
             thread.join(timeout=5)
-        broker.server.close()
-        broker.ipc.cleanup()
-        if gateway.poll() is None:
+        if broker is not None:
+            broker.server.close()
+            broker.ipc.cleanup()
+        if transport_directory is not None:
+            shutil.rmtree(transport_directory, ignore_errors=True)
+        if gateway is not None and gateway.poll() is None:
             gateway.terminate()
             try:
                 gateway.wait(timeout=5)
             except subprocess.TimeoutExpired:
                 gateway.kill()
                 gateway.wait()
-        proxy_directory.cleanup()
+        if proxy_directory is not None:
+            proxy_directory.cleanup()
         shutil.rmtree(root / 'agent/.runtime', ignore_errors=True)
-        shutil.rmtree(private, ignore_errors=True)
+        if private_created:
+            shutil.rmtree(private, ignore_errors=True)
 
 
 def run(method_path, request_path):

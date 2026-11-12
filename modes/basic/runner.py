@@ -52,24 +52,22 @@ def prepare(request):
 
 
 def run(request):
+    profile = request['preflight']['profile']
+    isolation.require_agent_isolation(profile)
     context = request['context']
     run_root = Path(context['session_root'])
-    profile = request['preflight']['profile']
     if profile.get('mode_provider'):
         profile = json.loads((run_root / 'profile.json').read_text())
     # Use the exact frozen prompt; exec preserves the owned PID/group and exit code.
     prompt = (run_root / 'prompt.txt').read_text()
     argv, additions = render(profile, context['workspace'], run_root, prompt)
     environment = {**os.environ, **additions, **provider.credentials(profile)}
-    if profile.get('backend') == 'pi' or isolation.enabled():
-        isolation.require_agent_isolation(profile)
-        argv, environment = isolation.agent_command(
-            argv, cwd=context['workspace'], environment=environment,
-            workspace=context['workspace'], session_root=run_root,
-        )
-        import agent_launch
-        return agent_launch.run_process(argv, cwd=context['workspace'], environment=environment)
-    os.execvpe(argv[0], argv, environment)
+    argv, environment = isolation.agent_command(
+        argv, cwd=context['workspace'], environment=environment,
+        workspace=context['workspace'], session_root=run_root,
+    )
+    import agent_launch
+    return agent_launch.run_process(argv, cwd=context['workspace'], environment=environment)
 
 
 def collect(request):

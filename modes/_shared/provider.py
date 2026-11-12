@@ -1,5 +1,6 @@
 """Optional mode-local Pi provider settings; credentials stay out of Run records."""
 import hashlib
+import grp
 import json
 import os
 from pathlib import Path
@@ -155,16 +156,21 @@ def prepare(profile, run_root, *, gateway=False):
     config = profile.get('mode_provider')
     if not config:
         return profile
-    directory = Path(run_root) / 'agent/pi'
+    directory = Path(run_root) / 'agent/pi-config'
+    share_gid = grp.getgrnam('ptobench-share').gr_gid
     with file_tree.open_directory(directory, create=True) as descriptor:
-        os.fchmod(descriptor, 0o700)
+        os.fchown(descriptor, -1, share_gid)
+        os.fchmod(descriptor, 0o750)
     settings = {'defaultProvider': config['provider'], 'defaultModel': config['model']['id'],
                 'defaultThinkingLevel': profile['reasoning']}
     base_url = local_gateway_url(profile) if gateway else config['base_url']
     models = {'providers': {config['provider']: {'baseUrl': base_url, 'api': config['api'],
               'apiKey': '$PYPTO_PROVIDER_API_KEY', 'models': [config['model']]}}}
     for name, value in (('settings.json', settings), ('models.json', models)):
-        file_tree.atomic_bytes(directory / name, (json.dumps(value, indent=2) + '\n').encode(), mode=0o600)
+        target = directory / name
+        file_tree.atomic_bytes(target, (json.dumps(value, indent=2) + '\n').encode(),
+                               mode=0o440)
+        os.chown(target, -1, share_gid)
     argv = profile['argv']
     if config['api'] == 'openai-completions' and profile.get('max_output_tokens') == 'unlimited':
         extension = directory / 'unlimited-output.ts'
@@ -176,7 +182,8 @@ def prepare(profile, run_root, *, gateway=False):
             '    delete payload.max_completion_tokens;\n'
             '    return payload;\n'
             '  });\n'
-            '}\n').encode(), mode=0o600)
+            '}\n').encode(), mode=0o440)
+        os.chown(extension, -1, share_gid)
         argv = list(argv)
         argv[argv.index('{prompt}'):argv.index('{prompt}')] = ['--extension', str(extension)]
     return {**profile, 'argv': argv, 'env': {**profile['env'], 'PI_CODING_AGENT_DIR': str(directory), 'PI_OFFLINE': '1'},

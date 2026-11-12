@@ -45,6 +45,7 @@ def require_agent_isolation(profile):
         raise RuntimeError('Pi Agent requires filesystem isolation')
     if not profile.get('mode_provider'):
         raise RuntimeError('isolated Pi requires the mode-local model API gateway configuration')
+    executable()
 
 
 def executable():
@@ -79,6 +80,7 @@ def agent_environment(environment):
     """Pass only runtime settings the interactive Agent process needs."""
     names = {'PATH', 'LANG', 'LC_ALL', 'TZ', 'TERM', 'LD_LIBRARY_PATH',
              'PI_CODING_AGENT_DIR', 'CODEX_HOME', 'PTOBENCH_RPC_SOCKET',
+             'PTOBENCH_PI_TOOLS_DIR',
              'PTOBENCH_CANNBOT_SOCKET', 'PTOBENCH_CANNBOT_ALLOW_TASK',
              'PTOBENCH_AGENT_DISPATCH_ID', 'PTOBENCH_AGENT_PARENT_TOOL_CALL_ID',
              'PI_OFFLINE', 'NO_PROXY', 'no_proxy'}
@@ -98,7 +100,9 @@ def sandbox_launcher_environment(environment):
 
 def _agent_shared_directory(path, mode=0o2770, group_id=None):
     path = Path(path)
-    metadata = path.stat()
+    metadata = path.lstat()
+    if not stat.S_ISDIR(metadata.st_mode):
+        raise RuntimeError(f'Agent shared path must be a real directory: {path}')
     expected_gid = os.getgid() if group_id is None else group_id
     if metadata.st_uid != os.getuid():
         raise RuntimeError(f'Agent shared directory must be owned by the Broker UID/GID: {path}')
@@ -177,82 +181,135 @@ def _exported_workspace(workspace, workspace_root, exported_workspaces):
     return Path(exported_workspaces) / relative
 
 
-def install_pi_private_tools(directory):
-    """Install trusted Pi guards in its private configuration directory."""
+def install_pi_private_tools(config_directory, tools_directory, workspace_root):
+    """Install Broker-owned Pi configuration and its read-only trusted tools."""
     import grp
-    directory = Path(directory)
-    directory.mkdir(parents=True, exist_ok=True, mode=0o2770)
-    _agent_shared_directory(directory, group_id=grp.getgrnam('ptobench-share').gr_gid)
+    share_gid = grp.getgrnam('ptobench-share').gr_gid
+    config_directory = Path(config_directory)
+    tools_directory = Path(tools_directory)
+    config_directory.mkdir(parents=True, exist_ok=True, mode=0o750)
+    tools_directory.mkdir(parents=True, exist_ok=True, mode=0o750)
+    _agent_shared_directory(config_directory, mode=0o750, group_id=share_gid)
+    _agent_shared_directory(tools_directory, mode=0o750, group_id=share_gid)
     for source_name, target_name in (
             ('pi_file_guard.mjs', 'ptobench-file-guard.mjs'),
             ('pi_shell_wrapper.py', 'ptobench-shell')):
-        target = directory / target_name
-        temporary = directory / f'.{target_name}.{uuid.uuid4().hex}'
+        target = tools_directory / target_name
+        temporary = tools_directory / f'.{target_name}.{uuid.uuid4().hex}'
         try:
             shutil.copyfile(Path(__file__).with_name(source_name), temporary)
+            os.chown(temporary, -1, share_gid)
             temporary.chmod(0o550 if source_name == 'pi_shell_wrapper.py' else 0o440)
             os.replace(temporary, target)
         finally:
             temporary.unlink(missing_ok=True)
-    shell_config = directory / 'shell.json'
+    shell_config = tools_directory / 'shell.json'
     file_tree.atomic_bytes(shell_config,
-        (json.dumps({'bwrap': executable()}) + '\n').encode(), mode=0o440)
-    settings_path = directory / 'settings.json'
+        (json.dumps({'bwrap': executable(),
+                     'workspace_root': str(Path(workspace_root).resolve())}) + '\n').encode(), mode=0o440)
+    os.chown(shell_config, -1, share_gid)
+    auth_path = config_directory / 'auth.json'
+    file_tree.atomic_bytes(auth_path, b'{}\n', mode=0o440)
+    os.chown(auth_path, -1, share_gid)
+    settings_path = config_directory / 'settings.json'
     settings = json.loads(settings_path.read_text()) if settings_path.is_file() else {}
-    settings['shellPath'] = '/ptobench/pi-private/ptobench-shell'
+    settings['shellPath'] = '/ptobench/pi-tools/ptobench-shell'
     file_tree.atomic_bytes(settings_path,
-        (json.dumps(settings, indent=2) + '\n').encode(), mode=0o660)
+        (json.dumps(settings, indent=2) + '\n').encode(), mode=0o440)
+    os.chown(settings_path, -1, share_gid)
 
 
 def agent_command(command, *, cwd, environment, workspace, session_root,
-                  cann_bot_extension=None, cann_bot_socket=None):
+                  cann_bot_extension=None, cann_bot_socket=None, backend=None):
     """Build the verified host launcher and Bubblewrap command for an Agent."""
     if not enabled():
         raise RuntimeError('Pi Agent requires filesystem isolation')
-    view = View(isolate_network=True).system().native_agent()
+    command = list(map(str, command))
+    view = View(isolate_network=True).system()
+    is_pi = (backend == 'pi' or Path(command[0]).name == 'pi'
+             or any('pi-coding-agent/dist/bundle/cli.js' in value for value in command[:3]))
+    view.native_agent(command=command, environment=environment, is_pi=is_pi)
     workspace_root = Path(session_root) / 'workspaces'
-    exported_workspaces = Path(environment.get('PTOBENCH_AGENT_WORKSPACE_ROOT', workspace_root))
-    candidate_pool = exported_workspaces.parent / 'candidates'
-    if candidate_pool.is_symlink() or not candidate_pool.is_dir():
-        raise RuntimeError('Agent Candidate pool is unavailable')
-    # Forks appear under the mounted Candidate pool while the Agent is running.
-    # Workspace roots remain read-only, so their Broker-owned links cannot move.
-    view.add(exported_workspaces, workspace_root)
-    view.add(candidate_pool, '/ptobench/candidates', write=True)
-    agent_workspace = _exported_workspace(workspace, workspace_root, exported_workspaces)
-    _candidate_location(view, agent_workspace, candidate_pool)
-    private_pi = Path(session_root) / 'agent/pi'
+    workspace_root_metadata = workspace_root.lstat()
+    if not stat.S_ISDIR(workspace_root_metadata.st_mode):
+        raise RuntimeError('Agent Session workspaces must be a real directory')
+    workspace = Path(workspace).absolute()
+    if workspace.is_symlink() or not workspace.is_dir():
+        raise RuntimeError('Agent Workspace must be a real registered directory')
+    try:
+        relative_workspace = workspace.resolve().relative_to(workspace_root.resolve())
+    except ValueError as error:
+        raise RuntimeError('Agent Workspace is outside the current Session') from error
+    if len(relative_workspace.parts) != 1:
+        raise RuntimeError('Agent Workspace must be a direct child of current Session workspaces')
+    view.add(workspace_root, workspace_root, write=True)
+
     import agent_launch
     agent_launch.ensure_request_directories(Path(session_root))
-    install_pi_private_tools(private_pi)
-    view.add(private_pi, '/ptobench/pi-private', write=True)
-    public = environment.get('PTOBENCH_PUBLIC_DIR')
-    client = environment.get('PTOBENCH_CLIENT_PATH')
+    share_gid = grp.getgrnam('ptobench-share').gr_gid
+    pi_config = Path(session_root) / 'agent/pi-config'
+    pi_tools = Path(session_root) / 'agent/pi-tools'
+    native_sessions = Path(session_root) / 'agent/native'
+    for path, mode in ((pi_config, 0o750), (pi_tools, 0o750), (native_sessions, 0o2770)):
+        path.mkdir(parents=True, exist_ok=True, mode=mode)
+        _agent_shared_directory(path, mode=mode, group_id=share_gid)
+    install_pi_private_tools(pi_config, pi_tools, workspace_root)
+    view.add_tmpfs('/ptobench/pi-config')
+    for name in ('settings.json', 'models.json', 'auth.json', 'unlimited-output.ts'):
+        config_file = pi_config / name
+        try:
+            metadata = config_file.lstat()
+        except FileNotFoundError:
+            continue
+        if (not stat.S_ISREG(metadata.st_mode) or metadata.st_uid != os.getuid()
+                or metadata.st_gid != share_gid or metadata.st_mode & 0o022):
+            raise RuntimeError(f'Pi config file must be Broker-owned and read-only: {config_file}')
+        view.add(config_file, f'/ptobench/pi-config/{name}')
+    view.add(pi_tools, '/ptobench/pi-tools')
+    view.add(native_sessions, '/ptobench/agent-sessions', write=True)
     api_socket = environment.get('PTOBENCH_API_PROXY_SOCKET')
-    if not public or not client or not api_socket:
+    if not api_socket:
         raise RuntimeError('Agent Broker or model API gateway is unavailable')
-    view.add(public, '/ptobench/public')
-    view.add(client, common.BENCHMARK_ROOT / 'ptobench')
     _agent_shared_socket(api_socket)
-    view.add(Path(api_socket).parent, '/ptobench/network')
+    view.add(api_socket, '/ptobench/network/api.sock')
     socket_path = environment.get('PTOBENCH_RPC_SOCKET')
     if not socket_path:
         raise RuntimeError('PTOBench Agent Broker is unavailable')
     _agent_shared_socket(socket_path)
     view.add(socket_path, '/ptobench/cli.sock')
 
+    client_value = environment.get('PTOBENCH_CLIENT_PATH')
+    if not client_value:
+        raise RuntimeError('Broker CLI transport shim is unavailable')
+    client = Path(client_value)
+    launcher_root = Path(session_root) / 'agent/launcher'
+    try:
+        client.relative_to(launcher_root)
+        client_parent = client.parent.lstat()
+        metadata = client.lstat()
+        client.resolve(strict=True).relative_to(launcher_root.resolve(strict=True))
+    except (OSError, ValueError) as error:
+        raise RuntimeError('Broker CLI transport shim must be in the current Session launcher directory') from error
+    if (not stat.S_ISDIR(client_parent.st_mode) or client_parent.st_uid != os.getuid()
+            or client_parent.st_gid != share_gid or stat.S_IMODE(client_parent.st_mode) != 0o2710
+            or not stat.S_ISREG(metadata.st_mode) or metadata.st_uid != os.getuid()
+            or metadata.st_gid != share_gid or stat.S_IMODE(metadata.st_mode) != 0o550
+            or metadata.st_nlink != 1 or not os.access(client, os.X_OK)):
+        raise RuntimeError('Broker CLI transport shim ownership or mode is invalid')
+    if client.read_bytes() != Path(__file__).with_name('sandbox_client.py').read_bytes():
+        raise RuntimeError('Broker CLI transport shim content is invalid')
+    view.add(client, '/ptobench/ptobench')
+
     # The bridge runs inside the Agent's private network namespace so its
     # loopback listener can reach only the mounted, path-limited API socket.
     # It deletes its temporary source before starting the Agent process.
     bridge_dir = Path(session_root) / 'agent/.runtime' / uuid.uuid4().hex
     bridge_dir.mkdir(parents=True, mode=0o2770)
-    import grp
     _agent_shared_directory(bridge_dir, group_id=grp.getgrnam('ptobench-share').gr_gid)
     bridge = bridge_dir / 'network_proxy.py'
     shutil.copyfile(Path(__file__).with_name('network_proxy.py'), bridge)
     bridge.chmod(0o440)
-    view.add(bridge_dir, '/ptobench/runtime', write=True)
-    command = list(map(str, command))
+    view.add(bridge_dir, '/ptobench/runtime/bridge', write=True)
     executable_path = Path(command[0])
     if executable_path.is_absolute() and executable_path.is_file():
         # system() and native_agent() already mount standard runtime roots.
@@ -267,51 +324,53 @@ def agent_command(command, *, cwd, environment, workspace, session_root,
         if argument == '--append-system-prompt':
             prompt_path = Path(command[index + 1])
             if prompt_path.is_absolute() and prompt_path.is_file():
-                view.add(prompt_path)
+                try:
+                    relative_prompt = prompt_path.resolve().relative_to(pi_tools.resolve())
+                except ValueError as error:
+                    raise RuntimeError('Pi prompt files must be provided through the public prompt argument') from error
+                command[index + 1] = str(Path('/ptobench/pi-tools') / relative_prompt)
         if argument == '--session-dir':
             session_directory = Path(command[index + 1])
             if not session_directory.is_absolute():
                 session_directory = Path(cwd) / session_directory
-            session_directory.mkdir(parents=True, exist_ok=True, mode=0o2770)
-            _agent_shared_directory(session_directory, group_id=grp.getgrnam('ptobench-share').gr_gid)
-            view.add(session_directory, '/ptobench/agent-sessions', write=True)
+            if session_directory.resolve() != native_sessions.resolve():
+                raise RuntimeError('Pi session files must use the current Session native directory')
             command[index + 1] = '/ptobench/agent-sessions'
             session_directory_mounted = True
         elif argument.startswith('--session-dir='):
             session_directory = Path(argument.split('=', 1)[1])
             if not session_directory.is_absolute():
                 session_directory = Path(cwd) / session_directory
-            session_directory.mkdir(parents=True, exist_ok=True, mode=0o2770)
-            _agent_shared_directory(session_directory, group_id=grp.getgrnam('ptobench-share').gr_gid)
+            if session_directory.resolve() != native_sessions.resolve():
+                raise RuntimeError('Pi session files must use the current Session native directory')
             view.add(session_directory, '/ptobench/agent-sessions', write=True)
             command[index] = '--session-dir=/ptobench/agent-sessions'
             session_directory_mounted = True
     if not session_directory_mounted:
-        native_sessions = Path(session_root) / 'agent/native'
-        native_sessions.mkdir(parents=True, exist_ok=True, mode=0o2770)
-        _agent_shared_directory(native_sessions, group_id=grp.getgrnam('ptobench-share').gr_gid)
-        view.add(native_sessions, '/ptobench/agent-sessions', write=True)
+        prompt_index = command.index('{prompt}') if '{prompt}' in command else len(command)
+        command[prompt_index:prompt_index] = ['--session-dir', '/ptobench/agent-sessions']
 
-    is_pi = (Path(command[0]).name == 'pi'
-             or any('pi-coding-agent/dist/bundle/cli.js' in value for value in command[:3]))
     if is_pi:
         for index, value in enumerate(command):
             path_value = Path(value)
             if path_value.is_absolute():
                 try:
-                    relative = path_value.relative_to(private_pi)
+                    relative = path_value.relative_to(pi_config)
                 except ValueError:
                     continue
-                command[index] = str(Path('/ptobench/pi-private') / relative)
+                command[index] = str(Path('/ptobench/pi-config') / relative)
         flags = ['--no-extensions', '--no-approve', '--extension',
-                 '/ptobench/pi-private/ptobench-file-guard.mjs']
-        insertion = command.index('--') if '--' in command else max(1, len(command) - 1)
+                 '/ptobench/pi-tools/ptobench-file-guard.mjs']
+        insertion = command.index('{prompt}') if '{prompt}' in command else len(command)
         command[insertion:insertion] = flags
     if cann_bot_extension:
-        view.add(cann_bot_extension, '/ptobench/cannbot-extension.ts')
-        command = ['/ptobench/cannbot-extension.ts' if value == cann_bot_extension else value
-                   for value in command]
-    command = [sys.executable, '/ptobench/runtime/network_proxy.py', 'agent',
+        try:
+            relative_extension = Path(cann_bot_extension).resolve().relative_to(pi_tools.resolve())
+        except ValueError as error:
+            raise RuntimeError('CANNBot extension must be stored in the Broker-owned Pi tools directory') from error
+        extension_path = str(Path('/ptobench/pi-tools') / relative_extension)
+        command = [extension_path if value == str(cann_bot_extension) else value for value in command]
+    command = [sys.executable, '/ptobench/runtime/bridge/network_proxy.py', 'agent',
                '--api-socket', '/ptobench/network/api.sock', '--api-port', '18081',
                '--delete-runtime-files', '--', *command]
     if cann_bot_socket:
@@ -320,9 +379,11 @@ def agent_command(command, *, cwd, environment, workspace, session_root,
 
     cleaned = agent_environment(environment)
     cleaned['PTOBENCH_RPC_SOCKET'] = '/ptobench/cli.sock'
-    cleaned['PI_CODING_AGENT_DIR'] = '/ptobench/pi-private'
+    cleaned['PTOBENCH_API_PROXY_SOCKET'] = '/ptobench/network/api.sock'
+    cleaned['PI_CODING_AGENT_DIR'] = '/ptobench/pi-config'
+    cleaned['PTOBENCH_PI_TOOLS_DIR'] = '/ptobench/pi-tools'
     cleaned['PTOBENCH_AGENT_SESSION_DIR'] = '/ptobench/agent-sessions'
-    cleaned['PATH'] = str(common.BENCHMARK_ROOT) + os.pathsep + cleaned.get('PATH', '')
+    cleaned['PATH'] = os.pathsep.join(('/ptobench', '/ptobench/runtime', '/usr/bin', '/bin'))
     if cann_bot_socket:
         cleaned['PTOBENCH_CANNBOT_SOCKET'] = '/ptobench/cannbot.sock'
     (Path(session_root) / 'filesystem_isolation.json').write_text(
@@ -368,6 +429,12 @@ class View:
             self.mounts.append(item)
         return self
 
+    def add_tmpfs(self, destination):
+        item = ('tmpfs', str(Path(destination)), 'tmpfs')
+        if item not in self.mounts:
+            self.mounts.append(item)
+        return self
+
     def system(self):
         # Explicit runtime roots, not /, /usr, /usr/local, /etc or host HOME.
         for path in ('/usr/bin', '/usr/lib', '/usr/lib64', '/usr/include', '/usr/share/cmake', '/bin', '/lib', '/lib64'):
@@ -394,16 +461,31 @@ class View:
             self.add(_EMPTY_RUNTIME.name, examples)
         return self
 
-    def native_agent(self):
-        npm = Path.home() / '.local/npm'
-        for relative in ('bin', 'lib/node_modules'):
-            if (npm / relative).exists():
-                self.add(npm / relative)
-        node = shutil.which('node')
-        if node:
-            # Include both symlink spelling and its actual executable directory.
-            self.add(Path(node).parent)
-            self.add(Path(node).resolve().parent)
+    def native_agent(self, *, command=None, environment=None, is_pi=False):
+        if not is_pi:
+            return self
+        if command is None:
+            raise RuntimeError('Pi runtime command is unavailable')
+        environment = os.environ if environment is None else environment
+        search_path = environment.get('PATH', os.defpath)
+        node = shutil.which('node', path=search_path)
+        if not node:
+            raise RuntimeError('Pi runtime requires Node from the frozen host manifest')
+        node_path = Path(node).resolve(strict=True)
+        if not node_path.is_file() or not os.access(node_path, os.X_OK):
+            raise RuntimeError('Pi runtime Node executable is unavailable')
+        self.add(node_path, '/ptobench/runtime/node')
+
+        resolved = shutil.which(command[0], path=search_path) if not Path(command[0]).is_absolute() else command[0]
+        bundle = Path(resolved).resolve(strict=True) if resolved else None
+        if bundle is None or not bundle.is_file() or bundle.suffix != '.js':
+            raise RuntimeError('Pi CLI bundle is unavailable from the frozen host manifest')
+        self.add(bundle.parent, '/ptobench/runtime/pi')
+        jiti = bundle.parents[2] / 'node_modules/jiti'
+        if not jiti.is_dir():
+            raise RuntimeError('Pi TypeScript extension runtime is unavailable from the frozen host manifest')
+        self.add(jiti.resolve(strict=True), '/ptobench/runtime/node_modules/jiti')
+        command[0] = str(Path('/ptobench/runtime/pi') / bundle.name)
         return self
 
     def toolchain(self, profile, runtime, *, devices=None):
@@ -453,8 +535,11 @@ class View:
             argv.insert(1, '--unshare-net')
         # Bind ancestors before their explicit children so restrictive overlays win.
         for source, destination, mode in sorted(self.mounts, key=lambda m: len(Path(m[1]).parts)):
-            flag = '--dev-bind' if mode == 'device' else '--bind' if mode == 'rw' else '--ro-bind'
-            argv.extend([flag, source, destination])
+            if mode == 'tmpfs':
+                argv.extend(['--tmpfs', destination])
+            else:
+                flag = '--dev-bind' if mode == 'device' else '--bind' if mode == 'rw' else '--ro-bind'
+                argv.extend([flag, source, destination])
         for source, destination in self.links:
             argv.extend(['--symlink', source, destination])
         for key, value in environment.items():

@@ -211,7 +211,8 @@ async def serve(socket_path, host, port):
     except FileNotFoundError:
         pass
     server = await asyncio.start_unix_server(ModelProxy((host, port)).handle, path=path)
-    os.chmod(path, 0o600)
+    import isolation
+    isolation._agent_shared_socket(path)
     async with server:
         await server.serve_forever()
 
@@ -228,7 +229,8 @@ async def serve_api(socket_path, base_url, api):
         pass
     server = await asyncio.start_unix_server(
         ModelAPIGateway(base_url, api, api_key).handle, path=path)
-    os.chmod(path, 0o600)
+    import isolation
+    isolation._agent_shared_socket(path)
     async with server:
         await server.serve_forever()
 
@@ -253,9 +255,7 @@ async def bridge(socket_path, port, api_socket, api_port, command, delete_runtim
     if not servers:
         raise ValueError('at least one network bridge socket is required')
     if delete_runtime_files:
-        for entry in Path(__file__).parent.iterdir():
-            if entry.is_file() or entry.is_symlink():
-                entry.unlink(missing_ok=True)
+        Path(__file__).unlink(missing_ok=True)
     process = await asyncio.create_subprocess_exec(*command)
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGTERM, signal.SIGINT):

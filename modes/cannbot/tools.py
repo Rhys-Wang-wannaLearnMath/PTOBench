@@ -14,6 +14,7 @@ sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT), str(ROOT / 'evaluator')]
 
+import session
 from modes.cannbot.runtime import exclusive, load_config, run_dispatch, save
 
 
@@ -89,7 +90,8 @@ class ToolServer:
 
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.server = Server(str(self.path), Handler)
-        os.chmod(self.path, 0o600)
+        import isolation
+        isolation._agent_shared_socket(self.path)
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         self.thread.start()
 
@@ -129,16 +131,23 @@ def call(config, dispatch, name, arguments, call_id, allow_task, cancel=None, ra
             if role not in ('pypto-op-optimizer', 'pypto-op-verifier') or not isinstance(prompt, str):
                 raise ValueError('Task requires an original stage role and a text prompt')
             child_config = dict(config)
-            if 'workspace' in arguments:
-                target = Path(arguments['workspace']).resolve()
-                # This is only a public workspace binding check. The CLI remains
-                # responsible for authoritative registration/Case enforcement.
-                binding = json.loads((target / '.benchmark_context/workspace.json').read_text())
-                current = json.loads((Path(config['workspace']) / '.benchmark_context/workspace.json').read_text())
-                target.relative_to(Path(config['run_root']) / 'workspaces')
-                if binding.get('case_id') != current.get('case_id') or binding.get('workspace') != str(target):
-                    raise ValueError('Task workspace must belong to the same public Run')
-                child_config['workspace'] = str(target)
+            session_root = config['run_root']
+            _, target, target_case_id = session.resolve_workspace(
+                session_root, arguments.get('workspace', config['workspace']))
+            _, current, current_case_id = session.resolve_workspace(
+                session_root, config['workspace'])
+            if target_case_id != current_case_id:
+                raise ValueError('Task workspace must belong to the same Case')
+            target_binding = json.loads((target / '.benchmark_context/workspace.json').read_text())
+            current_binding = (target_binding if target == current else json.loads(
+                (current / '.benchmark_context/workspace.json').read_text()))
+            if (not isinstance(target_binding, dict) or not isinstance(current_binding, dict)
+                    or target_binding.get('case_id') != target_case_id
+                    or current_binding.get('case_id') != current_case_id
+                    or target_binding.get('workspace') != str(target)
+                    or current_binding.get('workspace') != str(current)):
+                raise ValueError('Task workspace metadata does not match its Session registry')
+            child_config['workspace'] = str(target)
             with exclusive(Path(config['work_dir']) / '.task.lock', cancel):
                 result = run_dispatch(child_config, role, prompt, parent=dispatch,
                                       tool_call_id=call_id, cancel=cancel, task_input=arguments)

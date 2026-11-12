@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Original CANNBot resources, native sessions and opaque participant records."""
 import hashlib
+import grp
 import json
 import os
 from pathlib import Path
@@ -42,9 +43,15 @@ def prepare(request):
     ready = {**ready, 'profile': provider.prepare(prepared, root, gateway=gateway)}
     extension = None
     if ready['profile']['backend'] == 'pi':
-        extension = Path(ready['profile']['env']['PI_CODING_AGENT_DIR']) / 'cannbot-tools.ts'
+        share_gid = grp.getgrnam('ptobench-share').gr_gid
+        extension_directory = root / 'agent/pi-tools'
+        extension_directory.mkdir(parents=True, exist_ok=True, mode=0o750)
+        os.chown(extension_directory, -1, share_gid)
+        extension_directory.chmod(0o750)
+        extension = extension_directory / 'cannbot-extension.ts'
         shutil.copyfile(resources.DIRECTORY / 'bridge/pi_task.ts', extension)
-        extension.chmod(0o444)
+        os.chown(extension, -1, share_gid)
+        extension.chmod(0o440)
     upstream = root / 'method/resources/upstream'
     lock = resources.freeze(upstream)
     implementation = {}

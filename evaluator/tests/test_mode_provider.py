@@ -1,7 +1,9 @@
 """Mode-local Pi configuration, actual launcher processes, and secret-free records."""
 import json
+import grp
 import os
 from pathlib import Path
+import stat
 import subprocess
 import sys
 import tempfile
@@ -49,6 +51,7 @@ class ProviderTests(unittest.TestCase):
         second = provider.prepare(profile, self.root / 'run-two')
         self.assertNotEqual(first['env']['PI_CODING_AGENT_DIR'], second['env']['PI_CODING_AGENT_DIR'])
         directory = Path(first['env']['PI_CODING_AGENT_DIR'])
+        self.assertEqual(directory, self.root / 'run-one/agent/pi-config')
         config = json.loads((directory / 'models.json').read_text())['providers']['test-provider']
         self.assertEqual(config['baseUrl'], 'http://127.0.0.1:8765/v1')
         self.assertEqual(config['api'], 'openai-completions')
@@ -60,8 +63,7 @@ class ProviderTests(unittest.TestCase):
             'mode': integrity.ProtectionRoot(self.mode, 'fixed'),
             'configuration': integrity.ProtectionRoot(self.root / 'run-one/agent/config', 'agent_archive', readonly=True)})
         self.assertNotIn('.env', manifest['roots']['mode']['entries'])
-        # Pi creates native caches next to models.json during normal startup.
-        (directory / 'models-store.json').write_text('{}')
+        self.assertEqual(stat.S_IMODE((directory / 'models.json').stat().st_mode), 0o440)
         self.assertTrue(integrity.check_only(self.root / 'protection').passed)
         for p in self.root.rglob('*'):
             if p.is_file() and p.name != '.env':
@@ -110,6 +112,25 @@ class ProviderTests(unittest.TestCase):
         self.assertNotIn('local-provider-test-key', json.dumps(profile))
         self.assertNotIn('local-provider-test-key', (directory / 'models.json').read_text())
         self.assertIn('LLM_MODEL=test-model', (self.mode / '.env').read_text())
+
+    def test_isolated_gateway_configuration_is_broker_owned_and_read_only(self):
+        configured = provider.configure(self.profile, self.mode)
+        prepared = provider.prepare(configured, self.root / 'isolated-run', gateway=True)
+        directory = Path(prepared['env']['PI_CODING_AGENT_DIR'])
+        expected = self.root / 'isolated-run/agent/pi-config'
+        share_gid = grp.getgrnam('ptobench-share').gr_gid
+
+        self.assertEqual(directory, expected)
+        self.assertEqual(directory.stat().st_gid, share_gid)
+        self.assertEqual(stat.S_IMODE(directory.stat().st_mode), 0o750)
+        self.assertEqual(prepared['recording']['config_directory'], str(expected))
+        for name in ('settings.json', 'models.json'):
+            metadata = (directory / name).stat()
+            self.assertEqual(metadata.st_gid, share_gid)
+            self.assertEqual(stat.S_IMODE(metadata.st_mode), 0o440)
+        self.assertEqual(json.loads((directory / 'models.json').read_text())
+                         ['providers']['test-provider']['apiKey'], '$PYPTO_PROVIDER_API_KEY')
+        self.assertNotIn('local-provider-test-key', (directory / 'models.json').read_text())
 
     def test_mode_env_requires_a_model(self):
         (self.mode / '.env').write_text(ENV.replace('LLM_MODEL=test-model\n', ''))
@@ -221,7 +242,7 @@ class ProviderLauncherTests(unittest.TestCase):
     def assert_private_records(self, root):
         profile = json.loads((root / 'profile.json').read_text())
         self.assertEqual(profile['model'], 'test-provider/test-model')
-        self.assertEqual(profile['env']['PI_CODING_AGENT_DIR'], str(root / 'agent/pi'))
+        self.assertEqual(profile['env']['PI_CODING_AGENT_DIR'], str(root / 'agent/pi-config'))
         manifest = json.loads((root / 'protection/manifest.json').read_text())
         self.assertNotIn('.env', manifest['roots']['public_modes_basic']['entries'])
         self.assertNotIn('.env', manifest['roots']['public_modes_cannbot']['entries'])

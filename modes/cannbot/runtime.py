@@ -1,6 +1,7 @@
 """Fresh native sessions; no phase routing or optimization policy lives here."""
 from contextlib import contextmanager
 import fcntl
+import grp
 import hashlib
 import json
 import os
@@ -84,7 +85,7 @@ def command(config, directory, role, task, allow_task):
                 + f"Share this Bench Session's {config['hardware_budget']}-action exploration budget; "
                   "this Agent stage does not receive a new budget.\n\n" + task)
     prompt = task if config['profile']['backend'] == 'pi' else role_text + '\n\n' + task
-    argv, configured_env = render(config['profile'], config['workspace'], directory, prompt)
+    argv, configured_env = render(config['profile'], config['workspace'], config['run_root'], prompt)
     environment = {**os.environ, **configured_env,
                    'PTOBENCH_SESSION_ROOT': config['run_root'],
                    'CANNBOT_CONFIG': config['config_path'],
@@ -174,13 +175,12 @@ def _cleanup_agent_request(environment, process):
 
 
 def run_dispatch(config, role, task, *, parent, tool_call_id, forward=False, cancel=None, task_input=None):
-    if config['profile'].get('backend') == 'pi' or isolation.enabled():
-        isolation.require_agent_isolation(config['profile'])
+    isolation.require_agent_isolation(config['profile'])
     if role not in config['roles']:
         raise ValueError('Unknown upstream role: ' + str(role))
     directory = Path(config['run_root']) / 'method/dispatches' / uuid.uuid4().hex
     directory.mkdir(parents=True)
-    _, configured_env = render(config['profile'], config['workspace'], directory, '')
+    _, configured_env = render(config['profile'], config['workspace'], config['run_root'], '')
     native_profile = {**config['profile'], 'env': configured_env}
     state = {'schema_version': 1, 'id': directory.name, 'parent_dispatch_id': parent,
              'tool_call_id': tool_call_id, 'role': role,
@@ -197,6 +197,7 @@ def run_dispatch(config, role, task, *, parent, tool_call_id, forward=False, can
     environment = None
     tool_server = None
     tool_socket_directory = None
+    system_prompt_path = None
     try:
         save(directory / 'config.json', {key: value for key, value in config.items() if key != 'config_path'})
         config = load_config(directory / 'config.json')
@@ -220,6 +221,24 @@ def run_dispatch(config, role, task, *, parent, tool_call_id, forward=False, can
             raise InterruptedError('Task cancelled before native process start')
         if config['profile']['backend'] == 'pi':
             from modes.cannbot.tools import ToolServer
+            pi_tools = Path(config['run_root']) / 'agent/pi-tools'
+            pi_tools.mkdir(parents=True, exist_ok=True, mode=0o750)
+            isolation._agent_shared_directory(
+                pi_tools, mode=0o750, group_id=grp.getgrnam('ptobench-share').gr_gid)
+            system_prompt_path = pi_tools / f'{directory.name}-system.md'
+            descriptor = os.open(system_prompt_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL |
+                                 os.O_NOFOLLOW | os.O_CLOEXEC, 0o440)
+            try:
+                with os.fdopen(descriptor, 'wb') as stream:
+                    os.fchown(stream.fileno(), os.getuid(), grp.getgrnam('ptobench-share').gr_gid)
+                    os.fchmod(stream.fileno(), 0o440)
+                    stream.write((directory / 'system.md').read_bytes())
+            except BaseException:
+                system_prompt_path.unlink(missing_ok=True)
+                system_prompt_path = None
+                raise
+            system_prompt_index = argv.index('--append-system-prompt') + 1
+            argv[system_prompt_index] = str(system_prompt_path)
             tool_socket_directory = tempfile.TemporaryDirectory(prefix='ptb-cannbot-')
             tool_socket = Path(tool_socket_directory.name) / 'tools.sock'
             tool_server = ToolServer(config, directory.name, tool_socket, parent is None)
@@ -228,7 +247,7 @@ def run_dispatch(config, role, task, *, parent, tool_call_id, forward=False, can
                 argv, cwd=config['workspace'], environment=environment,
                 workspace=config['workspace'], session_root=config['run_root'],
                 cann_bot_extension=config.get('agent_extension'),
-                cann_bot_socket=tool_socket,
+                cann_bot_socket=tool_socket, backend=config['profile']['backend'],
             )
         # Inherit Launcher's process group: no detached child or fresh budget.
         process = subprocess.Popen(argv, cwd=config['workspace'], env=environment, shell=False,
@@ -286,6 +305,8 @@ def run_dispatch(config, role, task, *, parent, tool_call_id, forward=False, can
             tool_server.close()
         if tool_socket_directory is not None:
             tool_socket_directory.cleanup()
+        if system_prompt_path is not None:
+            system_prompt_path.unlink(missing_ok=True)
     result = {'dispatch_id': directory.name, 'exit_code': exit_code, 'answer': answer,
               'error': error, 'cancelled': cancelled}
     result['is_error'] = cancelled or error is not None or exit_code != 0 or answer is None

@@ -142,6 +142,9 @@ def collect(root, profile, workspace, *, started, close_reason):
     if not started:
         return {**result, 'status': 'not_started'}
     native = root / 'agent/native'
+    native_store = native
+    if root.parent.name == 'dispatches' and root.parent.parent.name == 'method':
+        native_store = root.parents[2] / 'agent/native'
     with file_tree.open_directory(native, create=True):
         pass
     events = root / 'stdout.log'
@@ -157,7 +160,7 @@ def collect(root, profile, workspace, *, started, close_reason):
         store = (config_directory(profile) / 'sessions').resolve()
         candidates = [path for identity in sorted(ids) for path in store.glob(f'**/*{identity}*.jsonl')]
     else:
-        candidates = list(native.glob('*.jsonl'))
+        candidates = list(native_store.glob('*.jsonl'))
     for path in sorted(set(candidates)):
         header = next(_json_lines(path), {})
         meta = header.get('payload', {}) if backend == 'codex' and header.get('type') == 'session_meta' else header
@@ -168,11 +171,10 @@ def collect(root, profile, workspace, *, started, close_reason):
             continue
         data = read_bytes(path)
         destination = native / path.name
-        if destination != path:
-            file_tree.atomic_bytes(destination, data, mode=0o444)
-        else:
-            with file_tree.open_file(destination) as fd:
-                os.fchmod(fd, 0o444)
+        # Native Pi files are Agent-owned. Replace them after the process exits
+        # so the archived copy is Broker-owned and immutable without chmod on
+        # a file the Broker does not own.
+        file_tree.atomic_bytes(destination, data, mode=0o444)
         result['native_session_ids'].append(identity)
         result['files'].append({'path': str(destination.relative_to(root)), 'source': str(path),
                                 'sha256': hashlib.sha256(data).hexdigest(), 'bytes': len(data)})
