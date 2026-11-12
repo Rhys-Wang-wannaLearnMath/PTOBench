@@ -11,9 +11,9 @@ Stage 1 已完成初版实现与离线回放。Stage 2 修缮与离线验收也�
 
 Stage 3 已完成工具收敛与 Cursor 分页改造；Stage 4 已完成大文件解析修缮和静态分配摘要：当前对外为九个只读 Tool（Compute 三个、Dataflow 三个、Schedule 三个），其中八个支持高基数明细分页，`tile_memory_allocation_summary` 返回完整聚合摘要。`pipeline_overlap_check` 因现有采集字段不能提供配对的 Compute/MTE 区间而暂缓。Stage 4 离线重放覆盖 16 份归档和 144 个工具摘要首屏校验，5,492 个索引文件哈希前后相同，硬件动作数为 0。Stage 2/3 报告未保留全部 observation 值，故跨阶段只能核对其存下的计数和来源覆盖；当前 `buffer_pressure_check` 的 Scope observations 差异及限制见 [Stage 4 离线回放报告](../reports/offline_replay_stage4_20261112.json)。最大单卡依赖图首屏临时解析峰值约 509 MB，后续 Cursor 页不再重复调用依赖图解析器。Stage 4 当前 CPU 回归为 51 项通过；PTOmni Host 接线、Basic Pi 和 Agent 配对试验尚未启动。
 
-## Stage 5：PTOmni 接线与真实优化小试
+## Stage 5：75 Case 轨迹覆盖与 Tuner 效用验证
 
-[Stage 5 规划](stage5/README.md)基于 Stage 4 检查结果，安排真实 PTOmni Host 的 Tuner 专属工具接线、CPU 集成验收和一个 Formal Case 的受控 Agent 小试。当前代码中尚未发现 PTOmni Host 调用 `ToolSession`，因此真实 Host 是接线前置条件；不创建模拟 Host 或第二个 Tool Server。初期复用身份匹配的 Stage 4 Profile，不新增 Case；只有实际 Agent 轨迹需要测量新的 Candidate 或基线身份不匹配时，才经 Runner/PTOBench 补 Profile/evaluate。完整执行门槛见 [Stage 5 任务清单](stage5/TASK_CHECKLIST.md)，可直接启动后续实施的说明见 [Stage 5 Prompt](stage5/IMPLEMENTATION_PROMPT.md)。
+[Stage 5 规划](stage5/README.md)安排真实 PTOmni Host 的 Tuner 专属工具接线、CPU 集成验收，并复用 Formal 60 + Held-out 15 全部 Case 的 Basic Pi/CANNBot Session 做九工具离线回放。对缺少身份匹配 `combined profile` 的起始和最终有效 Candidate，才经 Runner/PTOBench 补采，不为每次 Agent 尝试重复 Profile。另在三个 Formal Case 上分别为 Compute、Dataflow、Schedule 做 Raw Profile 与 Analyzer Tool 配对试点。Held-out 在 Formal 60 的语义/Parser 冻结后回放。当前仓库仍未发现 PTOmni Host 调用 `ToolSession`，故真实 Host 是接线前置条件；不创建模拟 Host 或第二个 Tool Server。完整执行门槛见 [Stage 5 任务清单](stage5/TASK_CHECKLIST.md)，启动说明见 [Stage 5 Prompt](stage5/IMPLEMENTATION_PROMPT.md)。
 
 ## Stage 4 实施与验收状态
 
