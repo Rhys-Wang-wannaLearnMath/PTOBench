@@ -8,6 +8,7 @@ import threading
 import unittest
 from pathlib import Path
 from unittest import mock
+import grp
 
 
 EVALUATOR_DIR = Path(__file__).resolve().parents[1]
@@ -87,6 +88,27 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             self.assertFalse((context / "profiling_modes.json").exists())
             self.assertNotIn("profil", (context / "README.md").read_text().lower())
             self.assertTrue((destination / "candidate" / "candidate.py").is_file())
+            self.assertTrue((destination / ".benchmark_context").is_dir())
+            self.assertTrue((destination / ".benchmark_outputs").is_dir())
+            self.assertFalse((destination / "candidate").is_symlink())
+            self.assertFalse((destination / ".benchmark_context").is_symlink())
+            self.assertFalse((destination / ".benchmark_outputs").is_symlink())
+            share_gid = grp.getgrnam("ptobench-share").gr_gid
+            expected_modes = {
+                destination: 0o2750,
+                destination / "candidate": 0o2770,
+                destination / ".benchmark_context": 0o750,
+                destination / ".benchmark_outputs": 0o750,
+                destination / "candidate/candidate.py": 0o660,
+                destination / "candidate/tuning.json": 0o660,
+                destination / ".benchmark_context/README.md": 0o640,
+                destination / ".benchmark_context/starting_point/candidate/candidate.py": 0o640,
+            }
+            for path, mode in expected_modes.items():
+                metadata = path.lstat()
+                self.assertEqual(metadata.st_uid, os.getuid(), path)
+                self.assertEqual(metadata.st_gid, share_gid, path)
+                self.assertEqual(metadata.st_mode & 0o7777, mode, path)
             self.assertEqual(
                 (context / "starting_point" / "candidate" / "candidate.py").read_text(encoding="utf-8"),
                 "def entry():\n    pass\n",
@@ -139,7 +161,6 @@ class WorkspaceDocumentationTest(unittest.TestCase):
                  mock.patch.object(common, "resolve_case", return_value=(case_dir, sealed, case)):
                 workspace.init_workspace(case_dir, sealed, case, parent)
                 (parent / "candidate" / "candidate.py").write_text("VALUE = 2\n", encoding="utf-8")
-                (parent / ".benchmark_outputs").mkdir()
                 (parent / ".benchmark_outputs" / "latest_result.json").write_text("{}\n")
                 result = workspace.fork_workspace(
                     parent, child,
@@ -155,7 +176,9 @@ class WorkspaceDocumentationTest(unittest.TestCase):
                 ),
                 "VALUE = 2\n",
             )
-            self.assertFalse((child / ".benchmark_outputs").exists())
+            self.assertTrue((child / ".benchmark_outputs").is_dir())
+            (child / "candidate" / "candidate.py").write_text("VALUE = 3\n", encoding="utf-8")
+            self.assertEqual((parent / "candidate" / "candidate.py").read_text(encoding="utf-8"), "VALUE = 2\n")
             binding = common.read_json(child / ".benchmark_context" / "workspace.json")
             self.assertEqual(binding["parent_workspace"], str(parent.resolve()))
             self.assertEqual(binding["workspace"], str(child.resolve()))
@@ -185,7 +208,7 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             context = candidate / ".benchmark_context"
             protection = root / "protection"
             integrity.capture_protection(protection, {
-                "context": integrity.ProtectionRoot(context, "context", readonly=True),
+                "context": integrity.ProtectionRoot(context, "context", readonly=False),
             })
             (candidate / "candidate" / "candidate.py").write_text("VERSION = 2\n")
             (candidate / "candidate" / "helper.py").write_text("VALUE = 'optimized'\n")
@@ -205,7 +228,7 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             self.assertEqual(workspace.source_manifest(candidate), original_candidate)
             self.assertEqual((context / "config.py").read_text(), "WIDTH = 2\n")
             self.assertEqual((context / "environment.json").read_text(), '{\n  "profile": "original"\n}\n')
-            self.assertEqual(initial.stat().st_mode & 0o777, 0o444)
+            self.assertEqual(initial.stat().st_mode & 0o777, 0o640)
             self.assertFalse((context / "extra").exists())
 
 

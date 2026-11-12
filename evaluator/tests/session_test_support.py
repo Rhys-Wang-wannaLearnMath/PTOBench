@@ -33,6 +33,7 @@ class SessionTestBase(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory(prefix='s2_')
         self.addCleanup(self.temporary.cleanup)
         self.repo = Path(self.temporary.name)
+        self.repo.chmod(0o755)
         self.bench = self.repo / 'benchmark'
         self.bench.mkdir()
         for path in (self.bench / 'evaluator/helper.py', self.bench / 'launcher/runner.py',
@@ -51,6 +52,9 @@ class SessionTestBase(unittest.TestCase):
         self.case_id = 'test.case'
         self.make_case(self.case_id)
         self.output = {'runs_root': self.repo / 'custom_runs', 'snapshots_root': self.repo / 'custom_snapshots'}
+        for root in self.output.values():
+            root.mkdir()
+            root.chmod(0o755)
 
     def make_case(self, case_id):
         family, name = case_id.split('.')

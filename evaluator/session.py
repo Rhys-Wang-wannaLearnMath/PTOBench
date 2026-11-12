@@ -11,6 +11,7 @@ import copy
 from dataclasses import dataclass
 from datetime import datetime, timezone
 import fcntl
+import grp
 import hashlib
 import json
 import math
@@ -341,6 +342,67 @@ def _output(output):
     return runs, snapshots
 
 
+def _validate_agent_traversal(runs_root: Path) -> None:
+    """Require the configured Agent identity to traverse the existing root chain."""
+    try:
+        import agent_launch
+        agent_uid, share_gid = agent_launch._agent_identity()
+        current = Path('/')
+        for part in runs_root.parts[1:]:
+            current /= part
+            try:
+                current.lstat()
+            except FileNotFoundError:
+                raise SessionError(
+                    f"runs_root must be preconfigured and traversable by ptobench-agent: {current}",
+                    'invalid_request') from None
+            if not current.is_dir():
+                raise SessionError(f"runs_root path component is not a directory: {current}", 'invalid_request')
+            permissions = agent_launch._agent_directory_permissions(current, agent_uid, share_gid)
+            if 'x' not in permissions:
+                raise SessionError(
+                    f"Agent cannot traverse runs_root at {current}; an administrator must "
+                    "preconfigure traversal for ptobench-agent", 'invalid_request')
+    except SessionError:
+        raise
+    except (OSError, RuntimeError, ValueError) as error:
+        raise SessionError(
+            f"cannot verify Agent traversal of runs_root {runs_root}; an administrator must "
+            f"preconfigure the path for ptobench-agent: {error}", 'invalid_request') from error
+
+
+def _share_gid() -> int:
+    try:
+        return grp.getgrnam('ptobench-share').gr_gid
+    except KeyError as error:
+        raise SessionError('ptobench-share is unavailable; Session workspace cannot be prepared') from error
+
+
+def _prepare_agent_traversal_directory(path: Path, share_gid: int) -> None:
+    try:
+        with file_tree.open_directory(path) as descriptor:
+            metadata = os.fstat(descriptor)
+            if metadata.st_uid != os.getuid():
+                raise SessionError(f'Agent traversal directory must be Broker-owned: {path}')
+            os.fchown(descriptor, -1, share_gid)
+            os.fchmod(descriptor, 0o2710)
+    except SessionError:
+        raise
+    except OSError as error:
+        raise SessionError(f'cannot prepare Agent traversal directory {path}: {error}') from error
+
+
+def _prepare_session_path(root: Path, runs_root: Path, optimizer_id: str, case_id: str) -> None:
+    """Create the Broker-owned traversal chain without exposing directory listings."""
+    share_gid = _share_gid()
+    optimizer_root = runs_root / optimizer_id
+    case_root = optimizer_root / case_id
+    for directory in (optimizer_root, case_root):
+        with file_tree.open_directory(directory, create=True):
+            pass
+        _prepare_agent_traversal_directory(directory, share_gid)
+
+
 def create_session(case_id, optimizer, output=None, budget=None, *, mode=None,
                    initial_record_paths=(), profile_strategy=None) -> SessionHandle:
     budget = _budget(budget)
@@ -370,30 +432,53 @@ def create_session(case_id, optimizer, output=None, budget=None, *, mode=None,
     runs, snapshots = _output(output)
     with execution_lock():
         case_dir, sealed, case, environment = preflight_case(case_id)
+        _validate_agent_traversal(runs)
         session_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ_") + uuid.uuid4().hex[:12]
         root = runs / optimizer_id / case_id / session_id
         snapshot_root = snapshots / optimizer_id / case_id / session_id
         created = []
         publishing = False
         try:
+            _prepare_session_path(root, runs, optimizer_id, case_id)
             for target in (root, snapshot_root):
                 with file_tree.open_directory(target.parent, create=True) as fd:
                     os.mkdir(target.name, mode=0o700, dir_fd=fd)
                 created.append(target)
+                if target == root:
+                    _prepare_agent_traversal_directory(root, _share_gid())
             for name in ("workspaces", "staging", "final", "protection"):
                 with file_tree.open_directory(root / name, create=True):
                     pass
+                if name == 'workspaces':
+                    with file_tree.open_directory(root / name) as fd:
+                        os.fchown(fd, -1, _share_gid())
+                        os.fchmod(fd, 0o2750)
+                else:
+                    with file_tree.open_directory(root / name) as fd:
+                        os.fchmod(fd, 0o700)
+            with file_tree.open_directory(root / 'staging/forks', create=True) as fd:
+                os.fchmod(fd, 0o700)
             file_tree.atomic_bytes(root / "process.log", b"")
             initial = root / "workspaces/worker_000"
-            workspace.init_workspace(case_dir, sealed, case, initial,
+            initial_stage = root / 'staging/forks/worker_000'
+            with file_tree.open_directory(initial_stage, create=True) as fd:
+                os.fchmod(fd, 0o700)
+            workspace.init_workspace(case_dir, sealed, case, initial_stage, publish=False,
+                                     workspace_path=initial,
                                      enabled_profiles=public_profiles,
                                      profile_strategy=profile_strategy)
+            if os.stat(initial_stage).st_dev != os.stat(root / 'workspaces').st_dev:
+                raise SessionError('Workspace staging and workspaces must share a filesystem')
+            with file_tree.open_directory(initial_stage.parent) as source_fd, \
+                    file_tree.open_directory(initial.parent) as destination_fd:
+                os.rename(initial_stage.name, initial.name,
+                          src_dir_fd=source_fd, dst_dir_fd=destination_fd)
             with _session_lock(root):
                 declarations = _fixed_roots(case_dir, sealed, case)
                 declarations.update({name: integrity.ProtectionRoot(root / filename, "records")
                                      for name, filename in (("session", "session.json"), ("events", "events.jsonl"), ("final_result", "final_result.json"))})
                 declarations["context_worker_000"] = integrity.ProtectionRoot(
-                    initial / ".benchmark_context", "context", readonly=True)
+                    initial / ".benchmark_context", "context", readonly=False)
                 for name in initial_record_paths:
                     path = root / name
                     with file_tree.open_directory(path.parent, create=True):
@@ -403,12 +488,14 @@ def create_session(case_id, optimizer, output=None, budget=None, *, mode=None,
                         raise SessionError("initial record path conflicts with Session state")
                     declarations[logical] = integrity.ProtectionRoot(path, "records")
                 manifest = integrity.capture_protection(root / "protection", declarations)
+                workspace.publish_workspace_root(initial)
             with _session_lock(root):
                 record = {
-                    "schema_version": 1, "session_id": session_id, "optimizer_id": optimizer_id,
+                    "schema_version": 2, "session_id": session_id, "optimizer_id": optimizer_id,
                     "case_id": case_id, "status": "running", "exploration_closed": False, "close_reason": None,
                     "budget": budget, "usage": {"hardware_actions": 0, "finish_actions": 0},
                     "workspaces": {"worker_000": {"path": "workspaces/worker_000", "parent": None}},
+                    "pending_forks": {},
                     "next_workspace_index": 1, "next_event_seq": 1, "active_action": None,
                     "snapshots_root": str(snapshot_root), "runs_root": str(runs), "session_root": str(root),
                     "benchmark_root": str(file_tree.absolute_path(common.BENCHMARK_ROOT)),
@@ -438,7 +525,7 @@ def create_session(case_id, optimizer, output=None, budget=None, *, mode=None,
 
 def _validate_record(root, record):
     try:
-        if not isinstance(record, dict) or type(record["schema_version"]) is not int or record["schema_version"] != 1:
+        if not isinstance(record, dict) or type(record["schema_version"]) is not int or record["schema_version"] != 2:
             raise ValueError("schema")
         for name in ("session_id", "optimizer_id", "case_id"):
             _id(record[name], name)
@@ -494,6 +581,25 @@ def _validate_record(root, record):
                     raise ValueError("initial parent")
             elif info["parent"] not in record["workspaces"] or int(info["parent"][7:]) >= int(name[7:]):
                 raise ValueError("workspace parent")
+        pending = record["pending_forks"]
+        if not isinstance(pending, dict):
+            raise ValueError('pending forks')
+        staging_paths = set()
+        for name, info in pending.items():
+            if (not re.fullmatch(r"worker_\d{3,}", name)
+                    or int(name[7:]) >= record['next_workspace_index']
+                    or not isinstance(info, dict) or set(info) != {'worker_id', 'parent', 'staging', 'phase'}
+                    or info['worker_id'] != name or info['parent'] not in record['workspaces']
+                    or name in record['workspaces']
+                    and record['workspaces'][name]['parent'] != info['parent']
+                    or int(info['parent'][7:]) >= int(name[7:])
+                    or info['staging'] != f'staging/forks/{name}'
+                    or info['phase'] not in {'reservation', 'staged', 'renamed-locked',
+                                             'context-registered', 'registered-locked',
+                                             'registered-open'}
+                    or info['staging'] in staging_paths):
+                raise ValueError('pending fork binding')
+            staging_paths.add(info['staging'])
         if (not isinstance(record["profiling_modes"], list) or len(set(record["profiling_modes"])) != len(record["profiling_modes"])
                 or not set(record["profiling_modes"]) <= PUBLIC_MODES.keys()):
             raise ValueError("public modes")
@@ -538,17 +644,14 @@ def _validate_record(root, record):
         raise integrity.InfrastructureError(f"invalid Session schema: {error}") from error
 
 
-def _load_locked(root, repair=True):
+def _load_locked(root, repair=True, *, allow_pending=False):
     protection = root / "protection"
+    # Inspect retired Workspace markers and the hash-verified Session backup
+    # before any automatic record restoration can rewrite a historical Session.
+    manifest = integrity._load(protection)
+    _reject_retired_workspace_protocol(root, manifest)
     # S1 validates the complete manifest, even when inspecting one group.
     report = integrity.check_only(protection, "records")
-    manifest = _read(protection / "manifest.json")
-    if ("public_bench" in manifest["roots"]
-            or "bench.py" in manifest["roots"].get("evaluator", {}).get("entries", {})):
-        # Restoring a pre-cutover Session would reinstall the removed CLI and
-        # overwrite the new public layer. Keep its evidence; require a fresh
-        # Session instead of accepting a hidden compatibility recovery path.
-        raise integrity.InfrastructureError("Session captured retired CLI assets; create a fresh Session")
     for name, info in manifest["roots"].items():
         if info["group"] == "records" and not Path(info["path"]).is_relative_to(root):
             raise integrity.InfrastructureError("record recovery path is outside this Session")
@@ -559,7 +662,7 @@ def _load_locked(root, repair=True):
                 expected = root / "final/workspace/.benchmark_context"
             else:
                 raise integrity.InfrastructureError("invalid context protection name")
-            if info["path"] != str(expected) or not info["readonly"]:
+            if info["path"] != str(expected) or info["readonly"]:
                 raise integrity.InfrastructureError("context recovery path is outside its workspace")
     for name, filename in (("session", "session.json"), ("events", "events.jsonl"), ("final_result", "final_result.json")):
         info = manifest["roots"].get(name, {})
@@ -572,6 +675,8 @@ def _load_locked(root, repair=True):
         raise integrity.InfrastructureError("Session records changed", report)
     record = _read(root / "session.json")
     _validate_record(root, record)
+    if record['pending_forks'] and not allow_pending:
+        raise SessionError('Session has an unfinished Workspace fork; recovery is required', 'invalid_request')
     fixed = {name: info for name, info in manifest["roots"].items() if info["group"] == "fixed"}
     expected_paths = {
         "case": Path(record["case_dir"]), "sealed": Path(record["sealed_dir"]),
@@ -610,6 +715,32 @@ def _load_locked(root, repair=True):
         active['integrity_violations'] = sorted(set(active.get('integrity_violations', [])) | actionable)
         _commit(root, record)
     return record, events
+
+
+_RETIRED_WORKSPACE_ROOTS = frozenset({
+    'public_bench', 'candidate_pool', 'candidates', 'public_workspaces',
+    'workspace_exports', 'exported_workspaces',
+})
+
+
+def _reject_retired_workspace_protocol(root, manifest):
+    roots = manifest['roots']
+    if (_RETIRED_WORKSPACE_ROOTS & roots.keys()
+            or 'bench.py' in roots.get('evaluator', {}).get('entries', {})):
+        raise SessionError('Session uses a retired Workspace protocol; create a fresh Session', 'invalid_request')
+    entry = roots.get('session', {}).get('entries', {}).get('')
+    if not entry or entry.get('kind') != 'file':
+        raise integrity.InfrastructureError('Session record has no protected format backup')
+    integrity._verify_backup(root / 'protection', entry)
+    try:
+        with file_tree.open_file(root / 'protection' / entry['backup']) as descriptor, \
+                os.fdopen(os.dup(descriptor), 'rb') as stream:
+            backup = json.load(stream)
+    except (OSError, ValueError, UnicodeError, file_tree.UnsafeTreeError) as error:
+        raise integrity.InfrastructureError(f'cannot read protected Session format backup: {error}') from error
+    if (isinstance(backup, dict) and type(backup.get('schema_version')) is int
+            and backup['schema_version'] != 2):
+        raise SessionError('Session uses a retired Workspace protocol; create a fresh Session', 'invalid_request')
 
 
 def _events(root, record):
@@ -749,36 +880,35 @@ def repair_assets(session_root):
         _load_locked(root)
         require_current_evaluator(_read(root / 'protection/manifest.json'))
     try:
-        return integrity.check_and_restore(root / "protection", {"fixed", "context"})
+        report = integrity.check_and_restore(root / "protection", {"fixed", "context"})
+        manifest = integrity._load(root / 'protection')
+        for protected in manifest['roots'].values():
+            if protected['group'] == 'context':
+                try:
+                    workspace._readonly(Path(protected['path']))
+                except (KeyError, OSError, ValueError, RuntimeError) as error:
+                    raise integrity.InfrastructureError(
+                        f'cannot normalize recovered Context {protected["path"]}: {error}') from error
+        return report
     except integrity.InfrastructureError:
         _fail_integrity_session(root, "asset_recovery_failed")
         raise
 
 
 def register_workspace(session_root, workspace_path, parent_id=None):
-    """Register a Bench-allocated, completely built worker; caller holds global lock."""
+    """Finish registration only for a durable pending reservation."""
     _require_execution()
+    target = _path(workspace_path)
+    name = target.name
     with _session_lock(session_root) as root:
-        record, _ = _load_locked(root)
+        record, _ = _load_locked(root, allow_pending=True)
         _open_exploration(record)
-        target = _path(workspace_path)
-        name = target.name
-        if (target.parent != root / "workspaces" or not re.fullmatch(r"worker_\d{3,}", name)
-                or name in record["workspaces"] or int(name[7:]) != record["next_workspace_index"] - 1
-                or parent_id not in record["workspaces"]):
-            raise SessionError("not the allocated workspace or parent", "invalid_workspace")
-    workspace.source_manifest(target)
-    with file_tree.open_directory(target / ".benchmark_context"):
-        pass
-    workspace.source_manifest(target / ".benchmark_context/starting_point")
-    protection = root / "protection"
-    integrity.register_roots(protection, {f"context_{name}": integrity.ProtectionRoot(target / ".benchmark_context", "context", readonly=True)})
-    with _session_lock(root):
-        record, _ = _load_locked(root)
-        _open_exploration(record)
-        record["workspaces"][name] = {"path": f"workspaces/{name}", "parent": parent_id}
-        _commit(root, record)
-        return name
+        reservation = record['pending_forks'].get(name)
+        if (target.parent != root / 'workspaces' or reservation is None
+                or reservation['parent'] != parent_id or name in record['workspaces']):
+            raise SessionError('not the allocated workspace or parent', 'invalid_workspace')
+    recover_pending_forks(root)
+    return name
 
 
 def fork_workspace(session_root, parent_workspace):
@@ -790,6 +920,7 @@ def fork_workspace(session_root, parent_workspace):
 def fork_workspace_locked(session_root, parent_workspace):
     """Shared internal path for a caller already holding the execution lock."""
     _require_execution()
+    recover_pending_forks(session_root)
     repair_assets(session_root)
     with _session_lock(session_root) as root:
         record, _ = _load_locked(root)
@@ -798,6 +929,7 @@ def fork_workspace_locked(session_root, parent_workspace):
         index = record["next_workspace_index"]
         name = f"worker_{index:03d}"
         target = root / "workspaces" / name
+        stage = root / 'staging/forks' / name
         with file_tree.open_directory(target.parent) as fd:
             try:
                 os.stat(name, dir_fd=fd, follow_symlinks=False)
@@ -805,26 +937,254 @@ def fork_workspace_locked(session_root, parent_workspace):
                 pass
             else:
                 raise SessionError("allocated child already exists", "invalid_workspace")
-        # Consume the ID before copying. Failed/unregistered publications
-        # cannot cause an ID to be reused after a crash.
+        with file_tree.open_directory(stage.parent) as fd:
+            try:
+                os.stat(stage.name, dir_fd=fd, follow_symlinks=False)
+            except FileNotFoundError:
+                pass
+            else:
+                raise SessionError('fork staging path already exists', 'invalid_workspace')
         record["next_workspace_index"] += 1
+        record['pending_forks'][name] = {
+            'worker_id': name, 'parent': parent_id,
+            'staging': f'staging/forks/{name}', 'phase': 'reservation',
+        }
         _commit(root, record)
-    temporary = target.parent / f".{name}.fork_{uuid.uuid4().hex}"
     try:
-        workspace.copy_candidate_tree(parent, temporary / 'candidate')
+        with file_tree.open_directory(stage, create=True) as fd:
+            os.fchown(fd, -1, _share_gid())
+            os.fchmod(fd, 0o700)
+        workspace.copy_candidate_tree(parent, stage / 'candidate')
         case_dir, sealed = Path(record["case_dir"]), Path(record["sealed_dir"])
         case = _read(case_dir / "case.json")
-        workspace.write_context(case_dir, sealed, case, temporary,
+        workspace.write_context(case_dir, sealed, case, stage,
                                 parent_workspace=parent, workspace_path=target, **context_options(record))
-        with file_tree.open_directory(target.parent) as fd:
-            os.rename(temporary.name, target.name, src_dir_fd=fd, dst_dir_fd=fd)
-            os.fsync(fd)
-        return register_workspace(root, target, parent_id)
-    finally:
-        with file_tree.open_directory(target.parent) as fd:
-            file_tree.remove_at(fd, temporary.name)
-        # A published but unregistered child remains inaccessible. Its ID
-        # is consumed, and any manifest-registered context stays recoverable.
+        workspace._ensure_tuning(stage, case)
+        workspace._normalize_workspace(stage, publish=False)
+        if os.stat(stage).st_dev != os.stat(target.parent).st_dev:
+            raise SessionError('Workspace staging and workspaces must share a filesystem')
+        if workspace.validate_workspace(stage, root_mode=0o700, workspace_path=target,
+                                        parent_workspace=parent, case_id=record['case_id']) is None:
+            raise workspace.InvalidWorkspaceError('Fork staging tree is incomplete')
+        _set_fork_phase(root, name, 'staged')
+        _rename_fork_stage(stage, target)
+        _set_fork_phase(root, name, 'renamed-locked')
+        recover_pending_forks(root)
+        return name
+    except BaseException:
+        _cancel_unpublished_reservation(root, name)
+        raise
+
+
+def _set_fork_phase(root, name, phase):
+    with _session_lock(root):
+        record, _ = _load_locked(root, allow_pending=True)
+        pending = record['pending_forks'].get(name)
+        if pending is None:
+            raise integrity.InfrastructureError(f'fork reservation disappeared: {name}')
+        pending['phase'] = phase
+        _commit(root, record)
+
+
+def _rename_fork_stage(stage, target):
+    with file_tree.open_directory(stage.parent) as source_fd, \
+            file_tree.open_directory(target.parent) as destination_fd:
+        try:
+            os.stat(target.name, dir_fd=destination_fd, follow_symlinks=False)
+        except FileNotFoundError:
+            pass
+        else:
+            raise integrity.InfrastructureError(f'fork target already exists: {target}')
+        os.rename(stage.name, target.name, src_dir_fd=source_fd, dst_dir_fd=destination_fd)
+        os.fsync(source_fd)
+        os.fsync(destination_fd)
+
+
+def _cancel_unpublished_reservation(root, name):
+    with _session_lock(root):
+        record, _ = _load_locked(root, allow_pending=True)
+        pending = record['pending_forks'].get(name)
+        if pending is None or pending['phase'] != 'reservation':
+            return
+        target = root / 'workspaces' / name
+        if target.exists() or target.is_symlink():
+            return
+        stage = root / pending['staging']
+        with file_tree.open_directory(stage.parent) as fd:
+            file_tree.remove_at(fd, stage.name)
+        record['pending_forks'].pop(name)
+        _commit(root, record)
+
+
+def _context_root_registered(root, name, target):
+    protection = root / 'protection'
+    manifest = integrity._load(protection)
+    key = f'context_{name}'
+    info = manifest['roots'].get(key)
+    if info is None:
+        integrity.register_roots(protection, {
+            key: integrity.ProtectionRoot(target / '.benchmark_context', 'context', readonly=False),
+        })
+        return
+    if (info['path'] != str(target / '.benchmark_context') or info['group'] != 'context'
+            or info['readonly'] is not False):
+        raise integrity.InfrastructureError(f'fork Context integrity binding is invalid: {name}')
+    report = integrity.check_only(protection, {'context'})
+    if not report.passed:
+        raise integrity.InfrastructureError(f'fork Context integrity check failed: {name}', report)
+
+
+def _discard_unpublished_fork_reservation(root, record, name, pending, *, stage=None):
+    """Remove a reservation only while neither Workspace nor Context is published."""
+    target = root / 'workspaces' / name
+    if pending['phase'] != 'reservation' or target.exists() or target.is_symlink():
+        raise integrity.InfrastructureError(f'fork reservation has published Workspace state: {name}')
+    if name in record['workspaces']:
+        raise integrity.InfrastructureError(f'fork reservation has registered Workspace state: {name}')
+    manifest = integrity._load(root / 'protection')
+    if f'context_{name}' in manifest['roots']:
+        raise integrity.InfrastructureError(f'fork reservation has registered Context state: {name}')
+    if stage is not None:
+        if stage.is_symlink():
+            raise integrity.InfrastructureError(f'fork reservation staging path is a symlink: {name}')
+        with file_tree.open_directory(stage.parent) as descriptor:
+            file_tree.remove_at(descriptor, stage.name)
+    record['pending_forks'].pop(name)
+    _commit(root, record)
+
+
+def _finish_pending_fork(root, record, name, pending, *, stage_exists):
+    target = root / 'workspaces' / name
+    parent_id = pending['parent']
+    if parent_id not in record['workspaces']:
+        raise integrity.InfrastructureError(f'fork parent is not registered: {name}')
+    parent = root / record['workspaces'][parent_id]['path']
+    stage = root / pending['staging']
+    phase = pending['phase']
+    context_key = f'context_{name}'
+    registered = name in record['workspaces']
+    manifest = integrity._load(root / 'protection')
+    context_registered = context_key in manifest['roots']
+    if stage_exists:
+        if stage.is_symlink() or target.exists() or target.is_symlink():
+            raise integrity.InfrastructureError(f'fork staging and target are ambiguous: {name}')
+        if phase not in {'reservation', 'staged'}:
+            raise integrity.InfrastructureError(f'fork staging contradicts its recorded phase: {name}')
+        if registered or context_registered:
+            raise integrity.InfrastructureError(f'unpublished fork has registered state: {name}')
+        if os.stat(stage).st_dev != os.stat(target.parent).st_dev:
+            raise integrity.InfrastructureError(f'fork staging filesystem changed: {name}')
+        try:
+            valid = workspace.validate_workspace(stage, root_mode=0o700,
+                    workspace_path=target, parent_workspace=parent, case_id=record['case_id'])
+        except workspace.InvalidWorkspaceError as error:
+            if phase == 'reservation':
+                _discard_unpublished_fork_reservation(root, record, name, pending, stage=stage)
+                return
+            raise integrity.InfrastructureError(f'invalid staged fork {name}: {error}') from error
+        if valid is None:
+            if pending['phase'] == 'reservation':
+                _discard_unpublished_fork_reservation(root, record, name, pending, stage=stage)
+                return
+            raise integrity.InfrastructureError(f'incomplete staged fork: {name}')
+        pending['phase'] = 'staged'
+        _commit(root, record)
+        _rename_fork_stage(stage, target)
+        pending['phase'] = 'renamed-locked'
+        phase = 'renamed-locked'
+        _commit(root, record)
+    elif target.exists() or target.is_symlink():
+        if phase == 'reservation':
+            raise integrity.InfrastructureError(
+                f'fork target exists before staging was committed: {name}')
+    else:
+        if pending['phase'] == 'reservation':
+            _discard_unpublished_fork_reservation(root, record, name, pending)
+            return
+        raise integrity.InfrastructureError(f'fork staging and target are both missing: {name}')
+
+    if target.is_symlink():
+        raise integrity.InfrastructureError(f'fork target is a symlink: {name}')
+    if stage_exists and stage.exists():
+        raise integrity.InfrastructureError(f'fork staging remains after rename: {name}')
+    target_mode = stat.S_IMODE(target.lstat().st_mode)
+    if target_mode not in {0o700, 0o2750}:
+        raise integrity.InfrastructureError(f'fork target is partially published: {name}')
+    allowed_registration = {
+        'staged': (False, False),
+        'renamed-locked': (False, None),
+        'context-registered': (False, True),
+        'registered-locked': (True, True),
+        'registered-open': (True, True),
+    }
+    expected_registration = allowed_registration.get(phase)
+    if (expected_registration is None or registered != expected_registration[0]
+            or expected_registration[1] is not None
+            and context_registered != expected_registration[1]):
+        raise integrity.InfrastructureError(f'fork phase contradicts its registration state: {name}')
+    if target_mode == 0o700 and phase == 'registered-open':
+        raise integrity.InfrastructureError(f'published fork became inaccessible during recovery: {name}')
+    if target_mode == 0o2750 and phase not in {'registered-locked', 'registered-open'}:
+        raise integrity.InfrastructureError(f'fork opened before registration: {name}')
+    valid = workspace.validate_workspace(target, root_mode=target_mode,
+            workspace_path=target, parent_workspace=parent, case_id=record['case_id'],
+            verify_candidate=(target_mode == 0o700),
+            compare_starting=(target_mode == 0o700))
+    if valid is None:
+        raise integrity.InfrastructureError(f'fork target is incomplete: {name}')
+    if target_mode == 0o2750 and not registered:
+        raise integrity.InfrastructureError(f'unregistered fork is already open to the Agent: {name}')
+    if registered and not context_registered:
+        raise integrity.InfrastructureError(f'registered fork has no Context integrity root: {name}')
+    _context_root_registered(root, name, target)
+    if not registered:
+        record['workspaces'][name] = {'path': f'workspaces/{name}', 'parent': parent_id}
+    pending['phase'] = 'registered-locked'
+    _commit(root, record)
+    if target_mode == 0o700:
+        workspace.publish_workspace_root(target)
+    if workspace.validate_workspace(target, root_mode=0o2750,
+            workspace_path=target, parent_workspace=parent, case_id=record['case_id'],
+            verify_candidate=False, compare_starting=False) is None:
+        raise integrity.InfrastructureError(f'published fork is incomplete: {name}')
+    pending['phase'] = 'registered-open'
+    _commit(root, record)
+    record['pending_forks'].pop(name)
+    _commit(root, record)
+
+
+def recover_pending_forks(session_root):
+    """Recover complete closed forks and discard only uncommitted reservations."""
+    recovered = []
+    with _session_lock(session_root) as root:
+        record, _ = _load_locked(root, allow_pending=True)
+        forks_directory = root / 'staging/forks'
+        with file_tree.open_directory(forks_directory) as descriptor:
+            stage_names = set(os.listdir(descriptor))
+        expected_stages = {name for name, pending in record['pending_forks'].items()
+                           if (root / pending['staging']).parent == forks_directory}
+        if stage_names - expected_stages:
+            raise integrity.InfrastructureError('unknown fork staging directory exists')
+        with file_tree.open_directory(root / 'workspaces') as descriptor:
+            workspace_names = set(os.listdir(descriptor))
+        expected_workspaces = set(record['workspaces']) | set(record['pending_forks'])
+        if workspace_names - expected_workspaces:
+            raise integrity.InfrastructureError('unregistered Workspace directory exists')
+        for name in list(record['pending_forks']):
+            pending = record['pending_forks'].get(name)
+            if pending is None:
+                continue
+            stage = root / pending['staging']
+            target = root / 'workspaces' / name
+            stage_exists = stage.exists() or stage.is_symlink()
+            target_exists = target.exists() or target.is_symlink()
+            if stage_exists and target_exists:
+                raise integrity.InfrastructureError(f'fork staging and target both exist: {name}')
+            before = set(record['workspaces'])
+            _finish_pending_fork(root, record, name, pending, stage_exists=stage_exists)
+            if name in record['workspaces'] and name not in before and name not in record['pending_forks']:
+                recovered.append(name)
+        return recovered
 
 
 def process_identity(pid=None):

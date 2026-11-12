@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 import contextlib
 import errno
+import grp
 import json
 import math
 import os
@@ -731,6 +732,7 @@ def validate_result(path, record, frozen, kind, internal_mode, exit_code):
 
 def _publish_diagnostics(original, frozen, internal_mode, action_result, raw_result, *, root, artifact_index):
     """Replace complete output sets, removing links themselves without following."""
+    share_gid = grp.getgrnam('ptobench-share').gr_gid
     saved = action_records.verified_archive(root, artifact_index, event_seq=action_result.event_seq)
     source = saved / '.benchmark_outputs' / internal_mode
     parent = original / '.benchmark_outputs'
@@ -742,6 +744,8 @@ def _publish_diagnostics(original, frozen, internal_mode, action_result, raw_res
         if mode is not None and not stat.S_ISDIR(mode):
             file_tree.remove_at(fd, name)
     with file_tree.open_directory(parent, create=True) as fd:
+        os.fchown(fd, -1, share_gid)
+        os.fchmod(fd, 0o750)
         previous = parent / internal_mode
         previous_entries = file_tree.scan_tree(previous, excluded_names=frozenset())
         if previous_entries.get('', {}).get('kind') == 'directory':
@@ -773,26 +777,25 @@ def _publish_diagnostics(original, frozen, internal_mode, action_result, raw_res
                         pass
                     else:
                         workspace.copy_tree(source, temporary)
-                        prefix = '.benchmark_outputs/' + internal_mode + '/'
-                        for item in session._read(saved / 'index.json')['files']:
-                            if item['kind'] == 'file' and item['path'].startswith(prefix):
-                                # Publication retains original toolchain modes;
-                                # the durable archive itself stays readonly.
-                                os.chmod(temporary / item['path'][len(prefix):], item['mode'])
             except FileNotFoundError:
                 pass
             if raw_result is None:
                 try:
                     with file_tree.open_file(frozen.parent / 'result.json') as raw_fd, os.fdopen(os.dup(raw_fd), 'rb') as reader:
-                        file_tree.atomic_bytes(temporary / 'latest_result.json', reader.read())
+                        file_tree.atomic_bytes(temporary / 'latest_result.json', reader.read(), mode=0o640)
                 except (OSError, file_tree.UnsafeTreeError):
                     pass
-            file_tree.atomic_bytes(temporary / 'latest_session_result.json', session._bytes(action_result.to_dict()))
+            file_tree.atomic_bytes(temporary / 'latest_session_result.json',
+                                   session._bytes(action_result.to_dict()), mode=0o640)
             if raw_result is not None:
-                file_tree.atomic_bytes(temporary / 'latest_result.json', session._bytes(raw_result))
+                file_tree.atomic_bytes(temporary / 'latest_result.json',
+                                       session._bytes(raw_result), mode=0o640)
             file_tree.atomic_bytes(temporary / 'capture_receipt.json', session._bytes({
                 'schema_version': 1, 'event_seq': action_result.event_seq,
-                'mode': internal_mode, 'artifact_index': artifact_index}))
+                'mode': internal_mode, 'artifact_index': artifact_index}), mode=0o640)
+            # The public copy is Broker-owned feedback; preserve artifact
+            # content while normalizing every published entry to read-only DAC.
+            workspace._readonly(temporary)
             file_tree.remove_at(fd, internal_mode)
             os.rename(temporary.name, internal_mode, src_dir_fd=fd, dst_dir_fd=fd)
             os.fsync(fd)
@@ -862,7 +865,7 @@ def _run_action(session_root, workspace_path, kind, mode):
                 workspace.write_context(Path(record['case_dir']), Path(record['sealed_dir']), case, frozen,
                                         parent_workspace=original, **session.context_options(record))
                 integrity.register_roots(root / 'protection', {
-                    f'action_context_{seq}': integrity.ProtectionRoot(frozen / '.benchmark_context', 'action_context', readonly=True),
+                    f'action_context_{seq}': integrity.ProtectionRoot(frozen / '.benchmark_context', 'action_context'),
                     f'action_source_{seq}': integrity.ProtectionRoot(action_dir / 'source_manifest.json', 'records'),
                     f'action_result_{seq}': integrity.ProtectionRoot(action_dir / 'authority_result.json', 'records'),
                 })

@@ -268,6 +268,8 @@ class SessionActionsTest(ActionTestBase):
                 process=self.start_cli(['evaluate']); self.wait_file(ready,process)
                 output=self.handle.initial_workspace/'.benchmark_outputs'
                 if location=='root':
+                    import shutil
+                    shutil.rmtree(output)
                     output.symlink_to(outside,target_is_directory=True)
                 else:
                     import shutil

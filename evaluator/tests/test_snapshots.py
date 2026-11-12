@@ -9,6 +9,27 @@ import workspace
 
 
 class SnapshotTest(ActionTestBase):
+    def test_snapshot_rejects_unreadable_candidate_without_publishing_partial_tree(self):
+        frozen = self.handle.session_root / 'staging/unreadable'
+        workspace.copy_candidate_tree(self.handle.initial_workspace, frozen / 'candidate')
+        blocked = frozen / 'candidate/private.py'
+        blocked.write_text('PRIVATE = True\n')
+        blocked.chmod(0o000)
+        self.addCleanup(lambda: blocked.chmod(0o600) if blocked.exists() else None)
+        content_hash = workspace.source_manifest(self.handle.initial_workspace)['content_sha256']
+        event = {'seq': 1, 'workspace': str(self.handle.initial_workspace),
+                 'content_sha256': content_hash, 'exit_code': 0,
+                 'correctness': 'PASS', 'integrity_passed': True,
+                 'observation': {'correctness': 'PASS'}}
+
+        with session.execution_lock(), self.assertRaisesRegex(
+                workspace.InvalidWorkspaceError, 'private.py'):
+            import snapshots
+            snapshots.create_snapshot(self.handle.session_root, frozen, event)
+
+        self.assertEqual(list(self.handle.snapshots_root.iterdir()), [])
+        self.assertEqual(list((self.handle.snapshots_root).glob('.snapshot_*')), [])
+
     def test_new_python_helper_is_included_in_successful_snapshot(self):
         helper = self.handle.initial_workspace / 'candidate/new_helper.py'
         helper.write_text('NEW_VALUE = 42\n')

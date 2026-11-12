@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import copy
+import grp
+import hashlib
 import json
 import os
 import multiprocessing
 from pathlib import Path
 import shutil
+import stat
 from unittest import mock
 
 from session_test_support import SessionTestBase, write_json
@@ -15,20 +18,92 @@ import session
 import workspace
 
 
-def crash_fork(bench, repo, root, after_manifest):
+def tree_digest(root):
+    digest = hashlib.sha256()
+    for path in sorted(Path(root).rglob('*')):
+        relative = str(path.relative_to(root)).encode()
+        metadata = path.lstat()
+        digest.update(relative + b'\0' + str(metadata.st_mode).encode() + b'\0')
+        if stat.S_ISREG(metadata.st_mode):
+            digest.update(path.read_bytes())
+        elif stat.S_ISLNK(metadata.st_mode):
+            digest.update(os.readlink(path).encode())
+    return digest.hexdigest()
+
+
+def crash_fork(bench, repo, root, crash_at):
     common.BENCHMARK_ROOT, common.REPO_ROOT = Path(bench), Path(repo)
     original_commit = session._commit
-    original_write = integrity._write_manifest
-    def commit(protection_root, record, events=None):
-        if len(record['workspaces']) > 1:
-            if not after_manifest:
-                os._exit(23)
-            def crash_write(path, manifest):
-                original_write(path, manifest)
-                os._exit(23)
-            integrity._write_manifest = crash_write
-        original_commit(protection_root, record, events)
+    original_phase = session._set_fork_phase
+    original_rename = session._rename_fork_stage
+    original_register = session._context_root_registered
+    original_publish = workspace.publish_workspace_root
+    original_write_context = workspace.write_context
+    original_fchown = os.fchown
+
+    def commit(protection_root, record, events=None, record_updates=None):
+        original_commit(protection_root, record, events, record_updates)
+        pending = record.get('pending_forks', {}).get('worker_001')
+        if crash_at == 'reservation' and pending and pending['phase'] == 'reservation':
+            os._exit(23)
+        if crash_at == 'registered-locked' and pending and pending['phase'] == 'registered-locked':
+            os._exit(23)
+        if crash_at == 'registered-open' and pending and pending['phase'] == 'registered-open':
+            os._exit(23)
+
+    def phase(root_path, name, value):
+        original_phase(root_path, name, value)
+        if crash_at == 'complete-staging' and value == 'staged':
+            os._exit(23)
+        if crash_at == 'renamed-locked' and value == 'renamed-locked':
+            os._exit(23)
+
+    def rename(stage, target):
+        original_rename(stage, target)
+        if crash_at == 'renamed-before-phase':
+            os._exit(23)
+
+    def register(root_path, name, target):
+        original_register(root_path, name, target)
+        if crash_at == 'context-registered':
+            os._exit(23)
+
+    def publish(target):
+        original_publish(target)
+        if crash_at == 'registered-open-before-phase':
+            os._exit(23)
+
+    def write_context(*args, **kwargs):
+        if crash_at == 'partial-staging':
+            (Path(args[3]) / '.benchmark_context').mkdir()
+            os._exit(23)
+        return original_write_context(*args, **kwargs)
+
+    def fchown(descriptor, uid, gid):
+        if crash_at == 'pre-root-normalization':
+            stage = Path(root) / 'staging/forks/worker_001'
+            try:
+                stage_metadata = stage.stat()
+            except FileNotFoundError:
+                pass
+            else:
+                metadata = os.fstat(descriptor)
+                if ((metadata.st_dev, metadata.st_ino) ==
+                        (stage_metadata.st_dev, stage_metadata.st_ino)
+                        and all((stage / name).exists() for name in
+                                ('candidate', '.benchmark_context', '.benchmark_outputs'))):
+                    # Crash immediately before _normalize_workspace's final root
+                    # chown, after all required entries have been normalized.
+                    os._exit(23)
+        return original_fchown(descriptor, uid, gid)
+
     session._commit = commit
+    session._set_fork_phase = phase
+    session._rename_fork_stage = rename
+    session._context_root_registered = register
+    workspace.publish_workspace_root = publish
+    workspace.write_context = write_context
+    session.os.fchown = fchown
     session.fork_workspace(root, Path(root) / 'workspaces/worker_000')
 
 
@@ -43,6 +118,56 @@ def crash_creation(bench, repo, output):
 
 
 class SessionTest(SessionTestBase):
+    def test_create_rejects_runs_root_the_agent_cannot_traverse(self):
+        denied_runs = self.repo / 'unapproved_runs'
+        denied_runs.mkdir(mode=0o700)
+        denied_runs.chmod(0o700)
+        denied_snapshots = self.repo / 'denied_snapshots'
+
+        with self.assertRaises(session.SessionError) as caught:
+            self.create(output={'runs_root': denied_runs, 'snapshots_root': denied_snapshots})
+
+        self.assertEqual(caught.exception.error_code, 'invalid_request')
+        self.assertIn('runs_root', str(caught.exception))
+        self.assertIn('ptobench-agent', str(caught.exception))
+        self.assertEqual(list(denied_runs.iterdir()), [])
+        self.assertFalse(denied_snapshots.exists())
+
+    def test_retired_schema_is_rejected_before_repair_without_changing_session_tree(self):
+        handle = self.create()
+        record = session.read_session(handle.session_root)
+        retired = {key: value for key, value in record.items() if key != 'pending_forks'}
+        retired['schema_version'] = 1
+        integrity.commit_records(handle.protection_root, {'session': json.dumps(retired).encode()})
+        (handle.session_root / 'session.json').write_text('{"damaged": true}\n')
+        before = tree_digest(handle.session_root)
+
+        with self.assertRaises(session.SessionError) as caught:
+            session.read_session(handle.session_root)
+
+        self.assertEqual(caught.exception.error_code, 'invalid_request')
+        self.assertIn('fresh Session', str(caught.exception))
+        self.assertEqual(tree_digest(handle.session_root), before)
+
+    def test_exported_workspace_marker_is_rejected_before_record_repair(self):
+        handle = self.create()
+        marker = self.repo / 'retired_candidate_pool'
+        marker.mkdir()
+        manifest = common.read_json(handle.protection_root / 'manifest.json')
+        manifest['roots']['candidate_pool'] = {
+            'path': str(marker), 'group': 'retired', 'readonly': False,
+            'entries': {'': {'kind': 'directory', 'mode': 0o755}},
+        }
+        write_json(handle.protection_root / 'manifest.json', manifest)
+        (handle.session_root / 'session.json').write_text('{"damaged": true}\n')
+        before = tree_digest(handle.session_root)
+
+        with self.assertRaises(session.SessionError) as caught:
+            session.read_session(handle.session_root)
+
+        self.assertEqual(caught.exception.error_code, 'invalid_request')
+        self.assertEqual(tree_digest(handle.session_root), before)
+
     def test_preflight_rejects_missing_or_nondefault_baseline_tuning(self):
         _, sealed, _ = common.case_paths(self.case_id)
         baseline = common.read_json(sealed / 'ref_performance.json')
@@ -73,16 +198,17 @@ class SessionTest(SessionTestBase):
         for location in (handle.initial_workspace, fork):
             self.assertFalse((location / '.benchmark_context/mode.json').exists())
 
-    def test_creation_independent_layout_schema_and_original_assets(self):
+    def test_creation_initializes_independent_layouts_without_running_case(self):
         self.make_case('test.other')
-        with mock.patch.object(workspace, 'init_workspace', wraps=workspace.init_workspace) as init, \
-             mock.patch('subprocess.run', side_effect=AssertionError('no subprocess in S2')):
+        with mock.patch.object(workspace, 'init_workspace', wraps=workspace.init_workspace) as init:
             first = self.create()
             second = self.create(5, 'pi', 'test.other')
         self.assertEqual(init.call_count, 2)
         for handle in (first, second):
             record = session.read_session(handle.session_root)
             self.assertEqual(record['status'], 'running')
+            self.assertEqual(record['schema_version'], 2)
+            self.assertEqual(record['pending_forks'], {})
             self.assertEqual(record['usage'], {'hardware_actions': 0, 'finish_actions': 0})
             self.assertEqual(record['next_event_seq'], 1)
             self.assertEqual(record['workspaces']['worker_000']['path'], 'workspaces/worker_000')
@@ -90,6 +216,9 @@ class SessionTest(SessionTestBase):
             self.assertEqual(record['profiling_modes'], ['combined'])
             for name in ('workspaces', 'staging', 'final', 'protection'):
                 self.assertTrue((handle.session_root / name).is_dir())
+            self.assertEqual(stat.S_IMODE(handle.session_root.stat().st_mode), 0o2710)
+            self.assertEqual(stat.S_IMODE((handle.session_root / 'workspaces').stat().st_mode), 0o2750)
+            self.assertEqual(handle.session_root.stat().st_gid, grp.getgrnam('ptobench-share').gr_gid)
             self.assertTrue((handle.session_root / 'process.log').is_file())
             self.assertTrue(handle.snapshots_root.is_dir())
             self.assertFalse((handle.session_root / 'final_result.json').exists())
@@ -102,7 +231,7 @@ class SessionTest(SessionTestBase):
             self.assertFalse(any(Path(root['path']).is_relative_to(
                 common.BENCHMARK_ROOT / 'modes/ptomni') for root in manifest['roots'].values()))
             self.assertTrue(any(n.startswith('family_') for n in manifest['roots']))
-            self.assertEqual((handle.initial_workspace / '.benchmark_context/config.py').stat().st_mode & 0o777, 0o444)
+            self.assertEqual((handle.initial_workspace / '.benchmark_context/config.py').stat().st_mode & 0o777, 0o640)
             self.assertTrue(integrity.check_only(handle.protection_root).passed)
         self.assertNotEqual(first.session_root, second.session_root)
         self.assertEqual(session.read_session(first.session_root)['budget']['max_hardware_actions'], 2)
@@ -239,6 +368,25 @@ class SessionTest(SessionTestBase):
         self.assertEqual((handle.initial_workspace / '.benchmark_context/starting_point/candidate/helper.py').read_text(), 'VALUE = 1\n')
         self.assertTrue(integrity.check_only(handle.protection_root).passed)
 
+    def test_context_integrity_repair_restores_shared_group_access(self):
+        handle = self.create()
+        context = handle.initial_workspace / '.benchmark_context'
+        config = context / 'config.py'
+        config.write_text('ROGUE = True\n')
+        shutil.rmtree(context / 'starting_point')
+
+        with session.execution_lock():
+            report = session.repair_assets(handle.session_root)
+
+        share_gid = grp.getgrnam('ptobench-share').gr_gid
+        self.assertIn('context_worker_000/config.py', report.restored_paths)
+        self.assertIn('context_worker_000/starting_point', report.restored_paths)
+        self.assertEqual(config.read_text(), 'SIZE = 2\n')
+        for path in (config, context / 'starting_point',
+                     context / 'starting_point/candidate',
+                     context / 'starting_point/candidate/helper.py'):
+            self.assertEqual(path.stat().st_gid, share_gid, path)
+
     def test_corrupt_manifest_backup_and_wrong_binding_fail_without_rebaseline(self):
         handle = self.create()
         manifest = common.read_json(handle.protection_root / 'manifest.json')
@@ -273,7 +421,9 @@ class SessionTest(SessionTestBase):
         self.assertEqual(first, 'worker_001')
         self.assertEqual((child / 'candidate/helper.py').read_text(), 'VALUE = 2\n')
         self.assertEqual((child / '.benchmark_context/starting_point/candidate/helper.py').read_text(), 'VALUE = 2\n')
-        self.assertFalse((child / '.benchmark_outputs').exists())
+        self.assertTrue((child / '.benchmark_outputs').is_dir())
+        (child / 'candidate/helper.py').write_text('VALUE = 3\n')
+        self.assertEqual((handle.initial_workspace / 'candidate/helper.py').read_text(), 'VALUE = 2\n')
         second = session.fork_workspace(handle.session_root, child)
         record = session.read_session(handle.session_root)
         self.assertEqual(second, 'worker_002')
@@ -329,26 +479,115 @@ class SessionTest(SessionTestBase):
         self.assertTrue(integrity.check_only(roots[0] / 'protection').passed)
         print('S2 creation crash: committed manifest -> complete Session and empty event log restored')
 
-    def test_fork_crash_keeps_registry_atomic_and_never_reuses_published_number(self):
-        for after_manifest in (False, True):
-            with self.subTest(after_manifest=after_manifest):
+    def test_fork_crash_recovery_keeps_every_intermediate_worker_closed(self):
+        stages = ('reservation', 'partial-staging', 'pre-root-normalization', 'complete-staging',
+                  'renamed-before-phase', 'renamed-locked', 'context-registered',
+                  'registered-locked', 'registered-open-before-phase', 'registered-open')
+        for crash_at in stages:
+            with self.subTest(crash_at=crash_at):
                 handle = self.create()
-                process = multiprocessing.get_context('fork').Process(target=crash_fork, args=(self.bench, self.repo, handle.session_root, after_manifest))
+                process = multiprocessing.get_context('fork').Process(
+                    target=crash_fork, args=(self.bench, self.repo, handle.session_root, crash_at))
                 process.start()
                 process.join(10)
                 self.assertEqual(process.exitcode, 23)
-                record = session.read_session(handle.session_root)
+                record = common.read_json(handle.session_root / 'session.json')
                 self.assertEqual(record['next_workspace_index'], 2)
                 published = handle.session_root / 'workspaces/worker_001'
-                self.assertTrue((published / '.benchmark_context/starting_point/candidate/helper.py').is_file())
-                self.assertEqual('worker_001' in record['workspaces'], after_manifest)
-                if not after_manifest:
+                staging = handle.session_root / 'staging/forks/worker_001'
+                if crash_at in ('reservation', 'partial-staging', 'pre-root-normalization'):
+                    with self.assertRaises(session.SessionError):
+                        session.read_session(handle.session_root)
+                    if crash_at == 'pre-root-normalization':
+                        share_gid = grp.getgrnam('ptobench-share').gr_gid
+                        self.assertFalse(published.exists())
+                        self.assertEqual(stat.S_IMODE(staging.stat().st_mode), 0o700)
+                        self.assertEqual(staging.stat().st_gid, share_gid)
+                        for name, mode in (('candidate', 0o2770),
+                                           ('.benchmark_context', 0o750),
+                                           ('.benchmark_outputs', 0o750)):
+                            entry = (staging / name).stat()
+                            self.assertEqual(entry.st_gid, share_gid)
+                            self.assertEqual(stat.S_IMODE(entry.st_mode), mode)
+                elif crash_at == 'complete-staging':
+                    self.assertFalse(published.exists())
+                    self.assertEqual(stat.S_IMODE(staging.stat().st_mode), 0o700)
+                else:
+                    self.assertEqual(stat.S_IMODE(published.stat().st_mode), 0o700
+                                     if crash_at in ('complete-staging', 'renamed-before-phase',
+                                                     'renamed-locked', 'context-registered',
+                                                     'registered-locked') else 0o2750)
                     with self.assertRaises(session.SessionError):
                         session.resolve_workspace(handle.session_root, published)
+                with session.execution_lock():
+                    recovered = session.recover_pending_forks(handle.session_root)
+                record = session.read_session(handle.session_root)
+                self.assertEqual(record['pending_forks'], {})
+                if crash_at in ('reservation', 'partial-staging'):
+                    self.assertEqual(recovered, [])
+                    self.assertNotIn('worker_001', record['workspaces'])
+                    self.assertFalse(published.exists())
+                else:
+                    self.assertIn('worker_001', record['workspaces'])
+                    self.assertTrue((published / '.benchmark_context/starting_point/candidate/helper.py').is_file())
+                    self.assertEqual(stat.S_IMODE(published.stat().st_mode), 0o2750)
+                self.assertEqual(list((handle.session_root / 'staging/forks').iterdir()), [])
                 self.assertEqual(session.fork_workspace(handle.session_root, handle.initial_workspace), 'worker_002')
                 self.assertEqual(session.read_session(handle.session_root)['usage']['hardware_actions'], 0)
                 self.assertTrue(integrity.check_only(handle.protection_root).passed)
-                print(f'S2 fork crash: registry_manifest={after_manifest}, next accepted worker=002, usage=0')
+                print(f'S2 fork crash: {crash_at} recovered, next accepted worker=002, usage=0')
+
+    def test_fork_recovery_rejects_target_for_unstaged_reservation(self):
+        handle = self.create()
+        process = multiprocessing.get_context('fork').Process(
+            target=crash_fork, args=(self.bench, self.repo, handle.session_root, 'complete-staging'))
+        process.start()
+        process.join(10)
+        self.assertEqual(process.exitcode, 23)
+
+        stage = handle.session_root / 'staging/forks/worker_001'
+        target = handle.session_root / 'workspaces/worker_001'
+        with session.execution_lock(), session._session_lock(handle.session_root) as root:
+            record, _ = session._load_locked(root, allow_pending=True)
+            record['pending_forks']['worker_001']['phase'] = 'reservation'
+            session._commit(root, record)
+        os.rename(stage, target)
+
+        with session.execution_lock(), self.assertRaises(integrity.InfrastructureError):
+            session.recover_pending_forks(handle.session_root)
+
+        record = common.read_json(handle.session_root / 'session.json')
+        manifest = common.read_json(handle.protection_root / 'manifest.json')
+        self.assertEqual(record['pending_forks']['worker_001']['phase'], 'reservation')
+        self.assertNotIn('worker_001', record['workspaces'])
+        self.assertNotIn('context_worker_001', manifest['roots'])
+        self.assertEqual(stat.S_IMODE(target.stat().st_mode), 0o700)
+
+    def test_fork_recovery_discards_invalid_unpublished_reservation(self):
+        handle = self.create()
+        process = multiprocessing.get_context('fork').Process(
+            target=crash_fork, args=(self.bench, self.repo, handle.session_root, 'complete-staging'))
+        process.start()
+        process.join(10)
+        self.assertEqual(process.exitcode, 23)
+
+        stage = handle.session_root / 'staging/forks/worker_001'
+        with session.execution_lock(), session._session_lock(handle.session_root) as root:
+            record, _ = session._load_locked(root, allow_pending=True)
+            record['pending_forks']['worker_001']['phase'] = 'reservation'
+            session._commit(root, record)
+        (stage / '.benchmark_context').chmod(0o700)
+
+        with session.execution_lock():
+            recovered = session.recover_pending_forks(handle.session_root)
+
+        record = session.read_session(handle.session_root)
+        manifest = common.read_json(handle.protection_root / 'manifest.json')
+        self.assertEqual(recovered, [])
+        self.assertEqual(record['pending_forks'], {})
+        self.assertNotIn('worker_001', record['workspaces'])
+        self.assertNotIn('context_worker_001', manifest['roots'])
+        self.assertFalse(stage.exists())
 
     def test_record_symlink_replaced_itself_and_external_sentinel_untouched(self):
         handle = self.create()

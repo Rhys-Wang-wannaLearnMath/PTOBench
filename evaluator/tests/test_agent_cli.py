@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 import os
+import stat
 import subprocess
 import sys
 
@@ -10,6 +11,56 @@ import session
 
 
 class AgentCliTest(ActionTestBase):
+    def test_forked_workers_are_real_roots_with_isolated_readonly_outputs(self):
+        def assert_real_tree(root):
+            for name in ('candidate', '.benchmark_context', '.benchmark_outputs'):
+                self.assertTrue(stat.S_ISDIR((root / name).lstat().st_mode), root / name)
+                self.assertFalse((root / name).is_symlink(), root / name)
+
+        initial = self.handle.initial_workspace
+        assert_real_tree(initial)
+        process, first = self.cli(['evaluate'])
+        self.assertEqual(process.returncode, 0, first)
+        first_output = initial / '.benchmark_outputs/clean/latest_session_result.json'
+        self.assertTrue(first_output.is_file())
+
+        process, fork = self.cli(['fork'])
+        self.assertEqual(process.returncode, 0, fork)
+        child = Path(fork['workspace'])
+        assert_real_tree(child)
+        self.assertEqual((child / 'candidate/helper.py').read_text(), 'VALUE = 1\n')
+        self.assertNotEqual((child / 'candidate').stat().st_ino, (initial / 'candidate').stat().st_ino)
+
+        (child / 'candidate/helper.py').write_text('VALUE = 2\n')
+        self.assertEqual((initial / 'candidate/helper.py').read_text(), 'VALUE = 1\n')
+        process, second = self.cli(['evaluate', str(child)])
+        self.assertEqual(process.returncode, 0, second)
+        second_output = child / '.benchmark_outputs/clean/latest_session_result.json'
+        self.assertTrue(second_output.is_file())
+        self.assertEqual(json.loads(first_output.read_text())['event_seq'], first['event_seq'])
+        self.assertEqual(json.loads(second_output.read_text())['event_seq'], second['event_seq'])
+        self.assertNotEqual(first['event_seq'], second['event_seq'])
+
+        import grp
+        share_gid = grp.getgrnam('ptobench-share').gr_gid
+        for worker in (initial, child):
+            output = worker / '.benchmark_outputs'
+            self.assertEqual(output.stat().st_gid, share_gid)
+            self.assertEqual(stat.S_IMODE(output.stat().st_mode), 0o750)
+            self.assertEqual((output / 'clean/latest_session_result.json').stat().st_gid, share_gid)
+            self.assertEqual(stat.S_IMODE((worker / '.benchmark_outputs/clean').stat().st_mode), 0o750)
+            self.assertEqual(stat.S_IMODE((worker / '.benchmark_outputs/clean/latest_session_result.json').stat().st_mode), 0o640)
+            for base, directories, files in os.walk(output):
+                for name in directories:
+                    entry = Path(base) / name
+                    self.assertEqual(entry.stat().st_gid, share_gid)
+                    self.assertEqual(stat.S_IMODE(entry.stat().st_mode), 0o750)
+                for name in files:
+                    entry = Path(base) / name
+                    self.assertEqual(entry.stat().st_uid, os.getuid())
+                    self.assertEqual(entry.stat().st_gid, share_gid)
+                    self.assertEqual(stat.S_IMODE(entry.stat().st_mode), 0o640)
+
     def test_legacy_session_cannot_restore_the_unrepaired_environment(self):
         marker = self.bench / 'evaluator/runtime_policy.py'
         content = marker.read_bytes()
@@ -165,8 +216,8 @@ class AgentCliTest(ActionTestBase):
         old_parser.unlink()
         env={**self.env,'PTOBENCH_SESSION_ROOT':str(legacy.session_root)}
         process,result=self.cli(['evaluate',str(legacy.initial_workspace)],env=env)
-        self.assertEqual((process.returncode,result['error_code']),(5,'infrastructure_error'))
-        self.assertIn('retired CLI',result['message'])
+        self.assertEqual((process.returncode,result['error_code']),(2,'invalid_request'))
+        self.assertIn('fresh Session',result['message'])
         self.assertFalse(old_parser.exists())
         self.assertFalse((self.bench/'bench').exists())
         self.assertEqual(len(self.calls()),0)

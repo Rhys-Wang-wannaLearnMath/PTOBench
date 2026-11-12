@@ -230,7 +230,7 @@ def _prepare_final(root, record, selected):
     case = session._read(Path(record['case_dir']) / 'case.json')
     workspace.write_context(Path(record['case_dir']), Path(record['sealed_dir']), case, target,
                             parent_workspace=source, **session.context_options(record))
-    roots = {'context_final': integrity.ProtectionRoot(target / '.benchmark_context', 'context', readonly=True),
+    roots = {'context_final': integrity.ProtectionRoot(target / '.benchmark_context', 'context'),
              'final_source': integrity.ProtectionRoot(final / 'source_manifest.json', 'records'),
              'final_selection': integrity.ProtectionRoot(final / 'selection.json', 'records'),
              'final_evaluator_result': integrity.ProtectionRoot(final / 'authority_result.json', 'records')}

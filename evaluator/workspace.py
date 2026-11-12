@@ -7,6 +7,7 @@ import os
 import stat
 import uuid
 from pathlib import Path
+import grp
 
 import common
 import file_tree
@@ -23,11 +24,17 @@ def _case_files(case_dir: Path, case: dict) -> dict[str, Path]:
 
 
 def _readonly(path: Path) -> None:
+    share_gid = grp.getgrnam("ptobench-share").gr_gid
     entries = file_tree.scan_tree(path, reject_special=True)
     for relative, entry in entries.items():
         if entry["kind"] == "file":
             with file_tree.open_file(path / relative) as descriptor:
-                os.fchmod(descriptor, 0o444)
+                os.fchown(descriptor, -1, share_gid)
+                os.fchmod(descriptor, 0o640)
+        elif entry["kind"] == "directory":
+            with file_tree.open_directory(path / relative) as descriptor:
+                os.fchown(descriptor, -1, share_gid)
+                os.fchmod(descriptor, 0o750)
 
 
 def _reference_summary(sealed: Path) -> dict:
@@ -163,7 +170,7 @@ def _ensure_tuning(destination: Path, case: dict | None = None) -> None:
         return
     data = (json.dumps(common.tuning_defaults(case) if case else common.TUNING_DEFAULTS,
                        indent=2, ensure_ascii=False) + "\n").encode("utf-8")
-    file_tree.atomic_bytes(path, data, mode=0o644)
+    file_tree.atomic_bytes(path, data, mode=0o660)
 
 
 CANDIDATE_EXCLUDES = frozenset({
@@ -357,7 +364,117 @@ def write_context(case_dir: Path, sealed: Path, case: dict, destination: Path,
     _readonly(metadata)
 
 
-def init_workspace(case_dir: Path, sealed: Path, case: dict, destination: Path, **context_options) -> None:
+def _normalize_candidate(path: Path) -> None:
+    share_gid = grp.getgrnam("ptobench-share").gr_gid
+    entries = file_tree.scan_tree(path, reject_special=True)
+    for relative, entry in entries.items():
+        candidate = path / relative
+        if entry["kind"] == "file":
+            with file_tree.open_file(candidate) as descriptor:
+                os.fchown(descriptor, -1, share_gid)
+                os.fchmod(descriptor, 0o660)
+        elif entry["kind"] == "directory":
+            with file_tree.open_directory(candidate) as descriptor:
+                os.fchown(descriptor, -1, share_gid)
+                os.fchmod(descriptor, 0o2770)
+
+
+def publish_workspace_root(destination: Path) -> None:
+    """Expose a fully built Workspace with a group-readable, non-writable root."""
+    share_gid = grp.getgrnam("ptobench-share").gr_gid
+    with file_tree.open_directory(destination) as descriptor:
+        os.fchown(descriptor, -1, share_gid)
+        os.fchmod(descriptor, 0o2750)
+
+
+def _normalize_workspace(destination: Path, *, publish: bool = True) -> None:
+    share_gid = grp.getgrnam("ptobench-share").gr_gid
+    _normalize_candidate(destination / "candidate")
+    _readonly(destination / ".benchmark_context")
+    outputs = destination / ".benchmark_outputs"
+    with file_tree.open_directory(outputs, create=True):
+        pass
+    _readonly(outputs)
+    with file_tree.open_directory(destination) as descriptor:
+        os.fchown(descriptor, -1, share_gid)
+        os.fchmod(descriptor, 0o2750 if publish else 0o700)
+
+
+def validate_workspace(destination: Path, *, root_mode: int,
+                       workspace_path: Path | None = None,
+                       parent_workspace: Path | None = None,
+                       case_id: str | None = None,
+                       verify_candidate: bool = True,
+                       compare_starting: bool = True) -> dict | None:
+    """Validate a complete, unpublished real Workspace and its DAC contract."""
+    destination = file_tree.absolute_path(destination)
+    try:
+        share_gid = grp.getgrnam('ptobench-share').gr_gid
+    except KeyError as error:
+        raise InvalidWorkspaceError('ptobench-share is unavailable') from error
+    try:
+        root_metadata = destination.lstat()
+    except FileNotFoundError:
+        return None
+    required = ('candidate', '.benchmark_context', '.benchmark_outputs')
+    for name in required:
+        try:
+            (destination / name).lstat()
+        except FileNotFoundError:
+            return None
+    if (not stat.S_ISDIR(root_metadata.st_mode) or root_metadata.st_uid != os.getuid()
+            or root_metadata.st_gid != share_gid or stat.S_IMODE(root_metadata.st_mode) != root_mode):
+        raise InvalidWorkspaceError(f'Workspace root permissions are invalid: {destination}')
+    for name in required:
+        path = destination / name
+        try:
+            metadata = path.lstat()
+        except FileNotFoundError:
+            return None
+        expected = 0o2770 if name == 'candidate' else 0o750
+        if (not stat.S_ISDIR(metadata.st_mode) or metadata.st_uid != os.getuid()
+                or metadata.st_gid != share_gid or stat.S_IMODE(metadata.st_mode) != expected):
+            raise InvalidWorkspaceError(f'Workspace entry permissions are invalid: {name}')
+    try:
+        candidate_entries = (file_tree.scan_tree(destination / 'candidate', reject_special=True)
+                             if verify_candidate else {})
+        context_entries = file_tree.scan_tree(destination / '.benchmark_context', reject_special=True)
+        output_entries = file_tree.scan_tree(destination / '.benchmark_outputs', reject_special=True)
+    except PermissionError as error:
+        raise InvalidWorkspaceError(f'Workspace contains an unreadable entry: {error.filename or destination}') from error
+    for root, entries, directory_mode, file_mode in (
+            (destination / 'candidate', candidate_entries, 0o2770, 0o660),
+            (destination / '.benchmark_context', context_entries, 0o750, 0o640),
+            (destination / '.benchmark_outputs', output_entries, 0o750, 0o640)):
+        for relative, entry in entries.items():
+            path = root / relative
+            metadata = path.lstat()
+            expected = directory_mode if entry['kind'] == 'directory' else file_mode
+            if (metadata.st_uid != os.getuid() or metadata.st_gid != share_gid
+                    or stat.S_IMODE(metadata.st_mode) != expected):
+                raise InvalidWorkspaceError(f'Workspace subtree permissions are invalid: {path.relative_to(destination)}')
+    try:
+        binding = common.read_json(destination / '.benchmark_context/workspace.json')
+    except FileNotFoundError:
+        return None
+    except (OSError, ValueError) as error:
+        raise InvalidWorkspaceError(f'Workspace Context is unreadable or malformed: {error}') from error
+    if (not isinstance(binding, dict) or binding.get('workspace') != str(workspace_path or destination)
+            or binding.get('parent_workspace') != (str(parent_workspace) if parent_workspace else None)
+            or case_id is not None and binding.get('case_id') != case_id):
+        raise InvalidWorkspaceError(f'Workspace Context binding does not match its registry: {destination}')
+    candidate_hash = None
+    if verify_candidate:
+        candidate_hash = _source_manifest(_candidate_entries(destination / 'candidate'))
+        if compare_starting:
+            starting_hash = _source_manifest(_candidate_entries(destination / '.benchmark_context/starting_point'))
+            if candidate_hash['content_sha256'] != starting_hash['content_sha256']:
+                raise InvalidWorkspaceError(f'Workspace starting Candidate does not match its fork: {destination}')
+    return {'candidate': candidate_hash, 'context': context_entries, 'outputs': output_entries}
+
+
+def init_workspace(case_dir: Path, sealed: Path, case: dict, destination: Path, *,
+                   publish: bool = True, **context_options) -> None:
     destination = file_tree.absolute_path(destination)
     if destination.is_symlink():
         raise InvalidWorkspaceError(f"workspace cannot be a symlink: {destination}")
@@ -365,6 +482,7 @@ def init_workspace(case_dir: Path, sealed: Path, case: dict, destination: Path, 
     copy_candidate_tree(case_dir / case["workspace"], destination / "candidate")
     _ensure_tuning(destination, case)
     write_context(case_dir, sealed, case, destination, **context_options)
+    _normalize_workspace(destination, publish=publish)
 
 
 def fork_workspace(parent: Path, destination: Path) -> dict[str, str | None]:
@@ -397,8 +515,10 @@ def fork_workspace(parent: Path, destination: Path) -> dict[str, str | None]:
         _ensure_tuning(temporary, case)
         write_context(case_dir, sealed, case, temporary, parent_workspace=parent,
                        workspace_path=destination)
+        _normalize_workspace(temporary, publish=False)
         with file_tree.open_directory(destination.parent) as descriptor:
             os.rename(temporary_name, destination.name, src_dir_fd=descriptor, dst_dir_fd=descriptor)
+        publish_workspace_root(destination)
     except BaseException:
         with file_tree.open_directory(destination.parent) as descriptor:
             file_tree.remove_at(descriptor, temporary_name)
