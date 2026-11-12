@@ -16,7 +16,9 @@
 | 2 | [02-真实 Workspace 与 DAC](02-真实Workspace与DAC.md) | 初始化真实 `candidate/`、只读 Context/Outputs，并让在线 Fork 直接发布到同一 Workspace 树 | 01 |
 | 3 | [03-Pi 沙箱与运行通道](03-Pi沙箱与运行通道.md) | Agent 只挂当前 Session 的 `workspaces/`；接通 Pi 私有目录、Shell、Broker/Gateway/CANNBot Socket 和运行时依赖 | 01、02 |
 | 4 | [04-旧路径清理与软件验收](04-旧路径清理与软件验收.md) | 删除映射/导出视图的死代码，完成不占 NPU 的正式软件回归 | 01–03 |
-| 5 | [05-真实 Pi 与 Case 验收](05-真实Pi与Case验收.md) | Basic/CANNBot 真实 Pi Smoke、Formal/Held-out Evaluate 与 Combined Profile 验收 | 01–04 |
+| 5 | [05-真实 Pi 与 Case 验收](05-真实Pi与Case验收.md) | 复用 Basic 真实 Pi 证据，补齐 CANNBot canary、Formal/Held-out Evaluate 与 Combined Profile 验收 | 01–04 |
+
+Plan 01–05 全部实施和验收完成后，另做性能影响分析，并只将受影响的 baseline/Profile Case 放入串行 tmux 队列。无测量路径影响时记录无需重测；不得默认重跑全部 311 个 Case。该队列是 Plan 05 之后的收尾工作，不在 Plan 01–05 进行中启动。
 
 每份子计划只修改自己列出的代码边界。前置计划未完成或失败时停止，不跳到后续任务。发布后的 Agent 启动只有专用用户 + Bubblewrap + POSIX DAC 路径：配置缺失或不支持的后端均 fail closed。旧隔离方法没有运行兼容要求；不保留旧隔离实现、旧 Workspace 视图、旧配置解析、迁移逻辑或运行时回退。旧 Session 不自动迁移，也不提供继续运行的兼容入口；旧文件不批量删除，需要继续优化时新建 Session。
 
@@ -62,7 +64,7 @@
 - Basic、CANNBot 各自使用自己的 `.env`，两者按当前要求配置 DeepSeek Flash 与 High thinking；Agent 工具不开放 Web Search/Web Fetch，公网搜索不能绕过网络隔离。
 - CANNBot 保留原生冻结 Skills；通过受控 `skill` 工具读取，不给 Basic/CANNBot 注入 `raw_wiki`。
 - Basic 和 CANNBot 的新 Session 需验证 Agent Workspace 与 README；`.benchmark_context/` 与 Agent 文件视图不包含/不暴露 `mode.json`、`profiling_modes.json`、`fixture_catalog.json`。若 Broker 内部仍需 Run 级 `mode.json` 等元数据，可留在可信目录，不挂载、复制或提供给 Agent；不要为隐藏 Agent 信息而删除仍被可信运行器使用的记录。保留当前 Case 的 tuning capabilities。Profile 和 Evaluate 的说明维持客观、中性。
-- Gateway 的本地 `PYPTO_PROVIDER_API_KEY` 占位值不是认证凭据；当前访问控制由 Broker-owned Unix Socket 的 owner/group/mode 与 Bubblewrap 可见性提供。上游 Provider Key 不得进入 Pi Agent 的环境、启动 Request、Pi 配置、Session 配置或日志。该保证针对 Pi Agent 的文件与进程视图；Candidate Worker 与 Broker 同 UID，且其内部隔离已明确不在本轮范围，不对 Worker 进程状态作保证。
+- Gateway 的本地 `PYPTO_PROVIDER_API_KEY` 占位值不是认证凭据；当前访问控制由 Broker-owned Unix Socket 的 owner/group/mode 与 Bubblewrap 可见性提供。上游 Provider Key 不得进入 Pi Agent 的环境、启动 Request、Pi 配置、Session 配置或日志。该保证针对 Pi Agent 的文件与进程视图；Candidate Worker 与 Broker 同 UID，且其内部隔离已明确不在本轮范围，不对 Worker 进程状态作保证。Candidate Worker 的网络访问不作要求、不加限制、不测试，也不作为验收门槛。
 - 本轮支持 Pi Agent 后端。沙箱启动遇到非 Pi/不支持配置时明确失败；不得转交旧 `run_legacy` 或无隔离启动路径。
 - 正式代码模块不新增 PTOBench 顶层运行模块，最终根目录没有 PTOBench 自有 `ops/`。`reports/`、`case_selection/`、`升级/` 与独立 `lightweight_e2e/` 是结果、选择或审计资料，不是运行模块。
 - `lightweight_e2e` 不得成为 PTOBench 正式运行、导入、测试或部署依赖。Candidate Worker 内评测实现的可见性在本轮明确不处理。
@@ -72,7 +74,7 @@
 1. 正常 PTOBench 命令从普通 SSH 登录及队列/tmux 上下文运行时，Pi 进程实际宿主 UID 是 `ptobench-agent`；实际有效/附加组仅有共享组；`CapEff` 为零；Agent 用户自身不能通过 sudo 提权，且不能直接打开 NPU 设备节点。Broker 与可信 NPU Worker 仍使用原身份和权限。
 2. Agent 可创建、编辑、原子替换和删除 `candidate/` 中的 Python/helper 文件及 `candidate/tuning.json`；Broker 可读取普通文件。Agent 创建的 Broker 不可读文件会在 Snapshot 前明确拒绝，不生成不完整 Snapshot。
 3. 同 Session 所有 Worker 的 Candidate 对 Agent 可读写；Context/Outputs 可读但不可改；Worker/Workspace 根不可写，其他 Session 不可见。Broker 能更新真实 Workspace 内各 Worker 的 `.benchmark_outputs/`，Agent 能读而不能改；Fork 后新 Worker 在同一个 Pi/Shell 进程中立即可见，且各 Candidate 相互独立。
-4. Basic 与 CANNBot 的 Pi 文件工具、Shell/Python、CLI、Gateway、CANNBot Socket、模型凭据和网络边界均验证通过；另经 Agent Bubblewrap/Pi Shell 内的真实 `ptobench` CLI 与 Broker socket 各完成一次 Evaluate 和 Combined Profile canary；Broker 与受信任 NPU Worker 保持既有身份和硬件能力。
+4. Basic 与 CANNBot 的 Pi 文件工具、Shell/Python、CLI、Gateway、CANNBot Socket、模型凭据和 Pi Agent 网络边界均验证通过；另经 Agent Bubblewrap/Pi Shell 内的真实 `ptobench` CLI 与 Broker socket 各完成一次 Evaluate 和 Combined Profile canary；Broker 与受信任 NPU Worker 保持既有身份和硬件能力。Candidate Worker 网络访问不受本计划限制，也不参与验收。
 5. 旧身份映射、旧 Agent runner、旧 Session 执行兼容、Candidate/public 导出/链接/同步运行路径已删除；`evaluator/` 内的专用账号 dispatcher 是唯一入口，PTOBench 顶层无 `ops/`。其余 Snapshot 稳定性、Session 完整性、权限检查和非 Workspace 归档行为仍通过。
-6. Basic/CANNBot 真实 Smoke、Formal 60 与 Held-out 15 正确性 Evaluate、按已存在 `(granularity, device_count)` 类别选出的 8 个 Combined Profile 代表样本，以及 selection 内能够由有效运行配置证明的多卡和真实跨 host 多机样本通过。验收只读使用选择清单，不包含或修改具体 Case 实现内容。Profile 不是对全部 75 个 Case 逐一采集。多机需由实际运行配置中的 host topology 证明；`device_count` 或 8 卡不能单独证明多机。若 Formal/Held-out selection 没有可验证多机样本，则如实记录未覆盖，不能声称多机目标已通过；其余门槛通过时，只能签署“单机部署已验收”，不能签署“多机部署已验收”。如果实际部署目标包含多机，必须先提供可验证的 host topology 与可运行 Case，再完成该项验收。
-7. Case/Fixture/Seed/Reference/Baseline/CV、`case_selection/` 和 `sealed_assets/` 内容未改写；验收开始与结束的内容哈希 manifest 一致。硬件最终运行只在所有不占 NPU 的软件、真实 Pi 和 DAC 门槛通过后开始。
+6. Plan 03 的 Basic 生产 Pi `evaluate` 与 Combined `profile` 证据仍匹配最终代码时予以复用；只补齐缺失的 CANNBot 生产 Pi canary。Formal 60 与 Held-out 15 正确性 Evaluate、按已存在 `(granularity, device_count)` 类别选出的 8 个 Combined Profile 代表样本，以及 selection 内能够由有效运行配置证明的多卡和真实跨 host 多机样本通过。验收只读使用选择清单，不包含或修改具体 Case 实现内容。Profile 不是对全部 75 个 Case 逐一采集。多机需由实际运行配置中的 host topology 证明；`device_count` 或 8 卡不能单独证明多机。若 Formal/Held-out selection 没有可验证多机样本，则如实记录未覆盖，不能声称多机目标已通过；其余门槛通过时，只能签署“单机部署已验收”，不能签署“多机部署已验收”。如果实际部署目标包含多机，必须先提供可验证的 host topology 与可运行 Case，再完成该项验收。
+7. Case/Fixture/Seed/Reference/Baseline/CV、`case_selection/` 和 `sealed_assets/` 不新增或改变内容；验收前后 selection、锁文件 hash 及受保护目录的 Git 状态/tracked diff hash 一致。硬件任务只在所有必要的不占 NPU 测试和已有 Pi/DAC 证据复核后开始。所有 Plans 完成后，再按最终运行路径影响分析安排必要的性能 baseline/Profile tmux 重测。

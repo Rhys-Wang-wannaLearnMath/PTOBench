@@ -25,6 +25,11 @@ jev_explore/
 .ruff_cache
 .ptobench
 .agents
+# Keep project skills versionable without exposing other local agent state.
+!.agents/
+.agents/*
+!.agents/skills/
+!.agents/skills/**
 .aws
 升级
 archeved
