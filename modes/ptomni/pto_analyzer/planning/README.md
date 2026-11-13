@@ -13,7 +13,7 @@ Stage 3 已完成工具收敛与 Cursor 分页改造；Stage 4 已完成大文�
 
 ## Stage 5：75 Case 轨迹覆盖与 Tuner 效用验证
 
-[Stage 5 规划](stage5/README.md)安排真实 PTOmni Host 的 Tuner 专属工具接线、CPU 集成验收，并复用 Formal 60 + Held-out 15 全部 Case 的 Basic Pi/CANNBot Session 做九工具离线回放。对缺少身份匹配 `combined profile` 的起始和最终有效 Candidate，才经 Runner/PTOBench 补采，不为每次 Agent 尝试重复 Profile。另在三个 Formal Case 上分别为 Compute、Dataflow、Schedule 做 Raw Profile 与 Analyzer Tool 配对试点。Held-out 在 Formal 60 的语义/Parser 冻结后回放。当前仓库仍未发现 PTOmni Host 调用 `ToolSession`，故真实 Host 是接线前置条件；不创建模拟 Host 或第二个 Tool Server。完整执行门槛见 [Stage 5 任务清单](stage5/TASK_CHECKLIST.md)，启动说明见 [Stage 5 Prompt](stage5/IMPLEMENTATION_PROMPT.md)。
+[Stage 5 规划](stage5/README.md)安排真实 PTOmni Host 的 Tuner 专属工具接线、CPU 集成验收，并为 Formal 60 + Held-out 15 的每个 Case 准备一份身份匹配的 `combined profile`，逐 Case 回放九个工具；现有精确匹配的归档可复用，缺失 Case 才经 Runner/PTOBench 补采。Basic Pi/CANNBot 的 150 条真实 Session 用于轨迹审查，起始/最佳候选只按身份复用或按明确的轨迹分析需要补采，不为每次尝试重复 Profile。另在三个 Formal Case 上分别为 Compute、Dataflow、Schedule 做 Raw Profile 与 Analyzer Tool 配对试点。修改前后比较要求同 Case 候选 Profile 成对且字段口径兼容，只报告观测变化；性能结论以 `evaluate` 为准。Held-out 在 Formal 60 的语义/Parser 冻结后最终回放。当前仓库仍未发现 PTOmni Host 调用 `ToolSession`，故真实 Host 是接线前置条件；不创建模拟 Host 或第二个 Tool Server。完整执行门槛见 [Stage 5 任务清单](stage5/TASK_CHECKLIST.md)，启动说明见 [Stage 5 Prompt](stage5/IMPLEMENTATION_PROMPT.md)。
 
 ## Stage 4 实施与验收状态
 

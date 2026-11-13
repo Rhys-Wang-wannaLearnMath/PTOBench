@@ -1,6 +1,6 @@
 # PTOAnalyzer Stage 5 实施 Prompt
 
-请按 [Stage 5 任务清单](TASK_CHECKLIST.md) 实施 PTOAnalyzer 的真实 PTOmni Host 接线、Formal 60 + Held-out 15 的 Basic Pi/CANNBot 运行记录覆盖，以及三个 Tuner 专长的受控 Raw/Analyzer 试点。当前 Prompt 只是执行说明；没有在本轮启动 Agent、PTOBench 或 NPU 实验。
+请按 [Stage 5 任务清单](TASK_CHECKLIST.md) 实施 PTOAnalyzer 的真实 PTOmni Host 接线、Formal 60 + Held-out 15 的全量 Profile 覆盖与 Basic Pi/CANNBot 运行记录回放，以及三个 Tuner 专长的受控 Raw/Analyzer 试点。当前 Prompt 只是执行说明；没有在本轮启动 Agent、PTOBench 或 NPU 实验。
 
 ## 开始前
 
@@ -11,12 +11,14 @@
 
 ## Case 与数据要求
 
-- 使用完整的 [Formal 60](../../../../../case_selection/formal_60/cases.csv) 和 [Held-out 15](../../../../../case_selection/heldout_15/cases.csv)，不再抽小样本代替覆盖矩阵。Basic Pi/CANNBot 已有 Session 作为离线回放输入，不为覆盖目标重跑这 150 条 Agent 轨迹。
-- 每条 Case/方法轨迹选择起始 Candidate 和最终经 `evaluate` 接受的最佳 Candidate。若两者身份一致则去重；不为每次尝试 Profile。中间候选仅在已有 Profile 或回答明确轨迹问题时纳入。
+- 使用完整的 [Formal 60](../../../../../case_selection/formal_60/cases.csv) 和 [Held-out 15](../../../../../case_selection/heldout_15/cases.csv)，不再抽小样本代替覆盖矩阵。每个 Case 至少准备一份与该 Case 正式初始 Candidate、配置、设备和软件版本身份匹配的 `combined profile`；Stage 4、Basic Pi 或 CANNBot 已有 Profile 只有经过完整身份核验后才可复用。无匹配 Profile 的 Case 由 Runner/PTOBench 在已注册 workspace 对该初始 Candidate 运行一次 `combined profile`。
+- 75 Case Profile 覆盖表每 Case 只登记一份代表 Profile；已有精确匹配归档可抵扣新增采集，因此新增硬件动作数为缺少有效 Profile 的 Case 数，不强制重复采集。采集失败和身份不明仍保留在 75 行分母中。
+- Basic Pi/CANNBot 已有 Session 作为轨迹回放输入，不为覆盖目标重跑这 150 条 Agent 轨迹。每条 Case/方法轨迹均纳入起始 Candidate 和最终经 `evaluate` 接受的最佳 Candidate；若其身份与 75 Case Profile 或其他归档相同则复用，否则对缺失目标补采。不为每次编辑或失败尝试 Profile。
+- 75 Case 覆盖目标与 150 条轨迹的起始/最佳候选统一按完整 Candidate、配置和设备身份去重。若 150 条轨迹都没有可复用 Profile，轨迹候选最多形成 300 个不同 Profile 目标；再与 75 个 Case 初始 Candidate 目标取并集，实际需补采的数量是该唯一目标集合中缺少有效归档的数量，不重复采集重合目标。
 - 只复用 Case、Candidate/source digest、输入和编译配置、设备、软件版本、Profile Event 与受保护归档身份全部匹配的 `combined profile`。仅 Case ID 相同不足以复用。
 - 缺少对应 Profile 时，才由 Runner/PTOBench 在已注册的 Session workspace 对精确 Candidate 执行 `combined profile`。若 Agent Session 已关闭或 Snapshot 不可直接使用，先走获准的 Runner/Session workspace 流程，不对任意快照目录直接运行 CLI。每次成功 Profile 按 PTOBench 原账本计一次硬件动作；正确性与 Clean Latency 仍以对应 `evaluate` 为准。当前 `ProfileRef` 只接受完整的 `combined` Profile，不拼接 `split` Event。
-- 若 150 条轨迹均没有可复用事件，起始和最终 Candidate 最多形成 300 个 Profile 输入；基于 Candidate 身份去重，并复用已有 Event 后，实际补采数会降低。不要为重复 Candidate 额外 Profile。
 - 每个不同 Profile 都供九个 Tool 共用。Basic/CANNBot 记录用于事后覆盖与关联；除非轨迹含真实 PTOAnalyzer tool-call 记录，否则不能说 Baseline Agent 使用了 Analyzer。
+- 75 Case 全量 Profile 回放验证 Case 产物覆盖。修改前后观测比较需要同 Case 的起始/修改后候选 Profile 成对存在；只对身份、指标、单位和统计口径可对齐的数据报告增减，不输出根因或性能结论。性能变化以对应 `evaluate` 为准。
 - 先用 Formal 60 发现并修复有真实样本支持的问题；工具语义冻结后再回放 Held-out 15，保留其独立检查意义。
 
 ## 工具接线与试验
@@ -32,6 +34,7 @@
 
 - Host 原生工具接线、角色隔离、Profile 身份、只读归档和 Cursor CPU 集成测试通过。
 - 建立覆盖全部 75 Case、Basic Pi/CANNBot 两种方法的轨迹清单；所有缺失、失败、中断和无 Candidate 变化都保留原因。
+- 建立恰好 75 行 `Case × Profile` 覆盖矩阵；所有 Case 均有身份有效的 ProfileRef，或有明确、可追溯的失败/缺失状态。汇报复用数、新增 combined Profile 数与硬件动作数。
 - 对所有身份有效的起始/最佳 Candidate Profile 离线回放九个 Tool，形成 `Case × Method × Candidate × Tool` 覆盖矩阵；每项观测可追到源文件、Profile event 和 Agent event。
 - Formal 60 与 Held-out 15 分开报告，记录每个来源覆盖、解析拒绝、`evaluate` 结果、Profile 成本和解释边界。
 - 完成三个 Tuner 各一组 Raw/Analyzer 匹配对，并保存工具调用、假设、Diff、Profile/evaluate Event、正确性、Clean Latency、硬件动作、Token 和 wall-clock。

@@ -2,12 +2,13 @@
 
 ## 范围与约束
 
-- 覆盖 Formal 60 + Held-out 15 中所有 Case 的 Basic Pi、CANNBot 真实 Session 记录；不为这项覆盖工作重跑两种 Baseline Agent。
+- Formal 60 + Held-out 15 的每个 Case 至少有一份身份匹配的 `combined` Profile；复用已有精确匹配归档，只对缺失 Case 补采。
+- 覆盖全部 75 Case 的 Basic Pi、CANNBot 真实 Session 记录；不为这项覆盖工作重跑两种 Baseline Agent。
 - 在真实 PTOmni Host 接入九个只读 Tool，并对 Compute、Dataflow、Schedule 各做一个受控 Raw/Analyzer 配对试点。
 - PTOAnalyzer 继续离线、只读、确定性；`profile`、`evaluate`、设备租约和硬件动作只通过 Runner/PTOBench 与原账本。
 - 只向当前启用的 Tuner 暴露其三个工具。Lead 不调用 Analyzer 或硬件 Tool；Assembler 不分发工具；其他角色不获得 Analyzer Tool。
 - 不创建模拟 Host、第二个 Tool Server 或 Agent Harness；不新增诊断 Tool、不改变输出语义、不扩大 PTOBench Collector。
-- 不逐次尝试 Profile。每个 Case/方法至少覆盖起始 Candidate 与最终 `evaluate` 接受的最佳 Candidate；同一身份的 Candidate 只需一个 Profile。
+- 不逐次尝试 Profile。全量 Case 覆盖至少每 Case 一份；方法轨迹按起始 Candidate 与最终 `evaluate` 接受的最佳 Candidate 取样，同一身份的 Candidate 只需一个 Profile。
 - Held-out 结果在 Formal 60 的 Parser/工具语义冻结后再回放；不依据 Held-out 结果迭代调试并仍把它称为独立验收。
 - 保留工作区已有改动，尤其不覆盖 `evaluator/` 中的并行修改。
 
@@ -53,11 +54,24 @@
 
 **验收：** 形成 75 行 Case 主表及 Basic/CANNBot 两条方法记录列；每个缺失状态有明确原因和可追踪的 Session/Event。
 
-## Task 4：补齐候选 Profile 输入
+## Task 4：覆盖全部 75 个 Case 的 Profile
+
+**全集：** [`formal_60/cases.csv`](../../../../../case_selection/formal_60/cases.csv) 的 60 个 Case 与 [`heldout_15/cases.csv`](../../../../../case_selection/heldout_15/cases.csv) 的 15 个 Case。覆盖目标是每个 Case 的正式初始 Candidate 和配置各有一份身份有效的 `combined profile`。
+
+- [ ] 建立 75 行 `Case × Profile` 覆盖表，逐项指定 Case ID、初始 Candidate/source digest、输入与编译配置、设备、软件版本、ProfileRef、来源 Session/Event 和归档校验状态。
+- [ ] 盘点 Stage 4、Basic Pi、CANNBot 已有 Profile；只有 Case、Candidate/source digest、输入/编译配置、设备、软件版本、PTOBench event 与受保护归档身份都匹配时才计入覆盖。
+- [ ] 每个无匹配 Profile 的 Case，由 Runner/PTOBench 在已注册的 Case/Session workspace 对指定初始 Candidate 运行一次 `combined profile`；不因 Case 名称相同而复用，也不拼接 `split` Event。
+- [ ] 对每个 Case 恰好保留一份用于全量覆盖的 ProfileRef；若同一 Case 另有 Basic/CANNBot 候选 Profile，按 Candidate 身份作为轨迹数据另行登记，不重复计作新 Case。
+- [ ] 每个新成功 Profile 按 PTOBench 原账本计一次硬件动作。Profile 失败、Case 无法运行、身份字段缺失和归档校验失败均保留为明确状态，不能从 75 的分母移除。
+- [ ] Held-out 15 的工具结果在 Formal 60 解析和语义修正冻结后再做最终回放；采集与身份登记可以提前完成，但不得用 Held-out 结果调试后仍宣称是冻结验证。
+
+**验收：** 覆盖表固定为 75 个 Case；每行要么有唯一、可验证的 `combined ProfileRef`，要么有可审计的失败/缺失原因。报告新增 Profile 动作数和复用数，目标新增次数为 75 减去身份匹配的已有 Profile 数。
+
+## Task 5：补齐轨迹候选 Profile 输入
 
 PTOAnalyzer 只消费成功的 `combined profile`。已有 Profile 只有在 Case、Candidate/source digest、输入/编译配置、设备、软件版本和保护归档身份全部匹配时才能复用。
 
-- [ ] 先盘点每个起始/最佳 Candidate 是否已有对应 Profile event，并核对上述身份字段。
+- [ ] 先盘点每条 Basic/CANNBot 轨迹的起始/最佳 Candidate 是否已有对应 Profile event，并核对上述身份字段；Task 4 的 75 Case Profile 仅在 Candidate 身份相同时复用。
 - [ ] 对缺失 Profile 的起始 Candidate 和最终最佳 Candidate，由 Runner/PTOBench 对精确 Candidate 执行一次 `combined profile`；若同一 Candidate 已有可复用 Event，不重复运行。
 - [ ] 只在已注册的 Session workspace 中补采；若 Agent Session 已关闭或 Snapshot 不可直接使用，先走获准的 Runner/Session workspace 流程，不对任意快照目录直接运行 CLI。
 - [ ] 当前 `ProfileRef` 只接受完整 `combined` Profile；遇到历史 `split` 产物时记录不兼容，不拼接不同 Event。
@@ -65,22 +79,23 @@ PTOAnalyzer 只消费成功的 `combined profile`。已有 Profile 只有在 Cas
 - [ ] Profile 计入 PTOBench 硬件动作预算；Profile 不证明 correctness 或 Clean Latency，关联的 `evaluate` Event 保持为权威结果。
 - [ ] 记录每一项复用/新增 Profile 的 ProfileRef、Candidate hash、来源 Session、硬件动作和复用理由。
 
-在 150 条轨迹都缺少可复用 Profile 的极端情况下，起始与最终候选最多对应 300 个不同 Candidate Profile；同一候选身份去重和复用已有 Event 会降低新增动作数。每个缺失的 `combined profile` 计一次 PTOBench 硬件动作。此为预算规划上限，不为重复 Candidate 重复采集。
+在 150 条轨迹都缺少可复用 Profile 的情况下，起始与最终候选最多对应 300 个轨迹 Profile 目标。将它们与 Task 4 的 75 个 Case 初始 Candidate 目标按完整身份取并集，再扣除已有有效归档，得到新增动作数；同一身份不重复采集。每个缺失的 `combined profile` 计一次 PTOBench 硬件动作。
 
 **验收：** 每个纳入回放的 Candidate 都绑定一个身份有效的 ProfileRef；Profile 缺口与跳过原因完整可查。
 
-## Task 5：回放九个 Tool 并整理覆盖矩阵
+## Task 6：回放九个 Tool 并整理覆盖矩阵
 
 - [ ] 对每个有效 Profile 分别打开 Compute、Dataflow、Schedule ToolSession；九个 Tool 共用同一份 Profile，不重复采集。
+- [ ] 对 75 行 `Case × Profile` 覆盖表逐个离线回放九个 Tool，Formal 60 与 Held-out 15 的结果分开统计。
 - [ ] 保存每个 Tool 的完整摘要、来源覆盖、单位、限制、Profile 身份和 Tool 版本；不把缺失数据补成零或瓶颈判断。
 - [ ] 高基数 Tool 先完整读取摘要；只在验证某个 Case/候选差异或审查数据完整性时分页读取明细。至少包含 Stage 4 最大图形态的全页回归样本。
-- [ ] 对同 Case 的起始与最佳候选，比较工具观测变化，并并列记录对应代码 Diff、`evaluate` 正确性和 Clean Latency 变化；只陈述关联，不从单一关联断言根因。
+- [ ] 对已有同 Case 起始/最佳候选 Profile 配对，按观测名称、单位和聚合口径对齐并报告增减、持平、缺失或不可比较；并列记录代码 Diff、`evaluate` 正确性和 Clean Latency 变化，不从单一关联断言根因。
 - [ ] 先处理 Formal 60 的发现。冻结输出语义后再对 Held-out 15 做最终离线回放；Hold-out 的异常记录为结果，不用来静默调参。
 - [ ] 若真实归档暴露解析缺陷，保存可复现样本和来源；只做证据支持的 Parser 修正，保持 Tool API/语义边界，并回归全部受影响 Fixtures 与 Stage 4 样本。不新增未经数据支持的判定规则或 Tool。
 
-**验收：** 输出 `Case × Method × Candidate × Tool` 覆盖矩阵；每个观测可追到 Profile 文件和 Agent Event。Formal/Held-out 覆盖率分别以 60、15 为分母，失败/缺失单列。
+**验收：** 输出 75 行 `Case × Profile` 覆盖矩阵，以及 `Case × Method × Candidate × Tool` 轨迹矩阵；每个观测可追到 Profile 文件和 Agent Event。Formal/Held-out Profile 覆盖率分别以 60、15 为分母，失败/缺失单列。
 
-## Task 6：三个 Tuner 的 Raw/Analyzer 配对试点
+## Task 7：三个 Tuner 的 Raw/Analyzer 配对试点
 
 **执行门槛：** 真实 PTOmni Host 接线和 CPU 验收通过；Stage 5 已明确实验预算、设备窗口和 Runner/PTOBench 锁的使用方式。
 
@@ -94,9 +109,9 @@ PTOAnalyzer 只消费成功的 `combined profile`。已有 Profile 只有在 Cas
 
 **验收：** 每个 Tuner 至少一组可追溯的匹配对；三组只作为角色覆盖和可行性证据。单一匹配对不声称统计显著或全 Case 提升；后续重复数根据观察到的效应和波动另定。
 
-## Task 7：结果归档与结论边界
+## Task 8：结果归档与结论边界
 
-- [ ] 分开报告：Baseline 轨迹/Case 覆盖、工具解析与来源覆盖、候选 Profile 变化、Tuner 实际工具使用、正式 `evaluate` 结果。
+- [ ] 分开报告：75 Case Profile 覆盖、Baseline 轨迹/候选覆盖、工具解析与来源覆盖、配对 Profile 观测变化、Tuner 实际工具使用、正式 `evaluate` 结果。
 - [ ] Basic/CANNBot 事后重放不得写成“Baseline 使用了 Analyzer”；只有受控 PTOmni Tool calls 才是在线使用证据。
 - [ ] 记录未完成、Profile 失败、correctness 失败、缺失来源、解析拒绝、未变化候选和预算耗尽，不能只挑成功 Case。
 - [ ] 对所有真实硬件事件核对 PTOBench 原账本、设备分配与执行记录；回放前后核对受保护原始 Profile 哈希。
