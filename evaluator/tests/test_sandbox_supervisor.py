@@ -11,7 +11,11 @@ import threading
 import unittest
 from unittest.mock import patch
 
+from session_test_support import SessionTestBase
+import integrity
 import sandbox_supervisor
+import session
+from test_session import tree_digest
 
 
 class BrokerWorkspaceRoutingTests(unittest.TestCase):
@@ -135,7 +139,7 @@ class BrokerWorkspaceRoutingTests(unittest.TestCase):
                 broker.server.close()
                 broker.ipc.cleanup()
 
-    def test_cli_help_uses_registered_workspace_without_export_sync_or_feedback(self):
+    def test_cli_help_routes_directly_without_legacy_workspace_methods(self):
         class Child:
             stdout = io.BytesIO(b'help output\n')
 
@@ -155,7 +159,7 @@ class BrokerWorkspaceRoutingTests(unittest.TestCase):
                  patch.object(sandbox_supervisor.subprocess, 'Popen', return_value=Child()) as spawn:
                 broker = sandbox_supervisor.Broker(root, private, cli_environment={'PATH': '/usr/bin'})
                 for name in ('export', 'sync_source', 'feedback'):
-                    setattr(broker, name, unittest.mock.Mock(side_effect=AssertionError(name)))
+                    self.assertFalse(hasattr(broker, name), f'legacy Broker method remains: {name}')
                 thread = threading.Thread(target=broker.serve, daemon=True)
                 thread.start()
                 try:
@@ -169,14 +173,33 @@ class BrokerWorkspaceRoutingTests(unittest.TestCase):
                     resolve.assert_called_once_with(root, str(workspace))
                     spawn.assert_called_once()
                     self.assertEqual(spawn.call_args.args[0][-1], '--help')
-                    broker.export.assert_not_called()
-                    broker.sync_source.assert_not_called()
-                    broker.feedback.assert_not_called()
                 finally:
                     broker.stop.set()
                     thread.join(5)
                     broker.server.close()
                     broker.ipc.cleanup()
+
+
+class RetiredSessionBrokerTests(SessionTestBase):
+    def test_broker_rejects_retired_session_before_repair(self):
+        handle = self.create()
+        root = handle.session_root
+        record = session.read_session(root)
+        retired = dict(record)
+        retired['schema_version'] = 1
+        integrity.commit_records(handle.protection_root,
+                                 {'session': session._bytes(retired)})
+        (root / 'session.json').write_text('{"damaged": true}\n')
+        before = tree_digest(root)
+        private = self.repo / 'private'
+        private.mkdir()
+
+        with self.assertRaises(session.SessionError) as caught:
+            sandbox_supervisor.Broker(root, private)
+
+        self.assertEqual(caught.exception.error_code, 'invalid_request')
+        self.assertEqual(tree_digest(root), before)
+        self.assertFalse(list(private.iterdir()))
 
 
 if __name__ == '__main__':

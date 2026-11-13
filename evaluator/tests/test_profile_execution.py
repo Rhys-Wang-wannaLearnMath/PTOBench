@@ -131,13 +131,19 @@ class AgentProfilePolicyTest(ActionTestBase):
         self.assertEqual((self.calls()[-1]['phase'], self.calls()[-1]['profile_mode']), ('all', 'clean'))
 
     def test_runtime_errors_and_integrity_failures_still_fail_profiles(self):
+        self.handle = self.create(budget=1, profile_strategy='split')
+        self.env['PTOBENCH_SESSION_ROOT'] = str(self.handle.session_root)
         for config, code in (({'fail': True}, 1), ({'crash': True}, 1), ({'tamper': 'source'}, 4)):
             self.configure(**config)
             process, result = self.cli(['profile', 'pmu'])
             self.assertEqual(process.returncode, code, result)
             self.assertNotIn('correctness', result)
             self.assertIsNone(result['snapshot_id'])
+            self.assertEqual(result['remaining_hardware_actions'], 1)
         self.assertEqual(session.read_session(self.handle.session_root)['usage']['hardware_actions'], 3)
+        with session._session_lock(self.handle.session_root):
+            record, events = session._load_locked(self.handle.session_root)
+        self.assertEqual(session._evaluate_actions_used(record, events), 0)
 
     def test_maintenance_profiles_keep_original_correctness_and_snapshot_policy(self):
         self.handle = self.create(budget=4, optimizer='maintenance', profile_strategy='split')

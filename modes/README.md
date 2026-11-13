@@ -93,11 +93,14 @@ PTOmni 使用其独立的完整知识库。Pi Agent 在网络隔离环境运行�
 与 Candidate Worker 保持原有执行路径，以保留 NPU Runtime/HCCL 通信行为。
 
 PTOBench evaluator 只负责固定 Case、correctness、clean timing、原始 profile、
-预算、源码档案和最终验证，不导入方法代码，不读取方法 instructions。
+Evaluate 额度、源码档案和最终验证，不导入方法代码，不读取方法 instructions。
 `session.json.mode` 和 workspace 的 `mode.json` 只包含方法 ID。
 方法身份不会改变评测/预算规则，所有方法使用相同的公开 profile 权限。
 Basic 默认开放 evaluate、fork 和一次 combined profile（runtime、pmu、compiler）；
-需要分次采集时，method 可在 `mode.yaml` 显式设置 `profile_strategy: split`。
+只有接受的 `ptobench evaluate` 消耗 Evaluate 额度，失败或中断不退款；Profile 额度成本为 0
+但仍记录为硬件操作，Fork 额度成本为 0 但仍记录为 Session 操作。额度耗尽后 CLI 拒绝新
+Evaluate，Agent 仍可 Profile/Fork，直到自然退出或用户中断。需要分次采集时，method 可在
+`mode.yaml` 显式设置 `profile_strategy: split`。
 
 通用 Launcher 只调用方法声明的 `preflight / prepare / run / collect`，
 传入公开 Run context，管理整个考生进程，保存原始输出和方法声明的附件。
@@ -130,4 +133,4 @@ Basic 保留既有 Run 的 prompt/profile/backend/config/native 档案布局。
 额外的 `method.json / method_request.json / method_collection.json` 记录通用
 入口和关联信息；完整方法说明在 Basic 提供的 Run `mode.json` 中冻结。
 fork、测试与最终验证 workspace 继承共同评测政策和不透明的方法 ID。
-初始性能仍来自 Case 缓存，Agent 主动 evaluate 初始源码照常扣预算。
+初始性能仍来自 Case 缓存，Agent 主动 Evaluate 初始源码照常消耗 Evaluate 额度。

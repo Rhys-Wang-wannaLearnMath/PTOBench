@@ -166,5 +166,6 @@ Agent 导览不介绍测量轮数、自动选择历史源码、最终验证策�
 该兼容路径由方法侧处理。
 
 `session.json.mode` 和 workspace 的 `mode.json` 只保留不透明方法 ID。
-Basic 完整说明及其 hash 位于方法声明的 Run `mode.json`，由 Basic 提供。
+Basic 完整说明及其 hash 位于方法声明的 Run-level `mode.json`，由 Basic 提供；
+该文件仅供可信 Broker/Launcher 归档和方法处理，Agent Workspace 与 Pi/Shell 文件视图不可见。
 这与共同的 profile 权限、正确性规则和正式计分无关。

@@ -67,10 +67,16 @@ if control.get('worker_logs'):
         'summary_present':True,'execution_status':'unavailable'}))
 print('fake evaluator stdout',flush=True)
 print('fake evaluator stderr',file=sys.stderr,flush=True)
-if control.get('pause'):
-    Path(control['ready']).write_text('ready')
+candidate_source = (w/'candidate/helper.py').read_text() if (w/'candidate/helper.py').is_file() else ''
+if '# PTOBENCH_TEST_PAUSE' in candidate_source:
+    action_dir = Path(a.result).parent
+    ready = action_dir / 'test-ready'
+    release = action_dir / 'test-release'
+    ready.write_text('ready')
     deadline=time.monotonic()+15
-    while not Path(control['release']).exists() and time.monotonic()<deadline: time.sleep(.01)
+    while not release.exists() and time.monotonic()<deadline: time.sleep(.01)
+    ready.unlink(missing_ok=True)
+    release.unlink(missing_ok=True)
 if control.get('child'):
     child=subprocess.Popen([sys.executable,'-c','import time; time.sleep(30)'])
     Path(control['child_pid']).write_text(str(child.pid))
@@ -87,7 +93,9 @@ if control.get('tamper')=='fixed': (root/'cases/test/case/public/config.py').wri
 if control.get('tamper')=='record': Path(control['session_root'],'session.json').write_text('{}')
 if control.get('crash'): raise RuntimeError('fake Evaluator exception')
 if control.get('missing'): sys.exit(0)
-run={'fixture_id':'fixture_000','passed':not control.get('fail'),'median_effective_us':control.get('median',10.0 if a.profile_mode=='clean' else None)}
+candidate_source = (w/'candidate/helper.py').read_text() if (w/'candidate/helper.py').is_file() else ''
+default_median = 7.0 if candidate_source.strip() == 'VALUE = 2' else (10.0 if a.profile_mode=='clean' else None)
+run={'fixture_id':'fixture_000','passed':not control.get('fail'),'median_effective_us':control.get('median',default_median)}
 run['input_identity_sha256']=common.fixture_input_identity(common.case_paths(a.case)[1]/'fixtures/fixture_000')
 if control.get('missing_input_identity'): run.pop('input_identity_sha256')
 if control.get('wrong_input_identity'): run['input_identity_sha256']='0'*64

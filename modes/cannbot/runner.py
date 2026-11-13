@@ -75,8 +75,12 @@ Read .benchmark_context/tuning_capabilities.json for this Case's editable compil
 The compiler defaults remain PYPTO + false, and the complete defaults vary by Case.
 After changing source or settings, use ptobench evaluate . to check correctness and clean latency.
 PATH and the Bench Session environment are already set.
-Hardware budget: {context['budget']['max_hardware_actions']} accepted exploration actions,
-shared by all workspaces and Agent conversations in this Bench Session.
+Evaluate allowance: {context['budget']['max_hardware_actions']} accepted `ptobench evaluate` actions,
+shared by all workspaces and Agent conversations in this Bench Session. A failed
+or interrupted accepted Evaluate still consumes one. Profile has cost 0, is
+recorded as a hardware action, and remains available after the allowance is used;
+Fork also has cost 0 and is recorded. The CLI rejects extra Evaluate requests;
+continue with Profile/Fork until this method exits or the user interrupts it.
 Frozen upstream root: {upstream}
 Original main role: {upstream / resources.ROLES['pypto-op-orchestrator']}
 Method work directory: {work}

@@ -77,7 +77,7 @@ def _readme(case: dict, enabled_profiles: dict[str, dict[str, str]], *,
     verification = capabilities['default_configuration_validation']['status']
     if enabled_profiles:
         profile_commands = "\n".join(
-            f"| `ptobench profile{'' if name == 'combined' else ' ' + name} .` | {values['description']} | "
+            f"| `ptobench profile{'' if name == 'combined' else ' ' + name} .` | {values['description']} | 0; recorded as a hardware action | "
             f"`.benchmark_outputs/{(profile_modes.COMBINED_PUBLIC_TO_INTERNAL if name == 'combined' else profile_modes.PUBLIC_TO_INTERNAL)[name]}/` |"
             for name, values in enabled_profiles.items()
         ) + "\n"
@@ -129,25 +129,23 @@ the defaults apply.
 
 ## Commands
 
-| Command | Purpose | Output |
-| --- | --- | --- |
-| `ptobench evaluate .` | Check correctness and measure clean latency/speedup against the baseline. | `.benchmark_outputs/clean/` |
-{profile_commands}| `ptobench fork .` | Copy implementation into a new registered workspace; returns its absolute path. | New workspace |
+| Command | Purpose | Evaluate budget cost | Output |
+| --- | --- | ---: | --- |
+| `ptobench evaluate .` | Check correctness and measure clean latency/speedup against the baseline. | 1 per accepted action | `.benchmark_outputs/clean/` |
+{profile_commands}| `ptobench fork .` | Copy implementation into a new registered workspace; returns its absolute path. | 0; recorded as a Session operation | New workspace |
 
 Replace `.` with another registered workspace path, or omit it to use the current
 directory. Use a workspace root, not a subdirectory. After fork, edit and evaluate the returned workspace;
 its changes are independent of the parent. `ptobench --help` shows available commands.
-Each accepted evaluation or enabled diagnostic operation uses one exploration-budget action, including
-unchanged-source runs, compilation failures and interruptions. This counts the
-Agent's experiment attempt, not only NPU executions; observable runtime dispatches
-and measured device time are recorded separately. Rejected requests and fork cost
-nothing. All workspaces and Agent stages share the same Bench Session budget.
+Evaluate budget: 1 per accepted `ptobench evaluate`. A failed or interrupted accepted Evaluate still consumes its allowance.
+Profile budget cost: 0. Profile is recorded as a hardware action and remains available after the Evaluate allowance is exhausted.
+Fork budget cost: 0. Fork is recorded as a Session operation. Extra Evaluate requests are rejected by the CLI; the Agent can continue using Profile/Fork while the Session remains open, until it exits or is interrupted.
 
 ## Read feedback
 
 Each command ends with JSON: `status` is PASS, FAIL or REJECTED; `error_code` and
 `message` explain failures. `latency_us` is Candidate median latency in microseconds
-(lower is better); `remaining_hardware_actions` reports the remaining budget.
+(lower is better); `remaining_hardware_actions` reports the remaining Evaluate allowance.
 Fork returns `workspace`, the new registered root.{diagnostics}
 In the output directory, `latest_result.json` contains correctness, raw samples,
 speedup (higher is better) and available artifact/build paths.

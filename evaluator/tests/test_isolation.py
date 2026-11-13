@@ -55,6 +55,10 @@ class TrustedBubblewrapResolutionTests(unittest.TestCase):
 
 
 class AgentMountManifestTests(unittest.TestCase):
+    def test_retired_candidate_pool_and_export_mapping_helpers_are_absent(self):
+        self.assertFalse(hasattr(isolation, '_candidate_location'))
+        self.assertFalse(hasattr(isolation, '_exported_workspace'))
+
     def test_agent_view_uses_one_real_workspace_bind_and_single_file_cli_shim(self):
         import common
 
@@ -1068,92 +1072,6 @@ assert result.returncode==0 and result.stdout=="broker transport ok\\n", (result
             self.assertEqual(received['argv'], ['--help'])
             self.assertEqual(received['cwd'], str(workspace))
             self.assertEqual((workspace / 'candidate/candidate.py').read_text(), 'VALUE = 2\n')
-
-    def test_broker_refreshes_feedback_in_place_under_the_readonly_public_mount(self):
-        with tempfile.TemporaryDirectory(prefix='broker-feedback-') as temporary:
-            root = Path(temporary) / 'run'
-            original = root / 'workspaces/worker_000'
-            (original / 'candidate').mkdir(parents=True)
-            (original / '.benchmark_context').mkdir(parents=True)
-            (original / '.benchmark_context/README.md').write_text('contract')
-            (original / '.benchmark_outputs/combined').mkdir(parents=True)
-            (original / '.benchmark_outputs/combined/latest_result.json').write_text(
-                json.dumps({'path': str(root / 'staging/action_000001/workspace/.benchmark_outputs/combined/trace.json')})
-            )
-            (original / '.benchmark_outputs/combined/old.json').write_text('{}\n')
-            (original / 'candidate/candidate.py').write_text('def entry(): pass\n')
-            (original / 'candidate/tuning.json').write_text('{}\n')
-            private = Path(temporary) / 'private'
-            private.mkdir()
-            broker = sandbox_supervisor.Broker.__new__(sandbox_supervisor.Broker)
-            broker.root, broker.private = root, private
-            broker.view, broker.public = private / 'view', private / 'public'
-            broker.exports = broker.view / 'workspaces'
-            broker.candidates = broker.view / 'candidates'
-            broker.exports.mkdir(parents=True)
-            broker.candidates.mkdir()
-            broker.public.mkdir()
-
-            exported = broker.export('worker_000')
-            self.assertEqual(os.readlink(exported / '.benchmark_outputs'),
-                             '/ptobench/public/worker_000/.benchmark_outputs')
-            self.assertEqual(os.readlink(exported / '.benchmark_context'),
-                             '/ptobench/public/worker_000')
-            self.assertEqual(os.readlink(exported / 'candidate'),
-                             '/ptobench/candidates/worker_000')
-            broker.sync_source('worker_000')
-            self.assertEqual((original / 'candidate/candidate.py').read_text(), 'def entry(): pass\n')
-            self.assertEqual((original / 'candidate/tuning.json').read_text(), '{}\n')
-            exported_candidate = broker.candidates / 'worker_000'
-            (exported_candidate / 'candidate.py').write_text('def entry(): return 2\n')
-            broker.sync_source('worker_000')
-            self.assertEqual((original / 'candidate/candidate.py').read_text(), 'def entry(): return 2\n')
-
-            unexpected_link = exported_candidate / 'escape.py'
-            unexpected_link.symlink_to('/etc/passwd')
-            with self.assertRaises(ValueError):
-                broker.sync_source('worker_000')
-            unexpected_link.unlink()
-
-            context_link = exported / '.benchmark_context'
-            context_link.unlink()
-            context_link.symlink_to('/ptobench/public/other-worker')
-            with self.assertRaisesRegex(ValueError, 'protected workspace link changed: .benchmark_context'):
-                broker.sync_source('worker_000')
-            context_link.unlink()
-            context_link.symlink_to('/ptobench/public/worker_000')
-
-            outputs_link = exported / '.benchmark_outputs'
-            outputs_link.unlink()
-            outputs_link.symlink_to('/ptobench/public/other-worker/.benchmark_outputs')
-            with self.assertRaisesRegex(ValueError, 'protected workspace link changed: .benchmark_outputs'):
-                broker.sync_source('worker_000')
-            outputs_link.unlink()
-            outputs_link.symlink_to('/ptobench/public/worker_000/.benchmark_outputs')
-
-            public_outputs = broker.public / 'worker_000/.benchmark_outputs'
-            original_inode = public_outputs.stat().st_ino
-
-            broker.feedback('worker_000')
-            first = json.loads((public_outputs / 'combined/latest_result.json').read_text())
-            self.assertIn(str(root / 'workspaces/worker_000/.benchmark_outputs/combined/trace.json'),
-                          first['path'])
-            self.assertEqual(public_outputs.stat().st_ino, original_inode)
-
-            (original / '.benchmark_outputs/combined/old.json').unlink()
-            (original / '.benchmark_outputs/combined/new.json').write_text('{}\n')
-            broker.feedback('worker_000')
-            self.assertFalse((public_outputs / 'combined/old.json').exists())
-            self.assertTrue((public_outputs / 'combined/new.json').is_file())
-            self.assertEqual(public_outputs.stat().st_ino, original_inode)
-            self.assertEqual(os.readlink(exported / '.benchmark_outputs'),
-                             '/ptobench/public/worker_000/.benchmark_outputs')
-
-            candidate_link = exported / 'candidate'
-            candidate_link.unlink()
-            candidate_link.symlink_to('/ptobench/candidates/worker_999')
-            with self.assertRaisesRegex(ValueError, 'protected workspace link changed: candidate'):
-                broker.sync_source('worker_000')
 
     def test_missing_sandbox_does_not_fallback(self):
         with patch.object(isolation, 'executable', side_effect=RuntimeError('unavailable')):

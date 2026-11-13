@@ -48,7 +48,13 @@ CANNBot 保留冻结的上游 Skills 和角色文件，但新 Session 不校验�
 所有会话直接使用 `ptobench evaluate/profile/fork`。公开 CLI 的原始返回值
 不经过格式转换；旧 API、原脚本及其他上游宿主工具的使用由方法自行处理。
 本接入不是完整的新算子开发插件，没有模拟 Stage 6 通过状态或补造成功结果。
-初始性能使用 Case 缓存；方法主动请求的初始验证/profile 正常消耗预算。
+Evaluate allowance is 1 per accepted `ptobench evaluate`; a failed or interrupted
+accepted Evaluate still consumes it. Profile budget cost is 0, but Profile is
+recorded as a hardware action and remains available after the Evaluate allowance
+is exhausted. Fork budget cost is 0 and the Session records the operation. Extra
+Evaluate requests are rejected by the CLI; the Agent can continue Profile/Fork
+until its method exits or the user interrupts it. Initial performance comes
+from the Case cache.
 
 ## 保留的原始记录
 
@@ -74,7 +80,7 @@ RUN/method/
 ```
 
 `RUN/agent/session.json` 汇集全部主/子会话。任何已启动阶段缺少对应原生历史，
-整体状态都报告 `missing`，不能用主会话的历史掩盖。预算耗尽和中断由公共
+整体状态都报告 `missing`，不能用主会话的历史掩盖。用户中断会由公共
 生命周期终止整个方法进程组，收集器保留未完成的 dispatch 和 Task 输入。
 Pi 的 tool-call ID 是原生调用 ID；Codex 接线能取得的是 MCP request ID，
 记录明确标明来源，Codex 原生调用 ID 仍保留在原生会话中。

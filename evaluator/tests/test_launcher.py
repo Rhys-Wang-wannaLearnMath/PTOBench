@@ -10,9 +10,43 @@ import time
 from unittest.mock import patch
 
 from action_test_support import ActionTestBase, SOURCE_BENCHMARK, write_json
+from test_session import tree_digest
+import integrity
 import session
 sys.path.insert(0, str(SOURCE_BENCHMARK))
 from launcher import runner as launcher_runner
+
+
+def prepare_fake_pi_bundle(test_case):
+    """Ensure CANNBot's prepared CPU fake Pi bundle exists before launch."""
+    builder = getattr(test_case, 'pi_bundle', None)
+    if callable(builder):
+        bundle = test_case.handle.session_root / 'agent/pi-tools/fake-pi/dist/bundle/cli.js'
+        if not bundle.is_file():
+            builder()
+        return
+    import yaml
+    profile_path = test_case.bench / 'modes/_shared/profiles/pi/default.yaml'
+    profile = yaml.safe_load(profile_path.read_text())
+    if profile['argv'][0] != str(test_case.tool):
+        return
+    package = test_case.handle.session_root / 'agent/pi-tools/pi-coding-agent'
+    bundle = package / 'dist/bundle/cli.js'
+    bundle.parent.mkdir(parents=True)
+    (package / 'node_modules/jiti').mkdir(parents=True)
+    shutil.copyfile(test_case.tool, bundle.parent / 'fake-native.py')
+    bundle.write_text(
+        '#!/usr/bin/env node\n'
+        "const {spawnSync} = require('node:child_process');\n"
+        f"const result = spawnSync({test_case.python!r}, "
+        "[__dirname + '/fake-native.py', ...process.argv.slice(2)], {stdio:'inherit'});\n"
+        "if (result.error) throw result.error;\n"
+        "process.exit(result.status === null ? 1 : result.status);\n"
+    )
+    bundle.chmod(0o550)
+    profile['argv'][0] = str(bundle)
+    profile_path.write_text(yaml.safe_dump(profile))
+
 
 FAKE_TOOL = r'''
 import json, os, signal, subprocess, sys, time, uuid
@@ -62,16 +96,16 @@ if c.get('child'):
     child=subprocess.Popen([sys.executable,'-c','import signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); time.sleep(60)'])
     Path(c['child']).write_text(str(child.pid))
 if c.get('mode')=='empty': sys.exit(c.get('exit',0))
-if c.get('mode') != 'profiles_only': call(['evaluate'])
+if c.get('mode') != 'profiles_only':
+    if c.get('pause'):
+        Path('candidate/helper.py').write_text('VALUE = 1  # PTOBENCH_TEST_PAUSE\n')
+    call(['evaluate'])
 if c.get('mode')=='s6':
     fork=call(['fork'])
     target=Path(json.loads(fork.stdout.decode().splitlines()[-1])['workspace'])
     (target/'candidate/helper.py').write_text('VALUE = 2\n')
-    control=Path(os.environ['S3_CONTROL'])
-    control.write_text(json.dumps({'median':5.0}))
     call(['profile','runtime',str(target)])
     call(['evaluate',str(target)])
-    control.write_text(json.dumps({'median':7.0}))
 if c.get('mode')=='profiles_only':
     profile()
 if c.get('mode')=='all':
@@ -83,7 +117,11 @@ if c.get('mode')=='active':
     Path(c['ready']).write_text('ready')
     while not Path(c['go']).exists(): time.sleep(.01)
     call(['evaluate'])
-if c.get('mode') in ('budget','interrupt','active'):
+if c.get('mode')=='budget':
+    call(['profile'])
+    call(['evaluate'])
+    sys.exit(c.get('exit',0))
+if c.get('mode') in ('interrupt','active'):
     Path(c['ready']).write_text('ready')
     while True: time.sleep(.02)
 if c.get('tamper_method'):
@@ -127,6 +165,7 @@ class LauncherTests(ActionTestBase):
         (method/'mode.yaml').write_text('schema_version: 2\nid: diagnostic_test\nimplemented: true\ndescription: Test diagnostic policy\nentrypoint: runner.py\nprofile_strategy: split\n')
         (method/'instructions.md').write_text('Test diagnostics.\n')
         shutil.copyfile(self.bench/'modes/basic/runner.py', method/'runner.py')
+        shutil.copyfile(self.bench/'modes/basic/.env', method/'.env')
         self.launcher_config()
 
     def launcher_config(self, backend='codex', budget=4, **control):
@@ -142,6 +181,11 @@ class LauncherTests(ActionTestBase):
         write_json(self.launcher_control, {'seen':str(self.seen),'ready':str(self.ready),'go':str(self.go),**control})
         self.runs = self.repo / 'launcher_runs'
         self.snapshots = self.repo / 'launcher_snapshots'
+        if backend == 'pi':
+            self.runs.mkdir(exist_ok=True)
+            self.snapshots.mkdir(exist_ok=True)
+            self.runs.chmod(0o755)
+            self.snapshots.chmod(0o755)
         experiment_mode = control.get('experiment_mode', 'diagnostic_test' if control.get('mode') in ('all','s6','profiles_only') else 'basic')
         self.env['S5_PROFILE_STRATEGY'] = yaml.safe_load(
             (self.bench / 'modes' / experiment_mode / 'mode.yaml').read_text()
@@ -309,12 +353,15 @@ class LauncherTests(ActionTestBase):
         self.assertEqual(next(event for event in events if event['action'] == 'fork')['seq'], 2)
         self.assertNotIn('attempt_id', next(event for event in events if event['action'] == 'fork'))
         run = json.loads((root/'launcher_result.json').read_text())['run']
+        status=launcher_runner.status(root)
+        self.assertEqual(status['remaining_hardware_actions'],3)
         self.assertEqual((run['agent'], run['backend']), ('basic', backend))
         self.assertEqual(run['counts'], {
             'attempts': 3, 'check_calls': 2, 'bench_calls': 2,
             'profile_calls': 1, 'fork_events': 1,
         })
         self.assertEqual(run['hardware_usage']['total_actions'], 3)
+        self.assertEqual(run['hardware_usage']['budgeted_actions'], 1)
         self.assertEqual(run['token_usage']['input_tokens'], 12)
         self.assertEqual(run['token_usage']['output_tokens'], 3)
         self.assertEqual(run['token_usage']['reported_total_tokens'], 15)
@@ -339,6 +386,28 @@ class LauncherTests(ActionTestBase):
 
         spawn.assert_not_called()
         self.assertFalse(marker.exists())
+
+    def test_retired_session_rejected_before_pi_mode_runner_launch(self):
+        self.launcher_config('pi', experiment_mode='basic')
+        root = self.handle.session_root
+        record = session.read_session(root)
+        retired = dict(record)
+        retired['schema_version'] = 1
+        integrity.commit_records(self.handle.protection_root,
+                                 {'session': session._bytes(retired)})
+        (root / 'session.json').write_text('{"damaged": true}\n')
+        before = tree_digest(root)
+
+        with patch.dict(os.environ, {**self.env, 'PTOBENCH_SANDBOX': '0'}), \
+             patch.object(launcher_runner.session, 'create_session', return_value=self.handle) as create, \
+             patch.object(launcher_runner.methods, 'start') as start:
+            with self.assertRaises(session.SessionError) as caught:
+                launcher_runner.run(str(self.config))
+
+        self.assertEqual(caught.exception.error_code, 'invalid_request')
+        create.assert_called_once()
+        start.assert_not_called()
+        self.assertEqual(tree_digest(root), before)
 
     def test_reserved_methods_fail_before_creating_run(self):
         for mode in ('ours',):
@@ -439,7 +508,8 @@ print(json.dumps(response))
         self.assertNotIn('Changed later.', retained)
 
     def test_s6_fork_helper_edit_profile_evaluate_exit_provenance(self):
-        self.launcher_config(budget=4,mode='s6')
+        self.launcher_config('pi',budget=4,mode='s6')
+        self.isolate_fake_agent()
         p,value=self.launch()
         self.assertEqual(p.returncode,0,(value,p.stderr.decode()))
         root,final=self.assert_final(value,3)
@@ -462,6 +532,12 @@ print(json.dumps(response))
         self.assertEqual((root/'final/workspace/candidate/helper.py').read_text(),'VALUE = 2\n')
         self.assertEqual(events[-1]['result']['runs'][0]['median_effective_us'],7.0)
         self.assertFalse((root/'final/workspace/__pycache__').exists())
+        status=launcher_runner.status(root)
+        self.assertEqual(status['remaining_hardware_actions'],2)
+        run=json.loads((root/'launcher_result.json').read_text())['run']
+        self.assertEqual(run['hardware_usage']['budgeted_actions'],2)
+        self.assertEqual(run['hardware_usage']['total_actions'],4)
+        self.assertEqual(run['counts']['profile_calls'],1)
 
     def test_s6_profiles_only_cannot_supply_a_correctness_verified_candidate(self):
         self.launcher_config(budget=4,mode='profiles_only')
@@ -505,17 +581,29 @@ print(json.dumps(response))
         self.assertEqual(len(self.calls()),0)
         self.assertEqual(session.read_session(value['session_root'])['usage']['finish_actions'],0)
 
-    def test_budget_stop_and_dual_large_logs(self):
-        self.launcher_config(budget=1,mode='budget',huge=True)
+    def test_evaluate_budget_allows_profile_and_dual_large_logs(self):
+        self.launcher_config('pi',budget=1,mode='budget',huge=True)
+        self.isolate_fake_agent()
         p,value=self.launch()
         self.assertEqual(p.returncode,0,value)
-        root,_=self.assert_final(value)
-        self.assertEqual(value['close_reason'],'budget_exhausted')
+        root,_=self.assert_final(value,2)
+        self.assertEqual(value['close_reason'],'optimizer_exit')
         self.assertIn(b'O'*262144,(root/'stdout.log').read_bytes())
         self.assertIn(b'E'*262144,(root/'stderr.log').read_bytes())
+        events=[json.loads(line) for line in (root/'events.jsonl').read_text().splitlines()]
+        self.assertEqual([event['action'] for event in events],
+                         ['evaluate','profile','evaluate','finish'])
+        self.assertTrue(events[1]['hardware_action'])
+        self.assertFalse(events[2]['hardware_action'])
+        self.assertFalse(events[2]['action_started'])
+        self.assertEqual(len(list((root/'staging').glob('action_*/result.json'))),2)
+        run=json.loads((root/'launcher_result.json').read_text())['run']
+        self.assertEqual(run['hardware_usage']['budgeted_actions'],1)
+        self.assertEqual(run['hardware_usage']['total_actions'],3)
 
     def test_blocked_terminal_does_not_stall_finalization_or_exit(self):
-        self.launcher_config(budget=1,mode='budget',huge=True)
+        self.launcher_config('pi',budget=1,mode='budget',huge=True)
+        self.isolate_fake_agent()
         p=self.launch(True)
         # Intentionally leave both terminal pipes undrained until run exits.
         self.assertEqual(p.wait(timeout=35),0)
@@ -558,23 +646,38 @@ print(json.dumps(response))
         self.assert_final(value,2)
         self.assertIsNone(session.process_identity(int(child.read_text())))
 
-    def test_budget_waits_for_last_active_action(self):
-        self.launcher_config(budget=1,mode='budget')
-        action_ready=self.repo/'action.ready'; release=self.repo/'release'
-        self.configure(pause=True,ready=str(action_ready),release=str(release))
+    def test_evaluate_budget_exhaustion_allows_profile_after_active_action(self):
+        self.launcher_config('pi',budget=1,mode='budget')
+        write_json(self.launcher_control, {**json.loads(self.launcher_control.read_text()), 'pause': True})
+        self.isolate_fake_agent()
         p=self.launch(True)
+        deadline=time.monotonic()+10
+        roots=list(self.runs.glob('*/*/*'))
+        while not roots and p.poll() is None and time.monotonic()<deadline:
+            time.sleep(.01)
+            roots=list(self.runs.glob('*/*/*'))
+        self.assertTrue(roots, f'Launcher did not create a Session: exit={p.poll()}')
+        root=roots[0]
+        action_dir=root/'staging/action_000001'
+        action_ready=action_dir/'test-ready'
+        release=action_dir/'test-release'
         self.wait_file(action_ready,p)
         time.sleep(1.2)
         self.assertIsNone(p.poll())
-        root=next(self.runs.glob('*/*/*'))
         record=session.read_session(root)
         self.assertIsNotNone(record['active_action'])
         self.assertFalse(record['exploration_closed'])
-        self.configure()
         release.write_text('go')
         value,_,_=self.result(p)
         self.assertEqual(p.returncode,0,value)
-        self.assert_final(value)
+        root,_=self.assert_final(value,2)
+        events=[json.loads(line) for line in (root/'events.jsonl').read_text().splitlines()]
+        self.assertEqual([event['action'] for event in events],
+                         ['evaluate','profile','evaluate','finish'])
+        self.assertTrue(events[1]['hardware_action'])
+        self.assertFalse(events[2]['hardware_action'])
+        self.assertFalse(events[2]['action_started'])
+        self.assertEqual(len(list((root/'staging').glob('action_*/result.json'))),2)
 
     def test_status_no_hardware_and_repairs_records(self):
         p,value=self.launch()

@@ -101,6 +101,10 @@ runtime、PMU 和 compiler 诊断；method 可显式配置为 split，分别调�
 表示诊断执行成功，结果不含 `correctness` 字段；正确性以 `evaluate` 和最终
 fresh clean 为准。profile 不生成可供最终选择的 Snapshot。
 迁移验收使用的 maintenance Session 仍保留原有 profiling 正确性检查。
+只有已接受的 `ptobench evaluate` 消耗 Evaluate 额度，每次消耗一项；失败或中断的已接受
+Evaluate 仍消耗额度。Profile 额度成本为 0，但作为硬件操作留档；Fork 额度成本为 0，但
+作为 Session 操作留档。额度耗尽后 CLI 拒绝额外 Evaluate，Agent 仍可 Profile/Fork，直到
+自然退出或用户中断。
 探索 `evaluate` 使用 2 次预热、3 次正式测量并取中位数；session 最终验证
 使用 Case 的正式配置，目前为 5 次预热、10 次正式测量。两者都保留原始样本。
 中央 `evaluator/evaluate.py` 只提供统一结果格式。每个 Case 的
@@ -149,7 +153,7 @@ ptobench fork [PARENT_WORKSPACE]
 
 `ptobench fork` 从父 Candidate 创建独立 workspace，返回 Bench 分配的绝对路径。
 它复制完整实现及 helper，重新生成 context，不复制输出或缓存，不消耗探索额度。
-evaluate 和每种 profile 各预占一次探索额度；预占后的失败或中断不退还。
+fork 不消耗 Evaluate 额度。只有接受的 evaluate 预占一项额度；预占后的失败或中断不退还。
 
 ## 启动 Agent 优化
 

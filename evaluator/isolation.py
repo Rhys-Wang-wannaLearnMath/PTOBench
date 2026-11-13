@@ -141,46 +141,6 @@ def _sandbox_mount_path(view, host_path):
     raise RuntimeError('Candidate is not covered by a writable Agent mount')
 
 
-def _candidate_location(view, workspace, candidate_pool):
-    workspace = Path(workspace)
-    entry = workspace / 'candidate'
-    if entry.is_symlink():
-        target = os.readlink(entry)
-        virtual_pool = Path('/ptobench/candidates')
-        target_path = Path(target)
-        if target_path.is_absolute() and target_path.is_relative_to(virtual_pool):
-            host_path = Path(candidate_pool) / target_path.relative_to(virtual_pool)
-            guest_path = str(target_path)
-        else:
-            host_path = entry.resolve()
-            guest_path = _sandbox_mount_path(view, host_path)
-    elif entry.is_dir():
-        host_path = entry
-        guest_path = _sandbox_mount_path(view, host_path)
-    elif (workspace / 'candidate.py').is_file():
-        host_path = workspace
-        guest_path = _sandbox_mount_path(view, host_path)
-    else:
-        raise RuntimeError(f'Agent Candidate directory is unavailable: {entry}')
-    if not host_path.is_dir():
-        raise RuntimeError(f'Agent Candidate directory is unavailable: {host_path}')
-    resolved = host_path.resolve()
-    if not resolved.is_relative_to(Path(candidate_pool).resolve()) and not entry.is_dir():
-        raise RuntimeError('Agent Candidate symlink leaves the mounted Candidate pool')
-    return resolved, guest_path
-
-
-def _exported_workspace(workspace, workspace_root, exported_workspaces):
-    """Map a Session workspace path to the Broker's exported workspace tree."""
-    try:
-        relative = Path(workspace).resolve().relative_to(Path(workspace_root).resolve())
-    except ValueError as error:
-        raise RuntimeError('Agent workspace is outside registered Session workspaces') from error
-    if not relative.parts:
-        raise RuntimeError('Agent workspace must be a registered Session workspace')
-    return Path(exported_workspaces) / relative
-
-
 def install_pi_private_tools(config_directory, tools_directory, workspace_root):
     """Install Broker-owned Pi configuration and its read-only trusted tools."""
     import grp

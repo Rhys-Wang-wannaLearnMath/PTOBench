@@ -174,7 +174,13 @@ else:
             result = Path.cwd()/'.benchmark_outputs/clean/latest_session_result.json'
             assert result.is_file(), 'Broker feedback did not appear in the live Agent sandbox'
             assert stat.S_IMODE(result.stat().st_mode) == 0o640, 'Broker feedback DAC mode changed'
-        if control.get('hang_child') or control.get('budget_child') or control.get('cancel_child'):
+        if control.get('budget_child'):
+            profile = cli(['profile'])
+            rejected = cli(['evaluate'])
+            assert profile['exit_code'] == 0, profile
+            assert rejected['exit_code'] == 3, rejected
+            reply('Original evaluate stage answer')
+        if control.get('hang_child') or control.get('cancel_child'):
             if control.get('cancel_child'):
                 if backend == 'pi':
                     heartbeat=native.with_suffix('.worker-heartbeat')
@@ -1106,6 +1112,11 @@ class CANNBotTests(ActionTestBase):
         for relative, digest in lock['files'].items():
             self.assertEqual(hashlib.sha256((root / 'method/resources/upstream' / relative).read_bytes()).hexdigest(), digest)
         self.assertNotIn('First run ptobench evaluate', (root / 'prompt.txt').read_text())
+        allowance = session.read_session(root)['budget']['max_hardware_actions']
+        main_prompt=' '.join((root/'prompt.txt').read_text().split())
+        self.assertIn(f'Evaluate allowance: {allowance} accepted `ptobench evaluate` actions', main_prompt)
+        self.assertIn('Profile has cost 0, is recorded as a hardware action', main_prompt)
+        self.assertIn('Profile/Fork until this method exits', main_prompt)
         protection=json.loads((root/'protection/manifest.json').read_text())
         self.assertNotIn('raw_wiki', protection['roots']['participant_cannbot_resources']['entries'])
         self.assertFalse((root/'method/knowledge.json').exists())
@@ -1129,12 +1140,19 @@ class CANNBotTests(ActionTestBase):
             original = Path(state['role_path']).read_text()
             self.assertTrue((root / 'method/dispatches' / state['id'] / 'system.md').read_text().startswith(original))
             prompt=(root/'method/dispatches'/state['id']/'prompt.txt').read_text()
-            self.assertIn('.benchmark_context/README.md', prompt)
-            self.assertIn('.benchmark_context/tuning_capabilities.json', prompt)
-            self.assertIn('complete defaults vary by Case', prompt)
-            self.assertIn('PYPTO + false', prompt)
-            self.assertIn('ptobench evaluate .', prompt)
-            self.assertNotIn(str(root/'method/README.md'), prompt)
+            prompt_text=' '.join(prompt.split())
+            self.assertIn('.benchmark_context/README.md', prompt_text)
+            self.assertIn('.benchmark_context/tuning_capabilities.json', prompt_text)
+            self.assertIn('complete defaults vary by Case', prompt_text)
+            self.assertIn('PYPTO + false', prompt_text)
+            self.assertIn('ptobench evaluate .', prompt_text)
+            if state['parent_dispatch_id'] is None:
+                self.assertIn(f'Evaluate allowance: {allowance} accepted `ptobench evaluate` actions', prompt_text)
+                self.assertIn('Profile has cost 0, is recorded as a hardware action', prompt_text)
+            else:
+                self.assertIn(f'Evaluate allowance of {allowance} accepted `ptobench evaluate` actions', prompt_text)
+                self.assertIn('Profile costs 0 and is recorded as a hardware action', prompt_text)
+            self.assertNotIn(str(root/'method/README.md'), prompt_text)
             self.assertNotIn('5 + 10', prompt)
             if state is not parent:
                 self.assertEqual(state['parent_dispatch_id'], parent['id'])
@@ -1233,17 +1251,21 @@ class CANNBotTests(ActionTestBase):
         self.assertTrue(list((root / 'method/tools').glob('*/interrupted.json')))
         self.assertEqual(json.loads((root / 'agent/session.json').read_text())['status'], 'recorded')
 
-    def test_budget_exhaustion_stops_active_stage_without_new_budget(self):
-        child = self.repo / 'child.pid'
-        self.cannbot_config(budget=1, budget_child=True, child_pid=str(child))
+    def test_profile_after_evaluate_budget_exhaustion_completes_active_stage(self):
+        self.cannbot_config(budget=1, budget_child=True)
         process, value = self.launch()
         self.assertEqual(process.returncode, 0, (value, process.stderr.decode()))
-        root, _ = self.assert_final(value, 1)
-        self.assertEqual(session.read_session(root)['close_reason'], 'budget_exhausted')
-        for state in self.dispatches(root):
-            if state.get('process'):
-                self.assertIsNone(session.process_identity(state['process']['pid']))
-        self.assertTrue(any(state['status'] == 'interrupted' for state in self.dispatches(root)))
+        root, _ = self.assert_final(value, 3)
+        events=[json.loads(line) for line in (root/'events.jsonl').read_text().splitlines()]
+        self.assertEqual([event['action'] for event in events],
+                         ['evaluate','profile','evaluate','profile','finish'])
+        self.assertEqual([event['hardware_action'] for event in events],
+                         [True,True,False,True,True])
+        self.assertEqual(sum(event['hardware_action'] for event in events),4)
+        self.assertTrue(all(state['status'] == 'completed' for state in self.dispatches(root)))
+        run=json.loads((root/'launcher_result.json').read_text())['run']
+        self.assertEqual(run['hardware_usage']['budgeted_actions'],1)
+        self.assertEqual(run['hardware_usage']['total_actions'],4)
 
     def test_pi_task_cancellation_propagates_and_next_stage_runs(self):
         if not self.node or int(subprocess.check_output([self.node, '--version']).decode().split('.')[0][1:]) < 22:

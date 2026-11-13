@@ -27,20 +27,24 @@ Sessions captured before the cutover are rejected before fixed-asset recovery,
 so their old protection backups cannot reinstall the retired entry/parser or
 overwrite the new infrastructure. Keep their historical evidence and create a
 fresh Session; their context is not rewritten.
-Sessions captured before the diagnostic-only Agent profile policy also remain
-readable as historical evidence, but cannot execute or restore their former
-Evaluator backups. Create a fresh Session for subsequent operations.
+Sessions using a retired Workspace or schema are rejected before repair or
+execution. Their files remain unchanged as static historical evidence; create a
+fresh Session for subsequent operations.
 Sessions captured before the shared C++ runtime and delayed Case-import repair
 also require a fresh Session. Their old protection snapshots cannot reinstall
 the previous environment loader. The Launcher checks compiler loading before
 starting an Agent; every Evaluator invocation repeats that small check in its
 selected environment before importing the Case.
 
-| Operation | Internal Evaluator phase/mode | Exploration cost |
+| Operation | Internal Evaluator phase/mode | Evaluate budget cost |
 | --- | --- | ---: |
-| evaluate | all / clean | 1 |
-| profile (combined) | correctness / runtime + hardware + compile | 1 |
-| fork | source copy and fresh context | 0 |
+| evaluate | all / clean | 1 per accepted action |
+| profile (combined) | correctness / runtime + hardware + compile | 0; recorded as a hardware action |
+| fork | source copy and fresh context | 0; recorded as a Session operation |
+
+Evaluate budget: 1 per accepted `ptobench evaluate`. A failed or interrupted accepted Evaluate still consumes its allowance.
+Profile budget cost: 0. Profile is recorded as a hardware action and remains available after the Evaluate allowance is exhausted.
+Fork budget cost: 0. Fork is recorded as a Session operation. Extra Evaluate requests are rejected by the CLI; the Agent can continue using Profile/Fork while the Session remains open, until it exits or is interrupted.
 
 The split names pmu/compiler map to existing hardware/compile behavior and
 artifact directories. Agent profiling runs the Candidate without comparing its
@@ -48,7 +52,7 @@ outputs with the cached Ref. The internal `correctness` phase name is retained
 for the one-shot execution path; it does not mean output validation was performed.
 Profiles add no warmup or performance execution, omit the `correctness` field,
 and report `latency_us=null`, `metric_name=null`, `unit=null`.
-They retain runtime/compile errors, integrity checks, diagnostics and action costs.
+They retain runtime/compile errors, integrity checks and diagnostic evidence; Profile is recorded as a hardware action without using Evaluate allowance.
 Only evaluate and the final fresh clean establish Agent Candidate correctness.
 Maintenance Sessions used for migration qualification retain their existing
 profile correctness checks and result/Snapshot policy.
@@ -105,8 +109,9 @@ One protected `events.jsonl` entry records each completed or rejected operation,
 its original Evaluator exit, error, integrity/repair evidence, budget usage and
 Snapshot ID. Completion and active-action clearing are one S1 record commit.
 Infrastructure failures close the Session and never expose an unreliable result
-as success. Exploration exhaustion still permits the last accepted action to
-finish. Fork assigns the child path and regenerates context without budget cost.
+as success. Evaluate allowance exhaustion still permits the last accepted action
+to finish and leaves Profile/Fork available while the Session remains open. Fork
+assigns the child path and regenerates context without using Evaluate allowance.
 
 After authoritative completion, the complete diagnostic output set replaces
 `.benchmark_outputs/<internal_mode>/` in the original worker. Root and mode

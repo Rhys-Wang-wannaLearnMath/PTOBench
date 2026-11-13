@@ -555,16 +555,10 @@ def _validate_record(root, record):
         _budget(record["budget"])
         if set(record["usage"]) != {"hardware_actions", "finish_actions"}:
             raise ValueError("usage")
-        for name, maximum in (("hardware_actions", record["budget"]["max_hardware_actions"]), ("finish_actions", 1)):
+        for name, maximum in (("hardware_actions", None), ("finish_actions", 1)):
             used = record["usage"][name]
-            if type(used) is not int or used < 0 or (maximum != UNLIMITED_HARDWARE_ACTIONS and used > maximum):
+            if type(used) is not int or used < 0 or (maximum is not None and used > maximum):
                 raise ValueError("usage limits")
-        used = record["usage"]["hardware_actions"]
-        maximum = record["budget"]["max_hardware_actions"]
-        if record["status"] == "running" and maximum != UNLIMITED_HARDWARE_ACTIONS and used == maximum:
-            raise ValueError("exhausted status missing")
-        if record["status"] == "exhausted" and (maximum == UNLIMITED_HARDWARE_ACTIONS or used != maximum):
-            raise ValueError("premature exhaustion")
         if record["status"] in {"failed", "completed"} and not record["exploration_closed"]:
             raise ValueError("terminal exploration")
         if (record["exploration_closed"] and (not isinstance(record["close_reason"], str) or not record["close_reason"])) or (not record["exploration_closed"] and record["close_reason"] is not None):
@@ -752,6 +746,7 @@ def _events(root, record):
     seen = set()
     attempt_sequence = 0
     counters = {"hardware_actions": 0, "finish_actions": 0}
+    evaluate_actions = 0
     for event in events:
         seq = event.get("seq") if isinstance(event, dict) else None
         if type(seq) is not int or not 0 < seq < record["next_event_seq"] or seq in seen:
@@ -775,6 +770,7 @@ def _events(root, record):
             if event["action"] in {"fork", "invalid_request"} or not isinstance(event["content_sha256"], str) or not re.fullmatch(r"[a-f0-9]{64}", event["content_sha256"]):
                 raise integrity.InfrastructureError("invalid accepted event")
             counters["finish_actions" if event["action"] == "finish" else "hardware_actions"] += 1
+            evaluate_actions += event["action"] == "evaluate"
         if "attempt_id" in event and (type(event["attempt_id"]) is not int or event["attempt_id"] < 1):
             raise integrity.InfrastructureError("invalid Attempt number")
         if event.get("parent_attempt_id") is not None and (
@@ -790,9 +786,21 @@ def _events(root, record):
     if active:
         seen.add(active["event_seq"])
         counters["finish_actions" if active["kind"] == "finish" else "hardware_actions"] += 1
+        evaluate_actions += active["kind"] == "evaluate"
     if seen != set(range(1, record["next_event_seq"])) or counters != record["usage"]:
         raise integrity.InfrastructureError("event/active sequence or budget ledger mismatch")
+    maximum = record["budget"]["max_hardware_actions"]
+    if maximum != UNLIMITED_HARDWARE_ACTIONS and evaluate_actions > maximum:
+        raise integrity.InfrastructureError("Evaluate events exceed the Session allowance")
     return events
+
+
+def _evaluate_actions_used(record, events):
+    """Derive consumed Evaluate allowance from accepted events and reservation."""
+    completed = sum(event.get("action") == "evaluate" and event.get("hardware_action") is True
+                   for event in events)
+    active = record.get("active_action")
+    return completed + (active is not None and active.get("kind") == "evaluate")
 
 
 def read_session(session_root, repair=True) -> SessionRecord:
@@ -815,8 +823,6 @@ def _commit(root, record, events=None, record_updates=None):
 def _open_exploration(record):
     if record["status"] in {"failed", "completed"} or record["exploration_closed"]:
         raise SessionError("Session exploration is closed", "session_closed")
-    if record["status"] == "exhausted":
-        raise SessionError("exploration budget exhausted", "budget_exceeded")
     if record["active_action"] is not None:
         raise SessionError("another accepted action still needs completion")
 
@@ -1272,6 +1278,10 @@ def reserve_action(session_root, event_seq, kind, *, workspace_path=None,
             workspace_id = "final"
         else:
             _open_exploration(record)
+            if (kind == "evaluate"
+                    and record["budget"]["max_hardware_actions"] != UNLIMITED_HARDWARE_ACTIONS
+                    and _evaluate_actions_used(record, events) >= record["budget"]["max_hardware_actions"]):
+                raise SessionError("Evaluate allowance exhausted", "budget_exceeded")
             workspace_id, target = _workspace_path(root, record, workspace_path)
             if kind == "profile" and mode not in record["profiling_modes"]:
                 raise SessionError("profile is not enabled in this Session")
@@ -1283,7 +1293,7 @@ def reserve_action(session_root, event_seq, kind, *, workspace_path=None,
     if not clean.passed:
         raise SessionError("protected files must be repaired before reservation", "integrity_failed")
     with _session_lock(root):
-        record, _ = _load_locked(root)
+        record, events = _load_locked(root)
         if kind == "finish":
             if record["status"] in {"completed", "failed"} or not record["exploration_closed"]:
                 raise SessionError("finish requires closed nonterminal exploration", "session_closed")
@@ -1291,13 +1301,19 @@ def reserve_action(session_root, event_seq, kind, *, workspace_path=None,
                 raise SessionError("finish is active or already used", "budget_exceeded")
         else:
             _open_exploration(record)
+            if (kind == "evaluate"
+                    and record["budget"]["max_hardware_actions"] != UNLIMITED_HARDWARE_ACTIONS
+                    and _evaluate_actions_used(record, events) >= record["budget"]["max_hardware_actions"]):
+                raise SessionError("Evaluate allowance exhausted", "budget_exceeded")
         if record["next_event_seq"] != event_seq:
             raise SessionError("event sequence is stale")
         counter = "finish_actions" if kind == "finish" else "hardware_actions"
         record["usage"][counter] += 1
-        if (record["budget"]["max_hardware_actions"] != UNLIMITED_HARDWARE_ACTIONS
-                and record["usage"]["hardware_actions"] == record["budget"]["max_hardware_actions"]):
-            record["status"] = "exhausted"
+        if kind in {"evaluate", "profile"}:
+            evaluate_used = _evaluate_actions_used(record, events) + (kind == "evaluate")
+            maximum = record["budget"]["max_hardware_actions"]
+            record["status"] = ("exhausted" if maximum != UNLIMITED_HARDWARE_ACTIONS
+                                and evaluate_used >= maximum else "running")
         record["next_event_seq"] += 1
         record["active_action"] = {
             "event_seq": event_seq, "kind": kind, "mode": mode, "workspace": workspace_id,

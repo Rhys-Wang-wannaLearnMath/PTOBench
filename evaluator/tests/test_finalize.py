@@ -8,6 +8,7 @@ import time
 from unittest import mock
 
 from action_test_support import ActionTestBase
+from test_session import tree_digest
 import common
 import integrity
 import session
@@ -70,6 +71,22 @@ class FinalizeTest(ActionTestBase):
     def next_session(self):
         self.handle=self.create(budget=20,optimizer='pi')
         self.env['PTOBENCH_SESSION_ROOT']=str(self.handle.session_root)
+
+    def test_retired_session_rejected_before_close_or_write(self):
+        root = self.handle.session_root
+        record = session.read_session(root)
+        retired = dict(record)
+        retired['schema_version'] = 1
+        integrity.commit_records(self.handle.protection_root,
+                                 {'session': session._bytes(retired)})
+        (root / 'session.json').write_text('{"damaged": true}\n')
+        before = tree_digest(root)
+
+        result = self.finish()
+
+        self.assertEqual(result.error_code, 'invalid_request')
+        self.assertEqual(tree_digest(root), before)
+        self.assertEqual(self.calls(), [])
 
     def test_mixed_metrics_choose_lowest_then_earliest_without_new_execution(self):
         first=self.observe(median=40)

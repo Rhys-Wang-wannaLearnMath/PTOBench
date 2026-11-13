@@ -43,6 +43,25 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             'Profile does not check output correctness. Use `ptobench evaluate` to check correctness and clean latency.',
             guide,
         )
+        documents = {
+            'workspace README': guide,
+            'Agent CLI': (EVALUATOR_DIR / 'AGENT_CLI.md').read_text(encoding='utf-8'),
+            'CANNBot README': (EVALUATOR_DIR.parent / 'modes/cannbot/README.md').read_text(encoding='utf-8'),
+            'CANNBot design': (EVALUATOR_DIR.parent / 'modes/cannbot/DESIGN.md').read_text(encoding='utf-8'),
+        }
+        for name, document in documents.items():
+            with self.subTest(document=name):
+                text = ' '.join(document.split())
+                self.assertIn('ptobench evaluate', text)
+                self.assertRegex(text, r'(?i)Evaluate (?:budget|allowance).*?1.*?accepted')
+                self.assertRegex(text, r'(?i)Profile.*?(?:cost is 0|cost 0|allowance cost is 0|额度成本为 0|0; recorded)')
+                self.assertRegex(text, r'(?i)Profile.*?recorded as a hardware action')
+                self.assertRegex(text, r'(?i)Fork.*?(?:cost is 0|cost 0|0; recorded)')
+                self.assertRegex(text, r'(?i)(?:failed or interrupted accepted Evaluate.*?consum|failed.*?interrupted.*?Evaluate.*?consum)')
+                self.assertRegex(text, r'(?i)(?:Profile.*?available after.*?exhausted|Profile/Fork remain available)')
+                self.assertRegex(text, r'(?i)(?:extra Evaluate requests are rejected by the CLI|CLI rejects new Evaluate)')
+                self.assertNotIn('Each accepted evaluation or enabled diagnostic operation uses one', document)
+                self.assertNotIn('diagnostics have no free NPU execution', document)
         for private_detail in ('warmup', 'measured launches', 'final verification', 'Snapshot',
                                'finish budget', 'protection/', 'staging/', 'raw_wiki'):
             self.assertNotIn(private_detail, guide)
@@ -86,7 +105,7 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             self.assertFalse((context / "mode.json").exists())
             self.assertFalse((context / "fixture_catalog.json").exists())
             self.assertFalse((context / "profiling_modes.json").exists())
-            self.assertNotIn("profil", (context / "README.md").read_text().lower())
+            self.assertNotIn("| `ptobench profile", (context / "README.md").read_text().lower())
             self.assertTrue((destination / "candidate" / "candidate.py").is_file())
             self.assertTrue((destination / ".benchmark_context").is_dir())
             self.assertTrue((destination / ".benchmark_outputs").is_dir())

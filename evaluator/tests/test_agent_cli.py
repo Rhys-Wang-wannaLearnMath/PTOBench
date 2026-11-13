@@ -7,7 +7,9 @@ import sys
 
 from action_test_support import ActionTestBase, SOURCE_BENCHMARK
 import common
+import integrity
 import session
+from test_session import tree_digest
 
 
 class AgentCliTest(ActionTestBase):
@@ -90,6 +92,7 @@ class AgentCliTest(ActionTestBase):
                     help_text = ' '.join(process.stdout.decode().split())
                     self.assertIn('Profile does not check output correctness', help_text)
                     self.assertIn('ptobench evaluate', help_text)
+                    self.assertIn('Profile is recorded as a hardware action but does not consume the Evaluate allowance', help_text)
                     self.assertIn('combined', process.stdout.decode())
         self.assertEqual(self.events(), [])
         self.assertEqual(self.calls(), [])
@@ -128,6 +131,50 @@ class AgentCliTest(ActionTestBase):
         self.assertIsNone(result['snapshot_id'])
         self.assertEqual(session.read_session(self.handle.session_root)['usage']['hardware_actions'],4)
         self.assertEqual(len(self.calls()),4)
+
+    def test_evaluate_only_budget_keeps_profiles_available_and_recorded(self):
+        self.handle = self.create(budget=1)
+        self.env['PTOBENCH_SESSION_ROOT'] = str(self.handle.session_root)
+
+        process, combined = self.cli(['profile'])
+        self.assertEqual(process.returncode, 0, combined)
+        self.assertEqual(combined['remaining_hardware_actions'], 1)
+        self.assertEqual(self.events()[-1]['mode'], 'combined')
+
+        process, evaluated = self.cli(['evaluate'])
+        self.assertEqual(process.returncode, 0, evaluated)
+        self.assertEqual(evaluated['remaining_hardware_actions'], 0)
+        self.assertEqual(session.read_session(self.handle.session_root)['status'], 'exhausted')
+
+        process, profiled = self.cli(['profile'])
+        self.assertEqual(process.returncode, 0, profiled)
+        self.assertEqual(profiled['remaining_hardware_actions'], 0)
+        profile_event = self.events()[-1]
+        self.assertEqual(profile_event['action'], 'profile')
+        self.assertEqual(profile_event['mode'], 'combined')
+        self.assertIsInstance(profile_event['attempt_id'], int)
+        self.assertTrue(profile_event['hardware_action'])
+        self.assertEqual(profile_event['error_code'], None)
+        self.assertIsInstance(profile_event['result'], dict)
+
+        process, forked = self.cli(['fork'])
+        self.assertEqual(process.returncode, 0, forked)
+        self.assertEqual(forked['remaining_hardware_actions'], 0)
+
+        call_count = len(self.calls())
+        process, rejected = self.cli(['evaluate'])
+        self.assertEqual((process.returncode, rejected['error_code']), (3, 'budget_exceeded'))
+        self.assertEqual(len(self.calls()), call_count)
+        record = session.read_session(self.handle.session_root)
+        self.assertEqual(record['usage']['hardware_actions'], 3)
+        self.assertEqual(record['status'], 'exhausted')
+
+        self.handle = self.create(budget=1, profile_strategy='split')
+        self.env['PTOBENCH_SESSION_ROOT'] = str(self.handle.session_root)
+        process, split = self.cli(['profile', 'runtime'])
+        self.assertEqual(process.returncode, 0, split)
+        self.assertEqual(split['remaining_hardware_actions'], 1)
+        self.assertEqual(self.events()[-1]['mode'], 'runtime')
 
     def test_rejects_old_parser_modes_parameters_and_commands_without_execution(self):
         self.handle = self.create(profile_strategy='split')
@@ -223,3 +270,29 @@ class AgentCliTest(ActionTestBase):
         self.assertEqual(len(self.calls()),0)
         self.assertEqual(common.read_json(legacy.session_root/'session.json')['usage']['hardware_actions'],0)
         self.assertFalse(list(legacy.snapshots_root.iterdir()))
+
+    def test_retired_session_rejects_actions_and_fork_without_writes(self):
+        for damaged in (False, True):
+            with self.subTest(damaged=damaged):
+                self.handle = self.create(budget=2)
+                root = self.handle.session_root
+                self.env['PTOBENCH_SESSION_ROOT'] = str(root)
+                record = session.read_session(root)
+                retired = dict(record)
+                retired['schema_version'] = 1
+                integrity.commit_records(self.handle.protection_root,
+                                         {'session': session._bytes(retired)})
+                if damaged:
+                    (root / 'session.json').write_text('{"damaged": true}\n')
+                before = tree_digest(root)
+
+                for args in (['evaluate'], ['fork']):
+                    with self.subTest(args=args):
+                        process, result = self.cli(args)
+                        self.assertEqual((process.returncode, result['error_code']),
+                                         (2, 'invalid_request'))
+                        self.assertEqual(tree_digest(root), before)
+
+                self.assertEqual(tree_digest(root), before)
+
+        self.assertEqual(self.calls(), [])

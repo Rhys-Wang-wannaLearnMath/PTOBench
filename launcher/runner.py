@@ -161,7 +161,8 @@ def _run_summary(root, record, events, stop_reason):
         'final_result_path': 'final_result.json',
         'counts': counts,
         'hardware_usage': {
-            'budgeted_actions': record['usage']['hardware_actions'],
+            'budgeted_actions': sum(event.get('action') == 'evaluate' and event.get('hardware_action') is True
+                                    for event in events),
             'finish_actions': record['usage']['finish_actions'],
             'total_actions': record['usage']['hardware_actions'] + record['usage']['finish_actions'],
             'runtime_dispatch_entries': sum(known_calls) if known_calls else None,
@@ -396,12 +397,6 @@ def run(path):
                         code = process.returncode
                         reason = 'optimizer_exit' if code == 0 else 'optimizer_nonzero_exit'
                         break
-                    maximum = record['budget']['max_hardware_actions']
-                    if (maximum != session.UNLIMITED_HARDWARE_ACTIONS
-                            and record['usage']['hardware_actions'] >= maximum
-                            and active is None):
-                        reason = 'budget_exhausted'
-                        break
             session.close_exploration(root, reason)
         except Exception as failure:
             error = getattr(failure, 'error_code', 'infrastructure_error')
@@ -500,11 +495,16 @@ def run(path):
 
 def status(root):
     with session._session_lock(root) as normalized:
-        record, _ = session._load_locked(normalized)
+        record, events = session._load_locked(normalized)
         manifest = integrity._load(normalized / 'protection')
     result = {key: record[key] for key in ('session_id', 'optimizer_id', 'case_id', 'status',
               'exploration_closed', 'close_reason', 'budget', 'usage', 'active_action')}
-    result['remaining_hardware_actions'] = actions._remaining(record)
+    evaluate_used = session._evaluate_actions_used(record, events)
+    maximum = record['budget']['max_hardware_actions']
+    if record['status'] not in {'failed', 'completed'}:
+        result['status'] = ('exhausted' if maximum != session.UNLIMITED_HARDWARE_ACTIONS
+                            and evaluate_used >= maximum else 'running')
+    result['remaining_hardware_actions'] = actions._remaining(record, events)
     result['mode'] = record.get('mode')
     result['session_root'] = record['session_root']
     has_final = manifest['roots']['final_result']['entries']['']['kind'] == 'file'

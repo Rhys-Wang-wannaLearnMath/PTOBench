@@ -10,7 +10,12 @@ the compiler defaults remain `PYPTO + false`, and the complete defaults vary by 
 After changing source or settings, use `ptobench evaluate .` to check correctness and clean latency.
 PATH and the Bench Session environment are already set.
 {instructions}
-Exploration budget: {record['budget']['max_hardware_actions']} accepted hardware actions,
-shared by all workspaces and Agent conversations in this Bench Session.
-Stop when you are finished or the exploration budget is exhausted. No special final message is required.
+Evaluate allowance: {record['budget']['max_hardware_actions']} accepted `ptobench evaluate` actions,
+shared by all workspaces and Agent conversations in this Bench Session. A failed
+or interrupted accepted Evaluate still consumes one. Profile budget cost is 0;
+Profile is recorded as a hardware action and remains available after the Evaluate
+allowance is exhausted. Fork budget cost is 0 and is recorded as a Session
+operation. Extra Evaluate requests are rejected by the CLI; continue using
+Profile/Fork while the Session remains open, until this Agent exits or is interrupted.
+Stop when you are finished. No special final message is required.
 '''

@@ -82,8 +82,10 @@ def command(config, directory, role, task, allow_task):
                 "Edit Candidate source under `candidate/` and tuning options in `candidate/tuning.json`; the compiler defaults remain PYPTO + false, and the complete defaults vary by Case.\n"
                 "After changing source or settings, use ptobench evaluate . to check correctness and clean latency.\n"
                 "PATH and the Bench Session environment are already set.\n"
-                + f"Share this Bench Session's {config['hardware_budget']}-action exploration budget; "
-                  "this Agent stage does not receive a new budget.\n\n" + task)
+                + f"Share this Bench Session's Evaluate allowance of {config['hardware_budget']} accepted `ptobench evaluate` actions; "
+                  "a failed or interrupted accepted Evaluate still consumes one. Profile costs 0 and is recorded as a hardware action; "
+                  "Fork costs 0 and is recorded. Profile/Fork remain available after the allowance is exhausted, while the CLI rejects extra Evaluate requests. "
+                  "This Agent stage does not receive a new allowance.\n\n" + task)
     prompt = task if config['profile']['backend'] == 'pi' else role_text + '\n\n' + task
     argv, configured_env = render(config['profile'], config['workspace'], config['run_root'], prompt)
     environment = {**os.environ, **configured_env,

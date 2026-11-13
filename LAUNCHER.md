@@ -60,6 +60,12 @@ absence of retired entries. It performs no Ref preparation or measurement.
 `max_hardware_actions: "unlimited"` leaves exploration open until the Agent
 exits or the Session is interrupted; status and action results report
 `remaining_hardware_actions: null`.
+This allowance counts only accepted `ptobench evaluate` actions. Failed or
+interrupted accepted Evaluate actions still consume one. Profile has Evaluate
+budget cost 0 but is recorded as a hardware action; Fork has cost 0 and is
+recorded as a Session operation. When the allowance is exhausted, the CLI
+rejects new Evaluate requests while the Agent may continue Profile/Fork until
+it exits or the user interrupts it.
 
 Optional `method_options` is a mapping passed unchanged to the selected method;
 only methods that declare options consume it. Basic has no `raw_wiki` option and
@@ -94,7 +100,7 @@ agent configuration and native history collection belong to the method.
 PATH and `PTOBENCH_SESSION_ROOT`, `PTOBENCH_SESSION_ID`, `PTOBENCH_CASE_ID`,
 `PTOBENCH_OPTIMIZER_ID`, `PTOBENCH_WORKSPACE`, and the compatible backend label
 are passed to the participant. Basic execs one native agent in that same group;
-its prompt presents evaluate/profile/fork and the shared budget. Baseline still
+its prompt presents evaluate/profile/fork and the shared Evaluate allowance. Baseline still
 comes from the certified Case cache without an initial measurement.
 
 Protected `method.json`, `method_request.json` and `method_collection.json`
@@ -106,9 +112,9 @@ these opaque records and attachments, without reading instructions or interpreti
 optimization stages. stdout/stderr are forwarded and retained separately, and
 combined in `process.log`. Official values come from `final_result.json`.
 
-The monitor reads Session state approximately every second. On budget exhaustion
-it waits for the last accepted action to finish and clear `active_action` before
-closing exploration and stopping the Optimizer. On normal/nonzero exit or
+The monitor reads Session state approximately every second. Evaluate allowance
+exhaustion does not stop the Optimizer; the CLI rejects further Evaluate requests
+and leaves Profile/Fork available. On normal/nonzero exit or
 SIGINT/SIGTERM it closes exploration, stops remaining Optimizer workers and any
 attributed evaluator group, reaps processes, recovers interrupted actions without
 refunding budget, and invokes S4 finalization. Owned groups receive TERM, up to

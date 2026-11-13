@@ -15,10 +15,8 @@ import time
 
 import common
 sys.path.insert(0, str(common.BENCHMARK_ROOT))
-import file_tree
 import isolation
 import session
-import workspace
 
 
 
@@ -66,92 +64,6 @@ class Broker:
         self.stop = threading.Event()
         self.child = None
         self.cli_environment = cli_environment
-
-    def export(self, name):
-        original = self.root / 'workspaces' / name
-        target = self.exports / name
-        if target.is_symlink():
-            raise ValueError(f'workspace export is not a real directory: {name}')
-        new_workspace = not target.exists()
-        if new_workspace:
-            workspace.copy_candidate_tree(original, self.candidates / name)
-            target.mkdir()
-            public_workspace = self.public / name
-            copy_tree(original / '.benchmark_context', public_workspace)
-            (public_workspace / '.benchmark_outputs').mkdir()
-        elif (not target.is_dir()
-              or (self.candidates / name).is_symlink()
-              or not (self.candidates / name).is_dir()):
-            raise ValueError(f'workspace export is not a real directory: {name}')
-        for relative, expected in (
-                ('candidate', f'/ptobench/candidates/{name}'),
-                ('.benchmark_context', f'/ptobench/public/{name}'),
-                ('.benchmark_outputs', f'/ptobench/public/{name}/.benchmark_outputs')):
-            link = target / relative
-            if link.is_symlink() and os.readlink(link) == expected:
-                continue
-            if link.exists() or link.is_symlink() or not new_workspace:
-                raise ValueError(f'protected workspace link changed: {relative}')
-            link.symlink_to(expected)
-        return target
-
-    def sync_source(self, name):
-        source = self.exports / name
-        target = self.root / 'workspaces' / name
-        temporary = self.private / 'incoming'
-        if temporary.exists():
-            shutil.rmtree(temporary)
-        # The exported contract is a link to a readonly public mount. It is not
-        # part of the submitted source. All included entries must still be plain
-        # files/directories, and the ordinary no-follow copier opens each file.
-        protected = {
-            'candidate': f'/ptobench/candidates/{name}',
-            '.benchmark_context': f'/ptobench/public/{name}',
-            '.benchmark_outputs': f'/ptobench/public/{name}/.benchmark_outputs',
-        }
-        for relative, expected in protected.items():
-            link = source / relative
-            if not link.is_symlink() or os.readlink(link) != expected:
-                raise ValueError(f'protected workspace link changed: {relative}')
-        candidate_source = self.candidates / name
-        entries = workspace._candidate_payload_entries(candidate_source)
-        if any(e['kind'] not in ('file', 'directory') for e in entries.values()):
-            raise ValueError('non-regular Candidate source')
-        temporary.mkdir()
-        workspace._copy_source_tree(candidate_source, temporary, entries)
-        after = workspace._candidate_payload_entries(candidate_source)
-        if entries != after:
-            raise ValueError('Candidate source changed while submitting')
-        with file_tree.open_directory(target) as fd:
-            for name in os.listdir(fd):
-                if name not in workspace.CANDIDATE_EXCLUDES:
-                    file_tree.remove_at(fd, name)
-        candidate_target = target / 'candidate'
-        with file_tree.open_directory(target, create=True):
-            pass
-        if candidate_target.exists():
-            with file_tree.open_directory(candidate_target) as fd:
-                for name in os.listdir(fd):
-                    file_tree.remove_at(fd, name)
-        else:
-            candidate_target.mkdir()
-        for path in temporary.iterdir():
-            path.rename(candidate_target / path.name)
-        temporary.rmdir()
-
-    def feedback(self, name):
-        original = self.root / 'workspaces' / name / '.benchmark_outputs'
-        target = self.public / name / '.benchmark_outputs'
-        # Keep the read-only mount target stable while replacing its contents.
-        with file_tree.open_directory(target) as fd:
-            for child in os.listdir(fd):
-                file_tree.remove_at(fd, child)
-        copy_tree(original, target)
-        if target.exists():
-            for p in target.rglob('*.json'):
-                text = p.read_text()
-                p.write_text(self.rewrite(text, name))
-        self.export(name)
 
     def rewrite(self, text, name):
         prefix = re.escape(str(self.root))
@@ -302,8 +214,8 @@ def run_private_pi(method_path, request_path, request):
 
         bwrap = isolation.executable()
         cli_environment = isolation.clean_environment(os.environ)
-        for name in ('PTOBENCH_RPC_SOCKET', 'PTOBENCH_PUBLIC_DIR', 'PTOBENCH_CLIENT_PATH',
-                     'PTOBENCH_API_PROXY_SOCKET', 'PTOBENCH_AGENT_WORKSPACE_ROOT',
+        for name in ('PTOBENCH_RPC_SOCKET', 'PTOBENCH_CLIENT_PATH',
+                     'PTOBENCH_API_PROXY_SOCKET',
                      'PTOBENCH_PROVIDER_PREPARED', 'PTOBENCH_AGENT_BRIDGE_DIR'):
             cli_environment.pop(name, None)
         cli_environment.update(PTOBENCH_SESSION_ROOT=str(root), PTOBENCH_SANDBOX='1',

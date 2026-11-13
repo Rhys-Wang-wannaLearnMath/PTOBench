@@ -69,11 +69,11 @@ def _error_result(error, seq=None, path=None, remaining=None):
                         str(path) if path else None, remaining_hardware_actions=remaining, message=str(error))
 
 
-def _remaining(record):
+def _remaining(record, events):
     maximum = record['budget']['max_hardware_actions']
     if maximum == session.UNLIMITED_HARDWARE_ACTIONS:
         return None
-    return maximum - record['usage']['hardware_actions']
+    return maximum - session._evaluate_actions_used(record, events)
 
 
 def _repair_for_action(root):
@@ -807,13 +807,15 @@ def reject_request(session_root, action, error, *, path=None, mode=None):
     try:
         with session.execution_lock():
             recover_global_action()
-            record = session.read_session(session_root)
+            with session._session_lock(session._path(session_root, code='invalid_request')) as root:
+                record, _ = session._load_locked(root)
             _recover_unmarked_action(record['session_root'])
-            record = session.read_session(session_root)
             code = getattr(error, 'error_code', 'invalid_request')
             event = session.record_nonhardware_event(session_root, action, mode=mode,
                      error_code=code, exit_code=EXIT_CODES[code], result={'message': str(error)})
-            result = _error_result(error, event['seq'], path, _remaining(record))
+            with session._session_lock(Path(record['session_root'])) as root:
+                current, events = session._load_locked(root)
+            result = _error_result(error, event['seq'], path, _remaining(current, events))
             result.status = 'REJECTED'
             result.attempt_id = event.get('attempt_id')
             return result
@@ -846,8 +848,13 @@ def _run_action(session_root, workspace_path, kind, mode):
                 repaired += repairs.restored_paths
                 observed_mode_changes += repairs.blocked_paths
                 _recover_unmarked_action(root)
-                record = session.read_session(root)
+                with session._session_lock(root) as normalized:
+                    record, events = session._load_locked(normalized)
                 session._open_exploration(record)
+                maximum = record['budget']['max_hardware_actions']
+                if (kind == 'evaluate' and maximum != session.UNLIMITED_HARDWARE_ACTIONS
+                        and session._evaluate_actions_used(record, events) >= maximum):
+                    raise session.SessionError('Evaluate allowance exhausted', 'budget_exceeded')
                 worker_id, original, _ = session.resolve_workspace(root, workspace_path)
                 if kind == 'profile' and (mode not in session.PUBLIC_MODES or mode not in record['profiling_modes']):
                     raise session.SessionError('profile is not enabled')
@@ -881,7 +888,10 @@ def _run_action(session_root, workspace_path, kind, mode):
                 event = session.record_nonhardware_event(root, kind, mode=mode,
                          error_code=error.error_code, exit_code=EXIT_CODES[error.error_code], repaired_paths=repaired,
                          observed_mode_changes=observed_mode_changes, result={'message': str(error)})
-                result = _error_result(error, event['seq'], workspace_path, _remaining(session.read_session(root)))
+                with session._session_lock(root) as normalized:
+                    current, current_events = session._load_locked(normalized)
+                result = _error_result(error, event['seq'], workspace_path,
+                                       _remaining(current, current_events))
                 result.status = 'REJECTED'
                 result.attempt_id = event.get('attempt_id')
                 return result
@@ -968,11 +978,12 @@ def _run_action(session_root, workspace_path, kind, mode):
                     observed_mode_changes=observed_mode_changes, artifact_index=artifact_index,
                     attempt_metadata=attempt_metadata)
             _clear_marker()
-            current = session.read_session(root)
+            with session._session_lock(root) as normalized:
+                current, current_events = session._load_locked(normalized)
             result = ActionResult('PASS' if error_code is None else 'FAIL', error_code, EXIT_CODES[error_code], seq,
                                   str(original), observation.get('correctness') if observation else None,
                                   observation['latency_us'] if observation else None, snapshot_id,
-                                  _remaining(current), message)
+                                  _remaining(current, current_events), message)
             result._omit_correctness = kind == 'profile' and record['optimizer']['backend'] != 'maintenance'
             result.integrity_passed = intact
             result.attempt_id = event.get('attempt_id')
@@ -1001,13 +1012,12 @@ def fork_workspace(session_root, parent_path):
     try:
         with session.execution_lock():
             recover_global_action()
-            record = session.read_session(session_root)
+            with session._session_lock(session._path(session_root, code='invalid_request')) as normalized:
+                record, previous_events = session._load_locked(normalized)
             repairs = _repair_for_action(record['session_root'])
             _recover_unmarked_action(record['session_root'])
             try:
                 parent_id, parent, _ = session.resolve_workspace(session_root, parent_path)
-                with session._session_lock(Path(record['session_root'])):
-                    _, previous_events = session._load_locked(Path(record['session_root']))
                 parent_attempt_id = next((event.get('attempt_id') for event in reversed(previous_events)
                     if event.get('workspace') == parent_id and event.get('source_snapshot') is not None
                     and event.get('attempt_id') is not None), None)
@@ -1021,11 +1031,17 @@ def fork_workspace(session_root, parent_path):
                                                                 'parent_workspace_id': parent_id,
                                                                 'parent_attempt_id': parent_attempt_id,
                                                                 'source_snapshot': str((child / '.benchmark_context' / 'starting_point').relative_to(record['session_root']))})
-                return ActionResult('PASS', None, 0, event['seq'], str(child), remaining_hardware_actions=_remaining(record))
+                with session._session_lock(Path(record['session_root'])) as normalized:
+                    current, current_events = session._load_locked(normalized)
+                return ActionResult('PASS', None, 0, event['seq'], str(child),
+                                    remaining_hardware_actions=_remaining(current, current_events))
             except (session.SessionError, workspace.InvalidWorkspaceError) as error:
                 event = session.record_nonhardware_event(session_root, 'fork', error_code=error.error_code,
                                                         exit_code=EXIT_CODES[error.error_code], result={'message': str(error)})
-                result = _error_result(error, event['seq'], parent_path, _remaining(record))
+                with session._session_lock(Path(record['session_root'])) as normalized:
+                    current, current_events = session._load_locked(normalized)
+                result = _error_result(error, event['seq'], parent_path,
+                                       _remaining(current, current_events))
                 result.status = 'REJECTED'
                 return result
     except Exception as error:

@@ -14,6 +14,7 @@ from session_test_support import SessionTestBase
 import common
 import integrity
 import session
+import session_actions
 import workspace
 
 
@@ -230,9 +231,11 @@ class BudgetTest(SessionTestBase):
                 self.assertEqual(repeated, event)
                 self.assertEqual(session.read_session(handle.session_root)['usage']['hardware_actions'], seq)
         self.assertEqual(session.read_session(handle.session_root)['status'], 'exhausted')
-        with self.assertRaises(session.SessionError) as caught:
-            session.fork_workspace(handle.session_root, handle.initial_workspace)
-        self.assertEqual(caught.exception.error_code, 'budget_exceeded')
+        forked = session.fork_workspace(handle.session_root, handle.initial_workspace)
+        self.assertEqual(forked, 'worker_001')
+        with session._session_lock(handle.session_root):
+            record, events = session._load_locked(handle.session_root)
+        self.assertEqual(session._evaluate_actions_used(record, events), 5)
 
     def test_finish_is_independent_requires_closed_exploration_and_cannot_repeat(self):
         handle = self.create(budget=1)
@@ -375,15 +378,21 @@ class BudgetTest(SessionTestBase):
                     self.assertEqual(json.loads(lines[0])['error_code'], 'action_failed')
                 print(f'S2 completion crash: {point}, used=1, active={record["active_action"] is not None}, events={len(lines)}')
 
-    def test_all_public_profiles_charge_once_and_old_modes_never_reserve(self):
-        handle = self.create(budget=3, profile_strategy='split')
+    def test_all_public_profiles_are_recorded_without_using_evaluate_budget(self):
+        handle = self.create(budget=1, profile_strategy='split')
         for seq, mode in enumerate(('runtime', 'pmu', 'compiler'), 1):
             with session.execution_lock():
                 self.reserve(handle, 'profile', mode)
                 event = session.complete_action(handle.session_root, seq, exit_code=0, integrity_passed=True)
                 self.assertEqual(event['mode'], mode)
                 self.assertEqual(event['hardware_actions_used'], seq)
+                self.assertEqual(session.read_session(handle.session_root)['status'], 'running')
         self.assertEqual(session.read_session(handle.session_root)['usage'], {'hardware_actions': 3, 'finish_actions': 0})
+        with session._session_lock(handle.session_root):
+            record, events = session._load_locked(handle.session_root)
+        self.assertEqual(session._evaluate_actions_used(record, events), 0)
+        self.assertEqual(session_actions._remaining(record, events), 1)
+        self.assertEqual(record['status'], 'running')
 
     def test_close_during_prechecks_prevents_reservation_without_charge(self):
         handle = self.create()

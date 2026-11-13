@@ -20,12 +20,22 @@ class BasicModeTests(unittest.TestCase):
             {'module': 'candidate.py', 'entry': 'run'},
             'Normal optimization instructions.',
         )
+        normalized_prompt = ' '.join(prompt.split())
         for expected in ('.benchmark_context/README.md', '.benchmark_context/tuning_capabilities.json',
                          'candidate/', 'candidate/tuning.json', 'ptobench evaluate .',
-                         'Normal optimization instructions.'):
-            self.assertIn(expected, prompt)
-        self.assertNotIn('reference knowledge', prompt)
-        self.assertNotIn('raw_wiki', prompt)
+                         'Normal optimization instructions.',
+                         'Evaluate allowance: 8 accepted `ptobench evaluate` actions',
+                         'interrupted accepted Evaluate still consumes one',
+                         'Profile budget cost is 0', 'recorded as a hardware action',
+                         'remains available after the Evaluate',
+                         'allowance is exhausted',
+                         'Fork budget cost is 0', 'Extra Evaluate requests are rejected by the CLI',
+                         'continue using Profile/Fork'):
+            self.assertIn(expected, normalized_prompt)
+        self.assertNotIn('accepted hardware actions', normalized_prompt)
+        self.assertNotIn('Stop when you are finished or the exploration budget is exhausted', normalized_prompt)
+        self.assertNotIn('reference knowledge', normalized_prompt)
+        self.assertNotIn('raw_wiki', normalized_prompt)
 
     def test_preflight_does_not_access_knowledge_bundle(self):
         experiment = {'optimizer': {'backend': 'pi', 'profile': 'selected'}}
