@@ -66,4 +66,8 @@ class AnalyzerAdapter:
                             raise
                 if selected is None:
                     raise ValueError('No authorized completed combined Profile; run `ptobench profile .` first, or select an existing Session profile ID.')
-            return selected.call(name, args)
+            try:
+                return selected.call(name, args)
+            except Exception as error:
+                error.profile = selected.profile
+                raise

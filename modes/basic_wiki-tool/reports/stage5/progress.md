@@ -24,3 +24,12 @@
 - RED: `...python -m pytest modes/basic_wiki-tool/tests/test_analyzer_adapter.py -q` → 3 failures, missing adapter; evidence/task1_red.log.
 - Test fixture correction: compute_mapping_check has a single detail record, so pagination uses tile_access_check (multiple fixture records). Not a production workaround.
 - GREEN: same command → exit 0, 3 passed in 0.22s; evidence/task1_green.log. No need to repeat these tests while Task 1 code remains unchanged.
+
+## Task 2 — complete
+
+- Added bounded (1 MiB) threaded Unix socket ingress, serial Analyzer execution, generated call-directory identities, durable request/result records, duplicate-ID rejection, cancellation/connection interruption and server close cleanup. No NPU/CLI route exists in broker or adapter.
+- Extension reads colocated static specs, registers nine tools before Profile availability, forwards Pi call IDs/AbortSignal (including pre-cancelled requests), and records session_start registered+active names through an internal transport action.
+- RED: bridge test command → 2 failures (broker absent), evidence/task2_red.log.
+- First GREEN: 2 passed. Strengthened assertion exposed missing selected Profile in post-selection parameter errors (evidence/task2_error_identity_red.log). Adapter now annotates the original exception with selected identity; no Analyzer-copy changes.
+- Affected regression: `PYTHONPATH=.:evaluator:evaluator/tests /data1/home/ziruiwang/pypto-lib/.venv-official/bin/python -m pytest modes/basic_wiki-tool/tests/test_pi_bridge.py modes/basic_wiki-tool/tests/test_analyzer_adapter.py -q` → exit 0, 5 passed; evidence/task2_green.log. Repeated roundtrip only because error-audit behavior changed. Fixture originals/Session/Event bytes verified unchanged in same test.
+- CPU protocol evidence only: real Node 22.23.1 loads real TS; Pi APIs are stubs. No real Pi visibility or LLM call claimed yet. Synchronous ongoing analysis finishes before cancellation discards its response; no immediate parser interruption claimed.
