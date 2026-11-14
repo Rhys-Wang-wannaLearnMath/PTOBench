@@ -6,6 +6,7 @@ import threading
 
 import session
 from pto_analyzer import ProfileRef, ProfileRefError, open_toolset
+from pto_analyzer.profile import ProfileArchive
 
 MANIFEST = Path(__file__).with_name('analyzer_manifest.json')
 
@@ -16,6 +17,7 @@ class AnalyzerAdapter:
         self._manifest = json.loads(MANIFEST.read_text())
         self._cached_ref = None
         self._groups = {}
+        self._authority = None
         self._lock = threading.Lock()
 
     def specifications(self) -> list[dict]:
@@ -52,13 +54,16 @@ class AnalyzerAdapter:
                         continue
                     try:
                         ref = ProfileRef.from_event(self.root, event['seq'])
+                        authorized = ProfileArchive(ref)
+                        authority = (authorized.artifact_root, authorized._entries, authorized._protected_entries)
                         role = self._manifest['routing'][name]
-                        if ref != self._cached_ref:
+                        if ref != self._cached_ref or authority != self._authority:
                             self._groups.clear()
                             self._cached_ref = None
                         if role not in self._groups:
                             self._groups[role] = open_toolset(role, ref)
                         self._cached_ref = ref
+                        self._authority = authority
                         selected = self._groups[role]
                         break
                     except ProfileRefError:

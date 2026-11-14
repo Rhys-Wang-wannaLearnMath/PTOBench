@@ -132,7 +132,7 @@ class ToolServer:
             try:
                 if select.select([connection], [], [], 0)[0] and connection.recv(1, socket.MSG_PEEK) == b'':
                     state['disconnected'].set()
-            except OSError:
+            except (OSError, ValueError):
                 state['disconnected'].set()
 
         def monitor():
@@ -143,18 +143,19 @@ class ToolServer:
 
         watcher = threading.Thread(target=monitor, daemon=True)
         watcher.start()
-        output, error = None, None
+        output, error, profile = None, None, None
         try:
             with self._serial:
                 if not self._closing.is_set() and not state['cancel'].is_set() and not state['disconnected'].is_set():
                     if not isinstance(identity, str) or not identity:
                         raise ValueError('tool_call_id must be a nonempty string')
                     output = self.adapter.call(request.get('name'), request.get('arguments'))
+                    profile = output.get('profile') if isinstance(output, dict) else None
+                    # JSON transport failures are typed call errors, with the selected Profile retained.
+                    json.dumps(output, ensure_ascii=False, allow_nan=False)
         except Exception as caught:
             error = {'type': type(caught).__name__, 'message': str(caught)}
-            profile = getattr(caught, 'profile', None)
-        else:
-            profile = output.get('profile') if isinstance(output, dict) else None
+            profile = getattr(caught, 'profile', profile)
         finally:
             disconnected()
             with self._guard:
@@ -172,9 +173,11 @@ class ToolServer:
                                        'message': 'Synchronous analysis, if started, finished; response discarded'}
                 else:
                     result['error'] = error
-                save(directory / 'result.json', result)
-                state['done'].set()
-            watcher.join()
+                try:
+                    save(directory / 'result.json', result)
+                finally:
+                    state['done'].set()
+                    watcher.join()
         return reply(output) if status == 'success' else reply(error=f"{result['error']['type']}: {result['error']['message']}")
 
     def close(self) -> None:

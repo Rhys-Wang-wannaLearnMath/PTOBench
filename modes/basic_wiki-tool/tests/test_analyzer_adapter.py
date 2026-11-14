@@ -103,3 +103,32 @@ def test_profile_open_uses_consistent_session_snapshot(profile_root, monkeypatch
     assert finished.wait(5)
     thread.join()
     assert results[0]['profile']['event_seq'] == 2
+
+
+def test_cached_profile_revalidates_authority(profile_root):
+    Adapter = adapter_type()
+    root = profile_root
+    adapter = Adapter(root)
+    args = {'profile': 'fixture-session:1'}
+    assert adapter.call('tile_access_check', args)['profile']['event_id'] == args['profile']
+    paths = [root / 'events.jsonl', root / 'protection/manifest.json', root / 'staging/action_000001/artifacts/index.json']
+    original = {p: p.read_bytes() for p in paths}
+    for failure in ('index_escape', 'artifact_escape', 'index_protection', 'events_protection'):
+        for p, data in original.items():
+            p.write_bytes(data)
+        event = json.loads(paths[0].read_text())
+        manifest = json.loads(paths[1].read_text())
+        if failure == 'index_escape':
+            event['artifact_index'] = '/tmp/another-session/index.json'
+        elif failure == 'artifact_escape':
+            event['profile_artifacts_path'] = '/tmp/another-session/artifacts'
+        elif failure == 'index_protection':
+            manifest['roots']['action_artifacts_1']['entries']['index.json']['sha256'] = '0' * 64
+        paths[0].write_text(json.dumps(event) + '\n')
+        manifest['roots']['events']['entries']['']['sha256'] = ('0' * 64 if failure == 'events_protection' else hashlib.sha256(paths[0].read_bytes()).hexdigest())
+        paths[1].write_text(json.dumps(manifest))
+        with pytest.raises(ValueError):
+            adapter.call('tile_access_check', args)
+    for p, data in original.items():
+        p.write_bytes(data)
+    assert adapter.call('tile_access_check', args)['profile']['event_id'] == args['profile']

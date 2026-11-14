@@ -179,3 +179,26 @@ console.log(JSON.stringify([before, await promise]));
         server.close()
         if driver.poll() is None:
             driver.kill(); driver.communicate()
+
+
+def test_nonfinite_output_has_terminal_typed_error_and_profile(tmp_path):
+    Server = server_type()
+    class Nonfinite:
+        def call(self, name, args):
+            return {'profile': {'event_id': 'nonfinite:1'}, 'value': float('inf')}
+    log, path = tmp_path / 'method/analyzer_calls', tmp_path / 'a.sock'
+    server = Server(Nonfinite(), path, log)
+    try:
+        response = exchange(path, dict(action='call', tool_call_id='nonfinite', name='buffer_pressure_check', arguments={}))
+        assert response['isError'] and 'ValueError' in response['content'][0]['text']
+        assert len(records(log)) == 1, 'serialization failure must immediately write a terminal record'
+        terminal = records(log)[0]
+        assert terminal['status'] == 'error'
+        assert terminal['error']['type'] == 'ValueError'
+        assert terminal['profile'] == {'event_id': 'nonfinite:1'}
+        import importlib
+        importlib.import_module('modes.basic_wiki-tool.tools').interrupt_unfinished(log)
+        assert records(log) == [terminal]
+    finally:
+        server.close()
+    assert not path.exists()
