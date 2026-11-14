@@ -1,0 +1,266 @@
+{
+  "schema_version": 1,
+  "source": "modes/ptomni/pto_analyzer",
+  "files": {
+    "__init__.py": {
+      "source_sha256": "c5b412a2b4d027341cd90a34160a8fe417076f4e3bc8a4b70281281d695496b8",
+      "copy_sha256": "c5b412a2b4d027341cd90a34160a8fe417076f4e3bc8a4b70281281d695496b8"
+    },
+    "profile.py": {
+      "source_sha256": "d4be3f7a44c65dcd3ea80e1389c12ddc9a5f52cb9738757ce02cc8081e18a075",
+      "copy_sha256": "d4be3f7a44c65dcd3ea80e1389c12ddc9a5f52cb9738757ce02cc8081e18a075"
+    },
+    "toolset.py": {
+      "source_sha256": "bd18546620131b56e1b08a908540e812a9db21357f7aaec6e7ab505b3e6d00c7",
+      "copy_sha256": "bd18546620131b56e1b08a908540e812a9db21357f7aaec6e7ab505b3e6d00c7"
+    },
+    "diagnostics/__init__.py": {
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "copy_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diagnostics/common.py": {
+      "source_sha256": "170beff748c5d92fde85e9aabec39e2a1723720681adacb2a0675a57e5939f6a",
+      "copy_sha256": "170beff748c5d92fde85e9aabec39e2a1723720681adacb2a0675a57e5939f6a"
+    },
+    "diagnostics/compute.py": {
+      "source_sha256": "704f23518376a2241d0836c12e0883369db45e2dbaa51967d1b82aa9bc6de834",
+      "copy_sha256": "704f23518376a2241d0836c12e0883369db45e2dbaa51967d1b82aa9bc6de834"
+    },
+    "diagnostics/dataflow.py": {
+      "source_sha256": "c6ed5031257bf36c3479c6864bd46b683c12d749971a99ae1f396803d406b7cb",
+      "copy_sha256": "c6ed5031257bf36c3479c6864bd46b683c12d749971a99ae1f396803d406b7cb"
+    },
+    "diagnostics/schedule.py": {
+      "source_sha256": "eefdb3a92211fd55b8bcb4a8385cf10c92d158acd0c4dd3e8dede7b93bb28d1b",
+      "copy_sha256": "eefdb3a92211fd55b8bcb4a8385cf10c92d158acd0c4dd3e8dede7b93bb28d1b"
+    }
+  },
+  "specifications": [
+    {
+      "name": "compute_mapping_check",
+      "label": "compute_mapping_check",
+      "description": "Summarize archived program and callable mappings without unverified Candidate source attribution. Returns details with total_records, returned_records, records, and next_cursor (null on the last page).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Opaque continuation token returned by this tool."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "description": "Maximum detail records to return; defaults to 20."
+          },
+          "profile": {
+            "type": "string",
+            "description": "Session profile event ID (session_id:event_seq). Required with cursor."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "compute_unit_activity",
+      "label": "compute_unit_activity",
+      "description": "Aggregate all PMU counters by archived build, rank, dispatch, and core type. Returns details with total_records, returned_records, records, and next_cursor (null on the last page).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Opaque continuation token returned by this tool."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "description": "Maximum detail records to return; defaults to 20."
+          },
+          "profile": {
+            "type": "string",
+            "description": "Session profile event ID (session_id:event_seq). Required with cursor."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "compute_task_share",
+      "label": "compute_task_share",
+      "description": "Aggregate PMU counters by task only after same-dispatch task and callable joins validate. Returns details with total_records, returned_records, records, and next_cursor (null on the last page).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Opaque continuation token returned by this tool."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "description": "Maximum detail records to return; defaults to 20."
+          },
+          "profile": {
+            "type": "string",
+            "description": "Session profile event ID (session_id:event_seq). Required with cursor."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "tile_access_check",
+      "label": "tile_access_check",
+      "description": "Summarize all archived compiler hint categories and preserve their original text. Returns details with total_records, returned_records, records, and next_cursor (null on the last page).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Opaque continuation token returned by this tool."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "description": "Maximum detail records to return; defaults to 20."
+          },
+          "profile": {
+            "type": "string",
+            "description": "Session profile event ID (session_id:event_seq). Required with cursor."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "buffer_pressure_check",
+      "label": "buffer_pressure_check",
+      "description": "Summarize MemoryReuse hints and Scope fields without inferring capacity pressure. Returns details with total_records, returned_records, records, and next_cursor (null on the last page).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Opaque continuation token returned by this tool."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "description": "Maximum detail records to return; defaults to 20."
+          },
+          "profile": {
+            "type": "string",
+            "description": "Session profile event ID (session_id:event_seq). Required with cursor."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "tile_memory_allocation_summary",
+      "label": "tile_memory_allocation_summary",
+      "description": "Summarize verified static allocation requests by artifact, function, memory space, and operation without inferring runtime pressure.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "profile": {
+            "type": "string",
+            "description": "Session profile event ID (session_id:event_seq). Required with cursor."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dependency_path_check",
+      "label": "dependency_path_check",
+      "description": "Summarize normalized dependency graph structure without runtime weights. Returns details with total_records, returned_records, records, and next_cursor (null on the last page).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Opaque continuation token returned by this tool."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "description": "Maximum detail records to return; defaults to 20."
+          },
+          "profile": {
+            "type": "string",
+            "description": "Session profile event ID (session_id:event_seq). Required with cursor."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dispatch_gap_check",
+      "label": "dispatch_gap_check",
+      "description": "Summarize same-core AICore interval gaps in cycles; these gaps are not attributed to scheduling. Returns details with total_records, returned_records, records, and next_cursor (null on the last page).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Opaque continuation token returned by this tool."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "description": "Maximum detail records to return; defaults to 20."
+          },
+          "profile": {
+            "type": "string",
+            "description": "Session profile event ID (session_id:event_seq). Required with cursor."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "task_distribution_check",
+      "label": "task_distribution_check",
+      "description": "Summarize AICore interval durations per core, tuple counts, and distinct raw task tokens without inferring busy time or load balance. Returns details with total_records, returned_records, records, and next_cursor (null on the last page).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Opaque continuation token returned by this tool."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "description": "Maximum detail records to return; defaults to 20."
+          },
+          "profile": {
+            "type": "string",
+            "description": "Session profile event ID (session_id:event_seq). Required with cursor."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ],
+  "routing": {
+    "compute_mapping_check": "Compute",
+    "compute_unit_activity": "Compute",
+    "compute_task_share": "Compute",
+    "tile_access_check": "Dataflow",
+    "buffer_pressure_check": "Dataflow",
+    "tile_memory_allocation_summary": "Dataflow",
+    "dependency_path_check": "Schedule",
+    "dispatch_gap_check": "Schedule",
+    "task_distribution_check": "Schedule"
+  }
+}

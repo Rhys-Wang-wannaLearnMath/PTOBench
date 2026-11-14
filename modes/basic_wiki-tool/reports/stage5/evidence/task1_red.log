@@ -1,0 +1,62 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_______________________ test_copy_and_specs_match_source _______________________
+
+profile_root = PosixPath('/tmp/pytest-of-ziruiwang/pytest-1046/test_copy_and_specs_match_sour0/session')
+
+    def test_copy_and_specs_match_source(profile_root):
+>       Adapter = adapter_type()
+
+modes/basic_wiki-tool/tests/test_analyzer_adapter.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def adapter_type():
+>       assert (MODE / 'analyzer_adapter.py').is_file(), 'Task 1 adapter not implemented'
+E       AssertionError: Task 1 adapter not implemented
+E       assert False
+E        +  where False = is_file()
+E        +    where is_file = (PosixPath('/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/modes/basic_wiki-tool') / 'analyzer_adapter.py').is_file
+
+modes/basic_wiki-tool/tests/test_analyzer_adapter.py:13: AssertionError
+_______________________ test_profile_selection_lifecycle _______________________
+
+profile_root = PosixPath('/tmp/pytest-of-ziruiwang/pytest-1046/test_profile_selection_lifecyc0/session')
+
+    def test_profile_selection_lifecycle(profile_root):
+>       Adapter = adapter_type()
+
+modes/basic_wiki-tool/tests/test_analyzer_adapter.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def adapter_type():
+>       assert (MODE / 'analyzer_adapter.py').is_file(), 'Task 1 adapter not implemented'
+E       AssertionError: Task 1 adapter not implemented
+E       assert False
+E        +  where False = is_file()
+E        +    where is_file = (PosixPath('/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/modes/basic_wiki-tool') / 'analyzer_adapter.py').is_file
+
+modes/basic_wiki-tool/tests/test_analyzer_adapter.py:13: AssertionError
+______________ test_profile_open_uses_consistent_session_snapshot ______________
+
+profile_root = PosixPath('/tmp/pytest-of-ziruiwang/pytest-1046/test_profile_open_uses_consist0/session')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffff8fdcaf20>
+
+    def test_profile_open_uses_consistent_session_snapshot(profile_root, monkeypatch):
+>       Adapter = adapter_type()
+
+modes/basic_wiki-tool/tests/test_analyzer_adapter.py:74: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def adapter_type():
+>       assert (MODE / 'analyzer_adapter.py').is_file(), 'Task 1 adapter not implemented'
+E       AssertionError: Task 1 adapter not implemented
+E       assert False
+E        +  where False = is_file()
+E        +    where is_file = (PosixPath('/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/modes/basic_wiki-tool') / 'analyzer_adapter.py').is_file
+
+modes/basic_wiki-tool/tests/test_analyzer_adapter.py:13: AssertionError
+=========================== short test summary info ============================
+FAILED modes/basic_wiki-tool/tests/test_analyzer_adapter.py::test_copy_and_specs_match_source
+FAILED modes/basic_wiki-tool/tests/test_analyzer_adapter.py::test_profile_selection_lifecycle
+FAILED modes/basic_wiki-tool/tests/test_analyzer_adapter.py::test_profile_open_uses_consistent_session_snapshot
+3 failed in 0.13s

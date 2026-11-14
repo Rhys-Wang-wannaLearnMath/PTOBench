@@ -1,0 +1,56 @@
+ M .agents/skills/code-simplification/SKILL.md
+ M .agents/skills/executing-plans/SKILL.md
+ M .agents/skills/git-workflow-and-versioning/SKILL.md
+ M .agents/skills/incremental-implementation/SKILL.md
+ M .agents/skills/ponytail/SKILL.md
+ M .agents/skills/systematic-debugging/SKILL.md
+ M .agents/skills/test-driven-development/SKILL.md
+ M .agents/skills/verification-before-completion/SKILL.md
+ M .gitignore
+ M evaluator/AGENT_CLI.md
+ M evaluator/agent_cli.py
+ M evaluator/inspect_environment.py
+ M evaluator/isolation.py
+ M evaluator/session.py
+ M evaluator/tests/test_agent_cli.py
+ M evaluator/tests/test_basic_options.py
+ M evaluator/tests/test_budget.py
+ M evaluator/tests/test_cannbot.py
+ M evaluator/tests/test_isolation.py
+ M evaluator/tests/test_launcher.py
+ M evaluator/tests/test_snapshots.py
+ M evaluator/tests/test_workspace.py
+ M evaluator/workspace.py
+ D lightweight_e2e/PLAN.md
+ M modes/basic/README.md
+ M modes/basic/prompt.py
+ M modes/cannbot/DESIGN.md
+ M modes/cannbot/README.md
+ M modes/cannbot/mode.yaml
+ M modes/cannbot/runner.py
+ M modes/cannbot/runtime.py
+ M modes/ptomni/pto_analyzer/planning/README.md
+ M modes/ptomni/pto_analyzer/planning/stage5/IMPLEMENTATION_PROMPT.md
+ M modes/ptomni/pto_analyzer/planning/stage5/README.md
+ M modes/ptomni/pto_analyzer/planning/stage5/TASK_CHECKLIST.md
+A  modes/ptomni/pto_analyzer/planning/stage5/plans/IMPLEMENTATION_PLAN.md
+ M "\345\215\207\347\272\247/1110/00-overview.md"
+ M "\345\215\207\347\272\247/1110/05-\347\234\237\345\256\236Pi\344\270\216Case\351\252\214\346\224\266.md"
+?? .agents/skills/ce-plan/
+?? .agents/skills/code-simplification/agents/
+?? .agents/skills/codebase-design/
+?? .agents/skills/executing-plans/agents/
+?? .agents/skills/git-workflow-and-versioning/agents/
+?? .agents/skills/incremental-implementation/agents/
+?? .agents/skills/performance-optimization/
+?? .agents/skills/planning-and-task-breakdown/
+?? .agents/skills/ponytail/agents/
+?? .agents/skills/systematic-debugging/agents/
+?? .agents/skills/test-driven-development/agents/
+?? .agents/skills/verification-before-completion/agents/
+?? .agents/skills/writing-plans/
+?? docs/
+?? evaluator/tests/test_inspect_environment.py
+?? modes/basic_wiki-tool/
+?? "modes/\345\220\216\347\273\255Mode\347\273\237\344\270\200\346\216\245\345\205\245PTOBench\350\256\241\345\210\222.md"
+?? reports/agent_upgrade/dedicated_agent_user/
