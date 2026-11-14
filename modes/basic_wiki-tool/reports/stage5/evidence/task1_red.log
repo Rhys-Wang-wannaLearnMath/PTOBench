@@ -7,8 +7,8 @@ profile_root = PosixPath('/tmp/pytest-of-ziruiwang/pytest-1046/test_copy_and_spe
     def test_copy_and_specs_match_source(profile_root):
 >       Adapter = adapter_type()
 
-modes/basic_wiki-tool/tests/test_analyzer_adapter.py:19: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+modes/basic_wiki-tool/tests/test_analyzer_adapter.py:19:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
     def adapter_type():
 >       assert (MODE / 'analyzer_adapter.py').is_file(), 'Task 1 adapter not implemented'
@@ -25,8 +25,8 @@ profile_root = PosixPath('/tmp/pytest-of-ziruiwang/pytest-1046/test_profile_sele
     def test_profile_selection_lifecycle(profile_root):
 >       Adapter = adapter_type()
 
-modes/basic_wiki-tool/tests/test_analyzer_adapter.py:41: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+modes/basic_wiki-tool/tests/test_analyzer_adapter.py:41:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
     def adapter_type():
 >       assert (MODE / 'analyzer_adapter.py').is_file(), 'Task 1 adapter not implemented'
@@ -44,8 +44,8 @@ monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0xffff8fdcaf20>
     def test_profile_open_uses_consistent_session_snapshot(profile_root, monkeypatch):
 >       Adapter = adapter_type()
 
-modes/basic_wiki-tool/tests/test_analyzer_adapter.py:74: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+modes/basic_wiki-tool/tests/test_analyzer_adapter.py:74:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
     def adapter_type():
 >       assert (MODE / 'analyzer_adapter.py').is_file(), 'Task 1 adapter not implemented'

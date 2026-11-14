@@ -8,8 +8,8 @@ tmp_path = PosixPath('/tmp/pytest-of-ziruiwang/pytest-1052/test_registered_tools
     def test_registered_tools_roundtrip_and_audit(profile_root, tmp_path):
 >       Server = server_type()
 
-modes/basic_wiki-tool/tests/test_pi_bridge.py:54: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+modes/basic_wiki-tool/tests/test_pi_bridge.py:54:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
     def server_type():
         assert (MODE / 'tools.py').is_file(), 'Task 2 broker not implemented'
@@ -24,8 +24,8 @@ tmp_path = PosixPath('/tmp/pytest-of-ziruiwang/pytest-1052/test_cancel_disconnec
     def test_cancel_disconnect_and_close_are_recorded(tmp_path):
 >       Server = server_type()
 
-modes/basic_wiki-tool/tests/test_pi_bridge.py:112: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+modes/basic_wiki-tool/tests/test_pi_bridge.py:112:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
     def server_type():
         assert (MODE / 'tools.py').is_file(), 'Task 2 broker not implemented'

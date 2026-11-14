@@ -1,0 +1,6 @@
+schema_version: 2
+id: basic_wiki-tool
+implemented: true
+description: Basic single Pi agent with read-only optimization Wiki and nine PTOAnalyzer tools.
+entrypoint: runner.py
+profile_strategy: combined
