@@ -7,66 +7,66 @@
       "case_id": "deepseek_v4.lm_head_tp2_flash",
       "mode": "basic",
       "configuration": "modes/basic_wiki-tool/experiments/stage5/01_lm_head_basic.yaml",
-      "configuration_sha256": "ff258139e25b04f4f001b37b92e15f686a31951b8032c2212a1b34b89e2b9e14",
+      "configuration_sha256": "51ffd07cc6287815c5db0d2b108fb99a5fe7b64dd4adb52a933104dd748d5c45",
       "optimizer_id": "s5_01_lm_head_basic",
       "status": "pending_profile_coverage_step",
       "session_root": null,
-      "expected_runs_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/stage5"
+      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs"
     },
     {
       "order": 2,
       "case_id": "deepseek_v4.lm_head_tp2_flash",
       "mode": "basic_wiki-tool",
       "configuration": "modes/basic_wiki-tool/experiments/stage5/02_lm_head_wiki_tool.yaml",
-      "configuration_sha256": "879d915090de0997e567d8d7d9da660d221184578e32dfdea4089f9280d61979",
+      "configuration_sha256": "11688f7acf076c49dc7680d0fd9bc1e6e09d9991227a8e9db6c207aa7fbd1e62",
       "optimizer_id": "s5_02_lm_head_wiki_tool",
       "status": "pending_profile_coverage_step",
       "session_root": null,
-      "expected_runs_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/stage5"
+      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs"
     },
     {
       "order": 3,
       "case_id": "deepseek_v4.prefill_layer_ep2_csa_demo",
       "mode": "basic_wiki-tool",
       "configuration": "modes/basic_wiki-tool/experiments/stage5/03_prefill_layer_wiki_tool.yaml",
-      "configuration_sha256": "92d29423fe230f58dec0ad19c932cdae9de1ae4db105bb29dcc9ffb329be2c63",
+      "configuration_sha256": "0a8adf0f10fec3a6802140413a75450082fb93879722374ad4f5bdd272df3b09",
       "optimizer_id": "s5_03_prefill_layer_wiki_tool",
       "status": "pending_profile_coverage_step",
       "session_root": null,
-      "expected_runs_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/stage5"
+      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs"
     },
     {
       "order": 4,
       "case_id": "deepseek_v4.prefill_layer_ep2_csa_demo",
       "mode": "basic",
       "configuration": "modes/basic_wiki-tool/experiments/stage5/04_prefill_layer_basic.yaml",
-      "configuration_sha256": "aede5cbc51623fc0b0c6ae1aa1c51e650a1f8c4e5f9cbe1f91a846d0775c5dcc",
+      "configuration_sha256": "cad2a98e0aa64e645e3b38a9fc5716e2aa7c5aa30b3cbdb5a184960df8c259b1",
       "optimizer_id": "s5_04_prefill_layer_basic",
       "status": "pending_profile_coverage_step",
       "session_root": null,
-      "expected_runs_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/stage5"
+      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs"
     },
     {
       "order": 5,
       "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo",
       "mode": "basic",
       "configuration": "modes/basic_wiki-tool/experiments/stage5/05_cp8_basic.yaml",
-      "configuration_sha256": "ef19e0813f79f7a0af83e43cf1efca483cf39daa35cb9294b2edfe7cc436d0b5",
+      "configuration_sha256": "86c941c8e56b2b6c47d25003d9837467b0ed7d56882230175254e0ddda626665",
       "optimizer_id": "s5_05_cp8_basic",
       "status": "pending_profile_coverage_step",
       "session_root": null,
-      "expected_runs_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/stage5"
+      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs"
     },
     {
       "order": 6,
       "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo",
       "mode": "basic_wiki-tool",
       "configuration": "modes/basic_wiki-tool/experiments/stage5/06_cp8_wiki_tool.yaml",
-      "configuration_sha256": "0936c1b8d4c12d4beace6ceb62fbdcee7ddb80134f553f03af61c54b683d3c6f",
+      "configuration_sha256": "107609bc74f4d0864a2cb268265e6545942c9b35c95cc2633a7e08e966eb9f78",
       "optimizer_id": "s5_06_cp8_wiki_tool",
       "status": "pending_profile_coverage_step",
       "session_root": null,
-      "expected_runs_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/stage5"
+      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs"
     }
   ],
   "paired_effective_profiles": {
@@ -384,5 +384,10 @@
   ],
   "launch_allowed": true,
   "next_step": "Poll the running Profile collector; rebuild coverage from terminal Session events. Then revalidate effective pair identities and launch ONLY the six configs in numbered order with normal PTOBench locks.",
-  "launch_order_constraint": "Finish the authorized 75-Case coverage/failed-evidence step, revalidate paired inputs, then launch exactly these six configs serially."
+  "launch_order_constraint": "Finish the authorized 75-Case coverage/failed-evidence step, revalidate paired inputs, then launch exactly these six configs serially.",
+  "output_placement": {
+    "runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs",
+    "snapshots_root": "/data2/ziruiwang/PTOBench/stage5_trials/snapshots",
+    "reason": "Use spacious /data2 for all six Sessions; applied identically before the first real trial. Original canonical Case and environment configuration, model, budget and order remain frozen."
+  }
 }

@@ -108,3 +108,9 @@
 
 - Current live collector after storage adjustment: tool session55209, driver PID683815, launch shellPID683813. Full progress log: `/data2/ziruiwang/PTOBench/stage5_profile_fill/collection.log`. The last verified process is running in normal public `create_session` preflight for the first remaining Case; no CLI error has been reported.
 - Supplemental coverage/audit tools and updated execution decision committed as6f73890. The source-protection waiver is recorded in the report and experiment manifest; it must not be reinstated as a launch blocker. Coverage and six real Sessions remain the required outcome.
+
+## Paired output-root preparation
+
+- Before any of the six real Sessions, changed only output roots in all six numbered YAMLs to `/data2/ziruiwang/PTOBench/stage5_trials/runs` and `.../snapshots`, because large fixed inputs/attempt archives could consume the remaining `/data1` space. Case, Mode, optimizer identity, model profile, budget and numbered run order are unchanged. Config SHA-256 values and expected paths updated in experiment_manifest.json.
+- The roots are ordinary Broker-owned directories using existing traversal policy; no mounts, links, public source edits or Agent Session launch.
+- Existing `launcher.config.load_experiment` parsed all six changed configs successfully; each resolves to the shared `/data2` output roots with the unchanged20+1 budget and intended Case/Mode/order. Existing `session._validate_agent_traversal` accepts the new runs root. No runtime test repeated.

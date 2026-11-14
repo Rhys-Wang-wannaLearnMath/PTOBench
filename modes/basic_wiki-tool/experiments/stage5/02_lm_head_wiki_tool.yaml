@@ -8,5 +8,5 @@ budget:
   max_hardware_actions: 20
   finish_actions: 1
 output:
-  runs_root: ../../../../runs/stage5
-  snapshots_root: ../../../../snapshots/stage5
+  runs_root: /data2/ziruiwang/PTOBench/stage5_trials/runs
+  snapshots_root: /data2/ziruiwang/PTOBench/stage5_trials/snapshots
