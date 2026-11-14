@@ -13,8 +13,8 @@ from conftest import MODE, hashes
 
 def server_type():
     assert (MODE / 'tools.py').is_file(), 'Task 2 broker not implemented'
-    from tools import ToolServer
-    return ToolServer
+    import importlib
+    return importlib.import_module('modes.basic_wiki-tool.tools').ToolServer
 
 
 def extension(tmp_path):
