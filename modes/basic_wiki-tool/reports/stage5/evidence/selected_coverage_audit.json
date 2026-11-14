@@ -1,0 +1,1756 @@
+{
+  "schema_version": 1,
+  "scope": "Located historical completion indexes only, compared against canonical selected Case CSVs. Not an exhaustive artifact/Session search and not proof missing Profiles do not exist.",
+  "selection_sources": [
+    {
+      "path": "case_selection/formal_60/cases.csv",
+      "sha256": "ab370d2d5ba5579234b098c31857019fd64591ca7641e515dc20dca9db5663f1",
+      "rows": 60
+    },
+    {
+      "path": "case_selection/heldout_15/cases.csv",
+      "sha256": "60f73b88185e05ca1587466829e315419394b337f88d901ac30ebd17016b722f",
+      "rows": 15
+    }
+  ],
+  "selection_count": 75,
+  "previous_verified_profile_records": 51,
+  "public_summary": "reports/agent_upgrade/dedicated_agent_user/plan05-continuation-20261114T064555Z-passrefs/summary.json",
+  "public_profile_evidence_count": 8,
+  "cases": {
+    "deepseek_v4_flash_mtp.sample_pro": {
+      "split": "formal_60",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4_flash_mtp.sample_demo": {
+      "split": "formal_60",
+      "device_count": 1,
+      "located_queue_evidence": [
+        {
+          "case_id": "deepseek_v4_flash_mtp.sample_demo",
+          "session_id": "20261106T160259Z_1e3b435fb801",
+          "event_seq": 1,
+          "candidate_sha256": "a6d5427b0f45237f725448428dc395b72a85e9a71e184108ad44d37d6d16b433",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/post_baseline_combined_20261106/runs/combined_queue_12/deepseek_v4_flash_mtp.sample_demo/20261106T160259Z_1e3b435fb801",
+          "index_path": "manual_runs/post_baseline_combined_20261106/queue.json"
+        },
+        {
+          "case_id": "deepseek_v4_flash_mtp.sample_demo",
+          "session_id": "20261106T045333Z_45443accb3ff",
+          "event_seq": 1,
+          "candidate_sha256": "a6d5427b0f45237f725448428dc395b72a85e9a71e184108ad44d37d6d16b433",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_matrix_20261106/runs/combined_queue_13/deepseek_v4_flash_mtp.sample_demo/20261106T045333Z_45443accb3ff",
+          "index_path": "manual_runs/combined_profile_matrix_20261106/queue.json"
+        }
+      ],
+      "public_summary_profile_references": [],
+      "status": "completed_combined_event_verified_in_located_queue"
+    },
+    "deepseek_v4_flash_mtp.sample_flash": {
+      "split": "formal_60",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.sparse_attn_demo": {
+      "split": "formal_60",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.sparse_attn_flash": {
+      "split": "formal_60",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.lm_head_tp2_flash": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v3_2.deepseek_v3_2_decode_front_scope4_reduced": {
+      "split": "formal_60",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "qwen3_14b.topk_select_k32": {
+      "split": "formal_60",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.lm_head_tp2_pro": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.lm_head_tp2_demo": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [
+        {
+          "artifact_index": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.lm_head_tp2_demo/20261114T071039Z_79c960ea61fb/staging/action_000001/artifacts/index.json",
+          "build_dirs": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.lm_head_tp2_demo/20261114T071039Z_79c960ea61fb/staging/action_000001/artifacts/.benchmark_outputs/combined/build_output/_jit_host_orch_1dd5rm9h__001"
+          ],
+          "case_id": "deepseek_v4.lm_head_tp2_demo",
+          "combined_artifacts": [
+            {
+              "artifacts": [
+                "dfx_outputs/rank0/d0/chip_swimlane_records.json",
+                "dfx_outputs/rank0/d0/deps.json",
+                "dfx_outputs/rank1/d0/chip_swimlane_records.json",
+                "dfx_outputs/rank1/d0/deps.json",
+                "dfx_outputs/rank0/d0/pmu.csv",
+                "dfx_outputs/rank1/d0/pmu.csv",
+                "report/pipeline_profile.json",
+                "report/perf_hints.log"
+              ],
+              "mode": "combined",
+              "schema_version": 1,
+              "status": "artifacts_present"
+            }
+          ],
+          "event_seq": 1,
+          "inputs": {
+            "case_id": "deepseek_v4.lm_head_tp2_demo",
+            "fixed": {
+              "case": "de1a72cdd831439078ed087048e800c5285a3371fde0bd05a17566add2438124",
+              "environment": "2dd137c78b2faf8f6bc7fc333000726f07105366ff02a27395f8faf5d2e042d3",
+              "evaluator": "a001b24a3c3ae4ceca741b8e1f2b21ea5ee13e055444df65bd62bb38210a5d25",
+              "golden": "94d48fd68a648372f94c18a2ff807cbe1f021bdf30045484efc8fdb7e14c63c0",
+              "public_launcher": "c896fe7aed89ba4e892c89346e77acbffd2c0bdd076841c9e9cda8130a70361a",
+              "public_modes_basic": "c93b502c03cc6eae7a3432d88ad6c567799925a86202e451bf9a39d87478a44b",
+              "public_modes_cannbot": "dbb6c281c3da6e03ce24fb821341ce00fd350400803b5c643f67dfda88d168b6",
+              "public_modes_package": "4cde32b450b15abc08f18710ee8c8032b3346d280f0c027d841e54d361b1ea76",
+              "public_modes_shared": "c96613021e0d685772015d1af300e901b3e273ed0702cca472a0b5a4e184ba42",
+              "public_pto-launcher": "00a6c91da52d01528fbb8aa47d644a4c5b202095c4cddf10222183b4688a6b06",
+              "public_ptobench": "8b282740c32af13e1226246924346e15c28cd57b2357abf3d10e8eedca0bd6ab",
+              "sealed": "c15d286fcb28e8e4ed990482d8d7585763dc9812e04e82b219865c4ba8c2b894"
+            },
+            "seed_source": "13db022156a84b2b870af9f56f7d80469e95f7a37f26378dc5994a7642bb3589",
+            "source": "6ec281861b9311e3f78c223b9e46a7add471ee8f0ddcb0456c6e35660b0433d8"
+          },
+          "mode": "basic",
+          "profile_mode": "combined",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.lm_head_tp2_demo/20261114T071039Z_79c960ea61fb",
+          "status": "PASS",
+          "metadata_verification": {
+            "session_id": "20261114T071039Z_79c960ea61fb",
+            "session_status": "running",
+            "event_seq": 1,
+            "state": "completed",
+            "runtime_status": "pass",
+            "compile_status": "pass",
+            "correctness_status": "not_run",
+            "content_sha256": "6ec281861b9311e3f78c223b9e46a7add471ee8f0ddcb0456c6e35660b0433d8",
+            "profile_strategy": "combined",
+            "mode_id": "basic",
+            "optimizer_id": "plan05_profile_856f4a6a47",
+            "device_count": 2,
+            "configured_devices": [
+              0,
+              1
+            ],
+            "session_json": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.lm_head_tp2_demo/20261114T071039Z_79c960ea61fb/session.json",
+            "events_jsonl": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.lm_head_tp2_demo/20261114T071039Z_79c960ea61fb/events.jsonl",
+            "metadata_scope": "session.json and first events.jsonl record only; no large profile payload parsed"
+          }
+        }
+      ],
+      "status": "completed_combined_event_verified_in_public_summary_reference",
+      "coverage_sources": [
+        "public_summary_profile_reference",
+        "selected_coverage_audit_metadata"
+      ]
+    },
+    "deepseek_v3_2.deepseek_v3_2_decode_front_scope4_full": {
+      "split": "formal_60",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [
+        {
+          "artifact_index": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v3_2.deepseek_v3_2_decode_front_scope4_full/20261114T070935Z_b7fb907bf21e/staging/action_000001/artifacts/index.json",
+          "build_dirs": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v3_2.deepseek_v3_2_decode_front_scope4_full/20261114T070935Z_b7fb907bf21e/staging/action_000001/artifacts/.benchmark_outputs/combined/build_output/DeepSeekV32DecodeFrontScope4_20261114_070949"
+          ],
+          "case_id": "deepseek_v3_2.deepseek_v3_2_decode_front_scope4_full",
+          "combined_artifacts": [
+            {
+              "artifacts": [
+                "dfx_outputs/chip_swimlane_records.json",
+                "dfx_outputs/deps.json",
+                "dfx_outputs/pmu.csv",
+                "report/pipeline_profile.json",
+                "report/perf_hints.log"
+              ],
+              "mode": "combined",
+              "schema_version": 1,
+              "status": "artifacts_present"
+            }
+          ],
+          "event_seq": 1,
+          "inputs": {
+            "case_id": "deepseek_v3_2.deepseek_v3_2_decode_front_scope4_full",
+            "fixed": {
+              "case": "83c5a9c23d5bfe41d36f96a7bae6086fcdedef27c7ecfc85656e5403ba64cd43",
+              "environment": "2dd137c78b2faf8f6bc7fc333000726f07105366ff02a27395f8faf5d2e042d3",
+              "evaluator": "a001b24a3c3ae4ceca741b8e1f2b21ea5ee13e055444df65bd62bb38210a5d25",
+              "golden": "94d48fd68a648372f94c18a2ff807cbe1f021bdf30045484efc8fdb7e14c63c0",
+              "public_launcher": "c896fe7aed89ba4e892c89346e77acbffd2c0bdd076841c9e9cda8130a70361a",
+              "public_modes_basic": "c93b502c03cc6eae7a3432d88ad6c567799925a86202e451bf9a39d87478a44b",
+              "public_modes_cannbot": "dbb6c281c3da6e03ce24fb821341ce00fd350400803b5c643f67dfda88d168b6",
+              "public_modes_package": "4cde32b450b15abc08f18710ee8c8032b3346d280f0c027d841e54d361b1ea76",
+              "public_modes_shared": "c96613021e0d685772015d1af300e901b3e273ed0702cca472a0b5a4e184ba42",
+              "public_pto-launcher": "00a6c91da52d01528fbb8aa47d644a4c5b202095c4cddf10222183b4688a6b06",
+              "public_ptobench": "8b282740c32af13e1226246924346e15c28cd57b2357abf3d10e8eedca0bd6ab",
+              "sealed": "e2e6a285c2ed34e27169f87c50321968ba6b64cf799d111c30783df476762fc9"
+            },
+            "seed_source": "2ebb3c1e90c294504a0352ec0ad0199322848a669639950f3e138fd2b5d0b92d",
+            "source": "700c29b6393bd26fcf3c7def01b71168ff44e2e0ca896ea3775f4391e373f9c7"
+          },
+          "mode": "basic",
+          "profile_mode": "combined",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v3_2.deepseek_v3_2_decode_front_scope4_full/20261114T070935Z_b7fb907bf21e",
+          "status": "PASS",
+          "metadata_verification": {
+            "session_id": "20261114T070935Z_b7fb907bf21e",
+            "session_status": "running",
+            "event_seq": 1,
+            "state": "completed",
+            "runtime_status": "pass",
+            "compile_status": "pass",
+            "correctness_status": "not_run",
+            "content_sha256": "700c29b6393bd26fcf3c7def01b71168ff44e2e0ca896ea3775f4391e373f9c7",
+            "profile_strategy": "combined",
+            "mode_id": "basic",
+            "optimizer_id": "plan05_profile_856f4a6a47",
+            "device_count": 1,
+            "configured_devices": [
+              0
+            ],
+            "session_json": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v3_2.deepseek_v3_2_decode_front_scope4_full/20261114T070935Z_b7fb907bf21e/session.json",
+            "events_jsonl": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v3_2.deepseek_v3_2_decode_front_scope4_full/20261114T070935Z_b7fb907bf21e/events.jsonl",
+            "metadata_scope": "session.json and first events.jsonl record only; no large profile payload parsed"
+          }
+        }
+      ],
+      "status": "completed_combined_event_verified_in_public_summary_reference",
+      "coverage_sources": [
+        "public_summary_profile_reference",
+        "selected_coverage_audit_metadata"
+      ]
+    },
+    "deepseek_v4.moe_combine_pro": {
+      "split": "formal_60",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4_flash_dspark.decode_layer_csa_flash": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_layer_ep4_hca_flash": {
+      "split": "formal_60",
+      "device_count": 4,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_layer_ep8_csa_demo": {
+      "split": "formal_60",
+      "device_count": 8,
+      "located_queue_evidence": [
+        {
+          "case_id": "deepseek_v4.prefill_layer_ep8_csa_demo",
+          "session_id": "20261108T094853Z_357c6ad781ea",
+          "event_seq": 1,
+          "candidate_sha256": "409602b910b5f0ce0a189421a9ee7f21477d55969645d91b9abca91ac4eae7e9",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_boundary_recheck_20261108/runs/combined_queue_06/deepseek_v4.prefill_layer_ep8_csa_demo/20261108T094853Z_357c6ad781ea",
+          "index_path": "manual_runs/combined_profile_boundary_recheck_20261108/queue.json"
+        }
+      ],
+      "public_summary_profile_references": [],
+      "status": "completed_combined_event_verified_in_located_queue"
+    },
+    "deepseek_v4.prefill_layer_ep2_csa_pro": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_layer_ep2_csa_flash": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_layer_ep4_swa_flash": {
+      "split": "formal_60",
+      "device_count": 4,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_layer_ep2_csa_demo": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [
+        {
+          "case_id": "deepseek_v4.prefill_layer_ep2_csa_demo",
+          "session_id": "20261106T154609Z_a39baee9eb68",
+          "event_seq": 1,
+          "candidate_sha256": "70cb66c15b42d3811a24b718fffacc534f2ab171bde6a9e0fe89923ea70a3e66",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/post_baseline_combined_20261106/runs/combined_queue_04/deepseek_v4.prefill_layer_ep2_csa_demo/20261106T154609Z_a39baee9eb68",
+          "index_path": "manual_runs/post_baseline_combined_20261106/queue.json"
+        },
+        {
+          "case_id": "deepseek_v4.prefill_layer_ep2_csa_demo",
+          "session_id": "20261108T074546Z_18fe67cc4e27",
+          "event_seq": 1,
+          "candidate_sha256": "70cb66c15b42d3811a24b718fffacc534f2ab171bde6a9e0fe89923ea70a3e66",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_boundary_repair_20261108/runs/combined_queue_01/deepseek_v4.prefill_layer_ep2_csa_demo/20261108T074546Z_18fe67cc4e27",
+          "index_path": "manual_runs/combined_profile_boundary_repair_20261108/queue.json"
+        },
+        {
+          "case_id": "deepseek_v4.prefill_layer_ep2_csa_demo",
+          "session_id": "20261106T043630Z_ef8dda506e2d",
+          "event_seq": 1,
+          "candidate_sha256": "70cb66c15b42d3811a24b718fffacc534f2ab171bde6a9e0fe89923ea70a3e66",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_matrix_20261106/runs/combined_queue_04/deepseek_v4.prefill_layer_ep2_csa_demo/20261106T043630Z_ef8dda506e2d",
+          "index_path": "manual_runs/combined_profile_matrix_20261106/queue.json"
+        },
+        {
+          "case_id": "deepseek_v4.prefill_layer_ep2_csa_demo",
+          "session_id": "20261108T093431Z_3fca95a11aaa",
+          "event_seq": 1,
+          "candidate_sha256": "70cb66c15b42d3811a24b718fffacc534f2ab171bde6a9e0fe89923ea70a3e66",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_boundary_recheck_20261108/runs/combined_queue_02/deepseek_v4.prefill_layer_ep2_csa_demo/20261108T093431Z_3fca95a11aaa",
+          "index_path": "manual_runs/combined_profile_boundary_recheck_20261108/queue.json"
+        }
+      ],
+      "public_summary_profile_references": [],
+      "status": "completed_combined_event_verified_in_located_queue"
+    },
+    "deepseek_v4_flash_dspark.decode_layer_hca_flash": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_layer_ep4_csa_flash": {
+      "split": "formal_60",
+      "device_count": 4,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_layer_ep2_hca_flash": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_layer_ep2_swa_flash": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_layer_ep8_csa_flash": {
+      "split": "formal_60",
+      "device_count": 8,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_layer_ep8_swa_demo": {
+      "split": "formal_60",
+      "device_count": 8,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4_flash_dspark.decode_layer_csa_demo": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4_flash_dspark.decode_layer_hca_demo": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4_flash_mtp.prefill_cp_csa_cp4_flash": {
+      "split": "formal_60",
+      "device_count": 4,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo": {
+      "split": "formal_60",
+      "device_count": 8,
+      "located_queue_evidence": [
+        {
+          "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo",
+          "session_id": "20261106T155904Z_085104f9d3c2",
+          "event_seq": 1,
+          "candidate_sha256": "49ab191a3a5b91c5a574ec877658d6f19dfbcb63c74f25f8957156b3086abd13",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/post_baseline_combined_20261106/runs/combined_queue_10/deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo/20261106T155904Z_085104f9d3c2",
+          "index_path": "manual_runs/post_baseline_combined_20261106/queue.json"
+        },
+        {
+          "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo",
+          "session_id": "20261108T075545Z_de68a31432e9",
+          "event_seq": 1,
+          "candidate_sha256": "49ab191a3a5b91c5a574ec877658d6f19dfbcb63c74f25f8957156b3086abd13",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_boundary_repair_20261108/runs/combined_queue_04/deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo/20261108T075545Z_de68a31432e9",
+          "index_path": "manual_runs/combined_profile_boundary_repair_20261108/queue.json"
+        },
+        {
+          "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo",
+          "session_id": "20261106T044938Z_54b3c68886e3",
+          "event_seq": 1,
+          "candidate_sha256": "49ab191a3a5b91c5a574ec877658d6f19dfbcb63c74f25f8957156b3086abd13",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_matrix_20261106/runs/combined_queue_11/deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo/20261106T044938Z_54b3c68886e3",
+          "index_path": "manual_runs/combined_profile_matrix_20261106/queue.json"
+        },
+        {
+          "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo",
+          "session_id": "20261108T094438Z_bc48b59f3b26",
+          "event_seq": 1,
+          "candidate_sha256": "49ab191a3a5b91c5a574ec877658d6f19dfbcb63c74f25f8957156b3086abd13",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_boundary_recheck_20261108/runs/combined_queue_05/deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo/20261108T094438Z_bc48b59f3b26",
+          "index_path": "manual_runs/combined_profile_boundary_recheck_20261108/queue.json"
+        }
+      ],
+      "public_summary_profile_references": [],
+      "status": "completed_combined_event_verified_in_located_queue"
+    },
+    "deepseek_v4_flash_dspark.prefill_layer_hca_flash": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4_flash_mtp.prefill_cp_csa_cp4_demo": {
+      "split": "formal_60",
+      "device_count": 4,
+      "located_queue_evidence": [
+        {
+          "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp4_demo",
+          "session_id": "20261106T155633Z_7121588e05d5",
+          "event_seq": 1,
+          "candidate_sha256": "eb409c2c2c5b60466a26bd7cc9df70a33631ee8071765c686730bf8ebcc8b785",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/post_baseline_combined_20261106/runs/combined_queue_09/deepseek_v4_flash_mtp.prefill_cp_csa_cp4_demo/20261106T155633Z_7121588e05d5",
+          "index_path": "manual_runs/post_baseline_combined_20261106/queue.json"
+        },
+        {
+          "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp4_demo",
+          "session_id": "20261108T075308Z_db1dfa59336a",
+          "event_seq": 1,
+          "candidate_sha256": "eb409c2c2c5b60466a26bd7cc9df70a33631ee8071765c686730bf8ebcc8b785",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_boundary_repair_20261108/runs/combined_queue_03/deepseek_v4_flash_mtp.prefill_cp_csa_cp4_demo/20261108T075308Z_db1dfa59336a",
+          "index_path": "manual_runs/combined_profile_boundary_repair_20261108/queue.json"
+        },
+        {
+          "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp4_demo",
+          "session_id": "20261106T044611Z_e79d5845ccc1",
+          "event_seq": 1,
+          "candidate_sha256": "eb409c2c2c5b60466a26bd7cc9df70a33631ee8071765c686730bf8ebcc8b785",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_matrix_20261106/runs/combined_queue_09/deepseek_v4_flash_mtp.prefill_cp_csa_cp4_demo/20261106T044611Z_e79d5845ccc1",
+          "index_path": "manual_runs/combined_profile_matrix_20261106/queue.json"
+        },
+        {
+          "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp4_demo",
+          "session_id": "20261108T094157Z_d7255beb794f",
+          "event_seq": 1,
+          "candidate_sha256": "eb409c2c2c5b60466a26bd7cc9df70a33631ee8071765c686730bf8ebcc8b785",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_boundary_recheck_20261108/runs/combined_queue_04/deepseek_v4_flash_mtp.prefill_cp_csa_cp4_demo/20261108T094157Z_d7255beb794f",
+          "index_path": "manual_runs/combined_profile_boundary_recheck_20261108/queue.json"
+        }
+      ],
+      "public_summary_profile_references": [],
+      "status": "completed_combined_event_verified_in_located_queue"
+    },
+    "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_flash": {
+      "split": "formal_60",
+      "device_count": 8,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4_flash_dspark.prefill_layer_swa_demo": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4_flash_dspark.prefill_indexer_demo": {
+      "split": "formal_60",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.moe_ep4_flash": {
+      "split": "formal_60",
+      "device_count": 4,
+      "located_queue_evidence": [
+        {
+          "case_id": "deepseek_v4.moe_ep4_flash",
+          "session_id": "20261106T031140Z_c6e3c009d5b0",
+          "event_seq": 1,
+          "candidate_sha256": "e5cbde40760b0fa0c97b9d8a78f2a99914bd304ac70406a36ce65919604925a8",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_queue_20261106/runs/combined_queue_05/deepseek_v4.moe_ep4_flash/20261106T031140Z_c6e3c009d5b0",
+          "index_path": "manual_runs/combined_profile_queue_20261106/queue.json"
+        }
+      ],
+      "public_summary_profile_references": [],
+      "status": "completed_combined_event_verified_in_located_queue"
+    },
+    "deepseek_v4.moe_ep2_pro": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.moe_ep2_flash": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.moe_ep4_pro": {
+      "split": "formal_60",
+      "device_count": 4,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.moe_ep4_demo": {
+      "split": "formal_60",
+      "device_count": 4,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [
+        {
+          "artifact_index": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep4_demo/20261114T071634Z_9ef2eb6eac48/staging/action_000001/artifacts/index.json",
+          "build_dirs": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep4_demo/20261114T071634Z_9ef2eb6eac48/staging/action_000001/artifacts/.benchmark_outputs/combined/build_output/_jit_l3_moe_xs01j0b1__001"
+          ],
+          "case_id": "deepseek_v4.moe_ep4_demo",
+          "combined_artifacts": [
+            {
+              "artifacts": [
+                "dfx_outputs/rank0/d1/chip_swimlane_records.json",
+                "dfx_outputs/rank0/d1/deps.json",
+                "dfx_outputs/rank1/d1/chip_swimlane_records.json",
+                "dfx_outputs/rank1/d1/deps.json",
+                "dfx_outputs/rank2/d1/chip_swimlane_records.json",
+                "dfx_outputs/rank2/d1/deps.json",
+                "dfx_outputs/rank3/d1/chip_swimlane_records.json",
+                "dfx_outputs/rank3/d1/deps.json",
+                "dfx_outputs/rank0/d1/pmu.csv",
+                "dfx_outputs/rank1/d1/pmu.csv",
+                "dfx_outputs/rank2/d1/pmu.csv",
+                "dfx_outputs/rank3/d1/pmu.csv",
+                "report/pipeline_profile.json",
+                "report/perf_hints.log"
+              ],
+              "mode": "combined",
+              "schema_version": 1,
+              "status": "artifacts_present"
+            }
+          ],
+          "event_seq": 1,
+          "inputs": {
+            "case_id": "deepseek_v4.moe_ep4_demo",
+            "fixed": {
+              "case": "c8a45e2f9c4dfa2bb67078c81c0f1cdbf769689b7be13758e8bac282c90a9987",
+              "environment": "ddde4460172065707d95b979ba0aab935944cf8b69b6dc3c82ead3faea0dcfc8",
+              "evaluator": "a001b24a3c3ae4ceca741b8e1f2b21ea5ee13e055444df65bd62bb38210a5d25",
+              "golden": "94d48fd68a648372f94c18a2ff807cbe1f021bdf30045484efc8fdb7e14c63c0",
+              "public_launcher": "c896fe7aed89ba4e892c89346e77acbffd2c0bdd076841c9e9cda8130a70361a",
+              "public_modes_basic": "c93b502c03cc6eae7a3432d88ad6c567799925a86202e451bf9a39d87478a44b",
+              "public_modes_cannbot": "dbb6c281c3da6e03ce24fb821341ce00fd350400803b5c643f67dfda88d168b6",
+              "public_modes_package": "4cde32b450b15abc08f18710ee8c8032b3346d280f0c027d841e54d361b1ea76",
+              "public_modes_shared": "c96613021e0d685772015d1af300e901b3e273ed0702cca472a0b5a4e184ba42",
+              "public_pto-launcher": "00a6c91da52d01528fbb8aa47d644a4c5b202095c4cddf10222183b4688a6b06",
+              "public_ptobench": "8b282740c32af13e1226246924346e15c28cd57b2357abf3d10e8eedca0bd6ab",
+              "sealed": "59ea40999db41d34b60c4dd296c55fe5442757169518498842be79f25605124b"
+            },
+            "seed_source": "b432e4e7d343ca11f28afe696230ea5899375cb0067339d99fbfad77da47fc4c",
+            "source": "2aee3fa11740a56b5f5ca08dc7a3c7f4410fda8d8b0b15347738b21bb318b2b0"
+          },
+          "mode": "basic",
+          "profile_mode": "combined",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep4_demo/20261114T071634Z_9ef2eb6eac48",
+          "status": "PASS",
+          "metadata_verification": {
+            "session_id": "20261114T071634Z_9ef2eb6eac48",
+            "session_status": "running",
+            "event_seq": 1,
+            "state": "completed",
+            "runtime_status": "pass",
+            "compile_status": "pass",
+            "correctness_status": "not_run",
+            "content_sha256": "2aee3fa11740a56b5f5ca08dc7a3c7f4410fda8d8b0b15347738b21bb318b2b0",
+            "profile_strategy": "combined",
+            "mode_id": "basic",
+            "optimizer_id": "plan05_profile_856f4a6a47",
+            "device_count": 4,
+            "configured_devices": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "session_json": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep4_demo/20261114T071634Z_9ef2eb6eac48/session.json",
+            "events_jsonl": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep4_demo/20261114T071634Z_9ef2eb6eac48/events.jsonl",
+            "metadata_scope": "session.json and first events.jsonl record only; no large profile payload parsed"
+          }
+        }
+      ],
+      "status": "completed_combined_event_verified_in_public_summary_reference",
+      "coverage_sources": [
+        "public_summary_profile_reference",
+        "selected_coverage_audit_metadata"
+      ]
+    },
+    "deepseek_v4.moe_ep2_demo": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [
+        {
+          "case_id": "deepseek_v4.moe_ep2_demo",
+          "session_id": "20261106T155144Z_9194d838a6ce",
+          "event_seq": 1,
+          "candidate_sha256": "2aee3fa11740a56b5f5ca08dc7a3c7f4410fda8d8b0b15347738b21bb318b2b0",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/post_baseline_combined_20261106/runs/combined_queue_06/deepseek_v4.moe_ep2_demo/20261106T155144Z_9194d838a6ce",
+          "index_path": "manual_runs/post_baseline_combined_20261106/queue.json"
+        },
+        {
+          "case_id": "deepseek_v4.moe_ep2_demo",
+          "session_id": "20261106T044144Z_c2f9ed7d0cce",
+          "event_seq": 1,
+          "candidate_sha256": "2aee3fa11740a56b5f5ca08dc7a3c7f4410fda8d8b0b15347738b21bb318b2b0",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_matrix_20261106/runs/combined_queue_06/deepseek_v4.moe_ep2_demo/20261106T044144Z_c2f9ed7d0cce",
+          "index_path": "manual_runs/combined_profile_matrix_20261106/queue.json"
+        }
+      ],
+      "public_summary_profile_references": [
+        {
+          "artifact_index": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep2_demo/20261114T071317Z_909d7b4b4e03/staging/action_000001/artifacts/index.json",
+          "build_dirs": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep2_demo/20261114T071317Z_909d7b4b4e03/staging/action_000001/artifacts/.benchmark_outputs/combined/build_output/_jit_l3_moe_btzlkccm__001"
+          ],
+          "case_id": "deepseek_v4.moe_ep2_demo",
+          "combined_artifacts": [
+            {
+              "artifacts": [
+                "dfx_outputs/rank0/d1/chip_swimlane_records.json",
+                "dfx_outputs/rank0/d1/deps.json",
+                "dfx_outputs/rank1/d1/chip_swimlane_records.json",
+                "dfx_outputs/rank1/d1/deps.json",
+                "dfx_outputs/rank0/d1/pmu.csv",
+                "dfx_outputs/rank1/d1/pmu.csv",
+                "report/pipeline_profile.json",
+                "report/perf_hints.log"
+              ],
+              "mode": "combined",
+              "schema_version": 1,
+              "status": "artifacts_present"
+            }
+          ],
+          "event_seq": 1,
+          "inputs": {
+            "case_id": "deepseek_v4.moe_ep2_demo",
+            "fixed": {
+              "case": "60bd63ea519ed6e4df6662c8bac4ff048aeacefd5afdd26461fb6dfeec2ba720",
+              "environment": "5e5ff41f1869e4225ae888f6ae106b03e0275665c80b2726d4e2ca1a52828d4f",
+              "evaluator": "a001b24a3c3ae4ceca741b8e1f2b21ea5ee13e055444df65bd62bb38210a5d25",
+              "golden": "94d48fd68a648372f94c18a2ff807cbe1f021bdf30045484efc8fdb7e14c63c0",
+              "public_launcher": "c896fe7aed89ba4e892c89346e77acbffd2c0bdd076841c9e9cda8130a70361a",
+              "public_modes_basic": "c93b502c03cc6eae7a3432d88ad6c567799925a86202e451bf9a39d87478a44b",
+              "public_modes_cannbot": "dbb6c281c3da6e03ce24fb821341ce00fd350400803b5c643f67dfda88d168b6",
+              "public_modes_package": "4cde32b450b15abc08f18710ee8c8032b3346d280f0c027d841e54d361b1ea76",
+              "public_modes_shared": "c96613021e0d685772015d1af300e901b3e273ed0702cca472a0b5a4e184ba42",
+              "public_pto-launcher": "00a6c91da52d01528fbb8aa47d644a4c5b202095c4cddf10222183b4688a6b06",
+              "public_ptobench": "8b282740c32af13e1226246924346e15c28cd57b2357abf3d10e8eedca0bd6ab",
+              "sealed": "8c3586b27c29929c25c00f52816a6a9ca818eeb4ee4eda3d331308ee02d62de5"
+            },
+            "seed_source": "b432e4e7d343ca11f28afe696230ea5899375cb0067339d99fbfad77da47fc4c",
+            "source": "2aee3fa11740a56b5f5ca08dc7a3c7f4410fda8d8b0b15347738b21bb318b2b0"
+          },
+          "mode": "basic",
+          "profile_mode": "combined",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep2_demo/20261114T071317Z_909d7b4b4e03",
+          "status": "PASS",
+          "metadata_verification": {
+            "session_id": "20261114T071317Z_909d7b4b4e03",
+            "session_status": "running",
+            "event_seq": 1,
+            "state": "completed",
+            "runtime_status": "pass",
+            "compile_status": "pass",
+            "correctness_status": "not_run",
+            "content_sha256": "2aee3fa11740a56b5f5ca08dc7a3c7f4410fda8d8b0b15347738b21bb318b2b0",
+            "profile_strategy": "combined",
+            "mode_id": "basic",
+            "optimizer_id": "plan05_profile_856f4a6a47",
+            "device_count": 2,
+            "configured_devices": [
+              0,
+              1
+            ],
+            "session_json": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep2_demo/20261114T071317Z_909d7b4b4e03/session.json",
+            "events_jsonl": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep2_demo/20261114T071317Z_909d7b4b4e03/events.jsonl",
+            "metadata_scope": "session.json and first events.jsonl record only; no large profile payload parsed"
+          }
+        }
+      ],
+      "status": "completed_combined_event_verified_in_located_queue_and_public_summary_reference",
+      "coverage_sources": [
+        "located_queue_index",
+        "public_summary_profile_reference",
+        "selected_coverage_audit_metadata"
+      ]
+    },
+    "deepseek_v4.prefill_moe_ep8_demo": {
+      "split": "formal_60",
+      "device_count": 8,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_moe_ep8_flash": {
+      "split": "formal_60",
+      "device_count": 8,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_moe_ep2_pro": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_moe_ep8_pro": {
+      "split": "formal_60",
+      "device_count": 8,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_moe_ep4_demo": {
+      "split": "formal_60",
+      "device_count": 4,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_moe_ep4_pro": {
+      "split": "formal_60",
+      "device_count": 4,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_moe_ep2_flash": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [
+        {
+          "case_id": "deepseek_v4.prefill_moe_ep2_flash",
+          "session_id": "20261106T154939Z_c9b6a78d28f3",
+          "event_seq": 1,
+          "candidate_sha256": "67e5de829251b43f96ea24dd624cd4afcabf79221c43e28f492b2e10e7370df8",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/post_baseline_combined_20261106/runs/combined_queue_05/deepseek_v4.prefill_moe_ep2_flash/20261106T154939Z_c9b6a78d28f3",
+          "index_path": "manual_runs/post_baseline_combined_20261106/queue.json"
+        },
+        {
+          "case_id": "deepseek_v4.prefill_moe_ep2_flash",
+          "session_id": "20261106T043944Z_ab55861d1697",
+          "event_seq": 1,
+          "candidate_sha256": "67e5de829251b43f96ea24dd624cd4afcabf79221c43e28f492b2e10e7370df8",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_matrix_20261106/runs/combined_queue_05/deepseek_v4.prefill_moe_ep2_flash/20261106T043944Z_ab55861d1697",
+          "index_path": "manual_runs/combined_profile_matrix_20261106/queue.json"
+        }
+      ],
+      "public_summary_profile_references": [],
+      "status": "completed_combined_event_verified_in_located_queue"
+    },
+    "deepseek_v4.moe_ep8_flash": {
+      "split": "formal_60",
+      "device_count": 8,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.moe_ep8_demo": {
+      "split": "formal_60",
+      "device_count": 8,
+      "located_queue_evidence": [
+        {
+          "case_id": "deepseek_v4.moe_ep8_demo",
+          "session_id": "20261106T155322Z_392b97b65b5e",
+          "event_seq": 1,
+          "candidate_sha256": "a7c0191ee675b051797b2afcbbdce5ba8312f4ea398ffd29e3a432afd889d779",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/post_baseline_combined_20261106/runs/combined_queue_07/deepseek_v4.moe_ep8_demo/20261106T155322Z_392b97b65b5e",
+          "index_path": "manual_runs/post_baseline_combined_20261106/queue.json"
+        },
+        {
+          "case_id": "deepseek_v4.moe_ep8_demo",
+          "session_id": "20261106T044315Z_917fab39f7ac",
+          "event_seq": 1,
+          "candidate_sha256": "a7c0191ee675b051797b2afcbbdce5ba8312f4ea398ffd29e3a432afd889d779",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_matrix_20261106/runs/combined_queue_07/deepseek_v4.moe_ep8_demo/20261106T044315Z_917fab39f7ac",
+          "index_path": "manual_runs/combined_profile_matrix_20261106/queue.json"
+        }
+      ],
+      "public_summary_profile_references": [
+        {
+          "artifact_index": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep8_demo/20261114T071920Z_d369a49ca534/staging/action_000001/artifacts/index.json",
+          "build_dirs": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep8_demo/20261114T071920Z_d369a49ca534/staging/action_000001/artifacts/.benchmark_outputs/combined/build_output/_jit_l3_moe_0djkjffo__001"
+          ],
+          "case_id": "deepseek_v4.moe_ep8_demo",
+          "combined_artifacts": [
+            {
+              "artifacts": [
+                "dfx_outputs/rank0/d1/chip_swimlane_records.json",
+                "dfx_outputs/rank0/d1/deps.json",
+                "dfx_outputs/rank1/d1/chip_swimlane_records.json",
+                "dfx_outputs/rank1/d1/deps.json",
+                "dfx_outputs/rank2/d1/chip_swimlane_records.json",
+                "dfx_outputs/rank2/d1/deps.json",
+                "dfx_outputs/rank3/d1/chip_swimlane_records.json",
+                "dfx_outputs/rank3/d1/deps.json",
+                "dfx_outputs/rank4/d1/chip_swimlane_records.json",
+                "dfx_outputs/rank4/d1/deps.json",
+                "dfx_outputs/rank5/d1/chip_swimlane_records.json",
+                "dfx_outputs/rank5/d1/deps.json",
+                "dfx_outputs/rank6/d1/chip_swimlane_records.json",
+                "dfx_outputs/rank6/d1/deps.json",
+                "dfx_outputs/rank7/d1/chip_swimlane_records.json",
+                "dfx_outputs/rank7/d1/deps.json",
+                "dfx_outputs/rank0/d1/pmu.csv",
+                "dfx_outputs/rank1/d1/pmu.csv",
+                "dfx_outputs/rank2/d1/pmu.csv",
+                "dfx_outputs/rank3/d1/pmu.csv",
+                "dfx_outputs/rank4/d1/pmu.csv",
+                "dfx_outputs/rank5/d1/pmu.csv",
+                "dfx_outputs/rank6/d1/pmu.csv",
+                "dfx_outputs/rank7/d1/pmu.csv",
+                "report/pipeline_profile.json",
+                "report/perf_hints.log"
+              ],
+              "mode": "combined",
+              "schema_version": 1,
+              "status": "artifacts_present"
+            }
+          ],
+          "event_seq": 1,
+          "inputs": {
+            "case_id": "deepseek_v4.moe_ep8_demo",
+            "fixed": {
+              "case": "0dba64dc18d6119dee9b433eec1d2812a891584808a383a664f0a2e6e1f1cc25",
+              "environment": "ac394cf3625e077df783ba5bf6f01a8467027fe4ab5f0894be5ad0989b5be9cc",
+              "evaluator": "a001b24a3c3ae4ceca741b8e1f2b21ea5ee13e055444df65bd62bb38210a5d25",
+              "golden": "94d48fd68a648372f94c18a2ff807cbe1f021bdf30045484efc8fdb7e14c63c0",
+              "public_launcher": "c896fe7aed89ba4e892c89346e77acbffd2c0bdd076841c9e9cda8130a70361a",
+              "public_modes_basic": "c93b502c03cc6eae7a3432d88ad6c567799925a86202e451bf9a39d87478a44b",
+              "public_modes_cannbot": "dbb6c281c3da6e03ce24fb821341ce00fd350400803b5c643f67dfda88d168b6",
+              "public_modes_package": "4cde32b450b15abc08f18710ee8c8032b3346d280f0c027d841e54d361b1ea76",
+              "public_modes_shared": "c96613021e0d685772015d1af300e901b3e273ed0702cca472a0b5a4e184ba42",
+              "public_pto-launcher": "00a6c91da52d01528fbb8aa47d644a4c5b202095c4cddf10222183b4688a6b06",
+              "public_ptobench": "8b282740c32af13e1226246924346e15c28cd57b2357abf3d10e8eedca0bd6ab",
+              "sealed": "9f74ff1ed612c6ff3e23f1215533ccbfab7065490b6a6980116d39f52210cd0e"
+            },
+            "seed_source": "ed00f7873d8c3578942d7067b31d915e542da4df967cc7b7b9995731f698a060",
+            "source": "a7c0191ee675b051797b2afcbbdce5ba8312f4ea398ffd29e3a432afd889d779"
+          },
+          "mode": "basic",
+          "profile_mode": "combined",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep8_demo/20261114T071920Z_d369a49ca534",
+          "status": "PASS",
+          "metadata_verification": {
+            "session_id": "20261114T071920Z_d369a49ca534",
+            "session_status": "running",
+            "event_seq": 1,
+            "state": "completed",
+            "runtime_status": "pass",
+            "compile_status": "pass",
+            "correctness_status": "not_run",
+            "content_sha256": "a7c0191ee675b051797b2afcbbdce5ba8312f4ea398ffd29e3a432afd889d779",
+            "profile_strategy": "combined",
+            "mode_id": "basic",
+            "optimizer_id": "plan05_profile_856f4a6a47",
+            "device_count": 8,
+            "configured_devices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "session_json": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep8_demo/20261114T071920Z_d369a49ca534/session.json",
+            "events_jsonl": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep8_demo/20261114T071920Z_d369a49ca534/events.jsonl",
+            "metadata_scope": "session.json and first events.jsonl record only; no large profile payload parsed"
+          }
+        }
+      ],
+      "status": "completed_combined_event_verified_in_located_queue_and_public_summary_reference",
+      "coverage_sources": [
+        "located_queue_index",
+        "public_summary_profile_reference",
+        "selected_coverage_audit_metadata"
+      ]
+    },
+    "deepseek_v4_flash_dspark.prefill_layer_hca_demo": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4_flash_dspark.prefill_layer_csa_flash": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_moe_ep4_flash": {
+      "split": "formal_60",
+      "device_count": 4,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.prefill_moe_ep2_demo": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4_flash_dspark.prefill_indexer_pro": {
+      "split": "formal_60",
+      "device_count": 1,
+      "located_queue_evidence": [
+        {
+          "case_id": "deepseek_v4_flash_dspark.prefill_indexer_pro",
+          "session_id": "20261106T030545Z_5f124dab6e73",
+          "event_seq": 1,
+          "candidate_sha256": "a573e81245cbfb193c9b6cbbed013fffe8bb2d78bb49ebca9e9377025bc27f1e",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_queue_20261106/runs/combined_queue_02/deepseek_v4_flash_dspark.prefill_indexer_pro/20261106T030545Z_5f124dab6e73",
+          "index_path": "manual_runs/combined_profile_queue_20261106/queue.json"
+        }
+      ],
+      "public_summary_profile_references": [],
+      "status": "completed_combined_event_verified_in_located_queue"
+    },
+    "deepseek_v4.moe_ep_ep2_flash": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.synthetic_token_loop_prefill_flash": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.synthetic_token_loop_decode_pro": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.synthetic_token_loop_decode_flash": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [
+        {
+          "case_id": "deepseek_v4.synthetic_token_loop_decode_flash",
+          "session_id": "20261108T080125Z_f2c909539e4b",
+          "event_seq": 1,
+          "candidate_sha256": "a2549e0a29fcdb84fd8dca42aa39f122814896801e8c909ef9871d1613df0602",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_boundary_repair_20261108/runs/combined_queue_06/deepseek_v4.synthetic_token_loop_decode_flash/20261108T080125Z_f2c909539e4b",
+          "index_path": "manual_runs/combined_profile_boundary_repair_20261108/queue.json"
+        },
+        {
+          "case_id": "deepseek_v4.synthetic_token_loop_decode_flash",
+          "session_id": "20261108T095420Z_27263abeae0c",
+          "event_seq": 1,
+          "candidate_sha256": "a2549e0a29fcdb84fd8dca42aa39f122814896801e8c909ef9871d1613df0602",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_boundary_recheck_20261108/runs/combined_queue_07/deepseek_v4.synthetic_token_loop_decode_flash/20261108T095420Z_27263abeae0c",
+          "index_path": "manual_runs/combined_profile_boundary_recheck_20261108/queue.json"
+        }
+      ],
+      "public_summary_profile_references": [
+        {
+          "artifact_index": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.synthetic_token_loop_decode_flash/20261114T065723Z_becbc812391e/staging/action_000001/artifacts/index.json",
+          "build_dirs": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.synthetic_token_loop_decode_flash/20261114T065723Z_becbc812391e/staging/action_000001/artifacts/.benchmark_outputs/combined/build_output/_jit_l3_decode_fwd_u9wkl0i1__001"
+          ],
+          "case_id": "deepseek_v4.synthetic_token_loop_decode_flash",
+          "combined_artifacts": [
+            {
+              "artifacts": [
+                "dfx_outputs/rank0/d1/chip_swimlane_records.json",
+                "dfx_outputs/rank0/d1/deps.json",
+                "dfx_outputs/rank1/d1/chip_swimlane_records.json",
+                "dfx_outputs/rank1/d1/deps.json",
+                "dfx_outputs/rank0/d1/pmu.csv",
+                "dfx_outputs/rank1/d1/pmu.csv",
+                "report/pipeline_profile.json",
+                "report/perf_hints.log"
+              ],
+              "mode": "combined",
+              "schema_version": 1,
+              "status": "artifacts_present"
+            }
+          ],
+          "event_seq": 1,
+          "inputs": {
+            "case_id": "deepseek_v4.synthetic_token_loop_decode_flash",
+            "fixed": {
+              "case": "b9ca452d917c7780a05b23f09d390c1686920ef0edd3a124af611b0467502387",
+              "environment": "9509165d96e1b6fd239cd7f15478e63021a36eab6d60921357444877368adc64",
+              "evaluator": "a001b24a3c3ae4ceca741b8e1f2b21ea5ee13e055444df65bd62bb38210a5d25",
+              "golden": "94d48fd68a648372f94c18a2ff807cbe1f021bdf30045484efc8fdb7e14c63c0",
+              "public_launcher": "c896fe7aed89ba4e892c89346e77acbffd2c0bdd076841c9e9cda8130a70361a",
+              "public_modes_basic": "c93b502c03cc6eae7a3432d88ad6c567799925a86202e451bf9a39d87478a44b",
+              "public_modes_cannbot": "dbb6c281c3da6e03ce24fb821341ce00fd350400803b5c643f67dfda88d168b6",
+              "public_modes_package": "4cde32b450b15abc08f18710ee8c8032b3346d280f0c027d841e54d361b1ea76",
+              "public_modes_shared": "c96613021e0d685772015d1af300e901b3e273ed0702cca472a0b5a4e184ba42",
+              "public_pto-launcher": "00a6c91da52d01528fbb8aa47d644a4c5b202095c4cddf10222183b4688a6b06",
+              "public_ptobench": "8b282740c32af13e1226246924346e15c28cd57b2357abf3d10e8eedca0bd6ab",
+              "sealed": "a368bbe77e7b96719b802e3bba3c5e46993ef33c5e803bc2752836d158181d5c"
+            },
+            "seed_source": "71410f51c4d9efd698c899c7432665fb2517fbd3b6470667af60379b4cee5110",
+            "source": "a2549e0a29fcdb84fd8dca42aa39f122814896801e8c909ef9871d1613df0602"
+          },
+          "mode": "basic",
+          "profile_mode": "combined",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.synthetic_token_loop_decode_flash/20261114T065723Z_becbc812391e",
+          "status": "PASS",
+          "metadata_verification": {
+            "session_id": "20261114T065723Z_becbc812391e",
+            "session_status": "running",
+            "event_seq": 1,
+            "state": "completed",
+            "runtime_status": "pass",
+            "compile_status": "pass",
+            "correctness_status": "not_run",
+            "content_sha256": "a2549e0a29fcdb84fd8dca42aa39f122814896801e8c909ef9871d1613df0602",
+            "profile_strategy": "combined",
+            "mode_id": "basic",
+            "optimizer_id": "plan05_profile_856f4a6a47",
+            "device_count": 2,
+            "configured_devices": [
+              6,
+              7
+            ],
+            "session_json": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.synthetic_token_loop_decode_flash/20261114T065723Z_becbc812391e/session.json",
+            "events_jsonl": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.synthetic_token_loop_decode_flash/20261114T065723Z_becbc812391e/events.jsonl",
+            "metadata_scope": "session.json and first events.jsonl record only; no large profile payload parsed"
+          }
+        }
+      ],
+      "status": "completed_combined_event_verified_in_located_queue_and_public_summary_reference",
+      "coverage_sources": [
+        "located_queue_index",
+        "public_summary_profile_reference",
+        "selected_coverage_audit_metadata"
+      ]
+    },
+    "deepseek_v4.synthetic_token_loop_prefill_pro": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4_flash_dspark.dspark_drafter_pro": {
+      "split": "formal_60",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "qwen3_14b.topk_select_k1": {
+      "split": "heldout_15",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.moe_combine_flash": {
+      "split": "heldout_15",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "qwen3_14b.greedy_sample": {
+      "split": "heldout_15",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.moe_ep_ep2_pro": {
+      "split": "heldout_15",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4_flash_dspark.prefill_indexer_flash": {
+      "split": "heldout_15",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4_flash_mtp.prefill_swa_demo": {
+      "split": "heldout_15",
+      "device_count": 1,
+      "located_queue_evidence": [
+        {
+          "case_id": "deepseek_v4_flash_mtp.prefill_swa_demo",
+          "session_id": "20261106T160209Z_08e4cfd591a3",
+          "event_seq": 1,
+          "candidate_sha256": "09a955a67d22b5830034f6e0a5eb5900fa4c042882a1e6165089329470026ea0",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/post_baseline_combined_20261106/runs/combined_queue_11/deepseek_v4_flash_mtp.prefill_swa_demo/20261106T160209Z_08e4cfd591a3",
+          "index_path": "manual_runs/post_baseline_combined_20261106/queue.json"
+        },
+        {
+          "case_id": "deepseek_v4_flash_mtp.prefill_swa_demo",
+          "session_id": "20261106T045242Z_d2e17b820b3f",
+          "event_seq": 1,
+          "candidate_sha256": "09a955a67d22b5830034f6e0a5eb5900fa4c042882a1e6165089329470026ea0",
+          "state": "completed",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/manual_runs/combined_profile_matrix_20261106/runs/combined_queue_12/deepseek_v4_flash_mtp.prefill_swa_demo/20261106T045242Z_d2e17b820b3f",
+          "index_path": "manual_runs/combined_profile_matrix_20261106/queue.json"
+        }
+      ],
+      "public_summary_profile_references": [],
+      "status": "completed_combined_event_verified_in_located_queue"
+    },
+    "deepseek_v4.moe_ep_ep4_flash": {
+      "split": "heldout_15",
+      "device_count": 4,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.moe_ep_ep4_pro": {
+      "split": "heldout_15",
+      "device_count": 4,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.decode_sparse_attn_flash": {
+      "split": "heldout_15",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.decode_sparse_attn_demo": {
+      "split": "heldout_15",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.decode_indexer_pro": {
+      "split": "heldout_15",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4_flash_dspark.moe_flash": {
+      "split": "heldout_15",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    },
+    "deepseek_v4.decode_indexer_demo": {
+      "split": "heldout_15",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [
+        {
+          "artifact_index": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.decode_indexer_demo/20261114T071143Z_25e8407edb69/staging/action_000001/artifacts/index.json",
+          "build_dirs": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.decode_indexer_demo/20261114T071143Z_25e8407edb69/staging/action_000001/artifacts/.benchmark_outputs/combined/build_output/_jit_indexer_test_8vshbzdl__001"
+          ],
+          "case_id": "deepseek_v4.decode_indexer_demo",
+          "combined_artifacts": [
+            {
+              "artifacts": [
+                "dfx_outputs/chip_swimlane_records.json",
+                "dfx_outputs/deps.json",
+                "dfx_outputs/pmu.csv",
+                "report/pipeline_profile.json",
+                "report/perf_hints.log"
+              ],
+              "mode": "combined",
+              "schema_version": 1,
+              "status": "artifacts_present"
+            }
+          ],
+          "event_seq": 1,
+          "inputs": {
+            "case_id": "deepseek_v4.decode_indexer_demo",
+            "fixed": {
+              "case": "1f953227719308ca4701f792947d2fdc2bff56625171f1968dc85c2a83d70b99",
+              "environment": "2dd137c78b2faf8f6bc7fc333000726f07105366ff02a27395f8faf5d2e042d3",
+              "evaluator": "a001b24a3c3ae4ceca741b8e1f2b21ea5ee13e055444df65bd62bb38210a5d25",
+              "golden": "94d48fd68a648372f94c18a2ff807cbe1f021bdf30045484efc8fdb7e14c63c0",
+              "public_launcher": "c896fe7aed89ba4e892c89346e77acbffd2c0bdd076841c9e9cda8130a70361a",
+              "public_modes_basic": "c93b502c03cc6eae7a3432d88ad6c567799925a86202e451bf9a39d87478a44b",
+              "public_modes_cannbot": "dbb6c281c3da6e03ce24fb821341ce00fd350400803b5c643f67dfda88d168b6",
+              "public_modes_package": "4cde32b450b15abc08f18710ee8c8032b3346d280f0c027d841e54d361b1ea76",
+              "public_modes_shared": "c96613021e0d685772015d1af300e901b3e273ed0702cca472a0b5a4e184ba42",
+              "public_pto-launcher": "00a6c91da52d01528fbb8aa47d644a4c5b202095c4cddf10222183b4688a6b06",
+              "public_ptobench": "8b282740c32af13e1226246924346e15c28cd57b2357abf3d10e8eedca0bd6ab",
+              "sealed": "5875ea9cca7d93dd020e985d46766098a947c8336a0ccd0556eaec5437c0c808"
+            },
+            "seed_source": "13ec6464c615175b8f5a2af87e6f2de157ff3f8c210e0ed14315f5a39cc4fa0b",
+            "source": "19a361d2163b44053786d5ce09f5a1e0f5cf8cabdebe2d38bf25a945b9de7120"
+          },
+          "mode": "basic",
+          "profile_mode": "combined",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.decode_indexer_demo/20261114T071143Z_25e8407edb69",
+          "status": "PASS",
+          "metadata_verification": {
+            "session_id": "20261114T071143Z_25e8407edb69",
+            "session_status": "running",
+            "event_seq": 1,
+            "state": "completed",
+            "runtime_status": "pass",
+            "compile_status": "pass",
+            "correctness_status": "not_run",
+            "content_sha256": "19a361d2163b44053786d5ce09f5a1e0f5cf8cabdebe2d38bf25a945b9de7120",
+            "profile_strategy": "combined",
+            "mode_id": "basic",
+            "optimizer_id": "plan05_profile_856f4a6a47",
+            "device_count": 1,
+            "configured_devices": [
+              7
+            ],
+            "session_json": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.decode_indexer_demo/20261114T071143Z_25e8407edb69/session.json",
+            "events_jsonl": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.decode_indexer_demo/20261114T071143Z_25e8407edb69/events.jsonl",
+            "metadata_scope": "session.json and first events.jsonl record only; no large profile payload parsed"
+          }
+        }
+      ],
+      "status": "completed_combined_event_verified_in_public_summary_reference",
+      "coverage_sources": [
+        "public_summary_profile_reference",
+        "selected_coverage_audit_metadata"
+      ]
+    },
+    "qwen3_14b.prefill_fwd": {
+      "split": "heldout_15",
+      "device_count": 1,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [
+        {
+          "artifact_index": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/qwen3_14b.prefill_fwd/20261114T065320Z_b18c3c7738bc/staging/action_000001/artifacts/index.json",
+          "build_dirs": [
+            "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/qwen3_14b.prefill_fwd/20261114T065320Z_b18c3c7738bc/staging/action_000001/artifacts/.benchmark_outputs/combined/build_output/_jit_prefill_fwd_5oxj97ei__001"
+          ],
+          "case_id": "qwen3_14b.prefill_fwd",
+          "combined_artifacts": [
+            {
+              "artifacts": [
+                "dfx_outputs/chip_swimlane_records.json",
+                "dfx_outputs/deps.json",
+                "dfx_outputs/pmu.csv",
+                "report/pipeline_profile.json",
+                "report/perf_hints.log"
+              ],
+              "mode": "combined",
+              "schema_version": 1,
+              "status": "artifacts_present"
+            }
+          ],
+          "event_seq": 1,
+          "inputs": {
+            "case_id": "qwen3_14b.prefill_fwd",
+            "fixed": {
+              "case": "d3c71e9b6b6d3fe2c3bb9277bbdd4f30e2b5fb1e2a30a3f2069ad5eefdd08052",
+              "environment": "2dd137c78b2faf8f6bc7fc333000726f07105366ff02a27395f8faf5d2e042d3",
+              "evaluator": "a001b24a3c3ae4ceca741b8e1f2b21ea5ee13e055444df65bd62bb38210a5d25",
+              "golden": "94d48fd68a648372f94c18a2ff807cbe1f021bdf30045484efc8fdb7e14c63c0",
+              "public_launcher": "c896fe7aed89ba4e892c89346e77acbffd2c0bdd076841c9e9cda8130a70361a",
+              "public_modes_basic": "c93b502c03cc6eae7a3432d88ad6c567799925a86202e451bf9a39d87478a44b",
+              "public_modes_cannbot": "dbb6c281c3da6e03ce24fb821341ce00fd350400803b5c643f67dfda88d168b6",
+              "public_modes_package": "4cde32b450b15abc08f18710ee8c8032b3346d280f0c027d841e54d361b1ea76",
+              "public_modes_shared": "c96613021e0d685772015d1af300e901b3e273ed0702cca472a0b5a4e184ba42",
+              "public_pto-launcher": "00a6c91da52d01528fbb8aa47d644a4c5b202095c4cddf10222183b4688a6b06",
+              "public_ptobench": "8b282740c32af13e1226246924346e15c28cd57b2357abf3d10e8eedca0bd6ab",
+              "sealed": "3b9618f10000316178ed0f70ff2fecff0a099f0b0b08d376fa70938d2c61e0dd"
+            },
+            "seed_source": "c8a29a32de000deee6ff2c63e3081d7ecf4ebf281d8edd8205185455ee9745fb",
+            "source": "e891f55a1965f784d945521baec2a6f239478e50fa47f16347ae735dcd3cc8eb"
+          },
+          "mode": "basic",
+          "profile_mode": "combined",
+          "session_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/qwen3_14b.prefill_fwd/20261114T065320Z_b18c3c7738bc",
+          "status": "PASS",
+          "metadata_verification": {
+            "session_id": "20261114T065320Z_b18c3c7738bc",
+            "session_status": "running",
+            "event_seq": 1,
+            "state": "completed",
+            "runtime_status": "pass",
+            "compile_status": "pass",
+            "correctness_status": "not_run",
+            "content_sha256": "e891f55a1965f784d945521baec2a6f239478e50fa47f16347ae735dcd3cc8eb",
+            "profile_strategy": "combined",
+            "mode_id": "basic",
+            "optimizer_id": "plan05_profile_856f4a6a47",
+            "device_count": 1,
+            "configured_devices": [
+              0
+            ],
+            "session_json": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/qwen3_14b.prefill_fwd/20261114T065320Z_b18c3c7738bc/session.json",
+            "events_jsonl": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/qwen3_14b.prefill_fwd/20261114T065320Z_b18c3c7738bc/events.jsonl",
+            "metadata_scope": "session.json and first events.jsonl record only; no large profile payload parsed"
+          }
+        }
+      ],
+      "status": "completed_combined_event_verified_in_public_summary_reference",
+      "coverage_sources": [
+        "public_summary_profile_reference",
+        "selected_coverage_audit_metadata"
+      ]
+    },
+    "deepseek_v4_flash_dspark.dspark_prefill_pro": {
+      "split": "heldout_15",
+      "device_count": 2,
+      "located_queue_evidence": [],
+      "public_summary_profile_references": [],
+      "status": "not_proven_by_previously_located_queue_indexes"
+    }
+  },
+  "canonical_cases_proven_by_previous_queue_audit": 12,
+  "canonical_cases_not_proven_by_previous_queue_audit": [
+    "deepseek_v3_2.deepseek_v3_2_decode_front_scope4_full",
+    "deepseek_v3_2.deepseek_v3_2_decode_front_scope4_reduced",
+    "deepseek_v4.decode_indexer_demo",
+    "deepseek_v4.decode_indexer_pro",
+    "deepseek_v4.decode_sparse_attn_demo",
+    "deepseek_v4.decode_sparse_attn_flash",
+    "deepseek_v4.lm_head_tp2_demo",
+    "deepseek_v4.lm_head_tp2_flash",
+    "deepseek_v4.lm_head_tp2_pro",
+    "deepseek_v4.moe_combine_flash",
+    "deepseek_v4.moe_combine_pro",
+    "deepseek_v4.moe_ep2_flash",
+    "deepseek_v4.moe_ep2_pro",
+    "deepseek_v4.moe_ep4_demo",
+    "deepseek_v4.moe_ep4_pro",
+    "deepseek_v4.moe_ep8_flash",
+    "deepseek_v4.moe_ep_ep2_flash",
+    "deepseek_v4.moe_ep_ep2_pro",
+    "deepseek_v4.moe_ep_ep4_flash",
+    "deepseek_v4.moe_ep_ep4_pro",
+    "deepseek_v4.prefill_layer_ep2_csa_flash",
+    "deepseek_v4.prefill_layer_ep2_csa_pro",
+    "deepseek_v4.prefill_layer_ep2_hca_flash",
+    "deepseek_v4.prefill_layer_ep2_swa_flash",
+    "deepseek_v4.prefill_layer_ep4_csa_flash",
+    "deepseek_v4.prefill_layer_ep4_hca_flash",
+    "deepseek_v4.prefill_layer_ep4_swa_flash",
+    "deepseek_v4.prefill_layer_ep8_csa_flash",
+    "deepseek_v4.prefill_layer_ep8_swa_demo",
+    "deepseek_v4.prefill_moe_ep2_demo",
+    "deepseek_v4.prefill_moe_ep2_pro",
+    "deepseek_v4.prefill_moe_ep4_demo",
+    "deepseek_v4.prefill_moe_ep4_flash",
+    "deepseek_v4.prefill_moe_ep4_pro",
+    "deepseek_v4.prefill_moe_ep8_demo",
+    "deepseek_v4.prefill_moe_ep8_flash",
+    "deepseek_v4.prefill_moe_ep8_pro",
+    "deepseek_v4.sparse_attn_demo",
+    "deepseek_v4.sparse_attn_flash",
+    "deepseek_v4.synthetic_token_loop_decode_pro",
+    "deepseek_v4.synthetic_token_loop_prefill_flash",
+    "deepseek_v4.synthetic_token_loop_prefill_pro",
+    "deepseek_v4_flash_dspark.decode_layer_csa_demo",
+    "deepseek_v4_flash_dspark.decode_layer_csa_flash",
+    "deepseek_v4_flash_dspark.decode_layer_hca_demo",
+    "deepseek_v4_flash_dspark.decode_layer_hca_flash",
+    "deepseek_v4_flash_dspark.dspark_drafter_pro",
+    "deepseek_v4_flash_dspark.dspark_prefill_pro",
+    "deepseek_v4_flash_dspark.moe_flash",
+    "deepseek_v4_flash_dspark.prefill_indexer_demo",
+    "deepseek_v4_flash_dspark.prefill_indexer_flash",
+    "deepseek_v4_flash_dspark.prefill_layer_csa_flash",
+    "deepseek_v4_flash_dspark.prefill_layer_hca_demo",
+    "deepseek_v4_flash_dspark.prefill_layer_hca_flash",
+    "deepseek_v4_flash_dspark.prefill_layer_swa_demo",
+    "deepseek_v4_flash_mtp.prefill_cp_csa_cp4_flash",
+    "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_flash",
+    "deepseek_v4_flash_mtp.sample_flash",
+    "deepseek_v4_flash_mtp.sample_pro",
+    "qwen3_14b.greedy_sample",
+    "qwen3_14b.prefill_fwd",
+    "qwen3_14b.topk_select_k1",
+    "qwen3_14b.topk_select_k32"
+  ],
+  "nonselected_cases_in_previous_queue_audit": [
+    "deepseek_v3_2.deepseek_v3_2_decode_front_scope1",
+    "deepseek_v3_2.deepseek_v3_2_prefill_back",
+    "deepseek_v4.decode_compressor_ratio128_demo",
+    "deepseek_v4.decode_compressor_ratio4_demo",
+    "deepseek_v4.rmsnorm_decode_demo",
+    "deepseek_v4_flash_dspark.decode_csa_flash",
+    "deepseek_v4_flash_dspark.dspark_drafter_flash",
+    "deepseek_v4_flash_dspark.lm_head_demo",
+    "deepseek_v4_flash_mtp.prefill_cp_hca_cp2_demo",
+    "deepseek_v4_flash_mtp.prefill_cp_hca_cp4_demo",
+    "qwen3_14b.decode_layer_single_layer_max_seq_127",
+    "qwen3_14b.qwen3_14b_decode_scope1",
+    "qwen3_14b.qwen3_14b_decode_scope2",
+    "qwen3_32b.qwen3_32b_decode_scope1"
+  ],
+  "public_profile_metadata": [
+    {
+      "case_id": "qwen3_14b.prefill_fwd",
+      "session_id": "20261114T065320Z_b18c3c7738bc",
+      "session_status": "running",
+      "event_seq": 1,
+      "state": "completed",
+      "runtime_status": "pass",
+      "compile_status": "pass",
+      "correctness_status": "not_run",
+      "content_sha256": "e891f55a1965f784d945521baec2a6f239478e50fa47f16347ae735dcd3cc8eb",
+      "profile_strategy": "combined",
+      "mode_id": "basic",
+      "optimizer_id": "plan05_profile_856f4a6a47",
+      "device_count": 1,
+      "configured_devices": [
+        0
+      ],
+      "session_json": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/qwen3_14b.prefill_fwd/20261114T065320Z_b18c3c7738bc/session.json",
+      "events_jsonl": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/qwen3_14b.prefill_fwd/20261114T065320Z_b18c3c7738bc/events.jsonl",
+      "metadata_scope": "session.json and first events.jsonl record only; no large profile payload parsed"
+    },
+    {
+      "case_id": "deepseek_v4.synthetic_token_loop_decode_flash",
+      "session_id": "20261114T065723Z_becbc812391e",
+      "session_status": "running",
+      "event_seq": 1,
+      "state": "completed",
+      "runtime_status": "pass",
+      "compile_status": "pass",
+      "correctness_status": "not_run",
+      "content_sha256": "a2549e0a29fcdb84fd8dca42aa39f122814896801e8c909ef9871d1613df0602",
+      "profile_strategy": "combined",
+      "mode_id": "basic",
+      "optimizer_id": "plan05_profile_856f4a6a47",
+      "device_count": 2,
+      "configured_devices": [
+        6,
+        7
+      ],
+      "session_json": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.synthetic_token_loop_decode_flash/20261114T065723Z_becbc812391e/session.json",
+      "events_jsonl": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.synthetic_token_loop_decode_flash/20261114T065723Z_becbc812391e/events.jsonl",
+      "metadata_scope": "session.json and first events.jsonl record only; no large profile payload parsed"
+    },
+    {
+      "case_id": "deepseek_v3_2.deepseek_v3_2_decode_front_scope4_full",
+      "session_id": "20261114T070935Z_b7fb907bf21e",
+      "session_status": "running",
+      "event_seq": 1,
+      "state": "completed",
+      "runtime_status": "pass",
+      "compile_status": "pass",
+      "correctness_status": "not_run",
+      "content_sha256": "700c29b6393bd26fcf3c7def01b71168ff44e2e0ca896ea3775f4391e373f9c7",
+      "profile_strategy": "combined",
+      "mode_id": "basic",
+      "optimizer_id": "plan05_profile_856f4a6a47",
+      "device_count": 1,
+      "configured_devices": [
+        0
+      ],
+      "session_json": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v3_2.deepseek_v3_2_decode_front_scope4_full/20261114T070935Z_b7fb907bf21e/session.json",
+      "events_jsonl": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v3_2.deepseek_v3_2_decode_front_scope4_full/20261114T070935Z_b7fb907bf21e/events.jsonl",
+      "metadata_scope": "session.json and first events.jsonl record only; no large profile payload parsed"
+    },
+    {
+      "case_id": "deepseek_v4.lm_head_tp2_demo",
+      "session_id": "20261114T071039Z_79c960ea61fb",
+      "session_status": "running",
+      "event_seq": 1,
+      "state": "completed",
+      "runtime_status": "pass",
+      "compile_status": "pass",
+      "correctness_status": "not_run",
+      "content_sha256": "6ec281861b9311e3f78c223b9e46a7add471ee8f0ddcb0456c6e35660b0433d8",
+      "profile_strategy": "combined",
+      "mode_id": "basic",
+      "optimizer_id": "plan05_profile_856f4a6a47",
+      "device_count": 2,
+      "configured_devices": [
+        0,
+        1
+      ],
+      "session_json": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.lm_head_tp2_demo/20261114T071039Z_79c960ea61fb/session.json",
+      "events_jsonl": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.lm_head_tp2_demo/20261114T071039Z_79c960ea61fb/events.jsonl",
+      "metadata_scope": "session.json and first events.jsonl record only; no large profile payload parsed"
+    },
+    {
+      "case_id": "deepseek_v4.decode_indexer_demo",
+      "session_id": "20261114T071143Z_25e8407edb69",
+      "session_status": "running",
+      "event_seq": 1,
+      "state": "completed",
+      "runtime_status": "pass",
+      "compile_status": "pass",
+      "correctness_status": "not_run",
+      "content_sha256": "19a361d2163b44053786d5ce09f5a1e0f5cf8cabdebe2d38bf25a945b9de7120",
+      "profile_strategy": "combined",
+      "mode_id": "basic",
+      "optimizer_id": "plan05_profile_856f4a6a47",
+      "device_count": 1,
+      "configured_devices": [
+        7
+      ],
+      "session_json": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.decode_indexer_demo/20261114T071143Z_25e8407edb69/session.json",
+      "events_jsonl": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.decode_indexer_demo/20261114T071143Z_25e8407edb69/events.jsonl",
+      "metadata_scope": "session.json and first events.jsonl record only; no large profile payload parsed"
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep2_demo",
+      "session_id": "20261114T071317Z_909d7b4b4e03",
+      "session_status": "running",
+      "event_seq": 1,
+      "state": "completed",
+      "runtime_status": "pass",
+      "compile_status": "pass",
+      "correctness_status": "not_run",
+      "content_sha256": "2aee3fa11740a56b5f5ca08dc7a3c7f4410fda8d8b0b15347738b21bb318b2b0",
+      "profile_strategy": "combined",
+      "mode_id": "basic",
+      "optimizer_id": "plan05_profile_856f4a6a47",
+      "device_count": 2,
+      "configured_devices": [
+        0,
+        1
+      ],
+      "session_json": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep2_demo/20261114T071317Z_909d7b4b4e03/session.json",
+      "events_jsonl": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep2_demo/20261114T071317Z_909d7b4b4e03/events.jsonl",
+      "metadata_scope": "session.json and first events.jsonl record only; no large profile payload parsed"
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep4_demo",
+      "session_id": "20261114T071634Z_9ef2eb6eac48",
+      "session_status": "running",
+      "event_seq": 1,
+      "state": "completed",
+      "runtime_status": "pass",
+      "compile_status": "pass",
+      "correctness_status": "not_run",
+      "content_sha256": "2aee3fa11740a56b5f5ca08dc7a3c7f4410fda8d8b0b15347738b21bb318b2b0",
+      "profile_strategy": "combined",
+      "mode_id": "basic",
+      "optimizer_id": "plan05_profile_856f4a6a47",
+      "device_count": 4,
+      "configured_devices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "session_json": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep4_demo/20261114T071634Z_9ef2eb6eac48/session.json",
+      "events_jsonl": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep4_demo/20261114T071634Z_9ef2eb6eac48/events.jsonl",
+      "metadata_scope": "session.json and first events.jsonl record only; no large profile payload parsed"
+    },
+    {
+      "case_id": "deepseek_v4.moe_ep8_demo",
+      "session_id": "20261114T071920Z_d369a49ca534",
+      "session_status": "running",
+      "event_seq": 1,
+      "state": "completed",
+      "runtime_status": "pass",
+      "compile_status": "pass",
+      "correctness_status": "not_run",
+      "content_sha256": "a7c0191ee675b051797b2afcbbdce5ba8312f4ea398ffd29e3a432afd889d779",
+      "profile_strategy": "combined",
+      "mode_id": "basic",
+      "optimizer_id": "plan05_profile_856f4a6a47",
+      "device_count": 8,
+      "configured_devices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "session_json": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep8_demo/20261114T071920Z_d369a49ca534/session.json",
+      "events_jsonl": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/plan05_profile_856f4a6a47/deepseek_v4.moe_ep8_demo/20261114T071920Z_d369a49ca534/events.jsonl",
+      "metadata_scope": "session.json and first events.jsonl record only; no large profile payload parsed"
+    }
+  ],
+  "public_profile_metadata_scope": "Eight PASS combined-profile references were checked against their Session/Event metadata; this is selected-case evidence, not a complete 75-Case collection index.",
+  "selected_cases_proven_by_public_profile_metadata": 8,
+  "selected_cases_proven_union_of_located_queue_and_public_metadata": 17,
+  "selected_cases_remaining_without_located_profile_evidence": 58,
+  "canonical_cases_proven_by_public_profile_audit": [
+    "deepseek_v3_2.deepseek_v3_2_decode_front_scope4_full",
+    "deepseek_v4.decode_indexer_demo",
+    "deepseek_v4.lm_head_tp2_demo",
+    "deepseek_v4.moe_ep2_demo",
+    "deepseek_v4.moe_ep4_demo",
+    "deepseek_v4.moe_ep8_demo",
+    "deepseek_v4.synthetic_token_loop_decode_flash",
+    "qwen3_14b.prefill_fwd"
+  ],
+  "canonical_cases_not_proven_by_union_audit": [
+    "deepseek_v3_2.deepseek_v3_2_decode_front_scope4_reduced",
+    "deepseek_v4.decode_indexer_pro",
+    "deepseek_v4.decode_sparse_attn_demo",
+    "deepseek_v4.decode_sparse_attn_flash",
+    "deepseek_v4.lm_head_tp2_flash",
+    "deepseek_v4.lm_head_tp2_pro",
+    "deepseek_v4.moe_combine_flash",
+    "deepseek_v4.moe_combine_pro",
+    "deepseek_v4.moe_ep2_flash",
+    "deepseek_v4.moe_ep2_pro",
+    "deepseek_v4.moe_ep4_pro",
+    "deepseek_v4.moe_ep8_flash",
+    "deepseek_v4.moe_ep_ep2_flash",
+    "deepseek_v4.moe_ep_ep2_pro",
+    "deepseek_v4.moe_ep_ep4_flash",
+    "deepseek_v4.moe_ep_ep4_pro",
+    "deepseek_v4.prefill_layer_ep2_csa_flash",
+    "deepseek_v4.prefill_layer_ep2_csa_pro",
+    "deepseek_v4.prefill_layer_ep2_hca_flash",
+    "deepseek_v4.prefill_layer_ep2_swa_flash",
+    "deepseek_v4.prefill_layer_ep4_csa_flash",
+    "deepseek_v4.prefill_layer_ep4_hca_flash",
+    "deepseek_v4.prefill_layer_ep4_swa_flash",
+    "deepseek_v4.prefill_layer_ep8_csa_flash",
+    "deepseek_v4.prefill_layer_ep8_swa_demo",
+    "deepseek_v4.prefill_moe_ep2_demo",
+    "deepseek_v4.prefill_moe_ep2_pro",
+    "deepseek_v4.prefill_moe_ep4_demo",
+    "deepseek_v4.prefill_moe_ep4_flash",
+    "deepseek_v4.prefill_moe_ep4_pro",
+    "deepseek_v4.prefill_moe_ep8_demo",
+    "deepseek_v4.prefill_moe_ep8_flash",
+    "deepseek_v4.prefill_moe_ep8_pro",
+    "deepseek_v4.sparse_attn_demo",
+    "deepseek_v4.sparse_attn_flash",
+    "deepseek_v4.synthetic_token_loop_decode_pro",
+    "deepseek_v4.synthetic_token_loop_prefill_flash",
+    "deepseek_v4.synthetic_token_loop_prefill_pro",
+    "deepseek_v4_flash_dspark.decode_layer_csa_demo",
+    "deepseek_v4_flash_dspark.decode_layer_csa_flash",
+    "deepseek_v4_flash_dspark.decode_layer_hca_demo",
+    "deepseek_v4_flash_dspark.decode_layer_hca_flash",
+    "deepseek_v4_flash_dspark.dspark_drafter_pro",
+    "deepseek_v4_flash_dspark.dspark_prefill_pro",
+    "deepseek_v4_flash_dspark.moe_flash",
+    "deepseek_v4_flash_dspark.prefill_indexer_demo",
+    "deepseek_v4_flash_dspark.prefill_indexer_flash",
+    "deepseek_v4_flash_dspark.prefill_layer_csa_flash",
+    "deepseek_v4_flash_dspark.prefill_layer_hca_demo",
+    "deepseek_v4_flash_dspark.prefill_layer_hca_flash",
+    "deepseek_v4_flash_dspark.prefill_layer_swa_demo",
+    "deepseek_v4_flash_mtp.prefill_cp_csa_cp4_flash",
+    "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_flash",
+    "deepseek_v4_flash_mtp.sample_flash",
+    "deepseek_v4_flash_mtp.sample_pro",
+    "qwen3_14b.greedy_sample",
+    "qwen3_14b.topk_select_k1",
+    "qwen3_14b.topk_select_k32"
+  ]
+}

@@ -8,7 +8,7 @@ Overall completion is unproven. Real paired trials cannot start until the two ex
 | No forbidden public/Basic/CANNBot/Case/collector changes | evidence/identity_audit.json compares 1,118 initial source hashes; own commits touch only this Mode | verified at audit time |
 | Preserve unrelated dirty and staged work | evidence/worktree_start.txt; explicit path staging and --only commits | preserved |
 | Input identity includes uncommitted source and actual Provider | inputs.json per-file hashes, effective deepseek-flash/high | verified |
-| Full Formal60+Heldout15 combined completion index | existing queues cover 26 unique Cases including CPU/profile_validation; public summary is Evaluate75/Profile8 | not_located; external prerequisite |
+| Full Formal60+Heldout15 combined completion index | [selected coverage audit](evidence/selected_coverage_audit.json): located queue events for 12 selected Cases plus 8 public Profile references (3 overlap), 17/75 union; 58 remain without located evidence in these sources | full index not_located; external prerequisite |
 | Generic Pi extension/socket interface | public_pi_tool_tests.log; version identity in inputs.json | CPU verified once |
 | Selected Mode source bound by Launcher/Session protection | current create_session/_fixed_roots/launcher call inspected | absent; external prerequisite |
 | Frozen runtime only, original retained | analyzer_manifest.json; copy test; identity audit | byte-identical; adaptations outside copy |

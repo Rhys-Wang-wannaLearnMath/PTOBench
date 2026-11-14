@@ -36,6 +36,12 @@
       "result": "11 passed in 2.40s",
       "log": "evidence/review_fixes_mode_suite_green.log",
       "scope": "Affected regression after review changes to adapter and Broker, including downstream Mode lifecycle."
+    },
+    "selected_case_coverage_audit": {
+      "path": "evidence/selected_coverage_audit.json",
+      "result": "17 of 75 selected Cases have located completed combined-profile event evidence (12 queue-index cases + 8 public references - 3 overlap); 58 remain without located evidence in these sources.",
+      "public_reference_metadata_checked": "session.json and first events.jsonl record only; no large profile payload parsed",
+      "status": "coverage_index_still_incomplete"
     }
   },
   "claims": {
@@ -49,7 +55,10 @@
     "actual_model_Analyzer_calls": "not_observed_no_real_session",
     "tool_results_used_in_decisions": "not_observed_no_real_session",
     "actual_model_Wiki_reads": "not_observed_no_real_session",
-    "optimization_benefit": "unmeasured_no_paired_sessions"
+    "optimization_benefit": "unmeasured_no_paired_sessions",
+    "selected_cases_with_located_combined_profile_evidence": 17,
+    "selected_cases_without_located_combined_profile_evidence": 58,
+    "full_75_case_combined_profile_index": "not_located"
   },
   "sessions": [
     {
@@ -277,7 +286,8 @@
   },
   "external_dependencies": [
     "selected_mode_source_protection: not_ready",
-    "75_case_completed_combined_profile_index: not_located"
+    "75_case_completed_combined_profile_index: not_located",
+    "selected_case_coverage_index: incomplete; evidence/selected_coverage_audit.json locates 17/75 only"
   ],
   "experiment_manifest": "experiment_manifest.json",
   "input_identities": "inputs.json",

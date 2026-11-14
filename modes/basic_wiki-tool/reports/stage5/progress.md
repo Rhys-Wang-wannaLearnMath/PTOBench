@@ -56,6 +56,12 @@
 - Real launch blocked by selected-Mode source protection missing from create_session/_fixed_roots/Launcher and missing full input index. No bypass, model, smoke or hardware run started. Six Session roots remain null, real Pi registered/active evidence absent, actual model calls and optimization benefit unmeasured.
 - Next: after public owner supplies implementation+acceptance and full coverage index, check code identities; create approved traversable output roots via existing policy, then run only six configs serially in frozen order with PTOBench device locks. No per-step permission needed.
 
+## Coverage continuation — 2026-11-15
+
+- Rechecked the eight `combined_profile_evidence` references in `reports/agent_upgrade/dedicated_agent_user/plan05-continuation-20261114T064555Z-passrefs/summary.json` using only each referenced `session.json` and first `events.jsonl` record. All eight identify a completed `combined` event with PASS runtime/compile metadata; three overlap the previously located queue evidence.
+- `evidence/selected_coverage_audit.json` now records the exact Session IDs, event sequence, content hashes, device groups and metadata paths. The union is 17/75 selected Cases with located completed combined-profile evidence (12 queue-index Cases + 8 public references − 3 overlap); 58 selected Cases remain without located evidence in these sources.
+- This is a coverage-index audit, not a claim that the remaining Cases lack Profiles. No large profile payload was parsed, no replay/recollection was run, and no Session/model/NPU action was launched. The two launch blockers remain unchanged: selected-Mode source protection is absent in the public Session/Launcher path, and a complete 75-Case combined Profile index is not located.
+
 ## Task 5 — partial report, whole-implementation review pending
 
 - Final report will retain null metrics for unlaunched Sessions, separate CPU tool roundtrips from actual model use, and leave overall Stage5 incomplete.

@@ -7,6 +7,7 @@
 - [Six configurations, pairing identities, seed manifests and reuse audit](experiment_manifest.json)
 - [Structured results with unmeasured fields left null](summary.json)
 - [Requirement audit](acceptance_audit.md)
+- [Formal60/Held-out15 selected-profile coverage audit](evidence/selected_coverage_audit.json)
 - [Independent review and fixes](evidence/independent_review.md)
 
 CPU evidence proves nine registrations through a Pi API stub and real TS/Node→Unix socket→Analyzer roundtrips, plus pagination, typed errors, cancellation, interruption, duplicate rejection and cleanup. See [bridge/adapter acceptance](evidence/task2_green.log). It does not prove real Pi/model visibility or actual model calls.
@@ -22,7 +23,7 @@ Real Pi registration/active-tool evidence is absent until the three treatment Se
 Two launch prerequisites remain:
 
 1. Public selected-Mode source protection: `create_session/_fixed_roots` still uses a fixed Mode list and Launcher passes no selected source directory. The generic Mode plan's Task 1 must be implemented and accepted by its owner. Do not add this Mode to a static list or bypass protection.
-2. Full Formal60+Heldout15 combined Profile completion index: six existing queue indexes provide verified completed combined events for 26 distinct Cases, including non-Formal fixtures, but no complete 75-Case index was located. Public plan05's PASS summary means 75 correctness Evaluates plus eight representative combined Profiles; it is not full combined-profile coverage. No 75-Case replay/recollection was performed.
+2. Full Formal60+Heldout15 combined Profile completion index: the located queue indexes prove 12 selected Cases, and lightweight Session/Event checks of the eight public PASS combined-profile references add five unique selected Cases (17/75 total; three overlap). The remaining 58 selected Cases have no located evidence in these sources. Public plan05's PASS summary means 75 correctness Evaluates plus eight representative combined Profiles; it is not full combined-profile coverage. No 75-Case replay/recollection was performed. See [selected_coverage_audit.json](evidence/selected_coverage_audit.json); its gap count is not proof that Profiles do not exist.
 
 The experiment manifest fixes effective deepseek-flash/high, Pi1.5.2, budget20+finish1 and Case seed identity. Case runtime device groups are [0,1], [0,1] and [0..7]. Two historical Basic lm_head Sessions were inspected and rejected for reuse because their budget/reasoning/profile differ. Run configurations in their numbered serial order only after prerequisites and frozen identities are revalidated. Output roots must follow existing Broker/group traversal policy and PTOBench device locks.
 
