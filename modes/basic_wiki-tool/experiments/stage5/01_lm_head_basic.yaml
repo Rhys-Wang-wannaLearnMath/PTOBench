@@ -1,0 +1,12 @@
+case: deepseek_v4.lm_head_tp2_flash
+mode: basic
+optimizer:
+  id: s5_01_lm_head_basic
+  backend: pi
+  profile: default
+budget:
+  max_hardware_actions: 20
+  finish_actions: 1
+output:
+  runs_root: ../../../../runs/stage5
+  snapshots_root: ../../../../snapshots/stage5

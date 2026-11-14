@@ -1,0 +1,12 @@
+case: deepseek_v4.prefill_layer_ep2_csa_demo
+mode: basic_wiki-tool
+optimizer:
+  id: s5_03_prefill_layer_wiki_tool
+  backend: pi
+  profile: default
+budget:
+  max_hardware_actions: 20
+  finish_actions: 1
+output:
+  runs_root: ../../../../runs/stage5
+  snapshots_root: ../../../../snapshots/stage5

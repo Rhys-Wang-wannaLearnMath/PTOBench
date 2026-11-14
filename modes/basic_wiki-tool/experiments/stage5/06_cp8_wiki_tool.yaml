@@ -1,0 +1,12 @@
+case: deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo
+mode: basic_wiki-tool
+optimizer:
+  id: s5_06_cp8_wiki_tool
+  backend: pi
+  profile: default
+budget:
+  max_hardware_actions: 20
+  finish_actions: 1
+output:
+  runs_root: ../../../../runs/stage5
+  snapshots_root: ../../../../snapshots/stage5

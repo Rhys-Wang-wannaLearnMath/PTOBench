@@ -1690,5 +1690,21 @@
   "external_dependencies": {
     "selected_mode_source_protection": "not_ready",
     "pi_tool_interface": "verified: evidence/public_pi_tool_tests.log; source_sha256 recorded"
+  },
+  "coverage_distinction": {
+    "public_acceptance_summary": "reports/agent_upgrade/dedicated_agent_user/plan05-continuation-20261114T064555Z-passrefs/summary.json",
+    "sha256": "2d86ca0f091c9e73fd1651ed07852ecf7574f9c0b7943e58f37b61779fe0ef0f",
+    "correctness_evaluate_coverage": {
+      "continued_referenced": 40,
+      "current_run": 0,
+      "historical_referenced": 35,
+      "passed": 75,
+      "required": 75
+    },
+    "combined_profile_coverage": {
+      "passed": 8,
+      "required": 8
+    },
+    "interpretation": "75 correctness Evaluate coverage and eight representative combined Profiles do not prove 75 completed combined Profiles. Full collection index remains not_located."
   }
 }
