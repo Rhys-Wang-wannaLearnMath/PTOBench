@@ -40,8 +40,8 @@
     "selected_case_coverage_audit": {
       "path": "evidence/selected_coverage_audit.json",
       "status": "collection_in_progress",
-      "covered": 27,
-      "pending_collection": 48,
+      "covered": 28,
+      "pending_collection": 47,
       "failed_collection": 0,
       "scope": "Control identity, indexed diagnostic presence and full rank coverage; canonical starting Candidate verified with public Workspace helpers."
     }
@@ -58,8 +58,8 @@
     "tool_results_used_in_decisions": "not_observed_no_real_session",
     "actual_model_Wiki_reads": "not_observed_no_real_session",
     "optimization_benefit": "unmeasured_no_paired_sessions",
-    "selected_cases_with_located_combined_profile_evidence": 27,
-    "selected_cases_without_located_combined_profile_evidence": 48,
+    "selected_cases_with_located_combined_profile_evidence": 28,
+    "selected_cases_without_located_combined_profile_evidence": 47,
     "full_75_case_combined_profile_index": "being_completed_by_authorized_CLI_collection"
   },
   "sessions": [
@@ -297,5 +297,14 @@
     "report": "evidence/independent_review.md",
     "fix_commit": "ed7565a",
     "deferred_minor_findings": []
+  },
+  "execution_progress": {
+    "collector_tool_session": 55209,
+    "collector_pid": 683815,
+    "continuation_tool_session": 31733,
+    "continuation_pid": 688748,
+    "collection_log": "/data2/ziruiwang/PTOBench/stage5_profile_fill/collection.log",
+    "continuation_log": "/data2/ziruiwang/PTOBench/stage5_trials/continuation.log",
+    "status": "collector_live_continuation_waiting_for_terminal_process"
   }
 }
