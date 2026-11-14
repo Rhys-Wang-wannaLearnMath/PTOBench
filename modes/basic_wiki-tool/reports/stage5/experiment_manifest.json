@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "prepared_not_launched",
+  "status": "prepared_coverage_collection_in_progress",
   "configs": [
     {
       "order": 1,
@@ -9,7 +9,7 @@
       "configuration": "modes/basic_wiki-tool/experiments/stage5/01_lm_head_basic.yaml",
       "configuration_sha256": "ff258139e25b04f4f001b37b92e15f686a31951b8032c2212a1b34b89e2b9e14",
       "optimizer_id": "s5_01_lm_head_basic",
-      "status": "not_started_external_prerequisites",
+      "status": "pending_profile_coverage_step",
       "session_root": null,
       "expected_runs_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/stage5"
     },
@@ -20,7 +20,7 @@
       "configuration": "modes/basic_wiki-tool/experiments/stage5/02_lm_head_wiki_tool.yaml",
       "configuration_sha256": "879d915090de0997e567d8d7d9da660d221184578e32dfdea4089f9280d61979",
       "optimizer_id": "s5_02_lm_head_wiki_tool",
-      "status": "not_started_external_prerequisites",
+      "status": "pending_profile_coverage_step",
       "session_root": null,
       "expected_runs_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/stage5"
     },
@@ -31,7 +31,7 @@
       "configuration": "modes/basic_wiki-tool/experiments/stage5/03_prefill_layer_wiki_tool.yaml",
       "configuration_sha256": "92d29423fe230f58dec0ad19c932cdae9de1ae4db105bb29dcc9ffb329be2c63",
       "optimizer_id": "s5_03_prefill_layer_wiki_tool",
-      "status": "not_started_external_prerequisites",
+      "status": "pending_profile_coverage_step",
       "session_root": null,
       "expected_runs_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/stage5"
     },
@@ -42,7 +42,7 @@
       "configuration": "modes/basic_wiki-tool/experiments/stage5/04_prefill_layer_basic.yaml",
       "configuration_sha256": "aede5cbc51623fc0b0c6ae1aa1c51e650a1f8c4e5f9cbe1f91a846d0775c5dcc",
       "optimizer_id": "s5_04_prefill_layer_basic",
-      "status": "not_started_external_prerequisites",
+      "status": "pending_profile_coverage_step",
       "session_root": null,
       "expected_runs_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/stage5"
     },
@@ -53,7 +53,7 @@
       "configuration": "modes/basic_wiki-tool/experiments/stage5/05_cp8_basic.yaml",
       "configuration_sha256": "ef19e0813f79f7a0af83e43cf1efca483cf39daa35cb9294b2edfe7cc436d0b5",
       "optimizer_id": "s5_05_cp8_basic",
-      "status": "not_started_external_prerequisites",
+      "status": "pending_profile_coverage_step",
       "session_root": null,
       "expected_runs_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/stage5"
     },
@@ -64,7 +64,7 @@
       "configuration": "modes/basic_wiki-tool/experiments/stage5/06_cp8_wiki_tool.yaml",
       "configuration_sha256": "0936c1b8d4c12d4beace6ceb62fbdcee7ddb80134f553f03af61c54b683d3c6f",
       "optimizer_id": "s5_06_cp8_wiki_tool",
-      "status": "not_started_external_prerequisites",
+      "status": "pending_profile_coverage_step",
       "session_root": null,
       "expected_runs_root": "/data1/home/ziruiwang/pypto-lib/benchmarks/PTOBench/runs/stage5"
     }
@@ -380,9 +380,9 @@
     ]
   },
   "external_dependencies": [
-    "selected_mode_source_protection: not_ready",
-    "75_case_completed_combined_profile_index: not_located"
+    "selected_mode_source_protection: waiting waived by latest user instruction; public sources remain unchanged"
   ],
-  "launch_allowed": false,
-  "next_step": "Revalidate public protection implementation and owner acceptance, locate full input index, then recheck frozen pair identities and launch ONLY the six listed configs serially. Create output roots with existing broker/group traversal policy before launch."
+  "launch_allowed": true,
+  "next_step": "Poll the running Profile collector; rebuild coverage from terminal Session events. Then revalidate effective pair identities and launch ONLY the six configs in numbered order with normal PTOBench locks.",
+  "launch_order_constraint": "Finish the authorized 75-Case coverage/failed-evidence step, revalidate paired inputs, then launch exactly these six configs serially."
 }

@@ -14,6 +14,6 @@ Pi's native extension talks to a Python Broker over the current Session's `agent
 
 `method/analyzer_registration.json` separately records the registered and active Pi tool sets. This proves visibility only when emitted by real Pi; it is not evidence of an actual model call or optimization benefit.
 
-Stage 5 status, CPU evidence and external prerequisites: [reports/stage5/progress.md](reports/stage5/progress.md). Real experiments must wait for selected-Mode source protection and the full input-coverage evidence. Do not run extra smoke sessions or the 75-Case collection.
+Stage 5 status and CPU evidence: [reports/stage5/progress.md](reports/stage5/progress.md). The latest user decision authorizes missing canonical starting Candidate Profile collection through normal PTOBench CLI, followed by the six planned paired Sessions. Selected-Mode source protection is not a waiting condition. Do not add smoke Sessions or extra Agent trials.
 
 CPU checks use the existing official Python environment and `PYTHONPATH=.:evaluator:evaluator/tests`. Follow the ledger to reuse passed checks whose code has not changed. No dependencies are added.

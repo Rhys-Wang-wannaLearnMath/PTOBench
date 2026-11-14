@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
-  "status": "incomplete_external_prerequisites",
+  "status": "in_progress_profile_collection",
   "goal_complete": false,
   "tasks": {
-    "0": "input audit recorded; coverage/protection gaps explicit",
+    "0": "coverage_index_rebuilt_missing_canonical_profiles_collecting",
     "1": "implemented_CPU_verified",
     "2": "implemented_CPU_verified",
     "3": "implemented_CPU_verified",
-    "4": "configs_prepared_sessions_not_launched",
+    "4": "six_configs_prepared_pair_trials_follow_coverage",
     "5": "partial_report_complete_real_trial_data_pending"
   },
   "evidence": {
@@ -39,9 +39,11 @@
     },
     "selected_case_coverage_audit": {
       "path": "evidence/selected_coverage_audit.json",
-      "result": "17 of 75 selected Cases have located completed combined-profile event evidence (12 queue-index cases + 8 public references - 3 overlap); 58 remain without located evidence in these sources.",
-      "public_reference_metadata_checked": "session.json and first events.jsonl record only; no large profile payload parsed",
-      "status": "coverage_index_still_incomplete"
+      "status": "collection_in_progress",
+      "covered": 27,
+      "pending_collection": 48,
+      "failed_collection": 0,
+      "scope": "Control identity, indexed diagnostic presence and full rank coverage; canonical starting Candidate verified with public Workspace helpers."
     }
   },
   "claims": {
@@ -56,9 +58,9 @@
     "tool_results_used_in_decisions": "not_observed_no_real_session",
     "actual_model_Wiki_reads": "not_observed_no_real_session",
     "optimization_benefit": "unmeasured_no_paired_sessions",
-    "selected_cases_with_located_combined_profile_evidence": 17,
-    "selected_cases_without_located_combined_profile_evidence": 58,
-    "full_75_case_combined_profile_index": "not_located"
+    "selected_cases_with_located_combined_profile_evidence": 27,
+    "selected_cases_without_located_combined_profile_evidence": 48,
+    "full_75_case_combined_profile_index": "being_completed_by_authorized_CLI_collection"
   },
   "sessions": [
     {
@@ -66,7 +68,7 @@
       "case_id": "deepseek_v4.lm_head_tp2_flash",
       "mode": "basic",
       "configuration": "modes/basic_wiki-tool/experiments/stage5/01_lm_head_basic.yaml",
-      "status": "not_started_external_prerequisites",
+      "status": "pending_profile_coverage_step",
       "session_root": null,
       "reused": false,
       "initial_candidate_sha256": null,
@@ -91,14 +93,14 @@
       "wiki_read_evidence": null,
       "raw_agent_record": null,
       "raw_analyzer_call_root": null,
-      "unavailable_reason": "Session not launched: public selected-Mode protection prerequisite not ready; full 75 combined Profile index not located."
+      "unavailable_reason": "Paired Session not yet launched; authorized missing canonical Profile collection is running first in the user-requested order. Selected-Mode protection is not a launch gate."
     },
     {
       "order": 2,
       "case_id": "deepseek_v4.lm_head_tp2_flash",
       "mode": "basic_wiki-tool",
       "configuration": "modes/basic_wiki-tool/experiments/stage5/02_lm_head_wiki_tool.yaml",
-      "status": "not_started_external_prerequisites",
+      "status": "pending_profile_coverage_step",
       "session_root": null,
       "reused": false,
       "initial_candidate_sha256": null,
@@ -123,14 +125,14 @@
       "wiki_read_evidence": null,
       "raw_agent_record": null,
       "raw_analyzer_call_root": null,
-      "unavailable_reason": "Session not launched: public selected-Mode protection prerequisite not ready; full 75 combined Profile index not located."
+      "unavailable_reason": "Paired Session not yet launched; authorized missing canonical Profile collection is running first in the user-requested order. Selected-Mode protection is not a launch gate."
     },
     {
       "order": 3,
       "case_id": "deepseek_v4.prefill_layer_ep2_csa_demo",
       "mode": "basic_wiki-tool",
       "configuration": "modes/basic_wiki-tool/experiments/stage5/03_prefill_layer_wiki_tool.yaml",
-      "status": "not_started_external_prerequisites",
+      "status": "pending_profile_coverage_step",
       "session_root": null,
       "reused": false,
       "initial_candidate_sha256": null,
@@ -155,14 +157,14 @@
       "wiki_read_evidence": null,
       "raw_agent_record": null,
       "raw_analyzer_call_root": null,
-      "unavailable_reason": "Session not launched: public selected-Mode protection prerequisite not ready; full 75 combined Profile index not located."
+      "unavailable_reason": "Paired Session not yet launched; authorized missing canonical Profile collection is running first in the user-requested order. Selected-Mode protection is not a launch gate."
     },
     {
       "order": 4,
       "case_id": "deepseek_v4.prefill_layer_ep2_csa_demo",
       "mode": "basic",
       "configuration": "modes/basic_wiki-tool/experiments/stage5/04_prefill_layer_basic.yaml",
-      "status": "not_started_external_prerequisites",
+      "status": "pending_profile_coverage_step",
       "session_root": null,
       "reused": false,
       "initial_candidate_sha256": null,
@@ -187,14 +189,14 @@
       "wiki_read_evidence": null,
       "raw_agent_record": null,
       "raw_analyzer_call_root": null,
-      "unavailable_reason": "Session not launched: public selected-Mode protection prerequisite not ready; full 75 combined Profile index not located."
+      "unavailable_reason": "Paired Session not yet launched; authorized missing canonical Profile collection is running first in the user-requested order. Selected-Mode protection is not a launch gate."
     },
     {
       "order": 5,
       "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo",
       "mode": "basic",
       "configuration": "modes/basic_wiki-tool/experiments/stage5/05_cp8_basic.yaml",
-      "status": "not_started_external_prerequisites",
+      "status": "pending_profile_coverage_step",
       "session_root": null,
       "reused": false,
       "initial_candidate_sha256": null,
@@ -219,14 +221,14 @@
       "wiki_read_evidence": null,
       "raw_agent_record": null,
       "raw_analyzer_call_root": null,
-      "unavailable_reason": "Session not launched: public selected-Mode protection prerequisite not ready; full 75 combined Profile index not located."
+      "unavailable_reason": "Paired Session not yet launched; authorized missing canonical Profile collection is running first in the user-requested order. Selected-Mode protection is not a launch gate."
     },
     {
       "order": 6,
       "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo",
       "mode": "basic_wiki-tool",
       "configuration": "modes/basic_wiki-tool/experiments/stage5/06_cp8_wiki_tool.yaml",
-      "status": "not_started_external_prerequisites",
+      "status": "pending_profile_coverage_step",
       "session_root": null,
       "reused": false,
       "initial_candidate_sha256": null,
@@ -251,7 +253,7 @@
       "wiki_read_evidence": null,
       "raw_agent_record": null,
       "raw_analyzer_call_root": null,
-      "unavailable_reason": "Session not launched: public selected-Mode protection prerequisite not ready; full 75 combined Profile index not located."
+      "unavailable_reason": "Paired Session not yet launched; authorized missing canonical Profile collection is running first in the user-requested order. Selected-Mode protection is not a launch gate."
     }
   ],
   "paired_comparisons": [
@@ -285,9 +287,7 @@
     "source": "Use original PTOBench session/event/recording ledgers, no second hardware ledger."
   },
   "external_dependencies": [
-    "selected_mode_source_protection: not_ready",
-    "75_case_completed_combined_profile_index: not_located",
-    "selected_case_coverage_index: incomplete; evidence/selected_coverage_audit.json locates 17/75 only"
+    "selected_mode_source_protection: waiting explicitly waived by latest user instruction; public code unchanged"
   ],
   "experiment_manifest": "experiment_manifest.json",
   "input_identities": "inputs.json",

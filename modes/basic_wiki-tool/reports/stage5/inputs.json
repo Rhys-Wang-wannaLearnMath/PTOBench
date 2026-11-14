@@ -1686,9 +1686,9 @@
       "index_path": "manual_runs/combined_profile_boundary_recheck_20261108/queue.json"
     }
   ],
-  "collection_75_status": "not_located",
+  "collection_75_status": "collection_in_progress",
   "external_dependencies": {
-    "selected_mode_source_protection": "not_ready",
+    "selected_mode_source_protection": "not_ready; latest user instruction explicitly waives waiting; public code remains unchanged",
     "pi_tool_interface": "verified: evidence/public_pi_tool_tests.log; source_sha256 recorded"
   },
   "coverage_distinction": {
@@ -1708,14 +1708,12 @@
     "interpretation": "75 correctness Evaluate coverage and eight representative combined Profiles do not prove 75 completed combined Profiles. Full collection index remains not_located.",
     "selected_coverage_audit": {
       "path": "evidence/selected_coverage_audit.json",
-      "sha256": "655057e16c5db39557de30202ffd0b52589aec3c6a3c739abd51bd4c14aff5c4",
-      "selected_cases": 75,
-      "located_queue_cases": 12,
-      "located_public_profile_cases": 8,
-      "overlap_cases": 3,
-      "located_union_cases": 17,
-      "remaining_without_located_profile_evidence": 58,
-      "interpretation": "Lightweight Session/Event metadata verification of eight public PASS combined-profile references adds five unique selected Cases to the twelve queue-index cases. The remaining 58 are unproven by these located sources; this is not proof that Profiles do not exist."
+      "schema_version": 2,
+      "status": "collection_in_progress",
+      "covered": 27,
+      "pending": 48,
+      "failed": 0,
+      "authority": "Current audit supersedes historical located-source counts; canonical starting Candidate includes normal Workspace-generated tuning.json."
     }
   }
 }

@@ -1,4 +1,4 @@
-# PTOAnalyzer Stage 5 — incomplete, external prerequisites pending
+# PTOAnalyzer Stage 5 — in progress
 
 `modes/basic_wiki-tool` implements Basic's single Pi Agent lifecycle plus an optimization Wiki and nine read-only Analyzer tools. Tasks 1–3 have CPU acceptance evidence. Six paired-trial configurations are prepared, but **no real trial Session has been launched**. Stage 5 is not complete.
 
@@ -20,11 +20,10 @@ The generic public Pi extension/socket tests passed once: [public evidence](evid
 
 Real Pi registration/active-tool evidence is absent until the three treatment Sessions run. Actual model tool calls, observed Wiki reads, later decisions citing tool results and optimization benefit are all unmeasured. Unlaunched Session metrics are null with an explicit reason, not zero. After real trials, report all outcomes, including failures and zero tool calls, without adding forced-call or smoke Sessions.
 
-Two launch prerequisites remain:
+The latest user decision authorizes filling missing Formal60/Held-out15 combined Profiles and proceeding without waiting for selected-Mode source protection. Public PTOBench code remains unchanged. Earlier blocker descriptions in historical ledger entries are superseded.
 
-1. Public selected-Mode source protection: `create_session/_fixed_roots` still uses a fixed Mode list and Launcher passes no selected source directory. The generic Mode plan's Task 1 must be implemented and accepted by its owner. Do not add this Mode to a static list or bypass protection.
-2. Full Formal60+Heldout15 combined Profile completion index: the located queue indexes prove 12 selected Cases, and lightweight Session/Event checks of the eight public PASS combined-profile references add five unique selected Cases (17/75 total; three overlap). The remaining 58 selected Cases have no located evidence in these sources. Public plan05's PASS summary means 75 correctness Evaluates plus eight representative combined Profiles; it is not full combined-profile coverage. No 75-Case replay/recollection was performed. See [selected_coverage_audit.json](evidence/selected_coverage_audit.json); its gap count is not proof that Profiles do not exist.
+Coverage is being rebuilt from raw Session/Event/artifact indexes. The initial rebuilt audit verifies 27/75 Cases: 18 reused historical Profiles and 9 new canonical starting Candidate collections through normal `ptobench profile .`. Each selected record has authorized metadata, indexed diagnostics and complete device-rank coverage. Remaining Cases are collected serially with the Case's full device group; failures retain original CLI/Session evidence while other Cases continue. The current machine-readable status is [selected_coverage_audit.json](evidence/selected_coverage_audit.json).
 
-The experiment manifest fixes effective deepseek-flash/high, Pi1.5.2, budget20+finish1 and Case seed identity. Case runtime device groups are [0,1], [0,1] and [0..7]. Two historical Basic lm_head Sessions were inspected and rejected for reuse because their budget/reasoning/profile differ. Run configurations in their numbered serial order only after prerequisites and frozen identities are revalidated. Output roots must follow existing Broker/group traversal policy and PTOBench device locks.
+The experiment manifest fixes effective deepseek-flash/high, Pi1.5.2, budget20+finish1 and Case seed identity. Case runtime device groups are [0,1], [0,1] and [0..7]. Two historical Basic lm_head Sessions were inspected and rejected for reuse because their budget/reasoning/profile differ. Run configurations in their numbered serial order after the coverage step and frozen identities are revalidated. Output roots must follow existing Broker/group traversal policy and PTOBench device locks.
 
 Only the Wiki+Analyzer combination can be evaluated by these three pairs. Do not attribute effects separately or claim universal performance improvement. Profile measurements are diagnostic and never Clean Latency.

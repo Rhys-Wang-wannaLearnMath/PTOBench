@@ -1,6 +1,6 @@
 # Stage 5 requirement audit
 
-Overall completion is unproven. Real paired trials cannot start until the two external prerequisites below are satisfied. Evidence is scoped to the requirement it actually exercises.
+Overall completion is unproven. The latest user decision waives waiting for selected-Mode protection and authorizes missing canonical Profile collection before the paired trials. Evidence is scoped to the requirement it actually exercises.
 
 | Requirement | Current evidence | Status |
 |---|---|---|
@@ -8,9 +8,9 @@ Overall completion is unproven. Real paired trials cannot start until the two ex
 | No forbidden public/Basic/CANNBot/Case/collector changes | evidence/identity_audit.json compares 1,118 initial source hashes; own commits touch only this Mode | verified at audit time |
 | Preserve unrelated dirty and staged work | evidence/worktree_start.txt; explicit path staging and --only commits | preserved |
 | Input identity includes uncommitted source and actual Provider | inputs.json per-file hashes, effective deepseek-flash/high | verified |
-| Full Formal60+Heldout15 combined completion index | [selected coverage audit](evidence/selected_coverage_audit.json): located queue events for 12 selected Cases plus 8 public Profile references (3 overlap), 17/75 union; 58 remain without located evidence in these sources | full index not_located; external prerequisite |
+| Full Formal60+Heldout15 combined completion index | [selected coverage audit](evidence/selected_coverage_audit.json), rebuilt from raw metadata; missing canonical Candidates collected by normal CLI | in progress |
 | Generic Pi extension/socket interface | public_pi_tool_tests.log; version identity in inputs.json | CPU verified once |
-| Selected Mode source bound by Launcher/Session protection | current create_session/_fixed_roots/launcher call inspected | absent; external prerequisite |
+| Selected Mode source bound by Launcher/Session protection | remains absent in public code | waiting waived by latest user decision; no public change |
 | Frozen runtime only, original retained | analyzer_manifest.json; copy test; identity audit | byte-identical; adaptations outside copy |
 | Static nine tool specs, names/schema/role mapping | test_copy_and_specs_match_source; task2_green.log | CPU verified; no initial_summary |
 | No-Profile discovery/error, later/new/old/fork Profile selection | test_profile_selection_lifecycle | CPU verified |
@@ -33,7 +33,7 @@ Overall completion is unproven. Real paired trials cannot start until the two ex
 | Independent Provider secret storage and no credential archive | ignored .env; shared Provider/provenance; identity audit | verified local .env excluded; real archives pending |
 | Six exact named configs and serial paired order, equal model/budget/seed/devices | experiment_manifest.json; launcher parser | prepared, unlaunched |
 | Reuse only matching Basic records | two historical Session metadata records rejected for budget/reasoning mismatch | no exact reusable record found |
-| Three real Basic/treatment pairs through PTOBench | all six Session paths null | pending; blocked by public/input prerequisites |
+| Three real Basic/treatment pairs through PTOBench | all six Session paths null | pending; follows authorized Profile coverage step |
 | Real Pi nine tools active, natural call behavior and Wiki evidence | no real Sessions | unverified; do not conflate with CPU stub |
 | Per-Session performance/correctness/diff/actions/tokens/time/end reason | summary.json explicit nulls/reasons | pending raw Sessions |
 | Separate registered, actually called, later cited, final benefit | summary claims and report distinctions | accurately separated; actual behavior unmeasured |

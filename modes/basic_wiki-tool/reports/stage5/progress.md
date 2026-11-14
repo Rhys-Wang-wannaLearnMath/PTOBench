@@ -1,5 +1,11 @@
 # Stage 5 ledger — plan: modes/ptomni/pto_analyzer/planning/stage5/plans/IMPLEMENTATION_PLAN.md
 
+## 2026-11-15 — resumed by latest decision
+
+- The latest user decision supersedes the earlier external-blocker ruling: selected-Mode source protection is not a prerequisite for this task, public PTOBench code remains read-only, and Formal60+Held-out15 Profile coverage may be completed here through normal PTOBench CLI sessions.
+- Existing implementation and CPU evidence remain valid and are not being repeated while unchanged: Mode suite 11 passed, public Pi interface 2 passed/9 subtests, and the Analyzer runtime copy remains byte-identical.
+- Coverage scan of all non-Agent `events.jsonl` under `runs`, `manual_runs`, and `reports` found 18 selected Cases with completed `combined` Profile events. One (`deepseek_v4.lm_head_tp2_pro`) was absent from the previous audit because its raw Session existed outside the six indexed queues; the audit will be rebuilt from the raw Session/Event records before any new hardware action.
+
 ## 2026-11-15 — start / Task 0
 
 - Read full implementation plan, Stage 5 spec, modes/PROTOCOL.md, Analyzer interfaces, ponytail, executing-plans, TDD and verification skills.
@@ -86,3 +92,16 @@
 - No 75-Case rerun, extra smoke, LLM/API/NPU invocation or bypass Session launched. Generic public Pi tests reused after initial pass; last own Mode suite11 passed because production review fixes required affected regressions.
 - Resume from this ledger. Do not repeat unchanged CPU checks. Revalidate selected-Mode public protection + owner acceptance and locate full combined collection index; if ready, recheck manifest pair identities and run exactly six authorized configs serially. If dependencies remain absent, inspect authoritative state and record the continuing blocker; do not declare Stage5 complete.
 - Rulings are recorded above: user ledger/direct existing worktree rather than unavailable skill helpers; effective Provider matching rather than env-path-dependent profile SHA; typed serialization error rather than altering nonfinite Analyzer evidence. Their costs are explicit. No deferred minor findings.
+
+## Authorized Profile collection — running
+
+- Started one serial collector through normal `ptobench profile .`, `profile_strategy=combined`, and Case-defined device groups. Session roots are under `runs/stage5_profile_fill/stage5_profile_fill/<case>/<session>`; snapshots use `snapshots/stage5_profile_fill`. Normal public Session creation, CLI isolation and device locks are used; no collector/public code edits or alternate hardware ledger.
+- Rebuilt coverage with `experiments/stage5/scripts/audit_profiles.py`: 27/75 currently usable (18 existing + 9 newly collected); all 27 match canonical Candidate plus normal generated tuning.json. Artifact checks authorize Session/Event/index against protection metadata and verify indexed diagnostic files and full multi-card rank coverage without reparsing large payloads.
+- All 73 combined artifact indexes located in the initial scan are attached to Sessions with Event files; no orphaned raw combined index requiring reconstruction was found. Raw Session discovery added lm_head_tp2_pro to the earlier queue-limited audit. Duplicates are retained as references, with one explicitly selected per Case by canonical-match then latest usable event.
+- CPU/public tests are reused unchanged. The live serial collection tool session is 77161 (PID639260 at the checkpoint); it is not an experiment Agent Session. Do not restart it on an observation timeout; poll the handle/process and Session events.
+
+## Profile output storage adjustment
+
+- Ten new Profiles completed (28/75 usable together with 18 historical records), including EP4 HCA on [0,1,2,3]. Remaining sealed fixed inputs total about345 GiB versus351 GiB free on `/data1`, before diagnostics and paired-trial archives. `/data2` is Broker-owned with6.6 TiB available.
+- The first collector was interrupted by SIGINT only while `create_session` was in preflight fixture construction for `prefill_layer_ep2_csa_pro`, before a Session or CLI child existed. Handle77161 terminated with exit130; normal public context managers released locks. No hardware action was interrupted or repeated.
+- Remaining Profiles resume through the same serial driver with explicit output roots `/data2/ziruiwang/PTOBench/stage5_profile_fill/runs` and `.../snapshots`. Completed `/data1` Sessions remain in place; the audit scans both locations. This is output placement only, with no public or collector change.
