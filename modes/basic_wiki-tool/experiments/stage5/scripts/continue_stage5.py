@@ -17,6 +17,10 @@ BENCH = Path(__file__).resolve().parents[5]
 MODE = BENCH / 'modes/basic_wiki-tool'
 REPORT = MODE / 'reports/stage5'
 OUTPUT = Path('/data2/ziruiwang/PTOBench/stage5_trials')
+RECOVERY_SESSIONS = {
+    1: ('20261115T013039Z_41d365f68093', 'completed'),
+    2: ('20261115T021536Z_aecc178a0ae4', 'failed_before_agent_start'),
+}
 sys.path[:0] = [str(BENCH), str(BENCH / 'evaluator')]
 
 
@@ -47,8 +51,6 @@ def validate_inputs():
     for row in manifest['configs']:
         if sha(BENCH / row['configuration']) != row['configuration_sha256']:
             raise RuntimeError(f'Config identity changed: {row["configuration"]}')
-        if (Path(row['expected_runs_root']) / row['optimizer_id']).exists():
-            raise RuntimeError(f'Trial output already exists; inspect original Session instead of restarting: {row["optimizer_id"]}')
     for case_id, row in manifest['case_inputs'].items():
         case_path = BENCH / 'cases' / case_id.replace('.', '/') / 'case.json'
         if sha(case_path) != row['case_sha256'] or sha(BENCH / row['environment']) != row['environment_sha256']:
@@ -71,6 +73,46 @@ def validate_inputs():
     return manifest
 
 
+def validate_trial_recovery(manifest):
+    """Reuse the known Basic success; allow one zero-action retry for the socket failure."""
+    states = {}
+    for row in manifest['configs']:
+        parent = Path(row['expected_runs_root']) / row['optimizer_id'] / row['case_id']
+        sessions = sorted(parent.glob('*/session.json')) if parent.exists() else []
+        order = row['order']
+        if order in (1, 2):
+            expected_id, expected_state = RECOVERY_SESSIONS[order]
+            if len(sessions) != 1 or sessions[0].parent.name != expected_id:
+                raise RuntimeError(f'Trial {order} has unexpected prior Sessions; inspect before continuing')
+            root = sessions[0].parent
+            record = json.loads(sessions[0].read_text())
+            if order == 1:
+                valid = (record.get('status') == 'completed' and record.get('mode', {}).get('id') == 'basic'
+                         and record.get('profile_strategy') == 'combined'
+                         and record.get('usage', {}).get('hardware_actions') == 17)
+            else:
+                result_path = root / 'launcher_result.json'
+                result = json.loads(result_path.read_text()) if result_path.is_file() else {}
+                agent = json.loads((root / 'agent/session.json').read_text()) if (root / 'agent/session.json').is_file() else {}
+                valid = (record.get('status') == 'failed' and record.get('mode', {}).get('id') == 'basic_wiki-tool'
+                         and record.get('profile_strategy') == 'combined'
+                         and record.get('usage', {}).get('hardware_actions') == 0
+                         and record.get('next_event_seq') == 1
+                         and not (root / 'events.jsonl').read_text().strip()
+                         and result.get('optimizer_exit_code') == 5
+                         and result.get('error_code') == 'recording_incomplete'
+                         and agent.get('status') == 'missing'
+                         and not list((root / 'agent/native').glob('*')))
+            if not valid:
+                raise RuntimeError(f'Trial {order} prior Session does not match the recorded {expected_state} recovery evidence')
+            states[order] = expected_state
+        elif sessions or parent.exists():
+            raise RuntimeError(f'Trial {order} already has output; refusing an accidental duplicate')
+        else:
+            states[order] = 'not_started'
+    return states
+
+
 def main():
     pid, start = int(sys.argv[1]), sys.argv[2]
     print(json.dumps({'waiting_for_collector_pid': pid, 'start_ticks': start}), flush=True)
@@ -82,8 +124,9 @@ def main():
     if coverage['summary']['pending_collection']:
         raise RuntimeError('Collector left unattempted Cases; inspect its original progress log before launching trials')
     manifest = validate_inputs()
+    states = validate_trial_recovery(manifest)
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    print(json.dumps({'inputs_revalidated': True, 'coverage': coverage['summary'], 'ordered_configs': [r['configuration'] for r in manifest['configs']]}), flush=True)
+    print(json.dumps({'inputs_revalidated': True, 'recovery_states': states, 'coverage': coverage['summary'], 'ordered_configs': [r['configuration'] for r in manifest['configs']]}), flush=True)
     env = dict(os.environ)
     env.update({
         'PATH': os.pathsep.join((str(BENCH.parents[1] / '.venv-official/bin'), str(BENCH), env.get('PATH', ''))),
@@ -93,7 +136,12 @@ def main():
         'PTOBENCH_MINIFORGE_ROOT': env.get('PTOBENCH_MINIFORGE_ROOT', '/data1/home/ziruiwang/miniforge3'),
     })
     for row in manifest['configs']:
-        log = OUTPUT / f"{row['order']:02d}_{row['optimizer_id']}.log"
+        if states[row['order']] == 'completed':
+            print(json.dumps({'reusing_completed_trial': row['order'], 'session': RECOVERY_SESSIONS[row['order']][0]}), flush=True)
+            continue
+        retry = states[row['order']] == 'failed_before_agent_start'
+        log_name = f"{row['order']:02d}_{row['optimizer_id']}{'_retry1' if retry else ''}.log"
+        log = OUTPUT / log_name
         print(json.dumps({'starting_trial': row['order'], 'case': row['case_id'], 'mode': row['mode'], 'config': row['configuration'], 'log': str(log)}), flush=True)
         with log.open('w') as stream:
             result = subprocess.run([str(BENCH / 'pto-launcher'), 'run', row['configuration']], cwd=BENCH, env=env, stdout=stream, stderr=subprocess.STDOUT, check=False)

@@ -31,11 +31,12 @@ jev_explore/
 !.agents/skills/
 !.agents/skills/**
 .aws
-升级
+/升级/
 archeved
 lightweight_e2e
 manual_runs
 .superpowers
+reports
 
 # Mode-local provider credentials; keep only .env.example in version control.
 modes/*/.env

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline_head": "45ff9cd56e44f77917ad9f96c180c4b8de929044",
-  "current_head": "ed7565a38b758c39bc78772d83052818eea211bc",
+  "current_head": "c53ba6465cd8e80bdc2dda0d70827db53bfa8e40",
   "all_recorded_public_Basic_Analyzer_Wiki_sources_unchanged": true,
   "changed_sources": [],
   "missing_sources": [],
@@ -18,22 +18,22 @@
   "mode_code_and_test_sha256": {
     "instructions.md": "e5f36e78ade4b1ce29278b1c623415805636bbf49169b5b973f6b37f88115419",
     "resources.py": "8e5dcc3787ec61a22553c82fbbc10a898c002bd46cd8db26b1444b809002bbd8",
-    "runner.py": "ed04c929f4375976dc2bf433de0384553a7107c1180a47d41e2beab41ebc29e2",
-    "tools.py": "42d0cc06064e7b4464005c5be5881532362725ba1dfb92aaac0f7e02cb649e7c",
+    "runner.py": "e4a24f9f723e5b2bde838cc98a10539fb06248e6f06cbbfaf1519826b22a21be",
+    "tools.py": "ade31b43e26e59f04b60115410783ee494dea10cc117f90b452891406ca51ba8",
     "analyzer_manifest.json": "3c1110baf8c12e2bfa8a7debfa5dd079130e858fba4e2f77816d29f3d359a098",
     "analyzer_adapter.py": "fd1bd76d49335655d9486e4a5873fc875df2ca68472ced21a891582058b76912",
     ".gitignore": "2f242b3cad9918a0654c72d56a1f214010e305555fe336ca4adcaff60c52bfb7",
     "mode.yaml": "eba5557d23cce5921d30c516ae4f18ee5de81fb232510cdd2986043e3a625676",
-    "README.md": "ff91264dd22aa6bd98ea8f9d39d2789feea9eed6d64b0fe8969eb226168a95c5",
+    "README.md": "897f50d7d30a09d57fc88bee3ae0352a5371e590ec28ffe64165c7c82c2eef69",
     ".env.example": "b7067ab4a90896ea539fd0ff95e12a395365ef6d28a5e0594968134d71d8ad4a",
     "prompt.py": "dad94447dd899b9dedf00159093bffe99fde4f8a6515d32949e83f8c4de36660",
     "bridge/pi_analyzer.ts": "ff711359f507811c510c872fce73962912d9950c518818577a395a6636125a3a",
-    "experiments/stage5/04_prefill_layer_basic.yaml": "aede5cbc51623fc0b0c6ae1aa1c51e650a1f8c4e5f9cbe1f91a846d0775c5dcc",
-    "experiments/stage5/03_prefill_layer_wiki_tool.yaml": "92d29423fe230f58dec0ad19c932cdae9de1ae4db105bb29dcc9ffb329be2c63",
-    "experiments/stage5/05_cp8_basic.yaml": "ef19e0813f79f7a0af83e43cf1efca483cf39daa35cb9294b2edfe7cc436d0b5",
-    "experiments/stage5/02_lm_head_wiki_tool.yaml": "879d915090de0997e567d8d7d9da660d221184578e32dfdea4089f9280d61979",
-    "experiments/stage5/06_cp8_wiki_tool.yaml": "0936c1b8d4c12d4beace6ceb62fbdcee7ddb80134f553f03af61c54b683d3c6f",
-    "experiments/stage5/01_lm_head_basic.yaml": "ff258139e25b04f4f001b37b92e15f686a31951b8032c2212a1b34b89e2b9e14",
+    "experiments/stage5/04_prefill_layer_basic.yaml": "cad2a98e0aa64e645e3b38a9fc5716e2aa7c5aa30b3cbdb5a184960df8c259b1",
+    "experiments/stage5/03_prefill_layer_wiki_tool.yaml": "0a8adf0f10fec3a6802140413a75450082fb93879722374ad4f5bdd272df3b09",
+    "experiments/stage5/05_cp8_basic.yaml": "34f5dcac058c2c8443c222bb3a4c9f64dde62bde691e7e000b4efd8b049ac627",
+    "experiments/stage5/02_lm_head_wiki_tool.yaml": "11688f7acf076c49dc7680d0fd9bc1e6e09d9991227a8e9db6c207aa7fbd1e62",
+    "experiments/stage5/06_cp8_wiki_tool.yaml": "046f26c21a80cc23e77ae5d75cd88fa08fa400115ff653fff010574be5162ff8",
+    "experiments/stage5/01_lm_head_basic.yaml": "51ffd07cc6287815c5db0d2b108fb99a5fe7b64dd4adb52a933104dd748d5c45",
     "pto_analyzer/profile.py": "d4be3f7a44c65dcd3ea80e1389c12ddc9a5f52cb9738757ce02cc8081e18a075",
     "pto_analyzer/__init__.py": "c5b412a2b4d027341cd90a34160a8fe417076f4e3bc8a4b70281281d695496b8",
     "pto_analyzer/toolset.py": "bd18546620131b56e1b08a908540e812a9db21357f7aaec6e7ab505b3e6d00c7",
@@ -42,15 +42,69 @@
     "pto_analyzer/diagnostics/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "pto_analyzer/diagnostics/schedule.py": "eefdb3a92211fd55b8bcb4a8385cf10c92d158acd0c4dd3e8dede7b93bb28d1b",
     "pto_analyzer/diagnostics/common.py": "170beff748c5d92fde85e9aabec39e2a1723720681adacb2a0675a57e5939f6a",
-    "tests/test_pi_bridge.py": "cf03b8c78c31875b4c8722727befea8eca801530fb297950352a0930d1bba283",
+    "tests/test_pi_bridge.py": "70bb59b51d439713b200fac3e6f19a7aaa08086f4e96acfc081f024f1f82b5d7",
     "tests/conftest.py": "70431dd6ad1ad4654acdeebc9b95d1756d30091003abb67e2045bc77a5bce23a",
     "tests/test_analyzer_adapter.py": "c5704ae01c4a0ebaee6978e58f7c2db2f2f24dbd4b9e2c4c9e87e2c175182afa",
     "tests/test_mode.py": "05971d6500e233b0f534f8a11ffc048a3ebc04cc80bb04d2cd207be5e320f201"
   },
   "git_ignored_local_env": true,
   "tracked_local_env": false,
-  "real_sessions_started": false,
+  "real_sessions_started": true,
   "validation_reuse": "No passed unchanged tests rerun; only affected fixes rerun.",
-  "public_prerequisite": "still missing: selected Mode source parameter and selective binding",
-  "baseline_identity_applicability": "Source audit taken before Mode-only review fixes; no subsequent source Analyzer/Basic/Wiki/public changes made. No repeated full source or large archive hashing."
+  "public_prerequisite": "The Pi interface prerequisite was fulfilled. By Stage 5 design, selected-Mode source protection is not required; public PTOBench code remains unchanged.",
+  "baseline_identity_applicability": "Public Basic/Analyzer/Wiki source hashes were checked against inputs.json with no differences. Mode-local hashes above reflect the current tree; the post-baseline changes are separately identified. No new archive or hardware collection was performed during final audit.",
+  "post_baseline_mode_changes": {
+    "runner.py": {
+      "previous_sha256": "ed04c929f4375976dc2bf433de0384553a7107c1180a47d41e2beab41ebc29e2",
+      "current_sha256": "e4a24f9f723e5b2bde838cc98a10539fb06248e6f06cbbfaf1519826b22a21be"
+    },
+    "tools.py": {
+      "previous_sha256": "42d0cc06064e7b4464005c5be5881532362725ba1dfb92aaac0f7e02cb649e7c",
+      "current_sha256": "ade31b43e26e59f04b60115410783ee494dea10cc117f90b452891406ca51ba8"
+    },
+    "README.md": {
+      "previous_sha256": "ff91264dd22aa6bd98ea8f9d39d2789feea9eed6d64b0fe8969eb226168a95c5",
+      "current_sha256": "897f50d7d30a09d57fc88bee3ae0352a5371e590ec28ffe64165c7c82c2eef69"
+    },
+    "experiments/stage5/04_prefill_layer_basic.yaml": {
+      "previous_sha256": "aede5cbc51623fc0b0c6ae1aa1c51e650a1f8c4e5f9cbe1f91a846d0775c5dcc",
+      "current_sha256": "cad2a98e0aa64e645e3b38a9fc5716e2aa7c5aa30b3cbdb5a184960df8c259b1"
+    },
+    "experiments/stage5/03_prefill_layer_wiki_tool.yaml": {
+      "previous_sha256": "92d29423fe230f58dec0ad19c932cdae9de1ae4db105bb29dcc9ffb329be2c63",
+      "current_sha256": "0a8adf0f10fec3a6802140413a75450082fb93879722374ad4f5bdd272df3b09"
+    },
+    "experiments/stage5/05_cp8_basic.yaml": {
+      "previous_sha256": "ef19e0813f79f7a0af83e43cf1efca483cf39daa35cb9294b2edfe7cc436d0b5",
+      "current_sha256": "34f5dcac058c2c8443c222bb3a4c9f64dde62bde691e7e000b4efd8b049ac627"
+    },
+    "experiments/stage5/02_lm_head_wiki_tool.yaml": {
+      "previous_sha256": "879d915090de0997e567d8d7d9da660d221184578e32dfdea4089f9280d61979",
+      "current_sha256": "11688f7acf076c49dc7680d0fd9bc1e6e09d9991227a8e9db6c207aa7fbd1e62"
+    },
+    "experiments/stage5/06_cp8_wiki_tool.yaml": {
+      "previous_sha256": "0936c1b8d4c12d4beace6ceb62fbdcee7ddb80134f553f03af61c54b683d3c6f",
+      "current_sha256": "046f26c21a80cc23e77ae5d75cd88fa08fa400115ff653fff010574be5162ff8"
+    },
+    "experiments/stage5/01_lm_head_basic.yaml": {
+      "previous_sha256": "ff258139e25b04f4f001b37b92e15f686a31951b8032c2212a1b34b89e2b9e14",
+      "current_sha256": "51ffd07cc6287815c5db0d2b108fb99a5fe7b64dd4adb52a933104dd748d5c45"
+    },
+    "tests/test_pi_bridge.py": {
+      "previous_sha256": "cf03b8c78c31875b4c8722727befea8eca801530fb297950352a0930d1bba283",
+      "current_sha256": "70bb59b51d439713b200fac3e6f19a7aaa08086f4e96acfc081f024f1f82b5d7"
+    }
+  },
+  "real_stage5_sessions_completed": 6,
+  "post_socket_fix_validation": {
+    "regression_test": "tests/test_pi_bridge.py::test_long_socket_path_binds_and_cleans_up_through_short_alias",
+    "regression_result": "1 passed",
+    "affected_suite_result": "8 passed",
+    "evidence": [
+      "evidence/socket_path_green.log",
+      "evidence/socket_path_affected_green.log"
+    ],
+    "mode_runner_result": "4 passed",
+    "mode_runner_evidence": "evidence/socket_path_runner_green.log"
+  }
 }

@@ -26,10 +26,14 @@ session.close_exploration(handle.session_root, "optimizer_exit")
 
 `optimizer` also accepts a backend string, using that string as its ID and
 `default` as its profile. `output=None` uses benchmark `runs/` and `snapshots/`;
-`budget=None` uses 20 exploration actions and one finish action. The exploration
-limit may be a positive integer or the explicit string `unlimited`; the latter
+`budget=None` allows 20 combined Evaluate/Profile actions and one finish action.
+`max_hardware_actions` may be a positive integer or the explicit string
+`unlimited`; the latter
 leaves exploration open until the Optimizer exits or the Session is interrupted.
-The finish limit must be exactly one. Booleans are rejected as integers. Output
+Each accepted Evaluate or Profile request consumes one action, including a failed
+or interrupted request. Rejected requests consume none. A combined Profile
+counts once regardless of device count. The finish limit must be exactly one.
+Booleans are rejected as integers. Output
 roots cannot contain one another, or overlap
 Case, sealed, environment, evaluator, launcher, golden or control directories.
 All input directory components reject links, including a link preceding `..`.
@@ -116,11 +120,11 @@ interruption and spawn failure never refund it.
 
 At the exploration limit, status immediately becomes `exhausted`. Further
 exploration and fork fail, while completion of the accepted action remains
-allowed. Closing exploration keeps the active action and preserves the first
-close reason. Launcher must wait for `active_action is None` before treating
-exhaustion as ready for finalization. Completion commits one event and clears
-the active action together. Repeated completion returns the original event,
-including when a later action is active, and never modifies the later action.
+allowed. Launcher ends the Agent once `active_action` clears, then finalizes.
+Closing exploration keeps the active action and preserves the first close
+reason. Completion commits one event and clears the active action together.
+Repeated completion returns the original event, including when a later action
+is active, and never modifies the later action.
 
 Finish reservation uses `kind="finish"`, requires closed nonterminal exploration,
 no active action, a prepared `final/workspace`, and a stable source manifest.

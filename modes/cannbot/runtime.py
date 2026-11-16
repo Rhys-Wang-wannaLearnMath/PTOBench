@@ -77,14 +77,13 @@ def command(config, directory, role, task, allow_task):
     if not allow_task:
         # Every fresh stage gets public environment information independently
         # of the parent's Task handoff. Original role/skill bytes stay intact.
-        task = ("Read .benchmark_context/README.md for the Case contract, Bench CLI and result locations.\n"
-                "Read .benchmark_context/tuning_capabilities.json for this Case's editable compiler and runtime scheduling options, allowed values and restrictions.\n"
-                "Edit Candidate source under `candidate/` and tuning options in `candidate/tuning.json`; the compiler defaults remain PYPTO + false, and the complete defaults vary by Case.\n"
+        task = ("Read .benchmark_context/README.md for the Case contract, editable options, CLI commands and result locations.\n"
+                "Edit Candidate source under `candidate/` and tuning options in `candidate/tuning.json`.\n"
                 "After changing source or settings, use ptobench evaluate . to check correctness and clean latency.\n"
-                "PATH and the Bench Session environment are already set.\n"
-                + f"Share this Bench Session's Evaluate allowance of {config['hardware_budget']} accepted `ptobench evaluate` actions; "
-                  "a failed or interrupted accepted Evaluate still consumes one. Profile costs 0 and is recorded as a hardware action; "
-                  "Fork costs 0 and is recorded. Profile/Fork remain available after the allowance is exhausted, while the CLI rejects extra Evaluate requests. "
+                "The `ptobench` command is available on PATH and operates on this Session's registered workspace.\n"
+                + f"Share this Bench Session's hardware-action budget of {config['hardware_budget']} accepted `ptobench evaluate` or `ptobench profile` actions; "
+                  "a failed or interrupted accepted action still consumes one. Fork does not consume this budget. "
+                  "Stop when `remaining_hardware_actions` reaches 0; the Launcher ends the optimization run after the current action and rejects further Evaluate, Profile and Fork requests. "
                   "This Agent stage does not receive a new allowance.\n\n" + task)
     prompt = task if config['profile']['backend'] == 'pi' else role_text + '\n\n' + task
     argv, configured_env = render(config['profile'], config['workspace'], config['run_root'], prompt)

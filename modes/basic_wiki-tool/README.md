@@ -14,6 +14,8 @@ Pi's native extension talks to a Python Broker over the current Session's `agent
 
 `method/analyzer_registration.json` separately records the registered and active Pi tool sets. This proves visibility only when emitted by real Pi; it is not evidence of an actual model call or optimization benefit.
 
-Stage 5 status and CPU evidence: [reports/stage5/progress.md](reports/stage5/progress.md). The latest user decision authorizes missing canonical starting Candidate Profile collection through normal PTOBench CLI, followed by the six planned paired Sessions. Selected-Mode source protection is not a waiting condition. Do not add smoke Sessions or extra Agent trials.
+Stage 5 is complete: the [final paired-session report](reports/stage5/paired_trials.md) documents three Basic versus Wiki + PTOAnalyzer pairs; the [structured audit](reports/stage5/summary.json) records all six Session/Event roots, Candidate hashes and diffs, correctness, Clean Latency, tool use, Wiki identity, tokens, wall-clock and stop reasons. The [75-Case coverage audit](reports/stage5/evidence/selected_coverage_audit.json) selects one canonical combined Profile for each Formal/Held-out Case. See the [progress ledger](reports/stage5/progress.md) and [acceptance audit](reports/stage5/acceptance_audit.md) for test evidence and remaining limits.
 
-CPU checks use the existing official Python environment and `PYTHONPATH=.:evaluator:evaluator/tests`. Follow the ledger to reuse passed checks whose code has not changed. No dependencies are added.
+All three real treatment Sessions registered and activated the nine Analyzer tools; five calls succeeded. The records do not establish later decision use of those results. The measured pairs describe Wiki + PTOAnalyzer together and do not isolate either component. The two CP8 arms used a matched 10-Evaluate allowance; Profile events and official finish are separately accounted. No additional experiment is planned.
+
+CPU checks use the existing official Python environment and `PYTHONPATH=.:evaluator:evaluator/tests`. Reuse passed checks while implementation code is unchanged. No dependencies are added.

@@ -161,8 +161,8 @@ def _run_summary(root, record, events, stop_reason):
         'final_result_path': 'final_result.json',
         'counts': counts,
         'hardware_usage': {
-            'budgeted_actions': sum(event.get('action') == 'evaluate' and event.get('hardware_action') is True
-                                    for event in events),
+            'budgeted_actions': sum(event.get('action') in {'evaluate', 'profile'}
+                                    and event.get('hardware_action') is True for event in events),
             'finish_actions': record['usage']['finish_actions'],
             'total_actions': record['usage']['hardware_actions'] + record['usage']['finish_actions'],
             'runtime_dispatch_entries': sum(known_calls) if known_calls else None,
@@ -384,8 +384,8 @@ def run(path):
             while True:
                 logs.drain()
                 now = time.monotonic()
-                if now - last_poll >= 1 or state['received'] or process.poll() is not None:
-                    record = session.read_session(root)
+                if now - last_poll >= .1 or state['received'] or process.poll() is not None:
+                    record = session.read_session(root, allow_pending=True)
                     active = record['active_action']
                     last_poll = now
                     if state['received']:
@@ -393,6 +393,9 @@ def run(path):
                         break
                     if record['status'] == 'failed':
                         raise integrity.InfrastructureError('Session has an infrastructure failure')
+                    if record['status'] == 'exhausted' and active is None:
+                        reason = 'budget_exhausted'
+                        break
                     if process.poll() is not None:
                         code = process.returncode
                         reason = 'optimizer_exit' if code == 0 else 'optimizer_nonzero_exit'
@@ -499,12 +502,11 @@ def status(root):
         manifest = integrity._load(normalized / 'protection')
     result = {key: record[key] for key in ('session_id', 'optimizer_id', 'case_id', 'status',
               'exploration_closed', 'close_reason', 'budget', 'usage', 'active_action')}
-    evaluate_used = session._evaluate_actions_used(record, events)
     maximum = record['budget']['max_hardware_actions']
     if record['status'] not in {'failed', 'completed'}:
         result['status'] = ('exhausted' if maximum != session.UNLIMITED_HARDWARE_ACTIONS
-                            and evaluate_used >= maximum else 'running')
-    result['remaining_hardware_actions'] = actions._remaining(record, events)
+                            and record['usage']['hardware_actions'] >= maximum else 'running')
+    result['remaining_hardware_actions'] = actions._remaining(record)
     result['mode'] = record.get('mode')
     result['session_root'] = record['session_root']
     has_final = manifest['roots']['final_result']['entries']['']['kind'] == 'file'

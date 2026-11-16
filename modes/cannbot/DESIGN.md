@@ -143,17 +143,16 @@ INIT → S1_SETUP → S2_COLLECT → S3_ANALYZE
 | 公开操作 | CANNBot 与 Basic 共用的接口 | 预算 |
 | --- | --- | --- |
 | 初始 baseline 性能 | 读取 `.benchmark_context/reference.json` 对应缓存 | 不扣探索预算 |
-| correctness / 正式性能评测 | `ptobench evaluate`，由 CANNBot 自行使用并解释返回值 | 每次接受请求扣一项；失败/中断也计入 Evaluate 额度 |
-| 三类诊断 | `ptobench profile`，一次收集 Runtime、PMU 和 Compiler 诊断 | Evaluate 额度成本为 0；作为硬件操作留档 |
-| 读源码、查冻结文档、分析已有 profile、更新 Todo/摘要 | 本地操作 | 不扣 Evaluate 额度 |
+| correctness / 正式性能评测 | `ptobench evaluate`，由 CANNBot 自行使用并解释返回值 | 每次接受请求扣一项；失败/中断也计入共享硬件预算 |
+| 三类诊断 | `ptobench profile`，一次收集 Runtime、PMU 和 Compiler 诊断 | 每次接受请求扣一项；失败/中断也计入共享硬件预算 |
+| 读源码、查冻结文档、分析已有 profile、更新 Todo/摘要 | 本地操作 | 不扣硬件预算 |
 | 最终回归验证 | 共同的 PTOBench finish | 沿用所有方法共同的独立最终验证策略 |
 
-Evaluate allowance: 1 per accepted `ptobench evaluate`. A failed or interrupted
-accepted Evaluate still consumes its allowance. Profile budget cost: 0; Profile
-is recorded as a hardware action and remains available after the Evaluate
-allowance is exhausted. Fork budget cost is 0 and the Session records the
-operation. Extra Evaluate requests are rejected by the CLI; the Agent can
-continue Profile/Fork until its method exits or the user interrupts it.
+Hardware-action budget: 1 per accepted `ptobench evaluate` or
+`ptobench profile`. A failed or interrupted accepted action still consumes one.
+Fork costs 0 and the Session records the operation. When the budget reaches
+zero, the Launcher ends the optimization run after the current action; further Evaluate,
+Profile and Fork requests are rejected.
 
 Basic 和 CANNBot 的 workspace 均开放一体式 `ptobench profile`；每次请求同时收集 Runtime、PMU 和 Compiler 诊断。
 诊断产生的运行时间与正式延迟必须区分：原 `analyze_perf.py` 的 `max_work_time`
@@ -194,7 +193,7 @@ API 选择、profile 文件读取、原脚本运行和原工具使用均由 CANN
 读取原始返回值和附件，并提交自己的原始执行档案。
 PTOBench 可以保存方法身份和方法提供的 metadata，但不解释 catalog ID、
 PHK item 或阶段状态，也不依据它们改变评测规则。
-所有正式对比方法使用相同的 evaluate/profile 权限和 Evaluate 额度政策，
+所有正式对比方法使用相同的 evaluate/profile 权限和硬件操作总预算，
 不由某个方法自己的 mode 文件决定裁判允许它做哪些硬件实验。
 
 以 Pi 为例，执行链为：
@@ -210,8 +209,7 @@ PHK item 或阶段状态，也不依据它们改变评测规则。
 方法入口结束或用户中断 ──> 通用生命周期处理与共同最终验证
 ```
 
-Evaluate 额度耗尽时，CLI 拒绝新的 Evaluate；Launcher 不终止方法进程，Agent
-仍可 Profile/Fork，直到方法自然退出或用户中断。
+硬件操作总预算耗尽后，Launcher 等当前操作完成并结束 Agent，再执行统一收尾。
 
 这里 Pi 的启动、阶段 prompt、资料挂载和 session 关联由方法侧完成。
 Bench 只看到一个考生进程及其硬件请求，不需要知道内部有多少优化阶段。
@@ -253,7 +251,7 @@ Basic 的独立 runner 启动一次原生会话；不用让所有 mode 强制采
 
 方法 runner 在阶段 Pi 退出后继续存活并处理交接。
 通用 Launcher 不观察阶段退出，不安排下一阶段，
-只在整个方法进程结束或用户中断后执行共同 finalization；Evaluate 额度耗尽不终止方法。
+只在整个方法进程结束或用户中断后执行共同 finalization；硬件预算耗尽不终止方法。
 方法 runner 负责正常关闭其子会话；公共生命周期机制仍需能清理归属本 Run 的
 整个进程组，包括异常退出遗留的原生 Agent/evaluator。该机制对任意方法相同。
 CANNBot 启动阶段 Agent 时继承方法的进程组，不使用 `start_new_session=True`；
@@ -399,7 +397,7 @@ transformation patch、budget curve、interaction-to-best、失败率等可后�
    取消独立 adapted 指令集，不给 Pi 注入我们的新优化建议。
 2. **独立入口接线**：实现下表四个操作，在 cannbot runner 内承载 Task/Todo 等工具及多原生会话关联；
    公共 Launcher 只管理方法程序生命周期，统一退出后 finish。
-3. **公开 CLI 暴露**：向主/子会话传递相同 PATH、workspace 和 Session 环境；
+3. **公开 CLI 暴露**：向主/子会话提供 PTOBench 命令及当前 Session 的 Workspace；
    CANNBot 自己使用 evaluate/profile/fork，接入侧不添加命令或 profile 转换层。
 4. **原始记录**：保存每次 dispatch 输入、全部原生会话、原始答复/报告/错误及 action/source 关联。
 5. **执行机制验证**：验证资源原样加载、子会话启动/返回、CLI 可见、预算共享、
@@ -424,8 +422,8 @@ stdout/stderr、对应源码 hash 和返回摘要，位于方法自己的 `metho
 - 运行中实际加载的上游技能、角色、catalog、脚本和案例与固定版本逐字节一致。
 - 没有 adapted 指导、新优化建议、旧 API 替换或另写的分析器；执行接线的实际差异可追溯。
 - Codex/Pi 两条路径执行相同阶段协议，均完整保留全部原生会话。
-- Evaluate 的每个已接受请求消耗一项共享额度，失败或中断不退款；Profile 额度成本为 0 但作为硬件操作留档，Fork 额度成本为 0 但作为 Session 操作留档。
-- 额度耗尽后 CLI 拒绝新 Evaluate，Agent 仍可 Profile/Fork；Launcher 等待方法自然退出或用户中断。
+- 每个已接受的 Evaluate 或 Profile 请求消耗一项共享硬件预算，失败或中断不退款；Fork 不消耗硬件预算，但作为 Session 操作留档。
+- 额度耗尽后 Session 拒绝后续 Evaluate、Profile 和 Fork；Launcher 等待方法自然退出或用户中断。
 - 初始性能从 Case cache 获取，合法候选和最终成绩由共同评测判定。
 - CLI 原始结果与对应 action/源码保持关联；正式 latency 与诊断时间区分。
 - 运行失败原样保存，不以方法兼容性检查替代真实执行。

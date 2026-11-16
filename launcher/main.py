@@ -17,6 +17,9 @@ class Payload(dict):
     def to_dict(self):
         return self
 
+    def to_agent_dict(self):
+        return self
+
 
 def main(argv=None):
     parser = Parser(prog='pto-launcher', allow_abbrev=False)

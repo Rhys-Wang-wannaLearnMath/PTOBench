@@ -22,6 +22,11 @@ import workspace
 
 
 class WorkspaceDACTest(ActionTestBase):
+    def snapshot(self, result):
+        event = next(item for item in self.events() if item['seq'] == result['event_seq'])
+        self.assertTrue(event['snapshot_id'])
+        return self.handle.snapshots_root / event['snapshot_id']
+
     def _run_agent(self, command, *, mount_workspace=None, guest_path='/workspace', guest_cwd=None):
         mount_workspace = Path(mount_workspace or self.handle.initial_workspace)
         view = isolation.View().system().native_agent()
@@ -264,7 +269,6 @@ outputs_link.unlink()
 denied(lambda: os.symlink('candidate', root / '.candidate-link'))
 denied(lambda: context.rmdir())
 denied(lambda: outputs.rmdir())
-denied(lambda: (root / 'new-entry').mkdir())
 assert context_file.read_text() == 'SIZE = 2\n'
 assert output_file.read_text() == '{"event_seq": 1}\n'
 '''
@@ -272,6 +276,87 @@ assert output_file.read_text() == '{"event_seq": 1}\n'
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual((self.handle.initial_workspace / '.benchmark_context/config.py').read_text(), 'SIZE = 2\n')
         self.assertEqual((outputs / 'latest_result.json').read_text(), '{"event_seq": 1}\n')
+
+    def test_agent_root_temporaries_respect_sticky_boundary(self):
+        root = self.handle.initial_workspace
+        share_gid = grp.getgrnam('ptobench-share').gr_gid
+        self.assertEqual(stat.S_IMODE(root.stat().st_mode), 0o3770)
+        self.assertEqual(root.stat().st_gid, share_gid)
+        self.assertEqual(stat.S_IMODE(root.parent.stat().st_mode), 0o2750)
+        outputs = root / '.benchmark_outputs/clean'
+        outputs.mkdir()
+        output = outputs / 'latest_result.json'
+        output.write_text('{"event_seq": 1}\n')
+        workspace._readonly(root / '.benchmark_outputs')
+
+        script = r'''import errno, os
+from pathlib import Path
+root = Path.cwd()
+def denied(operation):
+    try:
+        operation()
+    except OSError as error:
+        assert error.errno in (errno.EACCES, errno.EPERM, errno.EROFS), error
+    else:
+        raise AssertionError('protected operation succeeded')
+note = root / 'notes.md'
+scratch = root / 'scratch'
+note.write_text('temporary')
+scratch.mkdir()
+(scratch / 'entry').write_text('temporary')
+note.rename(root / 'renamed.md')
+(root / 'renamed.md').unlink()
+(scratch / 'entry').unlink()
+scratch.rmdir()
+note.write_text('persistent')
+scratch.mkdir()
+(scratch / 'entry').write_text('not a Candidate input')
+for name in ('candidate', '.benchmark_context', '.benchmark_outputs'):
+    protected = root / name
+    denied(lambda protected=protected: protected.rename(root / (name + '-renamed')))
+    link = root / (name + '-replacement')
+    os.symlink('candidate', link)
+    denied(lambda link=link, protected=protected: os.replace(link, protected))
+    link.unlink()
+denied(lambda: root.chmod(0o700))
+denied(lambda: (root / '.benchmark_context/config.py').write_text('changed'))
+denied(lambda: (root / '.benchmark_outputs/clean/latest_result.json').write_text('{}'))
+assert note.read_text() == 'persistent'
+assert (scratch / 'entry').read_text() == 'not a Candidate input'
+'''
+        result = self._python_agent(script)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+        parent_probe = r'''import errno
+from pathlib import Path
+parent = Path('/workspaces')
+try:
+    (parent / 'worker_agent_created').mkdir()
+except OSError as error:
+    assert error.errno in (errno.EACCES, errno.EPERM, errno.EROFS), error
+else:
+    raise AssertionError('Agent wrote under workspaces/')
+'''
+        result = self._run_agent(
+            [sys.executable, '-c', parent_probe],
+            mount_workspace=root.parent, guest_path='/workspaces',
+            guest_cwd='/workspaces/worker_000')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse((root.parent / 'worker_agent_created').exists())
+
+        process, result = self.cli(['evaluate'])
+        self.assertEqual(process.returncode, 0, result)
+        snapshot_id = self.events()[-1]['snapshot_id']
+        snapshot_source = self.handle.snapshots_root / snapshot_id / 'source'
+        self.assertFalse((snapshot_source / 'notes.md').exists())
+        self.assertFalse((snapshot_source / 'scratch').exists())
+
+        worker_id = session.fork_workspace(self.handle.session_root, root)
+        child = root.parent / worker_id
+        self.assertEqual(stat.S_IMODE(child.stat().st_mode), 0o3770)
+        self.assertEqual(child.stat().st_gid, share_gid)
+        self.assertFalse((child / 'notes.md').exists())
+        self.assertFalse((child / 'scratch').exists())
 
     def test_agent_reads_isolated_outputs_for_each_worker(self):
         process, first = self.cli(['evaluate'])

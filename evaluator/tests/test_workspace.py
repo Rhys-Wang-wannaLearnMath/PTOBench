@@ -32,7 +32,10 @@ class WorkspaceDocumentationTest(unittest.TestCase):
         self.assertIn('candidate/candidate.py', guide)
         self.assertIn('candidate/tuning.json', guide)
         self.assertIn('Candidate Python files and local helpers', guide)
+        self.assertIn('notes, reports and other ordinary files under `candidate/`', guide)
         self.assertIn('read-only result and diagnostic copies', guide)
+        self.assertIn('structured host hardware snapshot (CPU, memory and assigned accelerator specifications)', guide)
+        self.assertNotIn('PTOBENCH_SESSION_ROOT', guide)
         for command in ('evaluate', 'profile', 'fork'):
             self.assertIn('ptobench ' + command, guide)
         for path in ('clean/', 'combined/'):
@@ -53,15 +56,17 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             with self.subTest(document=name):
                 text = ' '.join(document.split())
                 self.assertIn('ptobench evaluate', text)
-                self.assertRegex(text, r'(?i)Evaluate (?:budget|allowance).*?1.*?accepted')
-                self.assertRegex(text, r'(?i)Profile.*?(?:cost is 0|cost 0|allowance cost is 0|额度成本为 0|0; recorded)')
-                self.assertRegex(text, r'(?i)Profile.*?recorded as a hardware action')
-                self.assertRegex(text, r'(?i)Fork.*?(?:cost is 0|cost 0|0; recorded)')
-                self.assertRegex(text, r'(?i)(?:failed or interrupted accepted Evaluate.*?consum|failed.*?interrupted.*?Evaluate.*?consum)')
-                self.assertRegex(text, r'(?i)(?:Profile.*?available after.*?exhausted|Profile/Fork remain available)')
-                self.assertRegex(text, r'(?i)(?:extra Evaluate requests are rejected by the CLI|CLI rejects new Evaluate)')
+                self.assertRegex(text, r'(?i)Hardware-action budget.*?1 per accepted `ptobench evaluate` or `ptobench profile`')
+                self.assertRegex(text, r'(?i)each accepted Profile consumes one hardware action|accepted action still consumes one')
+                self.assertRegex(text, r'(?i)Fork.*?(?:cost is 0|costs? 0|0; recorded)')
+                self.assertRegex(text, r'(?i)failed or interrupted accepted actions? still consum(?:es|e) (?:one|it)')
+                self.assertRegex(text, r'(?i)reaches zero.*?(?:requests are rejected|Launcher ends the optimization run)')
+                self.assertRegex(text, r'(?i)Evaluate, Profile and Fork')
                 self.assertNotIn('Each accepted evaluation or enabled diagnostic operation uses one', document)
                 self.assertNotIn('diagnostics have no free NPU execution', document)
+        cann_bot_readme = documents['CANNBot README']
+        self.assertFalse(any('\u4e00' <= character <= '\u9fff' for character in cann_bot_readme))
+        self.assertNotIn('Codex', cann_bot_readme)
         for private_detail in ('warmup', 'measured launches', 'final verification', 'Snapshot',
                                'finish budget', 'protection/', 'staging/', 'raw_wiki'):
             self.assertNotIn(private_detail, guide)
@@ -98,6 +103,10 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             }
 
             with mock.patch.object(workspace.profile_modes, "enabled_modes", return_value={}), \
+                 mock.patch.object(workspace.inspect_environment, "collect_hardware", return_value={
+                     "system": {"cpu": {"model": "Example CPU"}},
+                     "accelerators": {"npu": {"devices": []}},
+                 }), \
                  mock.patch.object(common, "resolve_case", return_value=(case_dir, sealed, case)):
                 workspace.init_workspace(case_dir, sealed, case, destination)
 
@@ -106,6 +115,8 @@ class WorkspaceDocumentationTest(unittest.TestCase):
             self.assertFalse((context / "fixture_catalog.json").exists())
             self.assertFalse((context / "profiling_modes.json").exists())
             self.assertNotIn("| `ptobench profile", (context / "README.md").read_text().lower())
+            environment = common.read_json(context / "environment.json")
+            self.assertEqual(environment["hardware"]["system"]["cpu"]["model"], "Example CPU")
             self.assertTrue((destination / "candidate" / "candidate.py").is_file())
             self.assertTrue((destination / ".benchmark_context").is_dir())
             self.assertTrue((destination / ".benchmark_outputs").is_dir())
@@ -177,9 +188,14 @@ class WorkspaceDocumentationTest(unittest.TestCase):
                 "environment": "a2a3_single_card",
             }
             with mock.patch.object(workspace.profile_modes, "enabled_modes", return_value={}), \
+                 mock.patch.object(workspace.inspect_environment, "collect_hardware", return_value={
+                     "system": {"cpu": {"model": "Example CPU"}},
+                     "accelerators": {"npu": {"devices": []}},
+                 }), \
                  mock.patch.object(common, "resolve_case", return_value=(case_dir, sealed, case)):
                 workspace.init_workspace(case_dir, sealed, case, parent)
                 (parent / "candidate" / "candidate.py").write_text("VALUE = 2\n", encoding="utf-8")
+                (parent / "candidate" / "notes.md").write_text("parent notes\n")
                 (parent / ".benchmark_outputs" / "latest_result.json").write_text("{}\n")
                 result = workspace.fork_workspace(
                     parent, child,
@@ -196,6 +212,13 @@ class WorkspaceDocumentationTest(unittest.TestCase):
                 "VALUE = 2\n",
             )
             self.assertTrue((child / ".benchmark_outputs").is_dir())
+            self.assertEqual((child / "candidate/notes.md").read_text(), "parent notes\n")
+            self.assertEqual(
+                (child / ".benchmark_context/starting_point/candidate/notes.md").read_text(),
+                "parent notes\n",
+            )
+            (child / "candidate/notes.md").write_text("child notes\n")
+            self.assertEqual((parent / "candidate/notes.md").read_text(), "parent notes\n")
             (child / "candidate" / "candidate.py").write_text("VALUE = 3\n", encoding="utf-8")
             self.assertEqual((parent / "candidate" / "candidate.py").read_text(encoding="utf-8"), "VALUE = 2\n")
             binding = common.read_json(child / ".benchmark_context" / "workspace.json")
@@ -293,20 +316,27 @@ class CandidateCopyTest(unittest.TestCase):
         (self.source / "helpers/renamed.py").write_text("VERSION = 2\n")
         self.assertNotEqual(renamed, workspace.source_manifest(self.source)["content_sha256"])
 
-    def test_non_candidate_files_are_rejected_but_generic_artifacts_can_be_copied(self):
-        extra = self.source / 'notes.md'
-        extra.write_text('not Candidate source')
-        with self.assertRaisesRegex(workspace.InvalidWorkspaceError, 'outside the Candidate'):
-            workspace.copy_candidate_tree(self.source, self.target)
-        self.assertFalse(self.target.exists())
-        extra.unlink()
+    def test_candidate_supporting_files_are_copied_and_hashed(self):
+        files = {'notes.md': b'optimization notes', 'helpers/report.json': b'{}\n',
+                 'helpers/data.bin': b'\x00\xff'}
+        for name, content in files.items():
+            (self.source / name).write_bytes(content)
+        manifest = workspace.copy_candidate_tree(self.source, self.target)
+        self.assertEqual(manifest, workspace.source_manifest(self.target))
+        self.assertTrue(files.keys() <= {item['path'] for item in manifest['files']})
+        for name, content in files.items():
+            self.assertEqual((self.target / name).read_bytes(), content)
+        (self.source / 'notes.md').write_text('updated notes')
+        self.assertNotEqual(manifest['content_sha256'], workspace.source_manifest(self.source)['content_sha256'])
+        self.assertEqual((self.target / 'notes.md').read_bytes(), files['notes.md'])
         artifact = self.root / 'artifact'
         artifact.mkdir()
         (artifact / 'trace.json').write_text('{}\n')
         (artifact / 'trace.bin').write_bytes(b'\\x00\\xff')
-        workspace.copy_tree(artifact, self.target)
-        self.assertEqual((self.target / 'trace.json').read_text(), '{}\n')
-        self.assertEqual((self.target / 'trace.bin').read_bytes(), b'\\x00\\xff')
+        artifact_copy = self.root / 'artifact_copy'
+        workspace.copy_tree(artifact, artifact_copy)
+        self.assertEqual((artifact_copy / 'trace.json').read_text(), '{}\n')
+        self.assertEqual((artifact_copy / 'trace.bin').read_bytes(), b'\\x00\\xff')
 
     def test_source_links_and_fifos_fail_without_publishing_or_reading_outside(self):
         sentinel = self.root / "sentinel"

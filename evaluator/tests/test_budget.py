@@ -231,11 +231,10 @@ class BudgetTest(SessionTestBase):
                 self.assertEqual(repeated, event)
                 self.assertEqual(session.read_session(handle.session_root)['usage']['hardware_actions'], seq)
         self.assertEqual(session.read_session(handle.session_root)['status'], 'exhausted')
-        forked = session.fork_workspace(handle.session_root, handle.initial_workspace)
-        self.assertEqual(forked, 'worker_001')
-        with session._session_lock(handle.session_root):
-            record, events = session._load_locked(handle.session_root)
-        self.assertEqual(session._evaluate_actions_used(record, events), 5)
+        with self.assertRaises(session.SessionError) as caught:
+            session.fork_workspace(handle.session_root, handle.initial_workspace)
+        self.assertEqual(caught.exception.error_code, 'budget_exceeded')
+        self.assertEqual(len(session.read_session(handle.session_root)['workspaces']), 1)
 
     def test_finish_is_independent_requires_closed_exploration_and_cannot_repeat(self):
         handle = self.create(budget=1)
@@ -378,28 +377,39 @@ class BudgetTest(SessionTestBase):
                     self.assertEqual(json.loads(lines[0])['error_code'], 'action_failed')
                 print(f'S2 completion crash: {point}, used=1, active={record["active_action"] is not None}, events={len(lines)}')
 
-    def test_all_public_profiles_are_recorded_without_using_evaluate_budget(self):
-        handle = self.create(budget=1, profile_strategy='split')
+    def test_all_public_profiles_consume_shared_hardware_budget(self):
+        handle = self.create(budget=3, profile_strategy='split')
         for seq, mode in enumerate(('runtime', 'pmu', 'compiler'), 1):
             with session.execution_lock():
                 self.reserve(handle, 'profile', mode)
                 event = session.complete_action(handle.session_root, seq, exit_code=0, integrity_passed=True)
                 self.assertEqual(event['mode'], mode)
                 self.assertEqual(event['hardware_actions_used'], seq)
-                self.assertEqual(session.read_session(handle.session_root)['status'], 'running')
+                self.assertEqual(session.read_session(handle.session_root)['status'],
+                                 'exhausted' if seq == 3 else 'running')
         self.assertEqual(session.read_session(handle.session_root)['usage'], {'hardware_actions': 3, 'finish_actions': 0})
         with session._session_lock(handle.session_root):
             record, events = session._load_locked(handle.session_root)
-        self.assertEqual(session._evaluate_actions_used(record, events), 0)
-        self.assertEqual(session_actions._remaining(record, events), 1)
-        self.assertEqual(record['status'], 'running')
+        self.assertEqual(session_actions._remaining(record), 0)
+        self.assertEqual(record['status'], 'exhausted')
+
+    def test_profile_uses_the_same_budget_as_evaluate(self):
+        handle = self.create(budget=1, profile_strategy='combined')
+        with session.execution_lock():
+            self.reserve(handle, 'profile', 'combined')
+            session.complete_action(handle.session_root, 1, exit_code=0, integrity_passed=True)
+        with session.execution_lock(), self.assertRaises(session.SessionError) as caught:
+            self.reserve(handle, 'evaluate')
+        self.assertEqual(caught.exception.error_code, 'budget_exceeded')
+        self.assertIn('budget exhausted', str(caught.exception))
+        self.assertEqual(session.read_session(handle.session_root)['usage']['hardware_actions'], 1)
 
     def test_close_during_prechecks_prevents_reservation_without_charge(self):
         handle = self.create()
         original = workspace.source_manifest
-        def concurrent_close(path):
+        def concurrent_close(path, **kwargs):
             session.close_exploration(handle.session_root, 'optimizer_exit')
-            return original(path)
+            return original(path, **kwargs)
         manifest = original(handle.initial_workspace)
         with session.execution_lock(), mock.patch.object(workspace, 'source_manifest', side_effect=concurrent_close):
             with self.assertRaises(session.SessionError) as caught:

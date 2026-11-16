@@ -1121,11 +1121,11 @@
     "modes/_shared/profiles/pi/deepseek-flash.yaml": "c6f901c94749b210ade49df054aa10fa262abc1d4ae0a1a7b9e044161d3919a6",
     "modes/_shared/profiles/pi/README.md": "b3d350793616b734ffca2829d786c07e919d59f216705c897b48a14921392598",
     "modes/_shared/profiles/pi/glm-5.3-flash-max.yaml": "9d596a515dc59c4aac21a33c742ec1876313ebe9e5dd38b805d8799a14e748cc",
-    "modes/basic_wiki-tool/runner.py": "ed04c929f4375976dc2bf433de0384553a7107c1180a47d41e2beab41ebc29e2",
+    "modes/basic_wiki-tool/runner.py": "e4a24f9f723e5b2bde838cc98a10539fb06248e6f06cbbfaf1519826b22a21be",
     "modes/basic_wiki-tool/prompt.py": "dad94447dd899b9dedf00159093bffe99fde4f8a6515d32949e83f8c4de36660",
     "modes/basic_wiki-tool/instructions.md": "e5f36e78ade4b1ce29278b1c623415805636bbf49169b5b973f6b37f88115419",
     "modes/basic_wiki-tool/resources.py": "8e5dcc3787ec61a22553c82fbbc10a898c002bd46cd8db26b1444b809002bbd8",
-    "modes/basic_wiki-tool/tools.py": "42d0cc06064e7b4464005c5be5881532362725ba1dfb92aaac0f7e02cb649e7c",
+    "modes/basic_wiki-tool/tools.py": "ade31b43e26e59f04b60115410783ee494dea10cc117f90b452891406ca51ba8",
     "modes/basic_wiki-tool/analyzer_adapter.py": "fd1bd76d49335655d9486e4a5873fc875df2ca68472ced21a891582058b76912",
     "modes/basic_wiki-tool/analyzer_manifest.json": "3c1110baf8c12e2bfa8a7debfa5dd079130e858fba4e2f77816d29f3d359a098",
     "modes/basic_wiki-tool/mode.yaml": "eba5557d23cce5921d30c516ae4f18ee5de81fb232510cdd2986043e3a625676",
@@ -1695,7 +1695,7 @@
       "index_path": "manual_runs/combined_profile_boundary_recheck_20261108/queue.json"
     }
   ],
-  "collection_75_status": "collection_in_progress",
+  "collection_75_status": "completed",
   "external_dependencies": {
     "selected_mode_source_protection": "not_ready; latest user instruction explicitly waives waiting; public code remains unchanged",
     "pi_tool_interface": "verified: evidence/public_pi_tool_tests.log; source_sha256 recorded"
@@ -1718,17 +1718,24 @@
     "selected_coverage_audit": {
       "path": "evidence/selected_coverage_audit.json",
       "schema_version": 2,
-      "status": "collection_in_progress",
-      "covered": 28,
-      "pending": 47,
+      "status": "completed",
+      "covered": 75,
+      "pending": 0,
       "failed": 0,
-      "authority": "Current audit supersedes historical located-source counts; canonical starting Candidate includes normal Workspace-generated tuning.json."
+      "authority": "Audit rebuilt from canonical Formal60+Held-out15 and original Session/Event/artifact metadata."
     }
   },
   "current_mode_acceptance_identity": {
-    "commit": "ed7565a",
-    "files_added_to_frozen_sources": 9,
-    "evidence": "evidence/review_fixes_mode_suite_green.log",
-    "result": "All nine Mode implementation files match the existing accepted commit; no tests repeated."
+    "base_commit": "ed7565a",
+    "post_acceptance_fix": "Mode-local AF_UNIX short-alias fallback for canonical paths over 107 bytes",
+    "changed_implementation_files": {
+      "modes/basic_wiki-tool/tools.py": "ade31b43e26e59f04b60115410783ee494dea10cc117f90b452891406ca51ba8",
+      "modes/basic_wiki-tool/runner.py": "e4a24f9f723e5b2bde838cc98a10539fb06248e6f06cbbfaf1519826b22a21be"
+    },
+    "regression_test": "modes/basic_wiki-tool/tests/test_pi_bridge.py::test_long_socket_path_binds_and_cleans_up_through_short_alias",
+    "red": "evidence/socket_path_red.log",
+    "green": "evidence/socket_path_green.log",
+    "affected_suite": "evidence/socket_path_affected_green.log",
+    "affected_suite_result": "8 passed"
   }
 }

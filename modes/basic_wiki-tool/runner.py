@@ -105,7 +105,7 @@ def run(request):
             argv, cwd=context['workspace'], environment=environment,
             workspace=context['workspace'], session_root=run_root, backend='pi',
             pi_tool_extension=run_root / 'agent/pi-tools/pi_analyzer.ts',
-            pi_tool_socket=run_root / 'agent/analyzer.sock')
+            pi_tool_socket=server.path)
         return agent_launch.run_process(argv, cwd=context['workspace'], environment=environment)
     finally:
         for signum in previous:

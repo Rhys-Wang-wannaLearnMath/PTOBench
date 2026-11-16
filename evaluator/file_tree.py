@@ -98,7 +98,37 @@ def file_version(value: os.stat_result) -> tuple[int, ...]:
 
 def _entry(parent: int, name: str, relative: str, entries: dict,
            excluded_names: frozenset[str], reject_special: bool,
-           excluded_paths: frozenset[str]) -> None:
+           excluded_paths: frozenset[str], *, skip_unreadable: bool = False,
+           skipped_paths: list[str] | None = None,
+           skipped_versions: dict[str, tuple[int, ...]] | None = None) -> None:
+    try:
+        _entry_contents(parent, name, relative, entries, excluded_names, reject_special,
+                        excluded_paths, skip_unreadable=skip_unreadable,
+                        skipped_paths=skipped_paths,
+                        skipped_versions=skipped_versions)
+    except PermissionError:
+        if not skip_unreadable or not relative:
+            raise
+        try:
+            metadata = os.stat(name, dir_fd=parent, follow_symlinks=False)
+        except OSError:
+            raise
+        if not (stat.S_ISREG(metadata.st_mode) or stat.S_ISDIR(metadata.st_mode)):
+            raise UnsafeTreeError(f"unsupported unreadable node: {relative}") from None
+        prefix = relative + "/"
+        for path in list(entries):
+            if path == relative or path.startswith(prefix):
+                del entries[path]
+        skipped_paths.append(relative)
+        if skipped_versions is not None:
+            skipped_versions[relative] = file_version(metadata)
+
+
+def _entry_contents(parent: int, name: str, relative: str, entries: dict,
+                    excluded_names: frozenset[str], reject_special: bool,
+                    excluded_paths: frozenset[str], *, skip_unreadable: bool,
+                    skipped_paths: list[str] | None,
+                    skipped_versions: dict[str, tuple[int, ...]] | None) -> None:
     before = os.stat(name, dir_fd=parent, follow_symlinks=False)
     mode = stat.S_IMODE(before.st_mode)
     if stat.S_ISLNK(before.st_mode):
@@ -127,7 +157,9 @@ def _entry(parent: int, name: str, relative: str, entries: dict,
                             raise UnsafeTreeError(f"unsupported node: {child_relative}")
                     continue
                 _entry(descriptor, child, child_relative, entries,
-                       excluded_names, reject_special, excluded_paths)
+                       excluded_names, reject_special, excluded_paths,
+                       skip_unreadable=skip_unreadable, skipped_paths=skipped_paths,
+                       skipped_versions=skipped_versions)
             if names != included_names():
                 raise TreeChangedError(f"directory changed: {relative}")
         finally:
@@ -154,11 +186,18 @@ def _entry(parent: int, name: str, relative: str, entries: dict,
 
 def scan_tree(path: str | Path, *, excluded_names: frozenset[str] = CACHE_NAMES,
               reject_special: bool = False,
-              excluded_paths: frozenset[str] = frozenset()) -> dict[str, dict]:
+              excluded_paths: frozenset[str] = frozenset(),
+              skip_unreadable: bool = False,
+              skipped_paths: list[str] | None = None,
+              skipped_versions: dict[str, tuple[int, ...]] | None = None) -> dict[str, dict]:
     entries: dict[str, dict] = {}
+    if skipped_paths is None:
+        skipped_paths = []
     with open_parent(path) as (parent, name):
         try:
-            _entry(parent, name, "", entries, excluded_names, reject_special, excluded_paths)
+            _entry(parent, name, "", entries, excluded_names, reject_special,
+                   excluded_paths, skip_unreadable=skip_unreadable,
+                   skipped_paths=skipped_paths, skipped_versions=skipped_versions)
         except FileNotFoundError:
             # Only an absent root is an ordinary absence. A disappearing
             # descendant must not turn a partial scan into a new baseline.

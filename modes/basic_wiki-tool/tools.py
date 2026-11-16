@@ -1,10 +1,12 @@
 """Bounded local transport, serial read-only analysis and durable call auditing."""
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 import select
 import socket
 import socketserver
+import tempfile
 import threading
 import uuid
 
@@ -41,6 +43,8 @@ class ToolServer:
     def __init__(self, adapter, socket_path: Path, log_root: Path):
         self.adapter = adapter
         self.path = Path(socket_path)
+        self.endpoint = self.path
+        self._socket_alias_root = None
         self.log_root = Path(log_root)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.log_root.mkdir(parents=True, exist_ok=True)
@@ -77,9 +81,30 @@ class ToolServer:
                 except OSError:
                     pass
 
-        self._server = socketserver.ThreadingUnixStreamServer(str(self.path), Handler)
-        self._thread = threading.Thread(target=self._server.serve_forever, kwargs={'poll_interval': .02}, daemon=True)
-        self._thread.start()
+        self._server = None
+        try:
+            if len(os.fsencode(self.path)) > 107:
+                self._socket_alias_root = Path(tempfile.mkdtemp(prefix='ptobench-', dir='/tmp'))
+                alias_dir = self._socket_alias_root / 'session'
+                alias_dir.symlink_to(self.path.parent, target_is_directory=True)
+                self.endpoint = alias_dir / self.path.name
+                if len(os.fsencode(self.endpoint)) > 107:
+                    raise OSError('short Unix socket alias exceeds the platform pathname limit')
+            self._server = socketserver.ThreadingUnixStreamServer(str(self.endpoint), Handler)
+            self._thread = threading.Thread(target=self._server.serve_forever, kwargs={'poll_interval': .02}, daemon=True)
+            self._thread.start()
+        except BaseException:
+            if self._server is not None:
+                self._server.server_close()
+            self.path.unlink(missing_ok=True)
+            self._remove_socket_alias()
+            raise
+
+    def _remove_socket_alias(self):
+        if self._socket_alias_root is not None:
+            (self._socket_alias_root / 'session').unlink(missing_ok=True)
+            self._socket_alias_root.rmdir()
+            self._socket_alias_root = None
 
     def _registered(self, request):
         expected = {s['name'] for s in self.adapter.specifications()}
@@ -189,3 +214,4 @@ class ToolServer:
             self._server.server_close()
             self._thread.join()
             self.path.unlink(missing_ok=True)
+            self._remove_socket_alias()

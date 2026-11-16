@@ -92,7 +92,7 @@ class AgentCliTest(ActionTestBase):
                     help_text = ' '.join(process.stdout.decode().split())
                     self.assertIn('Profile does not check output correctness', help_text)
                     self.assertIn('ptobench evaluate', help_text)
-                    self.assertIn('Profile is recorded as a hardware action but does not consume the Evaluate allowance', help_text)
+                    self.assertIn('Each accepted Profile consumes one hardware action', help_text)
                     self.assertIn('combined', process.stdout.decode())
         self.assertEqual(self.events(), [])
         self.assertEqual(self.calls(), [])
@@ -119,52 +119,58 @@ class AgentCliTest(ActionTestBase):
                 else:
                     self.assertNotIn('correctness', result)
                 if internal == 'clean':
-                    self.assertTrue((self.snapshot(result)/'source/candidate/helper.py').is_file())
+                    self.assertNotIn('snapshot_id', result)
+                    snapshot_id = self.events()[-1]['snapshot_id']
+                    self.assertTrue(snapshot_id)
+                    self.assertTrue((self.handle.snapshots_root / snapshot_id / 'source/candidate/helper.py').is_file())
                 else:
-                    self.assertIsNone(result['snapshot_id'])
+                    self.assertNotIn('snapshot_id', result)
                 authority=self.events()[-1]['result']
                 self.assertIsNone(authority['bootstrap_marker'])
                 self.assertIsNone(authority['inherited_profile'])
         process, result=self.cli(['fork'])
         self.assertEqual(process.returncode,0,result)
         self.assertEqual(Path(result['workspace']).name,'worker_001')
-        self.assertIsNone(result['snapshot_id'])
+        self.assertNotIn('snapshot_id', result)
         self.assertEqual(session.read_session(self.handle.session_root)['usage']['hardware_actions'],4)
         self.assertEqual(len(self.calls()),4)
 
-    def test_evaluate_only_budget_keeps_profiles_available_and_recorded(self):
-        self.handle = self.create(budget=1)
+    def test_shared_hardware_budget_counts_evaluate_and_profile(self):
+        self.handle = self.create(budget=3)
         self.env['PTOBENCH_SESSION_ROOT'] = str(self.handle.session_root)
 
         process, combined = self.cli(['profile'])
         self.assertEqual(process.returncode, 0, combined)
-        self.assertEqual(combined['remaining_hardware_actions'], 1)
+        self.assertEqual(combined['remaining_hardware_actions'], 2)
         self.assertEqual(self.events()[-1]['mode'], 'combined')
 
         process, evaluated = self.cli(['evaluate'])
         self.assertEqual(process.returncode, 0, evaluated)
-        self.assertEqual(evaluated['remaining_hardware_actions'], 0)
-        self.assertEqual(session.read_session(self.handle.session_root)['status'], 'exhausted')
-
+        self.assertEqual(evaluated['remaining_hardware_actions'], 1)
         process, profiled = self.cli(['profile'])
         self.assertEqual(process.returncode, 0, profiled)
         self.assertEqual(profiled['remaining_hardware_actions'], 0)
+        self.assertEqual(session.read_session(self.handle.session_root)['status'], 'exhausted')
+        calls_before_rejected_actions = len(self.calls())
+
+        process, profiled = self.cli(['profile'])
+        self.assertEqual((process.returncode, profiled['error_code']), (3, 'budget_exceeded'))
+        self.assertEqual(profiled['remaining_hardware_actions'], 0)
+        self.assertEqual(len(self.calls()), calls_before_rejected_actions)
         profile_event = self.events()[-1]
         self.assertEqual(profile_event['action'], 'profile')
-        self.assertEqual(profile_event['mode'], 'combined')
-        self.assertIsInstance(profile_event['attempt_id'], int)
-        self.assertTrue(profile_event['hardware_action'])
-        self.assertEqual(profile_event['error_code'], None)
-        self.assertIsInstance(profile_event['result'], dict)
+        self.assertFalse(profile_event['hardware_action'])
+        self.assertEqual(profile_event['error_code'], 'budget_exceeded')
 
         process, forked = self.cli(['fork'])
-        self.assertEqual(process.returncode, 0, forked)
+        self.assertEqual((process.returncode, forked['error_code']), (3, 'budget_exceeded'))
         self.assertEqual(forked['remaining_hardware_actions'], 0)
+        self.assertEqual(len(session.read_session(self.handle.session_root)['workspaces']), 1)
+        self.assertEqual(len(self.calls()), calls_before_rejected_actions)
 
-        call_count = len(self.calls())
         process, rejected = self.cli(['evaluate'])
         self.assertEqual((process.returncode, rejected['error_code']), (3, 'budget_exceeded'))
-        self.assertEqual(len(self.calls()), call_count)
+        self.assertEqual(len(self.calls()), calls_before_rejected_actions)
         record = session.read_session(self.handle.session_root)
         self.assertEqual(record['usage']['hardware_actions'], 3)
         self.assertEqual(record['status'], 'exhausted')
@@ -173,7 +179,7 @@ class AgentCliTest(ActionTestBase):
         self.env['PTOBENCH_SESSION_ROOT'] = str(self.handle.session_root)
         process, split = self.cli(['profile', 'runtime'])
         self.assertEqual(process.returncode, 0, split)
-        self.assertEqual(split['remaining_hardware_actions'], 1)
+        self.assertEqual(split['remaining_hardware_actions'], 0)
         self.assertEqual(self.events()[-1]['mode'], 'runtime')
 
     def test_rejects_old_parser_modes_parameters_and_commands_without_execution(self):
@@ -243,6 +249,24 @@ class AgentCliTest(ActionTestBase):
         process, rejected = self.cli(['profile', 'runtime'])
         self.assertEqual(process.returncode, 2, rejected)
         self.assertEqual(rejected['error_code'], 'invalid_workspace')
+
+    def test_failed_profile_consumes_shared_hardware_budget(self):
+        self.handle = self.create(budget=1)
+        self.env['PTOBENCH_SESSION_ROOT'] = str(self.handle.session_root)
+        self.configure(fail=True)
+
+        process, failed = self.cli(['profile'])
+        self.assertEqual((process.returncode, failed['error_code']), (1, 'action_failed'))
+        self.assertEqual(failed['remaining_hardware_actions'], 0)
+        self.assertEqual(len(self.calls()), 1)
+        event = self.events()[-1]
+        self.assertEqual(event['action'], 'profile')
+        self.assertTrue(event['hardware_action'])
+
+        self.configure()
+        process, blocked = self.cli(['evaluate'])
+        self.assertEqual((process.returncode, blocked['error_code']), (3, 'budget_exceeded'))
+        self.assertEqual(len(self.calls()), 1)
 
     def test_linked_source_is_rejected_before_reservation(self):
         sentinel=self.repo/'sentinel'; sentinel.write_text('outside')

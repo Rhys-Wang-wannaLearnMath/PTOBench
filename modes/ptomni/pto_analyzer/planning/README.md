@@ -4,16 +4,16 @@
 
 可直接交给后续实现任务的材料：
 
-- [实现 Prompt](IMPLEMENTATION_PROMPT.md)：限定范围、权限边界、实施顺序和交付物。
-- [任务清单](TASK_CHECKLIST.md)：按阶段推进并在每个阶段设验收门槛。
+- [Stage 5 实施 Prompt](stage5/IMPLEMENTATION_PROMPT.md)：限定范围、权限边界、实施顺序和交付物。
+- [Stage 5 任务清单](stage5/TASK_CHECKLIST.md)：按阶段推进并在每个阶段设验收门槛。
 
 Stage 1 已完成初版实现与离线回放。Stage 2 修缮与离线验收也已完成；设计依据、执行清单和回放结果见 [Stage 2 总览](stage2/README.md)、[Stage 2 任务清单](stage2/TASK_CHECKLIST.md) 和 [Stage 2 回放报告](../reports/offline_replay_stage2_20261108.json)。原 [Stage 2 实施 Prompt](stage2/IMPLEMENTATION_PROMPT.md) 保留作历史实施范围记录。
 
 Stage 3 已完成工具收敛与 Cursor 分页改造；Stage 4 已完成大文件解析修缮和静态分配摘要：当前对外为九个只读 Tool（Compute 三个、Dataflow 三个、Schedule 三个），其中八个支持高基数明细分页，`tile_memory_allocation_summary` 返回完整聚合摘要。`pipeline_overlap_check` 因现有采集字段不能提供配对的 Compute/MTE 区间而暂缓。Stage 4 离线重放覆盖 16 份归档和 144 个工具摘要首屏校验，5,492 个索引文件哈希前后相同，硬件动作数为 0。Stage 2/3 报告未保留全部 observation 值，故跨阶段只能核对其存下的计数和来源覆盖；当前 `buffer_pressure_check` 的 Scope observations 差异及限制见 [Stage 4 离线回放报告](../reports/offline_replay_stage4_20261112.json)。最大单卡依赖图首屏临时解析峰值约 509 MB，后续 Cursor 页不再重复调用依赖图解析器。Stage 4 当前 CPU 回归为 51 项通过；PTOmni Host 接线、Basic Pi 和 Agent 配对试验尚未启动。
 
-## Stage 5：75 Case 轨迹覆盖与 Tuner 效用验证
+## Stage 5：Basic + Wiki + PTOAnalyzer 消融
 
-[Stage 5 规划](stage5/README.md)安排真实 PTOmni Host 的 Tuner 专属工具接线、CPU 集成验收，并为 Formal 60 + Held-out 15 的每个 Case 准备一份身份匹配的 `combined profile`，逐 Case 回放九个工具；现有精确匹配的归档可复用，缺失 Case 才经 Runner/PTOBench 补采。Basic Pi/CANNBot 的 150 条真实 Session 用于轨迹审查，起始/最佳候选只按身份复用或按明确的轨迹分析需要补采，不为每次尝试重复 Profile。另在三个 Formal Case 上分别为 Compute、Dataflow、Schedule 做 Raw Profile 与 Analyzer Tool 配对试点。修改前后比较要求同 Case 候选 Profile 成对且字段口径兼容，只报告观测变化；性能结论以 `evaluate` 为准。Held-out 在 Formal 60 的语义/Parser 冻结后最终回放。当前仓库仍未发现 PTOmni Host 调用 `ToolSession`，故真实 Host 是接线前置条件；不创建模拟 Host 或第二个 Tool Server。完整执行门槛见 [Stage 5 任务清单](stage5/TASK_CHECKLIST.md)，启动说明见 [Stage 5 Prompt](stage5/IMPLEMENTATION_PROMPT.md)。
+75 个 Formal/Held-out Case 的 `combined` Profile 覆盖和 PTOAnalyzer 离线验收视为已完成前置条件，不在 Stage 5 重跑。[Stage 5 规划](stage5/README.md)聚焦独立的 `modes/basic_wiki-tool`：尽量保持 Basic Pi 不变，增加只读 `pto_wiki/opt_wiki` 和复制后的最新 PTOAnalyzer。Basic 处理组不按 Tuner 分配工具，九个工具全部暴露；每次实际调用（包括失败和取消）都记录。Stage 5 依赖另一个 PTOBench 公共代码任务先完成并验收通用 Pi extension/socket 接口；Stage 5 只调用该接口，不修改隔离层。Pi 通过原生 extension 调用 Session-local Unix-socket Python Broker；Stage 5 的 CPU 集成测试还要证明 Pi 侧注册并实际调用九个工具，无需真实 LLM 或 NPU。Broker 授权 Profile、分发工具并归档完整调用，Runner 负责它的启动和清理。最新 Analyzer 本体继续保留在 `modes/ptomni/pto_analyzer/`，接入使用复制体和薄适配层。接口就绪后，Stage 5 用三个 Formal Case 做 Basic 与 Basic+Wiki+PTOAnalyzer 的六个真实 Agent Session 配对；结果仅作为组合消融的可行性和行为证据，不宣称单独归因或普遍提升。完整执行门槛见 [Stage 5 任务清单](stage5/TASK_CHECKLIST.md)，启动说明见 [Stage 5 Prompt](stage5/IMPLEMENTATION_PROMPT.md)。
 
 ## Stage 4 实施与验收状态
 

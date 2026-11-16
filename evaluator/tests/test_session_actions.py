@@ -1,5 +1,7 @@
 import json
 import os
+import contextlib
+import io
 from pathlib import Path
 import signal
 import subprocess
@@ -8,6 +10,7 @@ from unittest import mock
 
 from action_test_support import ActionTestBase
 import common
+import agent_cli
 import integrity
 import session
 import session_actions
@@ -15,6 +18,85 @@ import workspace
 
 
 class SessionActionsTest(ActionTestBase):
+    def snapshot(self, result):
+        seq = result['event_seq'] if isinstance(result, dict) else result.event_seq
+        event = next(item for item in self.events() if item['seq'] == seq)
+        self.assertTrue(event['snapshot_id'])
+        return self.handle.snapshots_root / event['snapshot_id']
+
+    def test_unreadable_auxiliary_candidate_does_not_reject_evaluate(self):
+        candidate = self.handle.initial_workspace / 'candidate'
+        auxiliary = candidate / 'unreadable-report.txt'
+        auxiliary.write_text('optional')
+        auxiliary.chmod(0)
+
+        with mock.patch.dict(os.environ, self.env):
+            first = session_actions.run_evaluate(self.handle.session_root, self.handle.initial_workspace)
+
+        self.assertEqual((first.status, first.error_code, first.exit_code), ('PASS', None, 0), first.message)
+        first_event = self.events()[-1]
+        self.assertEqual(first_event['candidate_capture_skipped'], ['unreadable-report.txt'])
+        frozen = self.handle.session_root / first_event['source_snapshot']
+        self.assertFalse((frozen / 'candidate/unreadable-report.txt').exists())
+        self.assertNotIn('snapshot_id', first.to_agent_dict())
+
+        helper = candidate / 'helper.py'
+        helper.chmod(0)
+        self.configure(inspect_before=str(self.repo / 'inspect-helper.json'))
+        with mock.patch.dict(os.environ, self.env):
+            second = session_actions.run_evaluate(self.handle.session_root, self.handle.initial_workspace)
+
+        self.assertEqual((second.status, second.error_code, second.exit_code), ('FAIL', 'action_failed', 1))
+        self.assertNotIn('archive', second.message.lower())
+        self.assertEqual(self.events()[-1]['candidate_capture_skipped'], ['helper.py', 'unreadable-report.txt'])
+        self.assertNotIn('snapshot_error', self.events()[-1])
+        self.assertEqual(session.read_session(self.handle.session_root)['usage']['hardware_actions'], 2)
+        helper.chmod(0o660)
+
+    def test_snapshot_failure_preserves_action_result(self):
+        register_roots = integrity.register_roots
+
+        def fail_snapshot_registration(protection_root, roots):
+            if any(name.startswith('snapshot_') for name in roots):
+                raise OSError('forced Snapshot storage failure')
+            return register_roots(protection_root, roots)
+
+        stdout = io.StringIO()
+        with mock.patch.dict(os.environ, self.env), \
+             mock.patch.object(integrity, 'register_roots',
+                               side_effect=fail_snapshot_registration), \
+             contextlib.redirect_stdout(stdout):
+            exit_code = agent_cli.main(['evaluate', str(self.handle.initial_workspace)])
+
+        agent_payload = json.loads(stdout.getvalue())
+        self.assertEqual(exit_code, 0)
+        self.assertEqual((agent_payload['status'], agent_payload['error_code'],
+                          agent_payload['exit_code']), ('PASS', None, 0))
+        self.assertEqual(agent_payload['remaining_hardware_actions'], 19)
+        event = self.events()[-1]
+        self.assertIsNone(event['snapshot_id'])
+        self.assertIn('forced Snapshot storage failure', event['snapshot_error'])
+        self.assertEqual(session.read_session(self.handle.session_root)['usage']['hardware_actions'], 1)
+        self.assertEqual(list(self.handle.snapshots_root.iterdir()), [])
+
+        self.assertNotIn('snapshot_id', agent_payload)
+        output = common.read_json(
+            self.handle.initial_workspace / '.benchmark_outputs/clean/latest_session_result.json')
+        self.assertEqual(output['status'], 'PASS')
+        self.assertNotIn('snapshot_id', output)
+        self.assertNotIn('snapshot_error', output)
+
+        with mock.patch.dict(os.environ, self.env):
+            final = session_actions.snapshots.finalize_session(
+                self.handle.session_root, 'optimizer_exit')
+        self.assertEqual(final.status, 'completed', final)
+        self.assertIsNone(final.selected_snapshot)
+        self.assertEqual(final.selected_event_seq, event['seq'])
+        completed = session.read_session(self.handle.session_root)
+        self.assertEqual(completed['status'], 'completed')
+        self.assertEqual(completed['usage']['hardware_actions'], 1)
+        self.assertEqual(completed['usage']['finish_actions'], 1)
+
     def test_recovery_cleans_stale_agent_requests_after_stopping_children(self):
         import agent_launch
 
@@ -85,8 +167,8 @@ class SessionActionsTest(ActionTestBase):
 
         self.assertEqual(process.returncode, 0, result)
         self.assertEqual(mode_file.read_text().splitlines()[-1], '# operator edit')
-        self.assertTrue(result['snapshot_id'])
         event = self.events()[-1]
+        self.assertTrue(event['snapshot_id'])
         self.assertEqual(event['attempt_id'], 1)
         self.assertEqual(event['run_id'], self.handle.session_root.name)
         self.assertEqual(event['compile_config'], common.read_tuning(self.handle.initial_workspace))
@@ -104,10 +186,12 @@ class SessionActionsTest(ActionTestBase):
                 if config:
                     self.assertEqual(process.returncode,1,result)
                     self.assertEqual(result['error_code'],'action_failed')
-                    self.assertIsNone(result['snapshot_id'])
+                    self.assertNotIn('snapshot_id', result)
+                    self.assertIsNone(self.events()[-1]['snapshot_id'])
                 else:
                     self.assertEqual(process.returncode,0,result)
-                    self.assertIsNotNone(result['snapshot_id'])
+                    self.assertNotIn('snapshot_id', result)
+                    self.assertIsNotNone(self.events()[-1]['snapshot_id'])
         self.assertEqual(len(self.calls()),3)
 
     def test_invalid_results_and_exceptions_charge_once_never_snapshot(self):
@@ -118,7 +202,7 @@ class SessionActionsTest(ActionTestBase):
                 process,result=self.cli(['evaluate'])
                 self.assertEqual(process.returncode,1,result)
                 self.assertEqual(result['error_code'],'action_failed')
-                self.assertIsNone(result['snapshot_id'])
+                self.assertNotIn('snapshot_id', result)
                 event=self.events()[-1]
                 self.assertTrue(event['hardware_action'])
                 self.assertTrue(event['integrity_passed'])
@@ -135,7 +219,7 @@ class SessionActionsTest(ActionTestBase):
                 process,result=self.cli(['evaluate'])
                 self.assertEqual(process.returncode,4,result)
                 self.assertEqual(result['error_code'],'integrity_failed')
-                self.assertIsNone(result['snapshot_id'])
+                self.assertNotIn('snapshot_id', result)
                 self.assertFalse(self.events()[-1]['integrity_passed'])
                 self.assertEqual(sentinel.read_text(),'outside')
                 self.assertEqual((self.bench/'cases/test/case/public/config.py').read_text(),'SIZE = 2\n')

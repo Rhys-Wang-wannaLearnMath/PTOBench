@@ -1,7 +1,7 @@
 # PTOmni 整体架构设计：通俗版
 
 > 这份文档是架构设计的快速导读，重点讲“系统怎么配合工作”和“每个角色做什么”。它不替代[完整架构设计](PTOmni_整体架构设计_2026-11-12.md)；接口、字段和未定事项以完整文档为准。
-> 轻量化角色与 Curator 长期记忆设计已于 2026-11-13 与完整架构稿同步。
+> 已同步 2026-11-16 的 Assembler 综合、诊断权限和按需查看原始 Profile 设计，以及此前确定的轻量化角色和长期记忆设计。
 
 ## 先用一句话理解 PTOmni
 
@@ -17,7 +17,7 @@ PTOmni 是一支按任务临时组队的优化小队：它先提出一个可验�
 | **Host** | 实验室管理员 | 安排角色、检查权限、整理上下文、记录过程 |
 | **Lead** | 组长 | 判断现在最该回答什么问题，并安排谁做什么 |
 | **Tuner** | 实验员 | 改一份自己的代码副本，提出并验证优化想法 |
-| **Assembler** | 结果整理者 | 比较实验结果，选出本轮要保留的候选代码 |
+| **Assembler** | 方案集成者 | 查看所有 Tuner 的候选与记录，比较现成方案和有依据的组合方案，并决定本轮交付哪个候选 |
 | **Challenger** | 临时复核者 | 对一个具体风险或争议做只读检查，找反例和证据缺口 |
 | **Curator** | 本轮经验整理者 | 每个 Round 结束时整理本轮分析、改动、结果和待办，更新 Run 级长期记忆 |
 | **PTO Wiki** | 技术手册 | 查 PyPTO、编译器、运行时、设备等已有知识 |
@@ -25,6 +25,8 @@ PTOmni 是一支按任务临时组队的优化小队：它先提出一个可验�
 | **Round 历史** | 按轮保存的实验记录 | 记住试过什么、哪些结论有证据、还有什么没弄清楚 |
 
 表格里的“角色”是工作职责，不代表必须启动同样数量的独立 Agent 进程。Tuner 的数量规则是：首个优化 Round 固定三个专长都启用；之后由 Lead 自主选择任意有效组合，不设推荐人数。角色任务可以按顺序完成。
+
+Tuner 和 Assembler 可能都会用到 Evaluate 或 PTOAnalyzer，但它们不是重复角色：Tuner 专注于自己负责的优化方向，独立改代码并分析 Parent Profile；Assembler 查看所有 Tuner 的方案，判断是否值得组合，并验证、诊断组合后的版本。Assembler 不会默认拿到全部 Analyzer 工具；Host 根据组合改动和授权开放相关专长。如果组合确实涉及所有优化方向，才可能开放所有相关工具。
 
 ## 谁来决定结果是真的
 
@@ -48,11 +50,11 @@ PTOmni 通过 PTOBench 的公共命令请求这些操作。它不另写一套评
 4. **Host 先采 Profile。** Lead 选好本轮 Tuner 并通过权限、预算校验后，Host 在任何 Tuner 改代码前，对当前 Parent Candidate 采一份新的 `combined` Profile。每个优化 Round 都重新采，不复用历史 Profile；入选的 Tuner 共用这份 Profile 的事件，但各自只拿到对应专长的 PTOAnalyzer 工具。
 5. **Tuner 做实验。** Host 为每个入选 Tuner 从同一个 Parent fork 一个独立 workspace。Tuner 读取 Parent、修改自己的 workspace，根据 Profile 和相关资料开展实验，并可按授权请求 Evaluate。Host 不主动提供同轮其他 Tuner 的路径；共享 Shell 下这能减少无意接触，但不构成强文件系统隔离。上一轮的完整记录仍可按需查看。
 6. **Evaluate 候选代码。** Tuner 可以请求 PTOBench 检查正确性和探索性能。每次结果都关联到实际运行的代码版本，不能把不同代码或不同环境的读数混在一起比较。
-7. **Assembler 做本轮决定。** 它可以选一个通过验证的候选、保留原代码，或要求一个有明确目的的补充实验。如果它把多个改动组合成新版本，新版本也必须重新验证。
+7. **Assembler 综合并验证方案。** 它可以只读查看所有入选 Tuner 的 workspace 和工作记录，比较各自改动、理由、Profile / Analyzer 观测与 Evaluate 结果。它不预设直接选现成 Candidate 或组合更好：若多个改动有依据且能兼容，Host 为它创建临时 workspace 来组合，并通过 PTOBench Evaluate 验证；如果结果出现具体诊断问题，且计划授权、预算允许，它可请求对组合 Candidate 再做 Profile，并使用 Host 按涉及机制开放的 PTOAnalyzer 工具。最后它比较验证过的组合与现成候选，决定交付哪一个，也记录为何没有组合或组合为何失败。
 8. **Curator 更新长期记忆。** Assembler 做出选择、候选验证状态明确后，Host 每轮固定调用一次 Curator。它把本轮的分析、改动、结果和待解决问题写入本次 PTOBench Session / PTOmni Run 共用的 `CASE_MEMORY.md`，并附上 Candidate 和 PTOBench Event 来源。即使本轮中断或没有成功实验，也如实记录当前状态。
 9. **开始下一轮或停止。** Lead 根据当前状态和需要查看的历史决定下一步。预算用完、结果没有新信息或优化目标已经满足时，可以停止。
 
-每轮这一份 `combined` Profile 会交给所有入选 Tuner 的专长 Analyzer 工具使用，不会按 Tuner 人数重复采集。对同一份 Profile 做多次离线分析不会额外启动硬件测量；新的 Profile（每轮一次）或 Evaluate 仍按 PTOBench 预算记账。Assembler 不需要自己采 Profile，也没有直接调用 Analyzer 的工具。
+每轮 Parent 的 `combined` Profile 只采一次，供入选 Tuner 使用。Assembler 会看到 Tuner 提交的 Analyzer 观测和来源；它不会重复采 Parent 基线。只有组合 Candidate 有具体诊断需要且计划授权时，Assembler 才可能请求额外 Profile，并使用与组合改动相关的 Analyzer 工具；组合覆盖多个方向时可开放多个专长，只有确实涉及全部方向时才开放全部相关工具。额外 Profile 和 Evaluate 都由 Host / Runner 执行，受计划与 PTOBench 预算约束。
 
 ## Round、Experiment 和 Event 有什么区别
 
@@ -78,7 +80,9 @@ PTOmni 通过 PTOBench 的公共命令请求这些操作。它不另写一套评
 
 它读取 PTOBench 已经保存的 Profile，整理计算、数据流和调度等方面的观测。它不运行硬件、不改代码，也不自动宣布根因。Tuner 结合读数和其他证据提出解释。
 
-目前 Analyzer 本身已有工具和离线验证；它还需要由 PTOmni Host 接入后，Tuner 才能在优化过程中调用。
+目前 Analyzer 本身已有工具和离线验证；它还需要由 PTOmni Host 接入，才能在优化过程中按权限提供给 Tuner，以及在必要时提供给 Assembler。
+
+设计上，角色可以按需查看原始 Profile 内容。Lead、Tuner、Assembler、Challenger 和 Curator 都能请 Host 读取与当前任务有关的 Profile 原始产物；Host 不会主动把整份 Profile 塞进上下文，也不会让 Agent 自己扫描任意归档。请求会绑定到具体 Profile 事件，并以只读方式返回。这样 Agent 想核对底层细节时有入口，同时仍可优先使用更精炼的 Analyzer 观测。这项 Host 能力目前尚未接入角色会话。
 
 ### 长期记忆：这个 Run 的各轮经历
 
@@ -103,8 +107,9 @@ Host 把“Agent 的想法”和“系统实际做过的事”分开管理：
 - 角色通常顺序工作，避免同时修改同一份代码和重复消耗上下文。
 - 每次角色调用使用自己的短时会话；一个角色在本次调用中可以多轮使用工具。不同角色、不同 Round 不共用对话，通过 Round 记录交接必要信息。
 - Host 为每个入选 Tuner 从同一个 Parent 创建一次 fork；Agent 不会为每条 CLI 或每次 Evaluate 重复 fork。Tuner 使用自己的副本，Host 不主动提供同轮其他 Tuner 的路径；共享 Shell 下不承诺强隔离。上一轮记录保留并可按需查看。
-- Assembler 只选择候选时不需要 workspace；要合并或修改时才由 Host 创建临时 workspace。组合出的新版本必须重新验证。
-- Assembler 综合正确性、可比性能、兼容性、证据质量和集成风险选本轮交付候选；它不必选性能数字最高的版本，也不必选自己组合的新版本。Host 根据 PTOBench 事实分别维护本轮 Parent (`current_candidate`) 和全局最好成绩 (`best_candidate`)，二者可以不同。
+- Assembler 可只读查看所有入选 Tuner 的 workspace 和记录，包括改动理由、分析解释、Profile / Analyzer 观测和 Evaluate 结果；Tuner 之间仍不互相开放 workspace。Assembler 需要组合或修改时，Host 才创建临时 workspace。
+- 所有角色都可按需请 Host 查看任务相关 Profile 的原始产物；Host 校验具体事件和文件后只读返回。原始内容不会默认推送，也不通过任意路径让 Agent 搜索归档。
+- Assembler 比较现成 Candidate 与有依据的组合 Candidate，不预设偏好；组合版本必须重新 Evaluate。若组合结果有明确诊断问题，且 Lead 已授权、预算允许，它可请求额外 Profile，并由 Host 按涉及机制开放相应 Analyzer 工具。最终它综合正确性、可比性能、兼容性、证据质量和集成风险做选择；Host 分别维护本轮 Parent (`current_candidate`) 和全局最好成绩 (`best_candidate`)，二者可以不同。
 - 当前 PTOBench 工作流按串行硬件实验设计；不能因为 Agent 可以并行，就同时发起 NPU 测量。
 - 首版不需要通用 Agent 平台、数据库、向量搜索、常驻 Curator 或跨 Case 自动学习；只需每个 Run 一份由 Curator 逐轮更新的普通记忆文件。
 
@@ -170,12 +175,12 @@ Host 把“Agent 的想法”和“系统实际做过的事”分开管理：
 | 角色 | 可以修改什么 | fork 由谁执行 |
 |---|---|---|
 | **Tuner** | 只读 Parent workspace，只修改自己的实验 workspace；Host 不主动提供同轮其他 Tuner 的路径 | Host / Runner 每个 Tuner 在 Round 开始时从 Parent 创建一次副本 |
-| **Assembler** | 只选择候选时不需要 workspace；只有组合或修改代码时才需要 | Host / Runner 仅在需要组装时创建；若只选一个现成候选，不 fork |
+| **Assembler** | 只读查看所有 Tuner 的 workspace 和工作记录；只有组合或修改代码时才需要自己的可写 workspace | Host / Runner 只在需要组装时创建临时 workspace |
 | **Lead** | 不修改 Candidate workspace | 不 fork |
 | **Challenger** | 只读，不修改 Candidate | 不 fork |
 | **Curator** | 整理本轮经验；Host 将它的记忆更新写入 Run 级 `CASE_MEMORY.md`；不改 Candidate 和 Round 原始记录 | 不 fork |
 
-Tuner 不能自行请求 Profile；Host 在每个优化 Round 开始时统一对 Parent 采一份 Profile。Tuner 可在计划授权范围内请求 Evaluate，但这不代表它能把自己的实验结果直接定为本轮交付候选。Assembler 若组合了多个改动，就在自己的 workspace 里形成新 Candidate，并对这个新版本重新 Evaluate；其他 Tuner 的 workspace 保持原样。Assembler 要求补充实验时只能使用 Lead 已选团队和已批准的权限；如果要换 Tuner 组合，由 Lead 开启新 Round 决定。
+Host 在每个优化 Round 开始时统一对 Parent 采一份 Profile；Tuner 不能自行采集 Profile，但可按需查看当前任务相关的原始 Profile 内容。Tuner 可在计划授权范围内请求 Evaluate，并提交改动内容、为什么这样改、Profile 观测、Evaluate 结果和自己的结论说明。Assembler 可以查看所有入选 Tuner 的 workspace 和这些工作记录，但只能只读查看；Tuner 之间仍看不到彼此的 workspace。Assembler 若组合改动，Host 会为它创建单独的可写 workspace；它可以请求 Evaluate。如果组合结果需要诊断，且 Lead 已授权、预算允许，Assembler 还可请求 Profile，再通过 Host 获得与改动相关的 PTOAnalyzer 工具，也可按需读取对应事件的原始内容。Assembler 不直接运行 CLI，也不默认获得全部 Analyzer 工具。Lead、Challenger 和 Curator 同样可按需查看各自任务相关的原始 Profile 内容。要换 Tuner 组合，由 Lead 开启新 Round 决定。
 
 PTOmni 首版会使用独立的 Tuner workspace，并只把 Parent 和自己的工作区路径交给当前 Tuner。这样可以减少误读和互相覆盖，也符合不修改 PTOBench 公共代码、不过度依赖 Prompt 的目标。但如果多个 Agent 共享可搜索整个工作目录的 Shell，这不是严格安全隔离；强制阻断需要额外的文件系统沙箱，首版先不增加这层复杂度。上一轮目录保留为历史存档，可按需查看，不会自动送进 Prompt。
 
@@ -207,9 +212,9 @@ PTOAnalyzer 已有适合接入的 Python 调用方式。Host 在 PTOBench 成功
 2. Host 根据成功的 Profile Event 创建 ProfileRef，绑定真实事件，而不是让 Agent 自己挑 Profile 文件；随后为本轮每个入选 Tuner 打开对应专长的 ToolSession。
 3. Host 把 ToolSession 提供的工具名称、说明和参数格式注册到该 Tuner 的 Agent Session。这些定义告诉 Agent“有哪些工具可以调用”。
 4. Tuner 请求某个工具时，Agent Session 把调用交给 Host 的工具回调；回调调用对应 ToolSession，再把结构化结果返回给 Tuner。
-5. Host 记录调用和结果引用。所有入选 Tuner 可以分析同一个只读 Profile，但每个 Tuner 只拿到与自己专长对应的工具集合；这不意味着它们能读取彼此的 workspace。Assembler 可读结果摘要和来源引用，不直接使用 Analyzer 工具。
+5. Host 记录调用和结果引用。所有入选 Tuner 可以分析同一个只读 Parent Profile，但每个 Tuner 只拿到与自己专长对应的工具集合；这不意味着它们能读取彼此的 workspace。Assembler 能看到 Tuner 提交的分析结果和引用。若它为组合 Candidate 请求了额外 Profile，Host 会按组合涉及的机制，为这个准确的 Profile Event 打开受限 Analyzer 工具；不会默认开放所有工具。
 
-所以集成重点不是重写 Analyzer，也不是给每个 Tuner 拷贝一份 Profile，而是在 PTOmni Host 的 Agent 工具注册和回调处加一层薄 Adapter。现有 Analyzer 的 open_toolset、tool_specs、initial_summary 和 call 已提供主要接入面，见 [ToolSession 实现](../../../ptomni/pto_analyzer/toolset.py)。目前缺少的是 PTOmni Host 对这套接口的调用和 Agent 工具传输接线。
+所以集成重点不是重写 Analyzer，也不是给每个角色拷贝一份 Profile，而是在 PTOmni Host 的 Agent 工具注册和回调处加一层薄 Adapter。现有 Analyzer 的 open_toolset、tool_specs、initial_summary 和 call 已提供主要接入面，见 [ToolSession 实现](../../../ptomni/pto_analyzer/toolset.py)。目前缺少的是 PTOmni Host 对这套接口的调用、按角色和 Profile Event 授权，以及 Agent 工具传输接线。
 
 ### 5. Challenger 什么时候进入 Round？
 
@@ -243,7 +248,7 @@ Curator 固定在每个 Round 的最后调用一次：等 Assembler 选好候选
 | **跨 Round 记忆** | 可用 persistent 模式保留同一个 Supervisor 会话；若换新会话，Harness 会汇总 TEAM_OUTPUT.md、最近几轮配置 / 评测、预算和任务记录作为交接。信息仍落在普通文件里。 | PTOmni 的角色会话彼此独立，因此采用文件记忆：Curator 每轮把结果追加到当前 Run 的 `CASE_MEMORY.md`；Lead / Tuner 之后按需读取，长记录链接到原始 Round 档案。 |
 | **各角色工作区** | EAT 的任务说明建议 Agent 在 work_role 这样的副本里工作，由交付新最佳结果的角色把结果放回主目录。启动脚本按 Phase 启动 Agent，但它们从同一个项目目录启动。 | 简单有效，但主要依靠目录约定和提示，不是每个角色各自的硬权限隔离。PTOmni 应使用 PTOBench 登记的独立 workspace 和 fork，避免多个 Tuner 修改同一 Candidate。 |
 | **谁做最终提交** | EAT Harness 在团队结束后运行官方评测，再由外层脚本对本轮改动执行 git add 和 git commit。不是由角色身份权限系统保证只有某个角色能提交。 | 借鉴“由外层 Harness 统一评测和记录”。PTOmni 应让 Assembler 决定候选，让 Host / Runner 执行受控验证；正式 finish 仍留给 PTOBench。 |
-| **Profile / Analyzer 工具** | EAT 的 Agent 使用 Claude Code 的工具和命令完成优化、评测及分析；这些材料没有 PTOmni 这种按 Profile Event 和专长角色绑定的只读工具集合。 | PTOmni 需要自己接线：Host 根据 Profile Event 打开专长 ToolSession，再把工具定义和回调注册给对应 Tuner。这不是可以直接从 EAT 复制的部分。 |
+| **Profile / Analyzer 工具** | EAT 的 Agent 使用 Claude Code 的工具和命令完成优化、评测及分析；这些材料没有 PTOmni 这种按 Profile Event 和专长角色绑定的只读工具集合。 | PTOmni 需要自己接线：Host 根据 Profile Event 打开受限 ToolSession，Parent Profile 的专长工具交给对应 Tuner；组合 Candidate 的诊断工具按需交给 Assembler。这不是可以直接从 EAT 复制的部分。 |
 | **Challenger 何时加入** | EAT Supervisor 阅读上一轮输出和成绩，再为下一轮重设角色、提示和工作阶段；遇到停滞时可以创建针对问题的新角色。 | 借鉴“根据证据变化角色，而不是固定开满团队”。EAT 主要在下一轮调整团队，不等于 PTOmni 在当前 Round 中途插入 Challenger。PTOmni 可按风险、结果冲突或停滞触发一次只读复核。 |
 
 EAT 的简化方法是：Supervisor 写团队配置，Harness 按 Phase 启动 Agent，把输出和每轮结果落盘，再统一评测和总结。它不需要复杂的实时 Agent 通信设施。PTOmni 沿用阶段调用、文件交接和 Harness 统一评测；由每轮一次的 Curator 更新单个 Session 级记忆文件，并保留 PTOBench 的受管 workspace、事件记录和预算，不额外建设记忆服务器、消息总线、重复账本或强文件系统沙箱。

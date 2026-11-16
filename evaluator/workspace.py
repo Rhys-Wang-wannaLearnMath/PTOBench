@@ -11,6 +11,7 @@ import grp
 
 import common
 import file_tree
+import inspect_environment
 import profile_modes
 import tuning
 
@@ -57,7 +58,8 @@ def _environment_summary(case: dict) -> dict:
         common.BENCHMARK_ROOT / "environments" / f"{case['environment']}.json"
     )
     return {"profile": profile["name"], "platform": profile["platform"],
-            "device": profile.get("device", 0), "runtime": profile.get("runtime", {})}
+            "device": profile.get("device", 0), "runtime": profile.get("runtime", {}),
+            "hardware": inspect_environment.collect_hardware(profile)}
 
 
 def _readme(case: dict, enabled_profiles: dict[str, dict[str, str]], *,
@@ -77,7 +79,7 @@ def _readme(case: dict, enabled_profiles: dict[str, dict[str, str]], *,
     verification = capabilities['default_configuration_validation']['status']
     if enabled_profiles:
         profile_commands = "\n".join(
-            f"| `ptobench profile{'' if name == 'combined' else ' ' + name} .` | {values['description']} | 0; recorded as a hardware action | "
+            f"| `ptobench profile{'' if name == 'combined' else ' ' + name} .` | {values['description']} | 1 per accepted action | "
             f"`.benchmark_outputs/{(profile_modes.COMBINED_PUBLIC_TO_INTERNAL if name == 'combined' else profile_modes.PUBLIC_TO_INTERNAL)[name]}/` |"
             for name, values in enabled_profiles.items()
         ) + "\n"
@@ -93,10 +95,12 @@ Optimize Case `{case['case_id']}`: minimize latency while preserving correctness
 Candidate entry: `candidate/{case['module']}::{case['entry']}`. Preserve the inputs, outputs,
 shapes, dtypes and comparison rules in the public contract below.
 Edit the Candidate Python files and local helpers under `candidate/`, plus the
-supported options in `candidate/tuning.json`. The task contract is in
-`.benchmark_context/`. Use the PTOBench
-CLI to evaluate changes and collect diagnostics. PATH and `PTOBENCH_SESSION_ROOT`
-are already set by the launcher.
+supported options in `candidate/tuning.json`. You may also create, edit, rename
+or delete notes, reports and other ordinary files under `candidate/`; these files
+are copied with the Candidate, except for excluded caches and metadata.
+The task contract is in
+`.benchmark_context/`. Use the PTOBench CLI from this registered workspace to
+evaluate changes and collect diagnostics.
 
 ## Files
 
@@ -106,7 +110,7 @@ The following files are read-only and relative to `.benchmark_context/`:
 | --- | --- |
 | `case.json`, `config.py`, `comparator.json` | Case description, fixed inputs/outputs/configuration and correctness rules. |
 | `reference.json` | Certified baseline latency in microseconds; no initial evaluation is required. |
-| `environment.json` | Target platform and device. |
+| `environment.json` | Case environment and a structured host hardware snapshot (CPU, memory and assigned accelerator specifications). NPU specifications are queried when this workspace is created; live utilization is not included. |
 | `tuning_capabilities.json` | Per-Case tuning permissions and inherited defaults. |
 | `workspace.json` | Current workspace path, entry and parent workspace. |
 | `starting_point/` | Source copy from when this workspace was created. |
@@ -118,8 +122,8 @@ The following files are read-only and relative to `.benchmark_context/`:
 {tuning_rows}
 
 The listed options are the values available in `tuning.json`; the set and defaults
-vary by Case. Reference and baseline measurements use the registered defaults,
-including `PYPTO + false`. Default Candidate correctness and clean baseline
+vary by Case. Reference and baseline measurements use the registered defaults.
+Default Candidate correctness and clean baseline
 verification: **{verification}**. After changing Candidate source or tuning,
 run `ptobench evaluate .` to verify correctness and measure clean latency.
 `enable_dep_gen` is a separate diagnostic option. If `tuning.json` is absent,
@@ -129,7 +133,7 @@ the defaults apply.
 
 ## Commands
 
-| Command | Purpose | Evaluate budget cost | Output |
+| Command | Purpose | Hardware-action budget cost | Output |
 | --- | --- | ---: | --- |
 | `ptobench evaluate .` | Check correctness and measure clean latency/speedup against the baseline. | 1 per accepted action | `.benchmark_outputs/clean/` |
 {profile_commands}| `ptobench fork .` | Copy implementation into a new registered workspace; returns its absolute path. | 0; recorded as a Session operation | New workspace |
@@ -137,15 +141,13 @@ the defaults apply.
 Replace `.` with another registered workspace path, or omit it to use the current
 directory. Use a workspace root, not a subdirectory. After fork, edit and evaluate the returned workspace;
 its changes are independent of the parent. `ptobench --help` shows available commands.
-Evaluate budget: 1 per accepted `ptobench evaluate`. A failed or interrupted accepted Evaluate still consumes its allowance.
-Profile budget cost: 0. Profile is recorded as a hardware action and remains available after the Evaluate allowance is exhausted.
-Fork budget cost: 0. Fork is recorded as a Session operation. Extra Evaluate requests are rejected by the CLI; the Agent can continue using Profile/Fork while the Session remains open, until it exits or is interrupted.
+Hardware-action budget: 1 per accepted `ptobench evaluate` or `ptobench profile`. A failed or interrupted accepted action still consumes one; rejected requests consume none. When it reaches zero, further Evaluate, Profile and Fork requests are rejected. Fork costs 0 and is recorded as a Session operation.
 
 ## Read feedback
 
 Each command ends with JSON: `status` is PASS, FAIL or REJECTED; `error_code` and
 `message` explain failures. `latency_us` is Candidate median latency in microseconds
-(lower is better); `remaining_hardware_actions` reports the remaining Evaluate allowance.
+(lower is better); `remaining_hardware_actions` reports the remaining hardware-action budget.
 Fork returns `workspace`, the new registered root.{diagnostics}
 In the output directory, `latest_result.json` contains correctness, raw samples,
 speedup (higher is better) and available artifact/build paths.
@@ -180,9 +182,14 @@ class InvalidWorkspaceError(ValueError):
     error_code = "invalid_workspace"
 
 
-def _source_entries(source: Path, *, excluded_paths=frozenset()) -> dict[str, dict]:
+def _source_entries(source: Path, *, excluded_paths=frozenset(),
+                    best_effort: bool = False,
+                    skipped_paths: list[str] | None = None,
+                    skipped_versions: dict[str, tuple[int, ...]] | None = None) -> dict[str, dict]:
     entries = file_tree.scan_tree(source, excluded_names=CANDIDATE_EXCLUDES,
-                                  reject_special=True, excluded_paths=excluded_paths)
+                                  reject_special=True, excluded_paths=excluded_paths,
+                                  skip_unreadable=best_effort, skipped_paths=skipped_paths,
+                                  skipped_versions=skipped_versions)
     if entries[""]["kind"] != "directory":
         raise InvalidWorkspaceError(f"Candidate source is not a directory: {source}")
     return entries
@@ -197,18 +204,13 @@ def candidate_root(source: Path) -> Path:
     return source
 
 
-def _candidate_payload_entries(source: Path, *, excluded_paths=frozenset()) -> dict[str, dict]:
-    entries = _source_entries(source, excluded_paths=excluded_paths)
-    for relative, entry in entries.items():
-        if entry['kind'] == 'file' and relative != 'tuning.json' and Path(relative).suffix != '.py':
-            raise InvalidWorkspaceError(
-                f"workspace file is outside the Candidate and tuning.json: {relative}"
-            )
-    return entries
-
-
-def _candidate_entries(source: Path, *, excluded_paths=frozenset()) -> dict[str, dict]:
-    return _candidate_payload_entries(candidate_root(source), excluded_paths=excluded_paths)
+def _candidate_entries(source: Path, *, excluded_paths=frozenset(),
+                       best_effort: bool = False,
+                       skipped_paths: list[str] | None = None,
+                       skipped_versions: dict[str, tuple[int, ...]] | None = None) -> dict[str, dict]:
+    return _source_entries(candidate_root(source), excluded_paths=excluded_paths,
+                            best_effort=best_effort, skipped_paths=skipped_paths,
+                            skipped_versions=skipped_versions)
 
 
 def _source_manifest(entries: dict[str, dict]) -> dict:
@@ -224,10 +226,34 @@ def _source_manifest(entries: dict[str, dict]) -> dict:
             "content_sha256": hashlib.sha256(serialized).hexdigest()}
 
 
-def source_manifest(source: Path) -> dict:
+def source_manifest(source: Path, *, best_effort: bool = False,
+                    skipped_paths: list[str] | None = None,
+                    skipped_versions: dict[str, tuple[int, ...]] | None = None) -> dict:
     """Canonical source inventory/hash shared by staging and Snapshots."""
     try:
-        return _source_manifest(_candidate_entries(file_tree.absolute_path(source)))
+        skipped = []
+        versions = {}
+        entries = _candidate_entries(file_tree.absolute_path(source), best_effort=best_effort,
+                                     skipped_paths=skipped,
+                                     skipped_versions=versions)
+        if best_effort:
+            rescanned_skipped = []
+            rescanned_versions = {}
+            rescanned = _candidate_entries(file_tree.absolute_path(source), best_effort=True,
+                                           skipped_paths=rescanned_skipped,
+                                           skipped_versions=rescanned_versions)
+            if (entries != rescanned or skipped != rescanned_skipped
+                    or versions != rescanned_versions):
+                raise file_tree.TreeChangedError('Candidate source changed during verification')
+            if skipped_versions is not None:
+                skipped_versions.clear()
+                skipped_versions.update(rescanned_versions)
+        elif skipped_versions is not None:
+            skipped_versions.clear()
+            skipped_versions.update(versions)
+        if skipped_paths is not None:
+            skipped_paths.extend(skipped)
+        return _source_manifest(entries)
     except (OSError, UnicodeError, file_tree.UnsafeTreeError, file_tree.TreeChangedError) as error:
         raise InvalidWorkspaceError(str(error)) from error
 
@@ -261,7 +287,10 @@ def _copy_source_tree(source: Path, staging: Path, entries: dict[str, dict]) -> 
             os.fchmod(descriptor, entries[relative]["mode"])
 
 
-def _copy_tree(source: Path, destination: Path, *, max_retries: int, candidate: bool) -> dict:
+def _copy_tree(source: Path, destination: Path, *, max_retries: int, candidate: bool,
+               best_effort: bool = False,
+               skipped_paths: list[str] | None = None,
+               skipped_versions: dict[str, tuple[int, ...]] | None = None) -> dict:
     """Copy a stable tree without publishing partial data."""
     source, destination = map(file_tree.absolute_path, (source, destination))
     if type(max_retries) is not int or not 0 <= max_retries <= 3:
@@ -281,9 +310,20 @@ def _copy_tree(source: Path, destination: Path, *, max_retries: int, candidate: 
                 os.mkdir(staging_name, mode=0o700, dir_fd=parent)
                 staging = destination.parent / staging_name
                 try:
-                    entries = scan(scan_source)
+                    skipped = []
+                    skipped_version = {}
+                    entries = scan(scan_source, best_effort=best_effort,
+                                   skipped_paths=skipped,
+                                   skipped_versions=skipped_version)
                     _copy_source_tree(scan_source, staging, entries)
-                    if entries != scan(scan_source) or entries != scan(staging):
+                    rescanned_skipped = []
+                    rescanned_versions = {}
+                    rescanned = scan(scan_source, best_effort=best_effort,
+                                     skipped_paths=rescanned_skipped,
+                                     skipped_versions=rescanned_versions)
+                    if (entries != rescanned or skipped != rescanned_skipped
+                            or skipped_version != rescanned_versions
+                            or entries != scan(staging)):
                         raise file_tree.TreeChangedError("Candidate source changed during copy")
                     try:
                         target = os.stat(destination.name, dir_fd=parent, follow_symlinks=False)
@@ -297,8 +337,13 @@ def _copy_tree(source: Path, destination: Path, *, max_retries: int, candidate: 
                                 raise InvalidWorkspaceError(f"workspace is not empty: {destination}")
                     manifest = _source_manifest(entries)
                     os.rename(staging_name, destination.name, src_dir_fd=parent, dst_dir_fd=parent)
+                    if skipped_paths is not None:
+                        skipped_paths.extend(skipped)
+                    if skipped_versions is not None:
+                        skipped_versions.clear()
+                        skipped_versions.update(skipped_version)
                     return manifest
-                except (file_tree.TreeChangedError, FileNotFoundError) as error:
+                except (file_tree.TreeChangedError, FileNotFoundError, PermissionError) as error:
                     if attempt == max_retries:
                         raise InvalidWorkspaceError(f"Candidate could not be copied stably: {error}") from error
                 finally:
@@ -307,9 +352,14 @@ def _copy_tree(source: Path, destination: Path, *, max_retries: int, candidate: 
         raise InvalidWorkspaceError(str(error)) from error
 
 
-def copy_candidate_tree(source: Path, destination: Path, *, max_retries: int = 3) -> dict:
-    """Copy Candidate Python sources and tuning.json, excluding task/results."""
-    return _copy_tree(source, destination, max_retries=max_retries, candidate=True)
+def copy_candidate_tree(source: Path, destination: Path, *, max_retries: int = 3,
+                        best_effort: bool = False,
+                        skipped_paths: list[str] | None = None,
+                        skipped_versions: dict[str, tuple[int, ...]] | None = None) -> dict:
+    """Copy Candidate files, excluding task/results, metadata and caches."""
+    return _copy_tree(source, destination, max_retries=max_retries, candidate=True,
+                      best_effort=best_effort, skipped_paths=skipped_paths,
+                      skipped_versions=skipped_versions)
 
 
 def copy_tree(source: Path, destination: Path, *, max_retries: int = 3) -> dict:
@@ -378,11 +428,11 @@ def _normalize_candidate(path: Path) -> None:
 
 
 def publish_workspace_root(destination: Path) -> None:
-    """Expose a fully built Workspace with a group-readable, non-writable root."""
+    """Expose a Workspace root for private Agent temporaries with sticky entries."""
     share_gid = grp.getgrnam("ptobench-share").gr_gid
     with file_tree.open_directory(destination) as descriptor:
         os.fchown(descriptor, -1, share_gid)
-        os.fchmod(descriptor, 0o2750)
+        os.fchmod(descriptor, 0o3770)
 
 
 def _normalize_workspace(destination: Path, *, publish: bool = True) -> None:
@@ -395,7 +445,7 @@ def _normalize_workspace(destination: Path, *, publish: bool = True) -> None:
     _readonly(outputs)
     with file_tree.open_directory(destination) as descriptor:
         os.fchown(descriptor, -1, share_gid)
-        os.fchmod(descriptor, 0o2750 if publish else 0o700)
+        os.fchmod(descriptor, 0o3770 if publish else 0o700)
 
 
 def validate_workspace(destination: Path, *, root_mode: int,

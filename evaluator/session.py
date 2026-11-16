@@ -168,6 +168,8 @@ def _session_lock(root):
 def _budget(value):
     if value is not None and not isinstance(value, dict):
         raise SessionError("budget must be an object")
+    if value and "max_profile_actions" in value:
+        raise SessionError("max_profile_actions is no longer supported; evaluate and profile share max_hardware_actions")
     value = {"max_hardware_actions": 20, "finish_actions": 1, **(value or {})}
     maximum = value["max_hardware_actions"]
     valid_maximum = (maximum == UNLIMITED_HARDWARE_ACTIONS or
@@ -175,7 +177,7 @@ def _budget(value):
     if (set(value) != {"max_hardware_actions", "finish_actions"}
             or not valid_maximum
             or type(value["finish_actions"]) is not int or value["finish_actions"] != 1):
-        raise SessionError("budget requires a positive integer or 'unlimited' exploration actions and exactly one finish action")
+        raise SessionError("budget requires a valid hardware action limit and exactly one finish action")
     return value
 
 
@@ -489,6 +491,9 @@ def create_session(case_id, optimizer, output=None, budget=None, *, mode=None,
                     declarations[logical] = integrity.ProtectionRoot(path, "records")
                 manifest = integrity.capture_protection(root / "protection", declarations)
                 workspace.publish_workspace_root(initial)
+            if workspace.validate_workspace(initial, root_mode=0o3770,
+                    workspace_path=initial, case_id=case_id) is None:
+                raise workspace.InvalidWorkspaceError('published initial Workspace is incomplete')
             with _session_lock(root):
                 record = {
                     "schema_version": 2, "session_id": session_id, "optimizer_id": optimizer_id,
@@ -746,7 +751,6 @@ def _events(root, record):
     seen = set()
     attempt_sequence = 0
     counters = {"hardware_actions": 0, "finish_actions": 0}
-    evaluate_actions = 0
     for event in events:
         seq = event.get("seq") if isinstance(event, dict) else None
         if type(seq) is not int or not 0 < seq < record["next_event_seq"] or seq in seen:
@@ -766,11 +770,23 @@ def _events(root, record):
                 or type(event["hardware_actions_used"]) is not int
                 or not 0 <= event["hardware_actions_used"] <= record["usage"]["hardware_actions"]):
             raise integrity.InfrastructureError("invalid event schema")
+        skipped = event.get("candidate_capture_skipped")
+        if (skipped is not None and (not isinstance(skipped, list)
+                or any(not isinstance(path, str) or not path for path in skipped)
+                or skipped != sorted(set(skipped)))):
+            raise integrity.InfrastructureError("invalid Candidate capture diagnostics")
+        snapshot_error = event.get("snapshot_error")
+        if (snapshot_error is not None and
+                (not isinstance(snapshot_error, str) or not snapshot_error
+                 or event["action"] not in {"evaluate", "profile"}
+                 or event["snapshot_id"] is not None or event["error_code"] is not None
+                 or event["exit_code"] != 0 or not event["hardware_action"]
+                 or not event["action_started"] or not event["integrity_passed"])):
+            raise integrity.InfrastructureError("invalid optional Snapshot failure evidence")
         if event["hardware_action"]:
             if event["action"] in {"fork", "invalid_request"} or not isinstance(event["content_sha256"], str) or not re.fullmatch(r"[a-f0-9]{64}", event["content_sha256"]):
                 raise integrity.InfrastructureError("invalid accepted event")
             counters["finish_actions" if event["action"] == "finish" else "hardware_actions"] += 1
-            evaluate_actions += event["action"] == "evaluate"
         if "attempt_id" in event and (type(event["attempt_id"]) is not int or event["attempt_id"] < 1):
             raise integrity.InfrastructureError("invalid Attempt number")
         if event.get("parent_attempt_id") is not None and (
@@ -786,26 +802,17 @@ def _events(root, record):
     if active:
         seen.add(active["event_seq"])
         counters["finish_actions" if active["kind"] == "finish" else "hardware_actions"] += 1
-        evaluate_actions += active["kind"] == "evaluate"
     if seen != set(range(1, record["next_event_seq"])) or counters != record["usage"]:
         raise integrity.InfrastructureError("event/active sequence or budget ledger mismatch")
     maximum = record["budget"]["max_hardware_actions"]
-    if maximum != UNLIMITED_HARDWARE_ACTIONS and evaluate_actions > maximum:
-        raise integrity.InfrastructureError("Evaluate events exceed the Session allowance")
+    if maximum != UNLIMITED_HARDWARE_ACTIONS and counters["hardware_actions"] > maximum:
+        raise integrity.InfrastructureError("hardware events exceed the Session allowance")
     return events
 
 
-def _evaluate_actions_used(record, events):
-    """Derive consumed Evaluate allowance from accepted events and reservation."""
-    completed = sum(event.get("action") == "evaluate" and event.get("hardware_action") is True
-                   for event in events)
-    active = record.get("active_action")
-    return completed + (active is not None and active.get("kind") == "evaluate")
-
-
-def read_session(session_root, repair=True) -> SessionRecord:
+def read_session(session_root, repair=True, *, allow_pending=False) -> SessionRecord:
     with _session_lock(session_root) as root:
-        return copy.deepcopy(_load_locked(root, repair)[0])
+        return copy.deepcopy(_load_locked(root, repair, allow_pending=allow_pending)[0])
 
 
 def _commit(root, record, events=None, record_updates=None):
@@ -821,6 +828,8 @@ def _commit(root, record, events=None, record_updates=None):
 
 
 def _open_exploration(record):
+    if record["status"] == "exhausted":
+        raise SessionError("Hardware action budget exhausted; exploration actions are closed", "budget_exceeded")
     if record["status"] in {"failed", "completed"} or record["exploration_closed"]:
         raise SessionError("Session exploration is closed", "session_closed")
     if record["active_action"] is not None:
@@ -1114,7 +1123,7 @@ def _finish_pending_fork(root, record, name, pending, *, stage_exists):
     if stage_exists and stage.exists():
         raise integrity.InfrastructureError(f'fork staging remains after rename: {name}')
     target_mode = stat.S_IMODE(target.lstat().st_mode)
-    if target_mode not in {0o700, 0o2750}:
+    if target_mode not in {0o700, 0o3770}:
         raise integrity.InfrastructureError(f'fork target is partially published: {name}')
     allowed_registration = {
         'staged': (False, False),
@@ -1130,7 +1139,7 @@ def _finish_pending_fork(root, record, name, pending, *, stage_exists):
         raise integrity.InfrastructureError(f'fork phase contradicts its registration state: {name}')
     if target_mode == 0o700 and phase == 'registered-open':
         raise integrity.InfrastructureError(f'published fork became inaccessible during recovery: {name}')
-    if target_mode == 0o2750 and phase not in {'registered-locked', 'registered-open'}:
+    if target_mode == 0o3770 and phase not in {'registered-locked', 'registered-open'}:
         raise integrity.InfrastructureError(f'fork opened before registration: {name}')
     valid = workspace.validate_workspace(target, root_mode=target_mode,
             workspace_path=target, parent_workspace=parent, case_id=record['case_id'],
@@ -1138,7 +1147,7 @@ def _finish_pending_fork(root, record, name, pending, *, stage_exists):
             compare_starting=(target_mode == 0o700))
     if valid is None:
         raise integrity.InfrastructureError(f'fork target is incomplete: {name}')
-    if target_mode == 0o2750 and not registered:
+    if target_mode == 0o3770 and not registered:
         raise integrity.InfrastructureError(f'unregistered fork is already open to the Agent: {name}')
     if registered and not context_registered:
         raise integrity.InfrastructureError(f'registered fork has no Context integrity root: {name}')
@@ -1149,7 +1158,7 @@ def _finish_pending_fork(root, record, name, pending, *, stage_exists):
     _commit(root, record)
     if target_mode == 0o700:
         workspace.publish_workspace_root(target)
-    if workspace.validate_workspace(target, root_mode=0o2750,
+    if workspace.validate_workspace(target, root_mode=0o3770,
             workspace_path=target, parent_workspace=parent, case_id=record['case_id'],
             verify_candidate=False, compare_starting=False) is None:
         raise integrity.InfrastructureError(f'published fork is incomplete: {name}')
@@ -1251,7 +1260,9 @@ def _validate_source_manifest(value):
 
 def reserve_action(session_root, event_seq, kind, *, workspace_path=None,
                    mode=None, source_manifest=None, observed_mode_changes=None,
-                   compile_config=None, parent_attempt_id=None):
+                   compile_config=None, parent_attempt_id=None,
+                   candidate_capture_skipped=None,
+                   candidate_capture_skipped_versions=None):
     """Prechecks completed before this call; global lock remains held afterwards.
 
     A frozen manifest from S1's copy tool is mandatory. Finish callers supply a
@@ -1278,17 +1289,25 @@ def reserve_action(session_root, event_seq, kind, *, workspace_path=None,
             workspace_id = "final"
         else:
             _open_exploration(record)
-            if (kind == "evaluate"
-                    and record["budget"]["max_hardware_actions"] != UNLIMITED_HARDWARE_ACTIONS
-                    and _evaluate_actions_used(record, events) >= record["budget"]["max_hardware_actions"]):
-                raise SessionError("Evaluate allowance exhausted", "budget_exceeded")
+            if (record["budget"]["max_hardware_actions"] != UNLIMITED_HARDWARE_ACTIONS
+                    and record["usage"]["hardware_actions"] >= record["budget"]["max_hardware_actions"]):
+                raise SessionError("Hardware action budget exhausted", "budget_exceeded")
             workspace_id, target = _workspace_path(root, record, workspace_path)
             if kind == "profile" and mode not in record["profiling_modes"]:
                 raise SessionError("profile is not enabled in this Session")
         if event_seq != record["next_event_seq"]:
             raise SessionError("event sequence is stale")
     # Full tree/hash checks never hold the short Session record lock.
-    workspace.source_manifest(target)
+    source_skipped = []
+    source_skipped_versions = {}
+    workspace.source_manifest(target,
+                              best_effort=candidate_capture_skipped is not None,
+                              skipped_paths=source_skipped,
+                              skipped_versions=source_skipped_versions)
+    if (candidate_capture_skipped is not None
+            and (sorted(set(source_skipped)) != sorted(set(candidate_capture_skipped))
+                 or source_skipped_versions != candidate_capture_skipped_versions)):
+        raise workspace.InvalidWorkspaceError('Candidate unreadable entries changed during action reservation')
     clean = integrity.check_only(root / "protection", {"fixed", "context"})
     if not clean.passed:
         raise SessionError("protected files must be repaired before reservation", "integrity_failed")
@@ -1301,19 +1320,17 @@ def reserve_action(session_root, event_seq, kind, *, workspace_path=None,
                 raise SessionError("finish is active or already used", "budget_exceeded")
         else:
             _open_exploration(record)
-            if (kind == "evaluate"
-                    and record["budget"]["max_hardware_actions"] != UNLIMITED_HARDWARE_ACTIONS
-                    and _evaluate_actions_used(record, events) >= record["budget"]["max_hardware_actions"]):
-                raise SessionError("Evaluate allowance exhausted", "budget_exceeded")
+            if (record["budget"]["max_hardware_actions"] != UNLIMITED_HARDWARE_ACTIONS
+                    and record["usage"]["hardware_actions"] >= record["budget"]["max_hardware_actions"]):
+                raise SessionError("Hardware action budget exhausted", "budget_exceeded")
         if record["next_event_seq"] != event_seq:
             raise SessionError("event sequence is stale")
         counter = "finish_actions" if kind == "finish" else "hardware_actions"
         record["usage"][counter] += 1
         if kind in {"evaluate", "profile"}:
-            evaluate_used = _evaluate_actions_used(record, events) + (kind == "evaluate")
             maximum = record["budget"]["max_hardware_actions"]
             record["status"] = ("exhausted" if maximum != UNLIMITED_HARDWARE_ACTIONS
-                                and evaluate_used >= maximum else "running")
+                                and record["usage"]["hardware_actions"] >= maximum else "running")
         record["next_event_seq"] += 1
         record["active_action"] = {
             "event_seq": event_seq, "kind": kind, "mode": mode, "workspace": workspace_id,
@@ -1372,7 +1389,8 @@ def complete_action(session_root, event_seq, *, exit_code, error_code=None,
                     integrity_passed=False, result=None, repaired_paths=None,
                     snapshot_id=None, action_started=True, observation=None,
                     final_result=None, record_updates=None, artifact_index=None,
-                    observed_mode_changes=None, attempt_metadata=None):
+                    observed_mode_changes=None, attempt_metadata=None,
+                    candidate_capture_skipped=None, snapshot_error=None):
     """Atomically save the event and clear active_action, even when exhausted.
 
     Result validation and Snapshot creation are S3/S4 responsibilities. The
@@ -1383,7 +1401,13 @@ def complete_action(session_root, event_seq, *, exit_code, error_code=None,
             or type(integrity_passed) is not bool or type(action_started) is not bool
             or repaired_paths is not None and (not isinstance(repaired_paths, list) or any(not isinstance(p, str) for p in repaired_paths))
             or observed_mode_changes is not None and (not isinstance(observed_mode_changes, list)
-                    or any(not isinstance(p, str) for p in observed_mode_changes))):
+                    or any(not isinstance(p, str) for p in observed_mode_changes))
+            or candidate_capture_skipped is not None and (not isinstance(candidate_capture_skipped, list)
+                    or any(not isinstance(p, str) or not p for p in candidate_capture_skipped)
+                    or candidate_capture_skipped != sorted(set(candidate_capture_skipped)))
+            or snapshot_error is not None and (not isinstance(snapshot_error, str) or not snapshot_error
+                    or snapshot_id is not None or error_code is not None or exit_code != 0
+                    or not integrity_passed or not action_started)):
         raise SessionError("invalid action completion evidence")
     with _session_lock(session_root) as root:
         record, events = _load_locked(root)
@@ -1395,6 +1419,9 @@ def complete_action(session_root, event_seq, *, exit_code, error_code=None,
             raise SessionError("no matching active action")
         if active["event_seq"] != event_seq:
             raise SessionError("active action sequence mismatch")
+        if (candidate_capture_skipped is not None and active["kind"] not in {"evaluate", "profile"}
+                or snapshot_error is not None and active["kind"] not in {"evaluate", "profile"}):
+            raise SessionError("Candidate archive evidence is valid only for Evaluate/Profile")
         event = {
             "run_id": record["session_id"], "seq": event_seq, "time": _now(),
             "action": active["kind"], "mode": active["mode"],
@@ -1408,6 +1435,10 @@ def complete_action(session_root, event_seq, *, exit_code, error_code=None,
                                              | set(active.get("observed_mode_changes", []))),
             "hardware_actions_used": record["usage"]["hardware_actions"],
         }
+        if candidate_capture_skipped:
+            event["candidate_capture_skipped"] = list(candidate_capture_skipped)
+        if snapshot_error is not None:
+            event["snapshot_error"] = snapshot_error
         if "attempt_id" in active:
             event.update(attempt_id=active["attempt_id"],
                          source_snapshot=active["source_snapshot"],

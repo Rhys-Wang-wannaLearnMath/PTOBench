@@ -42,6 +42,13 @@ def skills(upstream):
         if name in result:
             raise ValueError('duplicate upstream skill identity')
         result[name] = str(source)
+        # Upstream references commonly spell the entry point as either
+        # ``<skill-name>/SKILL.md`` or its path relative to ``ops/``.
+        for alias in (f'{name}/SKILL.md',
+                      f'{source.parent.relative_to(upstream / "ops").as_posix()}/SKILL.md'):
+            if alias in result and result[alias] != str(source):
+                raise ValueError('duplicate upstream skill reference identity')
+            result[alias] = str(source)
         # Agents request progressive-disclosure documents as
         # ``<skill-name>/<relative-path>``. Keep the index rooted in the
         # frozen upstream tree so this remains a read-only resource lookup.

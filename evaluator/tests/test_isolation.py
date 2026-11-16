@@ -1,5 +1,6 @@
 """Actual kernel boundary tests; no mocked path checks or model calls."""
 import json
+import grp
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import os
 from pathlib import Path
@@ -55,6 +56,42 @@ class TrustedBubblewrapResolutionTests(unittest.TestCase):
 
 
 class AgentMountManifestTests(unittest.TestCase):
+    def _agent_inputs(self, root):
+        root = Path(root)
+        workspaces = root / 'workspaces'
+        for name in ('worker_000', 'worker_001'):
+            worker = workspaces / name
+            (worker / 'candidate').mkdir(parents=True)
+            (worker / '.benchmark_context').mkdir()
+            (worker / '.benchmark_outputs').mkdir()
+            (worker / 'candidate/candidate.py').write_text('pass\n')
+        workspace = workspaces / 'worker_000'
+        (workspace / '.benchmark_context/workspace.json').write_text('{}\n')
+        for name in ('mode.json', 'method_request.json', 'profile.json', 'prompt.txt'):
+            (root / name).write_text('private prompt\n' if name == 'prompt.txt' else '{}\n')
+        native = root / 'agent/native'
+        native.mkdir(parents=True)
+
+        def bind_socket(path):
+            path = Path(path)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            endpoint = socket.socket(socket.AF_UNIX)
+            endpoint.bind(str(path))
+            self.addCleanup(endpoint.close)
+            return path
+
+        rpc = bind_socket(root / 'sockets/rpc.sock')
+        gateway = bind_socket(root / 'sockets/api.sock')
+        transport_directory, transport = sandbox_supervisor._copy_cli_transport(root)
+        self.addCleanup(shutil.rmtree, transport_directory, True)
+        environment = {
+            'PATH': os.environ['PATH'],
+            'PTOBENCH_RPC_SOCKET': str(rpc),
+            'PTOBENCH_API_PROXY_SOCKET': str(gateway),
+            'PTOBENCH_CLIENT_PATH': str(transport),
+        }
+        return workspace, native, environment, bind_socket
+
     def test_retired_candidate_pool_and_export_mapping_helpers_are_absent(self):
         self.assertFalse(hasattr(isolation, '_candidate_location'))
         self.assertFalse(hasattr(isolation, '_exported_workspace'))
@@ -64,52 +101,22 @@ class AgentMountManifestTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory(prefix='agent-mount-manifest-') as temporary:
             root = Path(temporary) / 'session'
+            workspace, native, environment, bind_socket = self._agent_inputs(root)
             workspaces = root / 'workspaces'
-            workspace = workspaces / 'worker_000'
-            for name in ('worker_000', 'worker_001'):
-                worker = workspaces / name
-                (worker / 'candidate').mkdir(parents=True)
-                (worker / '.benchmark_context').mkdir()
-                (worker / '.benchmark_outputs').mkdir()
-                (worker / 'candidate/candidate.py').write_text('pass\n')
-            workspace.mkdir(exist_ok=True)
-            workspace_context = workspace / '.benchmark_context'
-            (workspace_context / 'workspace.json').write_text('{}\n')
-            (root / 'mode.json').write_text('{}\n')
-            (root / 'method_request.json').write_text('{}\n')
-            (root / 'profile.json').write_text('{}\n')
-            (root / 'prompt.txt').write_text('private prompt\n')
-
-            def bind_socket(path):
-                path.parent.mkdir(parents=True, exist_ok=True)
-                endpoint = socket.socket(socket.AF_UNIX)
-                endpoint.bind(str(path))
-                self.addCleanup(endpoint.close)
-                return path
-
-            rpc = bind_socket(root / 'sockets/rpc.sock')
-            gateway = bind_socket(root / 'sockets/api.sock')
             tools = root / 'agent/pi-tools'
             tools.mkdir(parents=True)
             extension = tools / 'cannbot-extension.ts'
             extension.write_text('export default () => {};\n')
-            native = root / 'agent/native'
-            native.mkdir(parents=True)
-            transport_directory, transport = sandbox_supervisor._copy_cli_transport(root)
-
-            environment = {
-                'PATH': os.environ['PATH'],
-                'PTOBENCH_RPC_SOCKET': str(rpc),
-                'PTOBENCH_API_PROXY_SOCKET': str(gateway),
-                'PTOBENCH_CLIENT_PATH': str(transport),
-            }
+            cann_bot_socket = bind_socket(root / 'agent/cannbot.sock')
+            environment['PTOBENCH_PI_TOOL_SOCKET'] = '/host/value-must-not-leak'
             with patch.object(agent_launch, 'prepare',
                               side_effect=lambda command, cwd, request_directory:
                               (command, {'PATH': os.defpath})):
                 command, launch_environment = isolation.agent_command(
                     ['pi', '--extension', str(extension), '--session-dir', str(native), '{prompt}'],
                     cwd=workspace, environment=environment, workspace=workspace,
-                    session_root=root, cann_bot_extension=extension)
+                    session_root=root, cann_bot_extension=extension,
+                    cann_bot_socket=cann_bot_socket)
 
             manifest = json.loads((root / 'filesystem_isolation.json').read_text())
             mounts = manifest['mounts']
@@ -143,6 +150,13 @@ class AgentMountManifestTests(unittest.TestCase):
             self.assertTrue(any(item['source'] == str(native.resolve())
                                 and item['access'] == 'rw' for item in mounts))
             self.assertIn('/ptobench/pi-tools/cannbot-extension.ts', command)
+            self.assertIn('/ptobench/cannbot.sock', command)
+            agent_argv = command[max(index for index, value in enumerate(command)
+                                     if value == '--') + 1:]
+            extensions = [agent_argv[index + 1] for index, value in enumerate(agent_argv[:-1])
+                          if value == '--extension']
+            self.assertEqual(extensions, ['/ptobench/pi-tools/cannbot-extension.ts',
+                                          '/ptobench/pi-tools/ptobench-file-guard.mjs'])
             sandbox_environment = {
                 command[index + 1]: command[index + 2]
                 for index, value in enumerate(command[:-2]) if value == '--setenv'
@@ -151,6 +165,11 @@ class AgentMountManifestTests(unittest.TestCase):
             self.assertEqual(sandbox_environment['PTOBENCH_PI_TOOLS_DIR'], '/ptobench/pi-tools')
             self.assertEqual(sandbox_environment['PTOBENCH_AGENT_SESSION_DIR'],
                              '/ptobench/agent-sessions')
+            self.assertEqual(sandbox_environment['PTOBENCH_CANNBOT_SOCKET'],
+                             '/ptobench/cannbot.sock')
+            self.assertNotIn('PTOBENCH_PI_TOOL_SOCKET', sandbox_environment)
+            self.assertFalse(any(item['destination'] == '/ptobench/pi-tool.sock'
+                                 for item in mounts))
             pi_tools = next(Path(item['source']) for item in mounts
                             if item['destination'] == '/ptobench/pi-tools')
             shell_config = json.loads((pi_tools / 'shell.json').read_text())
@@ -169,6 +188,143 @@ class AgentMountManifestTests(unittest.TestCase):
                                      for item in mounts), path)
             self.assertFalse(any('/candidates' in item['source'] or '/public' in item['source']
                                  for item in mounts))
+
+    def test_pi_tool_extension_and_socket_are_mapped_without_replacing_existing_extensions(self):
+        with tempfile.TemporaryDirectory(prefix='pi-tool-mount-manifest-') as temporary:
+            root = Path(temporary) / 'session'
+            workspace, native, environment, bind_socket = self._agent_inputs(root)
+            tools = root / 'agent/pi-tools'
+            tools.mkdir(parents=True)
+            tool_extension = tools / 'broker-tool.mjs'
+            tool_extension.write_text('export default () => {};\n')
+            cann_extension = tools / 'cannbot-extension.ts'
+            cann_extension.write_text('export default () => {};\n')
+            tool_socket = bind_socket(root / 'agent/tool.sock')
+            cann_socket = bind_socket(root / 'agent/cannbot.sock')
+            environment['PTOBENCH_PI_TOOL_SOCKET'] = str(tool_socket)
+            provider_extension = root / 'agent/pi-config/unlimited-output.ts'
+            provider_extension.parent.mkdir(parents=True)
+            provider_extension.write_text('export default () => {};\n')
+            os.chown(provider_extension, -1, grp.getgrnam('ptobench-share').gr_gid)
+            provider_extension.chmod(0o440)
+
+            with patch.object(agent_launch, 'prepare',
+                              side_effect=lambda command, cwd, request_directory:
+                              (command, {'PATH': os.defpath})):
+                command, _ = isolation.agent_command(
+                    ['pi', '--extension', str(tool_extension), '--extension', str(cann_extension),
+                     '--extension', str(provider_extension),
+                     '--session-dir', str(native), '{prompt}'],
+                    cwd=workspace, environment=environment, workspace=workspace,
+                    session_root=root, cann_bot_extension=cann_extension,
+                    cann_bot_socket=cann_socket, pi_tool_extension=tool_extension,
+                    pi_tool_socket=tool_socket)
+
+            manifest = json.loads((root / 'filesystem_isolation.json').read_text())
+            mounts = manifest['mounts']
+            tool_mounts = [item for item in mounts
+                           if item['destination'] == '/ptobench/pi-tool.sock']
+            self.assertEqual(tool_mounts, [{'source': str(tool_socket.resolve()),
+                                            'destination': '/ptobench/pi-tool.sock',
+                                            'access': 'ro'}])
+            self.assertTrue(any(item['source'] == str(cann_socket.resolve())
+                                and item['destination'] == '/ptobench/cannbot.sock'
+                                for item in mounts))
+
+            agent_argv = command[max(index for index, value in enumerate(command)
+                                     if value == '--') + 1:]
+            self.assertNotIn(str(tool_extension), agent_argv)
+            self.assertNotIn(str(tool_socket), agent_argv)
+            extensions = [agent_argv[index + 1] for index, value in enumerate(agent_argv[:-1])
+                          if value == '--extension']
+            self.assertIn('/ptobench/pi-tools/ptobench-file-guard.mjs', extensions)
+            self.assertIn('/ptobench/pi-config/unlimited-output.ts', extensions)
+            self.assertIn('/ptobench/pi-tools/cannbot-extension.ts', extensions)
+            self.assertIn('/ptobench/pi-tools/broker-tool.mjs', extensions)
+            self.assertEqual(extensions.count('/ptobench/pi-tools/broker-tool.mjs'), 1)
+
+            with patch.object(agent_launch, 'prepare',
+                              side_effect=lambda command, cwd, request_directory:
+                              (command, {'PATH': os.defpath})):
+                command_without_extension, _ = isolation.agent_command(
+                    ['pi', '--extension', str(cann_extension), '--extension', str(provider_extension),
+                     '--session-dir', str(native), '{prompt}'],
+                    cwd=workspace, environment=environment, workspace=workspace,
+                    session_root=root, cann_bot_extension=cann_extension,
+                    cann_bot_socket=cann_socket, pi_tool_extension=tool_extension,
+                    pi_tool_socket=tool_socket)
+            agent_argv_without_extension = command_without_extension[
+                max(index for index, value in enumerate(command_without_extension)
+                    if value == '--') + 1:]
+            self.assertNotIn(str(tool_extension), agent_argv_without_extension)
+            extensions_without_extension = [
+                agent_argv_without_extension[index + 1]
+                for index, value in enumerate(agent_argv_without_extension[:-1])
+                if value == '--extension']
+            self.assertEqual(extensions_without_extension.count('/ptobench/pi-tools/broker-tool.mjs'),
+                             1, agent_argv_without_extension)
+
+            sandbox_environment = {
+                command[index + 1]: command[index + 2]
+                for index, value in enumerate(command[:-2]) if value == '--setenv'
+            }
+            self.assertEqual(sandbox_environment['PTOBENCH_PI_TOOL_SOCKET'],
+                             '/ptobench/pi-tool.sock')
+            self.assertEqual(sandbox_environment['PTOBENCH_CANNBOT_SOCKET'],
+                             '/ptobench/cannbot.sock')
+            self.assertNotIn(str(tool_socket), sandbox_environment.values())
+
+    def test_pi_tool_arguments_reject_invalid_pairing_and_scope(self):
+        with tempfile.TemporaryDirectory(prefix='pi-tool-invalid-') as temporary:
+            base = Path(temporary)
+            root = base / 'session'
+            workspace, native, environment, bind_socket = self._agent_inputs(root)
+            tools = root / 'agent/pi-tools'
+            tools.mkdir(parents=True)
+            extension = tools / 'broker-tool.mjs'
+            extension.write_text('export default () => {};\n')
+            extension_directory = tools / 'directory-extension'
+            extension_directory.mkdir()
+            outside_extension = base / 'outside.mjs'
+            outside_extension.write_text('export default () => {};\n')
+            outside_alias = base / 'outside-alias.mjs'
+            outside_alias.symlink_to(extension)
+            escaping_link = tools / 'escape.mjs'
+            escaping_link.symlink_to(outside_extension)
+            tool_socket = bind_socket(root / 'agent/tool.sock')
+            outside_socket = bind_socket(base / 'outside.sock')
+            non_socket = root / 'agent/not-a-socket'
+            non_socket.write_text('not a socket')
+
+            invalid = (
+                ('extension without socket', {'pi_tool_extension': extension}),
+                ('socket without extension', {'pi_tool_socket': tool_socket}),
+                ('extension is a directory', {'pi_tool_extension': extension_directory,
+                                              'pi_tool_socket': tool_socket}),
+                ('extension outside pi-tools', {'pi_tool_extension': outside_extension,
+                                                'pi_tool_socket': tool_socket}),
+                ('extension path outside pi-tools', {'pi_tool_extension': outside_alias,
+                                                     'pi_tool_socket': tool_socket}),
+                ('extension symlink escape', {'pi_tool_extension': escaping_link,
+                                              'pi_tool_socket': tool_socket}),
+                ('non-socket endpoint', {'pi_tool_extension': extension,
+                                         'pi_tool_socket': non_socket}),
+                ('socket outside Session', {'pi_tool_extension': extension,
+                                           'pi_tool_socket': outside_socket}),
+                ('non-Pi Agent', {'pi_tool_extension': extension,
+                                  'pi_tool_socket': tool_socket, 'backend': 'other',
+                                  'command': ['python', '{prompt}']}),
+            )
+            with patch.object(agent_launch, 'prepare') as prepare:
+                for name, values in invalid:
+                    with self.subTest(name=name), self.assertRaises(RuntimeError):
+                        options = dict(values)
+                        command = options.pop('command',
+                                              ['pi', '--session-dir', str(native), '{prompt}'])
+                        isolation.agent_command(
+                            command, cwd=workspace, environment=environment,
+                            workspace=workspace, session_root=root, **options)
+                prepare.assert_not_called()
 
     def test_bubblewrap_does_not_inherit_host_variables_without_clearenv(self):
         with patch.dict(os.environ, {'UNAUTHORIZED_ENV': 'hidden'}):
@@ -1302,9 +1458,8 @@ assert 'complete defaults vary by Case' in Path('.benchmark_context/README.md').
             self.assertEqual(len(case.dispatches(root)), 3)
             for dispatch in case.dispatches(root):
                 prompt = (root/'method/dispatches'/dispatch['id']/'prompt.txt').read_text()
-                self.assertIn('.benchmark_context/tuning_capabilities.json', prompt)
-                self.assertIn('complete defaults vary by Case', prompt)
-                self.assertIn('PYPTO + false', prompt)
+                self.assertIn('Read .benchmark_context/README.md for the Case contract, editable options, CLI commands and result locations.', prompt)
+                self.assertIn('Fork does not consume this budget.', prompt)
                 self.assertIn('candidate/tuning.json', prompt)
                 self.assertNotIn('workspace-root tuning.json', prompt)
                 self.assertIn('ptobench evaluate .', prompt)

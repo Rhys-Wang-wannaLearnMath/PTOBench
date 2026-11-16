@@ -1,0 +1,5 @@
+Command: PYTHONPATH=.:evaluator:evaluator/tests /data1/home/ziruiwang/pypto-lib/.venv-official/bin/python -m pytest modes/basic_wiki-tool/tests/test_mode.py -q
+
+..                                                                       [100%]
+4 passed in 1.74s
+Exit code: 0

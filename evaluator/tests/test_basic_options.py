@@ -21,17 +21,17 @@ class BasicModeTests(unittest.TestCase):
             'Normal optimization instructions.',
         )
         normalized_prompt = ' '.join(prompt.split())
-        for expected in ('.benchmark_context/README.md', '.benchmark_context/tuning_capabilities.json',
+        for expected in ('Read .benchmark_context/README.md for the Case contract, editable options, CLI commands and result locations.',
                          'candidate/', 'candidate/tuning.json', 'ptobench evaluate .',
                          'Normal optimization instructions.',
-                         'Evaluate allowance: 8 accepted `ptobench evaluate` actions',
-                         'interrupted accepted Evaluate still consumes one',
-                         'Profile budget cost is 0', 'recorded as a hardware action',
-                         'remains available after the Evaluate',
-                         'allowance is exhausted',
-                         'Fork budget cost is 0', 'Extra Evaluate requests are rejected by the CLI',
-                         'continue using Profile/Fork'):
+                         'Hardware-action budget: 8 accepted `ptobench evaluate` or `ptobench profile` actions',
+                         'interrupted accepted action still consumes one',
+                         'Fork does not consume it.',
+                         'Stop when `remaining_hardware_actions` reaches 0',
+                         'Launcher ends the optimization run after the current action completes'):
             self.assertIn(expected, normalized_prompt)
+        for removed in ('tuning_capabilities.json', 'PYPTO + false', 'recorded as'):
+            self.assertNotIn(removed, normalized_prompt)
         self.assertNotIn('accepted hardware actions', normalized_prompt)
         self.assertNotIn('Stop when you are finished or the exploration budget is exhausted', normalized_prompt)
         self.assertNotIn('reference knowledge', normalized_prompt)

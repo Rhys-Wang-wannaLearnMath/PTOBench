@@ -30,17 +30,20 @@ class SnapshotTest(ActionTestBase):
         self.assertEqual(list(self.handle.snapshots_root.iterdir()), [])
         self.assertEqual(list((self.handle.snapshots_root).glob('.snapshot_*')), [])
 
-    def test_new_python_helper_is_included_in_successful_snapshot(self):
+    def test_new_helper_and_notes_are_included_in_successful_snapshot(self):
         helper = self.handle.initial_workspace / 'candidate/new_helper.py'
         helper.write_text('NEW_VALUE = 42\n')
+        notes = self.handle.initial_workspace / 'candidate/notes.md'
+        notes.write_text('optimization notes\n')
 
         process, result = self.cli(['evaluate'])
 
         self.assertEqual(process.returncode, 0, result)
         snapshot = self.snapshot(result)
         self.assertEqual((snapshot / 'source/candidate/new_helper.py').read_text(), 'NEW_VALUE = 42\n')
+        self.assertEqual((snapshot / 'source/candidate/notes.md').read_text(), 'optimization notes\n')
         manifest = workspace.source_manifest(snapshot / 'source')
-        self.assertIn('new_helper.py', {item['path'] for item in manifest['files']})
+        self.assertTrue({'new_helper.py', 'notes.md'} <= {item['path'] for item in manifest['files']})
 
     def test_authority_or_snapshot_registration_failure_never_publishes_success(self):
         for fault in ('authority','snapshot'):

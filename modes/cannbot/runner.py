@@ -70,17 +70,14 @@ Minimize verified latency while preserving the public contract and correctness.
 Candidate workspace: {candidate}
 Edit Candidate source under `candidate/` and tuning options in `candidate/tuning.json`.
 Entry: {context['case']['module']}::{context['case']['entry']}
-Read .benchmark_context/README.md for the Case contract, Bench CLI and result locations.
-Read .benchmark_context/tuning_capabilities.json for this Case's editable compiler and runtime scheduling options, allowed values and restrictions.
-The compiler defaults remain PYPTO + false, and the complete defaults vary by Case.
+Read .benchmark_context/README.md for the Case contract, editable options, CLI commands and result locations.
 After changing source or settings, use ptobench evaluate . to check correctness and clean latency.
-PATH and the Bench Session environment are already set.
-Evaluate allowance: {context['budget']['max_hardware_actions']} accepted `ptobench evaluate` actions,
+The `ptobench` command is available on PATH and operates on this Session's registered workspace.
+Hardware-action budget: {context['budget']['max_hardware_actions']} accepted `ptobench evaluate` or `ptobench profile` actions,
 shared by all workspaces and Agent conversations in this Bench Session. A failed
-or interrupted accepted Evaluate still consumes one. Profile has cost 0, is
-recorded as a hardware action, and remains available after the allowance is used;
-Fork also has cost 0 and is recorded. The CLI rejects extra Evaluate requests;
-continue with Profile/Fork until this method exits or the user interrupts it.
+or interrupted accepted action still consumes one. Fork does not consume this budget.
+Stop when `remaining_hardware_actions` reaches 0; the Launcher ends the optimization run
+after the current action completes and rejects further Evaluate, Profile and Fork requests.
 Frozen upstream root: {upstream}
 Original main role: {upstream / resources.ROLES['pypto-op-orchestrator']}
 Method work directory: {work}

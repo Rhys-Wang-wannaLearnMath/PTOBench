@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import socket
@@ -202,3 +203,32 @@ def test_nonfinite_output_has_terminal_typed_error_and_profile(tmp_path):
     finally:
         server.close()
     assert not path.exists()
+
+
+def test_long_socket_path_binds_and_cleans_up_through_short_alias(tmp_path):
+    Server = server_type()
+    session = tmp_path / ('session-component-' * 3)
+    path = session / 'agent/analyzer.sock'
+    log = session / 'method/analyzer_calls'
+    path.parent.mkdir(parents=True)
+    assert len(str(path).encode()) > 107
+
+    class EmptyAdapter:
+        def specifications(self):
+            return []
+
+    server = Server(EmptyAdapter(), path, log)
+    alias_root = server.endpoint.parent.parent
+    try:
+        assert len(str(server.endpoint).encode()) <= 107
+        assert server.endpoint.resolve(strict=True) == path.resolve(strict=True)
+        assert path.is_socket()
+        assert path.resolve(strict=True).is_relative_to(session.resolve(strict=True))
+        assert path.lstat().st_uid == os.getuid()
+        result = exchange(server.endpoint, dict(action='registered', names=[], active_names=[]))
+        assert not result['isError']
+        assert json.loads((session / 'method/analyzer_registration.json').read_text())['complete']
+    finally:
+        server.close()
+    assert not path.exists()
+    assert not alias_root.exists()

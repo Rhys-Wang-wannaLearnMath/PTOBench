@@ -128,9 +128,16 @@ def _validate_final(root, value, record, events):
             raise ValueError('identity/state/budget')
         saved = _read_if_present(root / 'final/selection.json')
         selected = snapshots.Selection(**saved) if saved else None
-        if selected is None and result.selected_snapshot is not None:
-            event = next(e for e in events if e['seq'] == result.selected_event_seq and e['snapshot_id'] == result.selected_snapshot)
+        if selected is None and result.selected_event_seq is not None:
+            event = next(e for e in events if e['seq'] == result.selected_event_seq)
+            if event['snapshot_id'] != result.selected_snapshot:
+                raise ValueError('selected event does not match the recorded Snapshot')
             original = root / record['workspaces'][event['workspace']]['path']
+            if event['snapshot_id'] is None:
+                _, source, observation = snapshots._action_freeze_source(
+                    root, record, event, session._read(root / 'protection/manifest.json'))
+                if source['content_sha256'] != event['content_sha256'] or observation != event['observation']:
+                    raise ValueError('selected action freeze does not match its event')
             selected = snapshots.Selection(event['snapshot_id'], event['seq'], event['content_sha256'],
                             str(original), event['observation'], result.selection_reason)
         if result.status == 'completed' and selected != snapshots._select_best_snapshot_locked(root):
@@ -194,10 +201,8 @@ def _commit_failure(root, result):
                                  events=events)
         if record['usage']['finish_actions'] and result.finish_event_seq is None:
             result.finish_event_seq = next(event['seq'] for event in events if event['action'] == 'finish')
-        selected_event = None
-        if result.selected_snapshot is not None:
-            selected_event = next((event for event in events
-                                   if event.get('snapshot_id') == result.selected_snapshot), None)
+        selected_event = next((event for event in events
+                               if event.get('seq') == result.selected_event_seq), None)
         for name, value in _trace_fields(record, events, selected_event).items():
             setattr(result, name, value)
         record.update(status='failed', exploration_closed=True, completed_at=session._now())
@@ -211,7 +216,20 @@ def _commit_failure(root, result):
 def _prepare_final(root, record, selected):
     final = root / 'final'
     target = final / 'workspace'
-    source = Path(record['snapshots_root']) / selected.snapshot_id / 'source'
+    if selected.snapshot_id is not None:
+        source = Path(record['snapshots_root']) / selected.snapshot_id / 'source'
+    else:
+        with session._session_lock(root) as normalized:
+            current, events = session._load_locked(normalized)
+        event = next((item for item in events if item['seq'] == selected.event_seq), None)
+        if event is None:
+            raise integrity.InfrastructureError('selected action freeze event is missing')
+        protection = session._read(root / 'protection/manifest.json')
+        source, manifest, observation = snapshots._action_freeze_source(
+            root, current, event, protection)
+        if (manifest['content_sha256'] != selected.content_sha256
+                or observation != selected.observation):
+            raise integrity.InfrastructureError('selected action freeze no longer matches its selection')
     # Handled pre-reservation retries always recreate a clean source tree.
     with file_tree.open_directory(final) as fd:
         file_tree.remove_at(fd, 'workspace')

@@ -3,19 +3,16 @@
 def make_prompt(experiment, record, case, instructions):
     return f'''Optimize Case {experiment['case']} for this experiment.
 Your initial cwd is the registered workspace worker_000. Entry: {case['module']}::{case['entry']}.
-Read .benchmark_context/README.md for the Case contract, Bench CLI and result locations.
-Read .benchmark_context/tuning_capabilities.json for this Case's editable compiler and runtime scheduling options, allowed values and restrictions.
-Edit Candidate Python files under `candidate/` and supported options in `candidate/tuning.json`;
-the compiler defaults remain `PYPTO + false`, and the complete defaults vary by Case.
+Read .benchmark_context/README.md for the Case contract, editable options, CLI commands and result locations.
+Edit Candidate Python files under `candidate/` and supported options in `candidate/tuning.json`.
 After changing source or settings, use `ptobench evaluate .` to check correctness and clean latency.
-PATH and the Bench Session environment are already set.
+The `ptobench` command is available on PATH and operates on this Session's registered workspace.
 {instructions}
-Evaluate allowance: {record['budget']['max_hardware_actions']} accepted `ptobench evaluate` actions,
+Hardware-action budget: {record['budget']['max_hardware_actions']} accepted `ptobench evaluate` or `ptobench profile` actions,
 shared by all workspaces and Agent conversations in this Bench Session. A failed
-or interrupted accepted Evaluate still consumes one. Profile budget cost is 0;
-Profile is recorded as a hardware action and remains available after the Evaluate
-allowance is exhausted. Fork budget cost is 0 and is recorded as a Session
-operation. Extra Evaluate requests are rejected by the CLI; continue using
-Profile/Fork while the Session remains open, until this Agent exits or is interrupted.
+or interrupted accepted action still consumes one; Fork does not consume it.
+Stop when `remaining_hardware_actions` reaches 0; the
+Launcher ends the optimization run after the current action completes, and all further
+Evaluate, Profile and Fork requests are rejected.
 Stop when you are finished. No special final message is required.
 '''

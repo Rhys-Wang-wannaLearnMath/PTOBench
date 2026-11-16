@@ -121,6 +121,8 @@ if c.get('mode')=='budget':
     call(['profile'])
     call(['evaluate'])
     sys.exit(c.get('exit',0))
+if c.get('mode')=='budget_wait':
+    while True: time.sleep(.02)
 if c.get('mode') in ('interrupt','active'):
     Path(c['ready']).write_text('ready')
     while True: time.sleep(.02)
@@ -354,14 +356,14 @@ class LauncherTests(ActionTestBase):
         self.assertNotIn('attempt_id', next(event for event in events if event['action'] == 'fork'))
         run = json.loads((root/'launcher_result.json').read_text())['run']
         status=launcher_runner.status(root)
-        self.assertEqual(status['remaining_hardware_actions'],3)
+        self.assertEqual(status['remaining_hardware_actions'],2)
         self.assertEqual((run['agent'], run['backend']), ('basic', backend))
         self.assertEqual(run['counts'], {
             'attempts': 3, 'check_calls': 2, 'bench_calls': 2,
             'profile_calls': 1, 'fork_events': 1,
         })
         self.assertEqual(run['hardware_usage']['total_actions'], 3)
-        self.assertEqual(run['hardware_usage']['budgeted_actions'], 1)
+        self.assertEqual(run['hardware_usage']['budgeted_actions'], 2)
         self.assertEqual(run['token_usage']['input_tokens'], 12)
         self.assertEqual(run['token_usage']['output_tokens'], 3)
         self.assertEqual(run['token_usage']['reported_total_tokens'], 15)
@@ -533,9 +535,9 @@ print(json.dumps(response))
         self.assertEqual(events[-1]['result']['runs'][0]['median_effective_us'],7.0)
         self.assertFalse((root/'final/workspace/__pycache__').exists())
         status=launcher_runner.status(root)
-        self.assertEqual(status['remaining_hardware_actions'],2)
+        self.assertEqual(status['remaining_hardware_actions'],1)
         run=json.loads((root/'launcher_result.json').read_text())['run']
-        self.assertEqual(run['hardware_usage']['budgeted_actions'],2)
+        self.assertEqual(run['hardware_usage']['budgeted_actions'],3)
         self.assertEqual(run['hardware_usage']['total_actions'],4)
         self.assertEqual(run['counts']['profile_calls'],1)
 
@@ -581,25 +583,23 @@ print(json.dumps(response))
         self.assertEqual(len(self.calls()),0)
         self.assertEqual(session.read_session(value['session_root'])['usage']['finish_actions'],0)
 
-    def test_evaluate_budget_allows_profile_and_dual_large_logs(self):
+    def test_evaluate_budget_rejects_post_budget_profile_and_drains_dual_large_logs(self):
         self.launcher_config('pi',budget=1,mode='budget',huge=True)
         self.isolate_fake_agent()
         p,value=self.launch()
         self.assertEqual(p.returncode,0,value)
-        root,_=self.assert_final(value,2)
-        self.assertEqual(value['close_reason'],'optimizer_exit')
+        root,_=self.assert_final(value,1)
         self.assertIn(b'O'*262144,(root/'stdout.log').read_bytes())
         self.assertIn(b'E'*262144,(root/'stderr.log').read_bytes())
         events=[json.loads(line) for line in (root/'events.jsonl').read_text().splitlines()]
-        self.assertEqual([event['action'] for event in events],
-                         ['evaluate','profile','evaluate','finish'])
-        self.assertTrue(events[1]['hardware_action'])
-        self.assertFalse(events[2]['hardware_action'])
-        self.assertFalse(events[2]['action_started'])
-        self.assertEqual(len(list((root/'staging').glob('action_*/result.json'))),2)
+        self.assertEqual(events[0]['action'], 'evaluate')
+        self.assertEqual(events[-1]['action'], 'finish')
+        self.assertTrue(all(not event['hardware_action'] and event['error_code'] == 'budget_exceeded'
+                            for event in events[1:-1]))
+        self.assertEqual(len(list((root/'staging').glob('action_*/result.json'))),1)
         run=json.loads((root/'launcher_result.json').read_text())['run']
         self.assertEqual(run['hardware_usage']['budgeted_actions'],1)
-        self.assertEqual(run['hardware_usage']['total_actions'],3)
+        self.assertEqual(run['hardware_usage']['total_actions'],2)
 
     def test_blocked_terminal_does_not_stall_finalization_or_exit(self):
         self.launcher_config('pi',budget=1,mode='budget',huge=True)
@@ -613,6 +613,18 @@ print(json.dumps(response))
         self.assertEqual(final['finish_actions_used'],1)
         self.assertIn(b'O'*262144,(root/'stdout.log').read_bytes())
         self.assertIn(b'E'*262144,(root/'stderr.log').read_bytes())
+
+    def test_budget_exhaustion_stops_optimizer_after_last_action(self):
+        self.launcher_config('pi',budget=1,mode='budget_wait')
+        self.isolate_fake_agent()
+        p=self.launch(True)
+        self.assertEqual(p.wait(timeout=15),0)
+        value,_,_=self.result(p)
+        self.assertEqual(value['close_reason'],'budget_exhausted')
+        root,_=self.assert_final(value,1)
+        events=[json.loads(line) for line in (root/'events.jsonl').read_text().splitlines()]
+        self.assertEqual([event['action'] for event in events], ['evaluate','finish'])
+        self.assertNotEqual(value['optimizer_exit_code'], 0)
 
     def test_leftover_worker_is_killed(self):
         child=self.repo/'worker.pid'
@@ -646,7 +658,7 @@ print(json.dumps(response))
         self.assert_final(value,2)
         self.assertIsNone(session.process_identity(int(child.read_text())))
 
-    def test_evaluate_budget_exhaustion_allows_profile_after_active_action(self):
+    def test_evaluate_budget_exhaustion_rejects_profile_after_active_action(self):
         self.launcher_config('pi',budget=1,mode='budget')
         write_json(self.launcher_control, {**json.loads(self.launcher_control.read_text()), 'pause': True})
         self.isolate_fake_agent()
@@ -670,14 +682,13 @@ print(json.dumps(response))
         release.write_text('go')
         value,_,_=self.result(p)
         self.assertEqual(p.returncode,0,value)
-        root,_=self.assert_final(value,2)
+        root,_=self.assert_final(value,1)
         events=[json.loads(line) for line in (root/'events.jsonl').read_text().splitlines()]
-        self.assertEqual([event['action'] for event in events],
-                         ['evaluate','profile','evaluate','finish'])
-        self.assertTrue(events[1]['hardware_action'])
-        self.assertFalse(events[2]['hardware_action'])
-        self.assertFalse(events[2]['action_started'])
-        self.assertEqual(len(list((root/'staging').glob('action_*/result.json'))),2)
+        self.assertEqual(events[0]['action'], 'evaluate')
+        self.assertEqual(events[-1]['action'], 'finish')
+        self.assertTrue(all(not event['hardware_action'] and event['error_code'] == 'budget_exceeded'
+                            for event in events[1:-1]))
+        self.assertEqual(len(list((root/'staging').glob('action_*/result.json'))),1)
 
     def test_status_no_hardware_and_repairs_records(self):
         p,value=self.launch()
@@ -738,6 +749,10 @@ print(json.dumps(response))
         self.assertEqual(config.budget,{'max_hardware_actions':20,'finish_actions':1})
         self.assertEqual(config.output['runs_root'],str(self.repo/'runs'))
         self.assertEqual(config.output['snapshots_root'],str(self.repo/'snapshots'))
+
+        self.config.write_text('case: test.case\noptimizer: {id: x, backend: codex}\nbudget: {max_profile_actions: 2}\n')
+        with self.assertRaisesRegex(ValueError, 'max_profile_actions is no longer supported'):
+            load_experiment(self.config)
 
     def test_infrastructure_failure_stops_owned_evaluator_without_final(self):
         self.launcher_config(mode='active')

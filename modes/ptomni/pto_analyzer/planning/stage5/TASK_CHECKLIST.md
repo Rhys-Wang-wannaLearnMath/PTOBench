@@ -1,120 +1,145 @@
 # PTOAnalyzer Stage 5 任务清单
 
-## 范围与约束
+## 范围与固定约束
 
-- Formal 60 + Held-out 15 的每个 Case 至少有一份身份匹配的 `combined` Profile；复用已有精确匹配归档，只对缺失 Case 补采。
-- 覆盖全部 75 Case 的 Basic Pi、CANNBot 真实 Session 记录；不为这项覆盖工作重跑两种 Baseline Agent。
-- 在真实 PTOmni Host 接入九个只读 Tool，并对 Compute、Dataflow、Schedule 各做一个受控 Raw/Analyzer 配对试点。
-- PTOAnalyzer 继续离线、只读、确定性；`profile`、`evaluate`、设备租约和硬件动作只通过 Runner/PTOBench 与原账本。
-- 只向当前启用的 Tuner 暴露其三个工具。Lead 不调用 Analyzer 或硬件 Tool；Assembler 不分发工具；其他角色不获得 Analyzer Tool。
-- 不创建模拟 Host、第二个 Tool Server 或 Agent Harness；不新增诊断 Tool、不改变输出语义、不扩大 PTOBench Collector。
-- 不逐次尝试 Profile。全量 Case 覆盖至少每 Case 一份；方法轨迹按起始 Candidate 与最终 `evaluate` 接受的最佳 Candidate 取样，同一身份的 Candidate 只需一个 Profile。
-- Held-out 结果在 Formal 60 的 Parser/工具语义冻结后再回放；不依据 Held-out 结果迭代调试并仍把它称为独立验收。
-- 保留工作区已有改动，尤其不覆盖 `evaluator/` 中的并行修改。
+- [ ] 只实现 `modes/basic_wiki-tool` 和必要的 Mode 适配；不修改 `modes/basic/` 的 Basic Pi 对照实现。
+- [ ] `modes/ptomni/pto_analyzer/` 是唯一维护的 PTOAnalyzer 本体。接入 Basic 时复制当前本体到 `modes/basic_wiki-tool/pto_analyzer/`；适配层可以变化，但不得反向修改本体来迎合 Basic。
+- [ ] 处理组只增加 `pto_wiki/opt_wiki` 和 PTOAnalyzer；不加入 PTOmni 的 Lead、Tuner、Assembler、Challenger、Curator 或其它工作流。
+- [ ] Basic Pi 不按三个 Tuner 分配工具；九个工具全部注册给 Basic Pi。每次工具调用都记录，包含成功、失败和取消。
+- [ ] PTOAnalyzer、Wiki 和工具调用不启动硬件动作。`evaluate`、`profile`、设备锁和预算继续由 PTOBench Runner/Event Ledger 负责。
+- [ ] 不重跑已经完成的 75 个 Case Profile 覆盖；只在配对试验发现输入身份确实缺失时，按 Runner/PTOBench 正常流程补采一个明确目标。
+- [ ] 不新增自动 diff、baseline 选择器或第二套硬件账本；Agent 可分别读取它有权访问的 Profile，自行比较。
+- [ ] PTOBench 公共代码需先提供已验收的通用 Pi extension/socket 接口。该公共改动由另一任务负责人实施；Stage 5 不修改 `evaluator/isolation.py`、公共 Runner 或其测试。
 
-## Task 0：冻结 Stage 4 基线并检查 Host
+公共接口的设计参考为[独立接入计划](../../../../../升级/1110/Plan%2005后轻量Pi工具接口与遗留代码清理.md)；是否完成以公共任务的实现和验收证据为准。
 
-- [ ] 核对 Stage 4 报告：16 份 Profile、九个 Tool、1/2/4/8 卡覆盖、51 项 CPU 测试、5,492 个哈希核对、0 个新增硬件动作。
-- [ ] 搜索当前 PTOmni Host 的原生工具注册入口和 `ToolSession` 调用方；若仍不存在，记录为前置阻塞并停止接线，不创建模拟实现。
-- [ ] 指明可信 Runner/Event Ledger 如何提供 Profile event、Candidate 身份和当前 Tuner 身份。
-- [ ] 查阅 Basic/CANNBot Session 记录接口，确认如何只读取得 Case、optimizer、action events、source snapshot/hash、Diff、`evaluate` 结果和已有 `profile` events。
+## Task 0：冻结输入与工作树
 
-**验收：** Host 与 Event Ledger 的实际入口已定位；75 Case × 两种方法的可读取记录格式已列明。Host 不存在时不得继续接线。
+- [ ] 核对 `modes/ptomni/pto_analyzer/` 的当前版本、九个工具名、CPU 回归结果和 Stage 4/75 Case 归档索引；记录本次接入使用的版本身份。
+- [ ] 核对 `pto_wiki/opt_wiki/INDEX.md`、`README.md` 和文件清单，生成只读知识库快照身份（例如提交/目录摘要或完整 SHA-256 清单）。
+- [ ] 确认 `modes/basic/` 当前协议和 Basic Pi 的 `preflight/prepare/run/collect` 行为；不把任何处理组文件写回 Basic。
+- [ ] 检查工作树并保留无关改动，尤其不覆盖 `evaluator/` 和已有 PTOAnalyzer 本体改动。
+- [ ] 检查 PTOBench 通用接口已落地并通过其自身验收：成对可选 `pi_tool_extension`/`pi_tool_socket`、Session-local Broker-owned extension 与 Unix socket、固定沙箱映射和 `PTOBENCH_PI_TOOL_SOCKET`，且现有 Pi extensions 可并存、CANNBot 兼容。若未完成或无验收证据，停止所有依赖 Pi 接线的 Stage 5 任务并报告；不在本 Stage 实现该接口。
 
-## Task 1：在真实 Host 暴露 Tuner 专属 Analyzer Tool
+**验收：** 形成输入版本记录；明确复制源、快照身份、通用接口验收依据和不应改动的路径。外部接口未就绪时，Stage 5 只可继续不依赖它的文档/输入准备工作。
 
-**接口：** `open_toolset(tuner, profile_ref)`；Host 转发 `tool_specs`、完整 `initial_summary` 和 `call(name, args)`。
+## Task 1：创建 `basic_wiki-tool` Mode 骨架
 
-- [ ] 只由可信 Host 注入 Tuner 与 ProfileRef；Agent 不能选择 Profile 路径、Event 或权限。
-- [ ] 每个 Tuner 只注册自己的三个 Tool；一次会话的工具回调固定绑定同一个 `ToolSession`。
-- [ ] 工具调用结果关联到原有 Agent tool-call trace、Round、Candidate 和 Profile event；不另建账本。
-- [ ] 保留完整摘要；高基数明细沿用 Cursor，错误与取消必须可识别，不能伪装成成功空结果。
+**Files:**
 
-**验收：** 真实 Tuner 可调用自己的摘要和分页工具；调用不触发 PTOBench/NPU。
+- Create: `modes/basic_wiki-tool/__init__.py`
+- Create: `modes/basic_wiki-tool/mode.yaml`
+- Create: `modes/basic_wiki-tool/runner.py`
+- Create/modify: `modes/basic_wiki-tool/prompt.py`
+- Create/modify: `modes/basic_wiki-tool/instructions.md`
+- Create: `modes/basic_wiki-tool/README.md`
 
-## Task 2：权限、身份和只读集成测试
+- [ ] 从 Basic Mode 复制生命周期和配置结构，再用独立 `id`（例如 `basic_wiki-tool`）登记；保持同一 Pi backend、`combined` profile strategy、Case workspace 和 PTOBench CLI 入口。
+- [ ] Prompt 只增加两项公开能力说明：可按需查阅 `pto_wiki/opt_wiki`，可按需调用九个 PTOAnalyzer 工具；保留 Basic 的编辑范围、正确性要求、预算和停止条件。
+- [ ] 不把 Wiki 全量文本预注入 Prompt；不自动调用所有工具；Agent 自行决定何时查询 Wiki 或工具。
+- [ ] 记录 Mode 配置、Prompt 和源文件哈希，保证 Basic 对照组与处理组可审计。
 
-- [ ] Compute、Dataflow、Schedule 各自只看到对应三个工具；Lead、Assembler、Challenger、Curator 看不到 Analyzer Tool。
-- [ ] 伪造角色、错误 Profile event、Candidate digest 不匹配、跨 Tuner/Profile Cursor 均在读取不匹配数据前失败。
-- [ ] 测试完整摘要和 Cursor 页的转发无截断、无重复、无遗漏。
-- [ ] 测试前后 Profile 原始归档哈希不变；Analyzer 调用不增加 PTOBench 硬件动作。
-- [ ] 运行 PTOAnalyzer 与 Host 的 CPU 集成测试。
+**验收：** Mode 能完成 CPU-only `preflight` 和 `prepare`，生成与 Basic 等价的基础 Agent 配置；Mode 文件不改变 `modes/basic/`。
 
-**验收：** Host 权限与 PTOAnalyzer 静态权限表一致；身份绑定、错误传递和只读性通过。
+## Task 2：复制并接入 PTOAnalyzer 本体
 
-## Task 3：建立 75 Case × Basic/CANNBot 轨迹清单
+**Files:**
 
-**全集：** [`formal_60/cases.csv`](../../../../../case_selection/formal_60/cases.csv) 和 [`heldout_15/cases.csv`](../../../../../case_selection/heldout_15/cases.csv)。不再抽小样本；完整记录最多 150 条 Agent Session 轨迹。
+- Create: `modes/basic_wiki-tool/pto_analyzer/`（复制 `modes/ptomni/pto_analyzer/` 的运行时代码与所需静态资源）
+- Create: `modes/basic_wiki-tool/analyzer_adapter.py`（或同职责的 Mode-local 适配模块）
+- Create: `modes/basic_wiki-tool/tools.py` and `modes/basic_wiki-tool/bridge/pi_analyzer.ts`（复用 Pi 原生 extension + 本地 Unix socket 的传输模式；只借用传输机制，不复制 CANNBot 的 Task/Skill 工作流）
+- Modify: `modes/basic_wiki-tool/runner.py`
 
-- [ ] 每个 Case 分别登记 Basic Pi、CANNBot 的 Session 身份、开始与结束 Candidate hash、代码 Diff、全部 `evaluate` 结果、已有 `profile` Event、硬件动作、Token 和 wall-clock。
-- [ ] 缺失 Session、失败/中断、没有 Candidate 变化、没有有效 `evaluate` 等状态必须显式记录；不得静默从分母中移除。
-- [ ] 按实际 Candidate hash/config 关系识别 Basic 与 CANNBot 是否共用起始 Candidate；不能仅按 Case ID 合并。
-- [ ] 每条方法轨迹选择起始 Candidate 和最终经 `evaluate` 接受的最佳 Candidate；若两者身份相同，去重。中间候选仅在已有 Profile 或能回答明确的轨迹问题时纳入。
-- [ ] 将 60 个 Formal 标为 Parser/语义修正阶段的开发覆盖；Hold-out 15 先封存其工具结果，待 Formal 规则冻结后统一回放。
+**依赖：** 使用已实现并验收的 `evaluator/isolation.py::agent_command(...)` 通用 Pi extension/socket 接口。Stage 5 不实现或修改该公共接口。
 
-**验收：** 形成 75 行 Case 主表及 Basic/CANNBot 两条方法记录列；每个缺失状态有明确原因和可追踪的 Session/Event。
+- [ ] 在实现接入前复制最新 PTOAnalyzer；记录源目录版本/文件清单哈希和复制体哈希。
+- [ ] 适配层为每个当前 Case 的授权 `ProfileRef` 建立/复用一组复制体 `ToolSession`（Compute、Dataflow、Schedule 各一个）；每个 `ToolSession` 仍绑定单一 Profile，Broker 可按已授权 Profile ID 选择对应的一组会话，并向 Agent 暴露九个工具。
+- [ ] 从三组 `tool_specs` 合并出统一注册表，使用工具名路由到对应 `ToolSession`；Pi 注册时把现有 `input_schema` 映射为 Pi `parameters`，并在扩展层为全部工具增加可选 `profile` ID 字段，分页工具同时保留 `cursor`/`limit`。
+- [ ] 由 Runner 提供当前 Case 的授权 Profile 索引（Profile ID 到已验证 `ProfileRef`/身份的映射）；PTOBench 接受新的 Profile Event 后，Runner 更新该索引，Broker 只从索引解析 Profile，不自行扫描任意目录或接受路径。工具参数可带可选 `profile` ID，省略时使用当前默认 Profile。拒绝未知 ID、跨 Case Profile、未授权 Event 和 Candidate 身份不符的 Profile；没有可用 Profile 时返回可记录的明确错误。
+- [ ] 每个复制体 `ToolSession` 仍只读且绑定单一 Profile，保留摘要和 Cursor 分页并拒绝未授权路径/事件；适配不改变九个工具的名称、结果字段或解释边界。
+- [ ] 在 `prepare` 阶段把 Pi extension 作为 Broker-owned 只读文件放入本次 Session 的 `agent/pi-tools/`。Extension 使用 Pi 原生 `registerTool` 注册九个具名工具；将各 Tool Spec 的 `input_schema` 映射为 Pi `parameters`，并为 Profile 选择增加可选 `profile` ID 参数，分页工具仍保留 `cursor`/`limit`。
+- [ ] 在 `run` 阶段由 Python Mode 启动本次 Agent Session 独有的 Unix-socket Tool Broker，再启动 Pi。使用单行 JSON socket 消息：`call` 携带 `tool_call_id`、`name`、`arguments`，`cancel` 携带 `tool_call_id`。Broker 校验 Profile ID，按 Profile 选择/缓存一组 Compute、Dataflow、Schedule `ToolSession`，从参数中移除 `profile` 后调用对应工具。Broker 返回完整工具结果或结构化错误给 Extension，Extension 原样返回 Pi。Pi 已发起但在分发前被取消的调用仍需提交一条可归档的取消请求，不允许在 extension 内静默丢弃。
+- [ ] 通过 PTOBench 通用接口挂载 Broker-owned extension 和本次 Agent Session 的 socket（接口固定映射到 `/ptobench/pi-tool.sock`，并提供 `PTOBENCH_PI_TOOL_SOCKET`）。Agent 正常结束、启动失败或取消时都关闭 Broker、清理 socket；未完成的调用写入取消/终止状态。
+- [ ] 每次调用在本次 PTOBench Session 的 Mode-owned 归档中保存完整 request/result（例如 `method/tool_calls/<tool_call_id>/request.json` 和 `result.json`），包含 `tool_call_id`、时间、工具名、原始参数、选用的 Profile identity、最终状态和完整结果/错误。若为避免重复存大结果而采用不可变结果文件引用，必须保存完整结果文件及哈希，不得截断或只留摘要。
+- [ ] Pi extension 只负责注册工具、参数转发、取消和结果返回；Profile 授权、工具执行和调用归档由 Python Broker 负责。该接线不增加 Agent 子角色、额外 PTOBench CLI 权限、硬件动作或写 Candidate 的能力。
+- [ ] 调用 `isolation.agent_command(...)` 时只使用通用 `pi_tool_extension`、`pi_tool_socket` 参数，不依赖 CANNBot 专用参数；将 PTOAnalyzer extension 与 File Guard、Provider extension 及既有 Pi extensions 一并加载，不覆盖它们；不在 Basic Mode 中伪装成 CANNBot。
+- [ ] 复用 PTOBench 原有 Profile/Event 身份和硬件账本；不在复制体或适配层执行 CLI，不把工具调用计为硬件动作。
 
-## Task 4：覆盖全部 75 个 Case 的 Profile
+**验收：** 复制体与本体在同一 fixture/profile 上输出一致；本体文件哈希不变；九个工具都由 Pi extension 注册并可经 Broker 调用；工具调用记录可与 Pi 原生 tool-call ID 关联；Broker 在 Agent 正常退出、启动失败和取消时均关闭。通用隔离接口及 CANNBot 兼容由公共接口任务验收，Stage 5 不承担其实现或回归责任。
 
-**全集：** [`formal_60/cases.csv`](../../../../../case_selection/formal_60/cases.csv) 的 60 个 Case 与 [`heldout_15/cases.csv`](../../../../../case_selection/heldout_15/cases.csv) 的 15 个 Case。覆盖目标是每个 Case 的正式初始 Candidate 和配置各有一份身份有效的 `combined profile`。
+## Task 3：接入 `pto_wiki/opt_wiki`
 
-- [ ] 建立 75 行 `Case × Profile` 覆盖表，逐项指定 Case ID、初始 Candidate/source digest、输入与编译配置、设备、软件版本、ProfileRef、来源 Session/Event 和归档校验状态。
-- [ ] 盘点 Stage 4、Basic Pi、CANNBot 已有 Profile；只有 Case、Candidate/source digest、输入/编译配置、设备、软件版本、PTOBench event 与受保护归档身份都匹配时才计入覆盖。
-- [ ] 每个无匹配 Profile 的 Case，由 Runner/PTOBench 在已注册的 Case/Session workspace 对指定初始 Candidate 运行一次 `combined profile`；不因 Case 名称相同而复用，也不拼接 `split` Event。
-- [ ] 对每个 Case 恰好保留一份用于全量覆盖的 ProfileRef；若同一 Case 另有 Basic/CANNBot 候选 Profile，按 Candidate 身份作为轨迹数据另行登记，不重复计作新 Case。
-- [ ] 每个新成功 Profile 按 PTOBench 原账本计一次硬件动作。Profile 失败、Case 无法运行、身份字段缺失和归档校验失败均保留为明确状态，不能从 75 的分母移除。
-- [ ] Held-out 15 的工具结果在 Formal 60 解析和语义修正冻结后再做最终回放；采集与身份登记可以提前完成，但不得用 Held-out 结果调试后仍宣称是冻结验证。
+**Files:**
 
-**验收：** 覆盖表固定为 75 个 Case；每行要么有唯一、可验证的 `combined ProfileRef`，要么有可审计的失败/缺失原因。报告新增 Profile 动作数和复用数，目标新增次数为 75 减去身份匹配的已有 Profile 数。
+- Modify: `modes/basic_wiki-tool/runner.py`
+- Modify: `modes/basic_wiki-tool/instructions.md` or `prompt.py`
+- Create: `modes/basic_wiki-tool/knowledge/` manifest/snapshot metadata as needed
 
-## Task 5：补齐轨迹候选 Profile 输入
+- [ ] 在 Prepare 阶段把 `pto_wiki/opt_wiki` 冻结复制到本次 Run 的 Broker-owned `agent/pi-tools/opt_wiki`，利用现有 Pi 隔离只读挂载暴露为 `/ptobench/pi-tools/opt_wiki`；不把源 Wiki 目录直接交给 Agent 写入。
+- [ ] 向 Agent 提供 `/ptobench/pi-tools/opt_wiki/INDEX.md` 和 `README.md` 的入口及按主题查阅方式；允许使用 `rg`/普通文件读取按需检索，不强制预读全部文档。
+- [ ] 冻结并记录 Wiki 快照身份、可见路径和文件数量/哈希清单；不允许 Agent 写回知识库。
+- [ ] 明确 Wiki 内容是参考知识，不能替代 Profile 原始证据、PTOBench `evaluate` 结果或工具解释边界。
 
-PTOAnalyzer 只消费成功的 `combined profile`。已有 Profile 只有在 Case、Candidate/source digest、输入/编译配置、设备、软件版本和保护归档身份全部匹配时才能复用。
+**验收：** Agent workspace 中可读到固定 Wiki 快照且不可写；快照前后哈希一致；Basic 对照组看不到新增 Wiki 文件。
 
-- [ ] 先盘点每条 Basic/CANNBot 轨迹的起始/最佳 Candidate 是否已有对应 Profile event，并核对上述身份字段；Task 4 的 75 Case Profile 仅在 Candidate 身份相同时复用。
-- [ ] 对缺失 Profile 的起始 Candidate 和最终最佳 Candidate，由 Runner/PTOBench 对精确 Candidate 执行一次 `combined profile`；若同一 Candidate 已有可复用 Event，不重复运行。
-- [ ] 只在已注册的 Session workspace 中补采；若 Agent Session 已关闭或 Snapshot 不可直接使用，先走获准的 Runner/Session workspace 流程，不对任意快照目录直接运行 CLI。
-- [ ] 当前 `ProfileRef` 只接受完整 `combined` Profile；遇到历史 `split` 产物时记录不兼容，不拼接不同 Event。
-- [ ] 不对每次 Agent 编辑、失败候选或未选中的低价值尝试批量 Profile。正确性失败且无法稳定执行的候选不强行补采。
-- [ ] Profile 计入 PTOBench 硬件动作预算；Profile 不证明 correctness 或 Clean Latency，关联的 `evaluate` Event 保持为权威结果。
-- [ ] 记录每一项复用/新增 Profile 的 ProfileRef、Candidate hash、来源 Session、硬件动作和复用理由。
+## Task 4：九个工具的发现、调用与记录测试
 
-在 150 条轨迹都缺少可复用 Profile 的情况下，起始与最终候选最多对应 300 个轨迹 Profile 目标。将它们与 Task 4 的 75 个 Case 初始 Candidate 目标按完整身份取并集，再扣除已有有效归档，得到新增动作数；同一身份不重复采集。每个缺失的 `combined profile` 计一次 PTOBench 硬件动作。
+**Files:**
 
-**验收：** 每个纳入回放的 Candidate 都绑定一个身份有效的 ProfileRef；Profile 缺口与跳过原因完整可查。
+- Create/modify: `modes/basic_wiki-tool/tests/test_mode.py`
+- Create/modify: `modes/basic_wiki-tool/tests/test_analyzer_adapter.py`
 
-## Task 6：回放九个 Tool 并整理覆盖矩阵
+- [ ] 测试工具列表恰好包含九个工具：`compute_mapping_check`、`compute_unit_activity`、`compute_task_share`、`tile_access_check`、`buffer_pressure_check`、`tile_memory_allocation_summary`、`dependency_path_check`、`dispatch_gap_check`、`task_distribution_check`。
+- [ ] 用 Pi `registerTool` 测试桩加载原生 extension，确认 Pi 收到的九个工具名与上列完全一致；再调用已注册工具，经 Session socket 到达 Broker，并确认完整结果/错误返回对应 tool call。使用 CPU Profile fixtures；不启动真实 LLM、PTOBench Case 或 NPU。该测试证明 PTOAnalyzer extension 按 Pi API 注册且可调用，不替代公共隔离接口任务的验收。
+- [ ] 测试 Basic 处理组不按 Tuner 隐藏工具；三组工具都可由同一 Agent 会话调用。
+- [ ] 对每个工具各执行至少一次成功调用并核对记录；另覆盖一个失败或非法参数调用，确认失败也有记录且不会伪装成空成功。
+- [ ] 验证省略 `profile` 使用默认 Profile，显式 Profile ID 能选到同 Case 的另一份授权 Profile；未知 ID、跨 Case ID、任意路径及不匹配 Cursor 均明确失败并记录。
+- [ ] 对至少一个分页工具验证 Cursor 页调用、Profile identity 和调用记录的连续性；高基数结果保存完整内容或可验证的不可变文件引用。
+- [ ] 验证 Pi tool-call ID 在 Pi 注册工具 → Extension → Broker → 归档记录 → Pi 返回值链路中保持一致；测试取消信号确实到达 Broker，并且 Agent 退出后 socket 已关闭。
+- [ ] 测试工具调用不修改 Profile 原始归档，不增加 `evaluate/profile` Event 或 PTOBench 硬件动作。
+- [ ] 测试复制体与 `modes/ptomni/pto_analyzer` 在现有 fixtures 上的结果一致；测试本体源文件哈希在 Mode 接入前后不变。
 
-- [ ] 对每个有效 Profile 分别打开 Compute、Dataflow、Schedule ToolSession；九个 Tool 共用同一份 Profile，不重复采集。
-- [ ] 对 75 行 `Case × Profile` 覆盖表逐个离线回放九个 Tool，Formal 60 与 Held-out 15 的结果分开统计。
-- [ ] 保存每个 Tool 的完整摘要、来源覆盖、单位、限制、Profile 身份和 Tool 版本；不把缺失数据补成零或瓶颈判断。
-- [ ] 高基数 Tool 先完整读取摘要；只在验证某个 Case/候选差异或审查数据完整性时分页读取明细。至少包含 Stage 4 最大图形态的全页回归样本。
-- [ ] 对已有同 Case 起始/最佳候选 Profile 配对，按观测名称、单位和聚合口径对齐并报告增减、持平、缺失或不可比较；并列记录代码 Diff、`evaluate` 正确性和 Clean Latency 变化，不从单一关联断言根因。
-- [ ] 先处理 Formal 60 的发现。冻结输出语义后再对 Held-out 15 做最终离线回放；Hold-out 的异常记录为结果，不用来静默调参。
-- [ ] 若真实归档暴露解析缺陷，保存可复现样本和来源；只做证据支持的 Parser 修正，保持 Tool API/语义边界，并回归全部受影响 Fixtures 与 Stage 4 样本。不新增未经数据支持的判定规则或 Tool。
+**验收：** CPU 测试证明 Pi 收到并能调用全部九个工具，且覆盖成功/失败/分页/取消记录和只读边界；每次调用都有唯一可追溯记录。Stage 5 验收 PTOAnalyzer 的 Pi 注册、传输、Broker 路由和返回；通用隔离 seam 本身由公共接口任务负责验收。
 
-**验收：** 输出 75 行 `Case × Profile` 覆盖矩阵，以及 `Case × Method × Candidate × Tool` 轨迹矩阵；每个观测可追到 Profile 文件和 Agent Event。Formal/Held-out Profile 覆盖率分别以 60、15 为分母，失败/缺失单列。
+## Task 5：Basic 对照与真实 Agent 配对试验
 
-## Task 7：三个 Tuner 的 Raw/Analyzer 配对试点
+**Case：**
 
-**执行门槛：** 真实 PTOmni Host 接线和 CPU 验收通过；Stage 5 已明确实验预算、设备窗口和 Runner/PTOBench 锁的使用方式。
+| Case | 重点 |
+|---|---|
+| `deepseek_v4.lm_head_tp2_flash` | 双卡 MatMul/通信与 Compute 证据 |
+| `deepseek_v4.prefill_layer_ep2_csa_demo` | 多阶段 Dataflow、Tile/Buffer/静态分配 |
+| `deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo` | CP8 多 rank、依赖和高基数 Schedule |
 
-| Tuner | Formal Case | Profile 身份与覆盖重点 |
-|---|---|---|
-| Compute | `deepseek_v4.lm_head_tp2_flash` | Operator MatMul/communication、双卡计算和 rank/dispatch 记录；Stage 4 无同 Case Profile，按 Task 4 补齐。 |
-| Dataflow | `deepseek_v4.prefill_layer_ep2_csa_demo` | 多阶段、双卡 Tile/Buffer/分配观测；Stage 4 同名 Profile 只有身份核验通过才复用。 |
-| Schedule | `deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo` | CP8 多 rank、高基数 Task/依赖与分页；Stage 4 同名 Profile 只有身份核验通过才复用。 |
+- [ ] 从已完成的 Formal/Held-out Profile 归档中核对这三个 Case 的 ProfileRef、Candidate、设备和配置身份；缺失时只补采本试验需要的明确 Candidate，不重跑 75 Case。
+- [ ] 每个 Case 运行一组 Basic Pi 和一组 `basic_wiki-tool`，共六个独立 Session；固定模型/backend、初始 Candidate、PTOBench 配置、evaluate/profile 权限、预算和软件环境。
+- [ ] 使用隔离 workspace；配对的运行顺序交错或随机，避免固定顺序造成系统性偏差。
+- [ ] 处理组由 Agent 自主决定是否查 Wiki、调用哪些工具和调用次数；不强制每个工具恰好调用一次，但记录要求覆盖每一个实际调用。九工具可发现/可调用性由 Task 4 CPU 集成测试证明，不要求为此额外启动 Agent smoke run，也不把 Task 4 测试计入性能结果。
+- [ ] 每个 Session 保存 Case、模型、Mode/版本、初始与最终 Candidate hash、代码 Diff、工具调用记录、Wiki 快照身份、Profile/evaluate Event、正确性、Clean Latency、硬件动作、Token、wall-clock 和结束原因。
+- [ ] 统计工具调用次数、工具覆盖、调用后是否出现相关代码/配置修改、无效尝试、evaluate 结果和性能变化；不把“调用工具”直接解释成“使用证据”或“获得收益”。
 
-对每个 Case 单独做 Raw Profile 与 Analyzer Tool 匹配对：固定 Agent 后端/模型、当前 Tuner、起始 Candidate、知识、代码工具、优化预算、Profile/evaluate 许可和硬件设置，只改变 Profiling 信息接口。两组用隔离工作区，运行顺序交错或随机。每个试点记录 Tuner 假设、工具调用、代码 Diff、检查/evaluate、Profile event、正确性、Clean Latency、硬件动作、Token 和 wall-clock。
+**验收：** 六个 Session 均可从 Session → Agent call → Profile/evaluate → Candidate Diff 追溯；失败、中断、无 Candidate 变化和零工具调用均保留。
 
-**验收：** 每个 Tuner 至少一组可追溯的匹配对；三组只作为角色覆盖和可行性证据。单一匹配对不声称统计显著或全 Case 提升；后续重复数根据观察到的效应和波动另定。
+## Task 6：离线分析与报告
 
-## Task 8：结果归档与结论边界
+**Files:**
 
-- [ ] 分开报告：75 Case Profile 覆盖、Baseline 轨迹/候选覆盖、工具解析与来源覆盖、配对 Profile 观测变化、Tuner 实际工具使用、正式 `evaluate` 结果。
-- [ ] Basic/CANNBot 事后重放不得写成“Baseline 使用了 Analyzer”；只有受控 PTOmni Tool calls 才是在线使用证据。
-- [ ] 记录未完成、Profile 失败、correctness 失败、缺失来源、解析拒绝、未变化候选和预算耗尽，不能只挑成功 Case。
-- [ ] 对所有真实硬件事件核对 PTOBench 原账本、设备分配与执行记录；回放前后核对受保护原始 Profile 哈希。
-- [ ] 保存 Stage 5 结果报告和更新后的 Case/Tool 覆盖矩阵；对下一步仅提出有证据的修复或追加试验。
+- Create: `modes/ptomni/pto_analyzer/reports/stage5_basic_wiki_tool_*.json`（或项目约定的报告路径）
+- Create: `modes/basic_wiki-tool/reports/README.md`（如需要）
 
-**验收：** 结果可从 Case/Session/Candidate/Profile/evaluate/Event 完整追溯；没有把单次可行性信号写成普遍性能收益。
+- [ ] 分开报告 Basic 与 `basic_wiki-tool` 的工具使用、Wiki 使用、Candidate 变化、硬件动作、正确性、Clean Latency、Token 和 wall-clock。
+- [ ] 将工具调用和工具输出按 Profile identity 与 Agent call ID 关联；区分“工具被调用”“结果被读取/引用”“之后发生了相关修改”三个事实。
+- [ ] 对同一 Case 的结果只报告可比指标；Profile 观测由 Agent 自行比较或离线做简单汇总时，注明两份 Profile 身份、单位和采集口径，不创建自动 baseline 结论。
+- [ ] 报告工具或 Wiki 接入错误、Profile 缺失、权限拒绝、调用失败和硬件异常；不把缺失值当作零。
+- [ ] 明确这是 Wiki + PTOAnalyzer 的组合消融；不得从六个 Session 宣称单独的 Wiki 或 PTOAnalyzer 因果效果。
+
+**验收：** 生成可审计的 Stage 5 报告和原始记录索引；所有硬件数字来自 PTOBench/Event Ledger，所有工具调用来自 Mode 记录。
+
+## Task 7：收尾检查
+
+- [ ] 运行 Basic 现有 CPU 测试，确认对照实现未被改变。
+- [ ] 运行 `basic_wiki-tool` 的 Mode/Analyzer CPU 测试和 PTOAnalyzer 原有测试。
+- [ ] 复核 `modes/ptomni/pto_analyzer/` 与 `modes/basic_wiki-tool/pto_analyzer/` 的版本关系；若修复复制体发现本体缺陷，先在本体中单独修复、验收并重新复制，不只改复制体。
+- [ ] 检查 Git 跟踪清单：Stage 5 文档、Mode、复制体、Wiki 快照元数据、测试和报告索引均被跟踪；不提交运行时凭证、NPU 临时文件或可写归档。
+
+**验收：** Basic 对照可复现，处理组可运行，九个工具调用可审计，原 PTOAnalyzer 本体保留且未被接入适配污染。

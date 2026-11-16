@@ -36,15 +36,13 @@ the previous environment loader. The Launcher checks compiler loading before
 starting an Agent; every Evaluator invocation repeats that small check in its
 selected environment before importing the Case.
 
-| Operation | Internal Evaluator phase/mode | Evaluate budget cost |
+| Operation | Internal Evaluator phase/mode | Hardware-action budget cost |
 | --- | --- | ---: |
 | evaluate | all / clean | 1 per accepted action |
-| profile (combined) | correctness / runtime + hardware + compile | 0; recorded as a hardware action |
+| profile (combined) | correctness / runtime + hardware + compile | 1 per accepted action |
 | fork | source copy and fresh context | 0; recorded as a Session operation |
 
-Evaluate budget: 1 per accepted `ptobench evaluate`. A failed or interrupted accepted Evaluate still consumes its allowance.
-Profile budget cost: 0. Profile is recorded as a hardware action and remains available after the Evaluate allowance is exhausted.
-Fork budget cost: 0. Fork is recorded as a Session operation. Extra Evaluate requests are rejected by the CLI; the Agent can continue using Profile/Fork while the Session remains open, until it exits or is interrupted.
+Hardware-action budget: 1 per accepted `ptobench evaluate` or `ptobench profile`. A failed or interrupted accepted action still consumes one; rejected requests consume none. When it reaches zero, further Evaluate, Profile and Fork requests are rejected. Fork costs 0 and is recorded as a Session operation.
 
 The split names pmu/compiler map to existing hardware/compile behavior and
 artifact directories. Agent profiling runs the Candidate without comparing its
@@ -52,7 +50,7 @@ outputs with the cached Ref. The internal `correctness` phase name is retained
 for the one-shot execution path; it does not mean output validation was performed.
 Profiles add no warmup or performance execution, omit the `correctness` field,
 and report `latency_us=null`, `metric_name=null`, `unit=null`.
-They retain runtime/compile errors, integrity checks and diagnostic evidence; Profile is recorded as a hardware action without using Evaluate allowance.
+They retain runtime/compile errors, integrity checks and diagnostic evidence; each accepted Profile consumes one hardware action.
 Only evaluate and the final fresh clean establish Agent Candidate correctness.
 Maintenance Sessions used for migration qualification retain their existing
 profile correctness checks and result/Snapshot policy.
@@ -101,7 +99,9 @@ readonly Snapshot of the same frozen source. An Agent profile saves protected
 authority and diagnostics without a `correctness` field, but creates no selectable
 Snapshot and cannot supply final-selection metrics. Snapshot metadata
 records Session/Case/Optimizer, source workspace, event sequence/hash and metric
-provenance. Outputs, context and caches are excluded. The completed event only
+provenance. Ordinary files under `candidate/`, including notes and reports, are
+included in Candidate copies, content hashes and Snapshots. Outputs, context,
+excluded metadata and caches are excluded. The completed event only
 references a Snapshot after source/metadata verification and protection
 registration; an orphan directory is never a successful candidate.
 
@@ -109,22 +109,22 @@ One protected `events.jsonl` entry records each completed or rejected operation,
 its original Evaluator exit, error, integrity/repair evidence, budget usage and
 Snapshot ID. Completion and active-action clearing are one S1 record commit.
 Infrastructure failures close the Session and never expose an unreliable result
-as success. Evaluate allowance exhaustion still permits the last accepted action
-to finish and leaves Profile/Fork available while the Session remains open. Fork
-assigns the child path and regenerates context without using Evaluate allowance.
+as success. The last accepted hardware action can finish after reserving the
+remaining budget; then exploration and the Optimizer are stopped. Fork assigns
+the child path and regenerates context without consuming hardware budget.
 
 After authoritative completion, the complete diagnostic output set replaces
 `.benchmark_outputs/<internal_mode>/` in the original worker. Root and mode
 links are removed themselves; publication never writes through them.
 `latest_result.json` is the Evaluator copy; `latest_session_result.json` includes
-event sequence, status, integrity and Snapshot. They are editable diagnostics,
+event sequence, status and integrity. They are editable diagnostics,
 and changing them cannot alter protected records or scores. Staging remains
 available for recorded build/report paths. Diagnostic publication failure does
 not invalidate an already committed observation.
 
 Normal terminal output ends with one JSON line containing `status`, `error_code`,
 `exit_code`, `event_seq`, `workspace`, `correctness`, `integrity_passed`,
-`latency_us`, `snapshot_id`, `remaining_hardware_actions`, and `message`.
+`latency_us`, `remaining_hardware_actions`, and `message`.
 
 | Error | CLI exit |
 | --- | ---: |

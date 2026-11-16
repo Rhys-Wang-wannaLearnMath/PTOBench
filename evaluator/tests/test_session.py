@@ -231,11 +231,23 @@ class SessionTest(SessionTestBase):
             self.assertFalse(any(Path(root['path']).is_relative_to(
                 common.BENCHMARK_ROOT / 'modes/ptomni') for root in manifest['roots'].values()))
             self.assertTrue(any(n.startswith('family_') for n in manifest['roots']))
+            self.assertEqual(stat.S_IMODE(handle.initial_workspace.stat().st_mode), 0o3770)
+            self.assertEqual(handle.initial_workspace.stat().st_gid, grp.getgrnam('ptobench-share').gr_gid)
             self.assertEqual((handle.initial_workspace / '.benchmark_context/config.py').stat().st_mode & 0o777, 0o640)
             self.assertTrue(integrity.check_only(handle.protection_root).passed)
         self.assertNotEqual(first.session_root, second.session_root)
         self.assertEqual(session.read_session(first.session_root)['budget']['max_hardware_actions'], 2)
         self.assertEqual(session.read_session(second.session_root)['budget']['max_hardware_actions'], 5)
+
+    def test_published_workspace_root_uses_sticky_mode(self):
+        handle = self.create()
+        child_id = session.fork_workspace(handle.session_root, handle.initial_workspace)
+        for root in (handle.initial_workspace, handle.session_root / 'workspaces' / child_id):
+            metadata = root.stat()
+            self.assertEqual(stat.S_IMODE(metadata.st_mode), 0o3770)
+            self.assertEqual(metadata.st_uid, os.getuid())
+            self.assertEqual(metadata.st_gid, grp.getgrnam('ptobench-share').gr_gid)
+        self.assertEqual(stat.S_IMODE((handle.session_root / 'workspaces').stat().st_mode), 0o2750)
 
     def test_unrelated_mode_tree_changes_do_not_enter_session_integrity_checks(self):
         handle = self.create()
@@ -285,10 +297,12 @@ class SessionTest(SessionTestBase):
             self.create(case_id='test.no_seed')
 
     def test_invalid_parameters_output_overlap_and_link_components(self):
+        self.assertEqual(session._budget(None), {'max_hardware_actions': 20, 'finish_actions': 1})
         for budget in (0, -1, True, 1.5):
             with self.subTest(budget=budget), self.assertRaises(session.SessionError):
                 self.create(budget=budget)
-        for value in ({'finish_actions': 2}, {'finish_actions': True}, {'unknown': 1}, [], False):
+        for value in ({'finish_actions': 2}, {'finish_actions': True},
+                      {'max_profile_actions': 1}, {'unknown': 1}, [], False):
             with self.subTest(value=value), self.assertRaises(session.SessionError):
                 session.create_session(self.case_id, 'codex', self.output, value)
         for runs, snapshots in ((self.bench / 'cases/new', self.repo / 'snap'), (self.repo / 'run', self.repo / 'run/sub'),
@@ -516,7 +530,7 @@ class SessionTest(SessionTestBase):
                     self.assertEqual(stat.S_IMODE(published.stat().st_mode), 0o700
                                      if crash_at in ('complete-staging', 'renamed-before-phase',
                                                      'renamed-locked', 'context-registered',
-                                                     'registered-locked') else 0o2750)
+                                                     'registered-locked') else 0o3770)
                     with self.assertRaises(session.SessionError):
                         session.resolve_workspace(handle.session_root, published)
                 with session.execution_lock():
@@ -530,12 +544,28 @@ class SessionTest(SessionTestBase):
                 else:
                     self.assertIn('worker_001', record['workspaces'])
                     self.assertTrue((published / '.benchmark_context/starting_point/candidate/helper.py').is_file())
-                    self.assertEqual(stat.S_IMODE(published.stat().st_mode), 0o2750)
+                    self.assertEqual(stat.S_IMODE(published.stat().st_mode), 0o3770)
                 self.assertEqual(list((handle.session_root / 'staging/forks').iterdir()), [])
                 self.assertEqual(session.fork_workspace(handle.session_root, handle.initial_workspace), 'worker_002')
                 self.assertEqual(session.read_session(handle.session_root)['usage']['hardware_actions'], 0)
                 self.assertTrue(integrity.check_only(handle.protection_root).passed)
                 print(f'S2 fork crash: {crash_at} recovered, next accepted worker=002, usage=0')
+
+    def test_launcher_poll_can_read_session_during_pending_fork(self):
+        handle = self.create()
+        with session._session_lock(handle.session_root) as root:
+            record, _ = session._load_locked(root)
+            record['next_workspace_index'] = 2
+            record['pending_forks']['worker_001'] = {
+                'worker_id': 'worker_001', 'parent': 'worker_000',
+                'staging': 'staging/forks/worker_001', 'phase': 'reservation',
+            }
+            session._commit(root, record)
+
+        with self.assertRaisesRegex(session.SessionError, 'unfinished Workspace fork'):
+            session.read_session(handle.session_root)
+        state = session.read_session(handle.session_root, allow_pending=True)
+        self.assertEqual(state['pending_forks']['worker_001']['phase'], 'reservation')
 
     def test_fork_recovery_rejects_target_for_unstaged_reservation(self):
         handle = self.create()

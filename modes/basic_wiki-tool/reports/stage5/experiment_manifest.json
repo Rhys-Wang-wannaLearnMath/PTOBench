@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "prepared_coverage_collection_in_progress",
+  "status": "completed_75_case_coverage_and_six_paired_sessions",
   "configs": [
     {
       "order": 1,
@@ -9,9 +9,14 @@
       "configuration": "modes/basic_wiki-tool/experiments/stage5/01_lm_head_basic.yaml",
       "configuration_sha256": "51ffd07cc6287815c5db0d2b108fb99a5fe7b64dd4adb52a933104dd748d5c45",
       "optimizer_id": "s5_01_lm_head_basic",
-      "status": "pending_profile_coverage_step",
-      "session_root": null,
-      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs"
+      "status": "completed",
+      "session_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs/s5_01_lm_head_basic/deepseek_v4.lm_head_tp2_flash/20261115T013039Z_41d365f68093",
+      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs",
+      "session_id": "20261115T013039Z_41d365f68093",
+      "final_candidate_sha256": "3f626bbdf9ed9ba09d811884ba64526145d31f9e6e76a0a9ac74371f47934baa",
+      "official_clean_latency_us": 802.3995,
+      "finish_event_seq": 19,
+      "close_reason": "optimizer_exit"
     },
     {
       "order": 2,
@@ -20,9 +25,14 @@
       "configuration": "modes/basic_wiki-tool/experiments/stage5/02_lm_head_wiki_tool.yaml",
       "configuration_sha256": "11688f7acf076c49dc7680d0fd9bc1e6e09d9991227a8e9db6c207aa7fbd1e62",
       "optimizer_id": "s5_02_lm_head_wiki_tool",
-      "status": "pending_profile_coverage_step",
-      "session_root": null,
-      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs"
+      "status": "completed",
+      "session_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs/s5_02_lm_head_wiki_tool/deepseek_v4.lm_head_tp2_flash/20261115T084928Z_e7f77e99ccad",
+      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs",
+      "session_id": "20261115T084928Z_e7f77e99ccad",
+      "final_candidate_sha256": "b534d53b0acb567c43e63461654f0f0c3426cc21811905d73564073adae1d410",
+      "official_clean_latency_us": 877.5799999999999,
+      "finish_event_seq": 24,
+      "close_reason": "optimizer_exit"
     },
     {
       "order": 3,
@@ -31,9 +41,14 @@
       "configuration": "modes/basic_wiki-tool/experiments/stage5/03_prefill_layer_wiki_tool.yaml",
       "configuration_sha256": "0a8adf0f10fec3a6802140413a75450082fb93879722374ad4f5bdd272df3b09",
       "optimizer_id": "s5_03_prefill_layer_wiki_tool",
-      "status": "pending_profile_coverage_step",
-      "session_root": null,
-      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs"
+      "status": "completed",
+      "session_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs/s5_03_prefill_layer_wiki_tool/deepseek_v4.prefill_layer_ep2_csa_demo/20261115T093220Z_20f5f4546e4c",
+      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs",
+      "session_id": "20261115T093220Z_20f5f4546e4c",
+      "final_candidate_sha256": "7f783e5c9f93ba2f5a10a5a86d2c473c3cd89ddc397b66fce52ee62d5fe0d624",
+      "official_clean_latency_us": 9192.289499999999,
+      "finish_event_seq": 36,
+      "close_reason": "optimizer_exit"
     },
     {
       "order": 4,
@@ -42,31 +57,54 @@
       "configuration": "modes/basic_wiki-tool/experiments/stage5/04_prefill_layer_basic.yaml",
       "configuration_sha256": "cad2a98e0aa64e645e3b38a9fc5716e2aa7c5aa30b3cbdb5a184960df8c259b1",
       "optimizer_id": "s5_04_prefill_layer_basic",
-      "status": "pending_profile_coverage_step",
-      "session_root": null,
-      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs"
+      "status": "completed",
+      "session_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs/s5_04_prefill_layer_basic/deepseek_v4.prefill_layer_ep2_csa_demo/20261115T123730Z_e39c5644a361",
+      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs",
+      "session_id": "20261115T123730Z_e39c5644a361",
+      "final_candidate_sha256": "bb94e977ba038e56b6f571c270eae5c810d50665de00e0f198d1d77b617ea931",
+      "official_clean_latency_us": 18545.71,
+      "finish_event_seq": 25,
+      "close_reason": "optimizer_exit"
     },
     {
       "order": 5,
       "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo",
       "mode": "basic",
       "configuration": "modes/basic_wiki-tool/experiments/stage5/05_cp8_basic.yaml",
-      "configuration_sha256": "86c941c8e56b2b6c47d25003d9837467b0ed7d56882230175254e0ddda626665",
+      "configuration_sha256": "34f5dcac058c2c8443c222bb3a4c9f64dde62bde691e7e000b4efd8b049ac627",
       "optimizer_id": "s5_05_cp8_basic",
-      "status": "pending_profile_coverage_step",
-      "session_root": null,
-      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs"
+      "status": "completed",
+      "session_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs/s5_05_cp8_basic/deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo/20261115T140928Z_d69e0bda1447",
+      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs",
+      "budget": {
+        "max_hardware_actions": 10,
+        "finish_actions": 1
+      },
+      "session_id": "20261115T140928Z_d69e0bda1447",
+      "final_candidate_sha256": "921c437b1bf4b6bbc4d9d70135babbdc7d671a6248ca3c6f63c98656efc89c59",
+      "official_clean_latency_us": 7204.3099999999995,
+      "finish_event_seq": 24,
+      "close_reason": "optimizer_exit"
     },
     {
       "order": 6,
       "case_id": "deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo",
       "mode": "basic_wiki-tool",
       "configuration": "modes/basic_wiki-tool/experiments/stage5/06_cp8_wiki_tool.yaml",
-      "configuration_sha256": "107609bc74f4d0864a2cb268265e6545942c9b35c95cc2633a7e08e966eb9f78",
+      "configuration_sha256": "046f26c21a80cc23e77ae5d75cd88fa08fa400115ff653fff010574be5162ff8",
       "optimizer_id": "s5_06_cp8_wiki_tool",
-      "status": "pending_profile_coverage_step",
-      "session_root": null,
-      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs"
+      "status": "completed",
+      "session_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs/s5_06_cp8_wiki_tool/deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo/20261115T160157Z_8a2c270c10e6",
+      "expected_runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs",
+      "budget": {
+        "max_hardware_actions": 10,
+        "finish_actions": 1
+      },
+      "session_id": "20261115T160157Z_8a2c270c10e6",
+      "final_candidate_sha256": "e8a3c9dc488d0f60b4a5e8cda543047033bb2092f2adda929fc7990e657b6fef",
+      "official_clean_latency_us": 6518.1095000000005,
+      "finish_event_seq": 14,
+      "close_reason": "optimizer_exit"
     }
   ],
   "paired_effective_profiles": {
@@ -379,15 +417,36 @@
       }
     ]
   },
-  "external_dependencies": [
-    "selected_mode_source_protection: waiting waived by latest user instruction; public sources remain unchanged"
-  ],
-  "launch_allowed": true,
-  "next_step": "Poll the running Profile collector; rebuild coverage from terminal Session events. Then revalidate effective pair identities and launch ONLY the six configs in numbered order with normal PTOBench locks.",
-  "launch_order_constraint": "Finish the authorized 75-Case coverage/failed-evidence step, revalidate paired inputs, then launch exactly these six configs serially.",
+  "external_dependencies": [],
+  "launch_allowed": false,
+  "next_step": "No further hardware runs are planned. See paired_trials.md and summary.json.",
+  "launch_order_constraint": "Satisfied: coverage audit completed before the six named configs ran serially through the standard PTOBench CLI.",
   "output_placement": {
     "runs_root": "/data2/ziruiwang/PTOBench/stage5_trials/runs",
     "snapshots_root": "/data2/ziruiwang/PTOBench/stage5_trials/snapshots",
     "reason": "Use spacious /data2 for all six Sessions; applied identically before the first real trial. Original canonical Case and environment configuration, model, budget and order remain frozen."
+  },
+  "budget_overrides": [
+    {
+      "orders": [
+        5,
+        6
+      ],
+      "max_hardware_actions": 10,
+      "finish_actions": 1,
+      "reason": "Latest user decision: focus the remaining paired CP8 trials on Analyzer exposure/discovery/calls with minimum sufficient Evaluate budget; keep both arms matched."
+    }
+  ],
+  "completion": {
+    "coverage_audit": "modes/basic_wiki-tool/reports/stage5/evidence/selected_coverage_audit.json",
+    "covered": 75,
+    "formal": 60,
+    "held_out": 15,
+    "failed": 0,
+    "pending": 0,
+    "completed_primary_sessions": 6,
+    "all_official_finish_events_passed": true,
+    "report": "modes/basic_wiki-tool/reports/stage5/paired_trials.md",
+    "public_ptobench_code_modified": false
   }
 }

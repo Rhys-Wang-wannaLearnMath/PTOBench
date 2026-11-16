@@ -1,29 +1,17 @@
-# PTOAnalyzer Stage 5 — in progress
+# PTOAnalyzer Stage 5 — completed
 
-`modes/basic_wiki-tool` implements Basic's single Pi Agent lifecycle plus an optimization Wiki and nine read-only Analyzer tools. Tasks 1–3 have CPU acceptance evidence. Six paired-trial configurations are prepared, but **no real trial Session has been launched**. Stage 5 is not complete.
+Stage 5 completed with 75/75 canonical Formal/Held-out combined Profiles and six completed PTOBench Sessions forming three matched Basic versus `basic_wiki-tool` pairs. The two CP8 arms each used the confirmed 10-Evaluate allowance; combined Profiles and the official finish action are recorded separately.
 
-- [Progress and exact commands](progress.md)
-- [Input file identities and external dependency audit](inputs.json)
-- [Six configurations, pairing identities, seed manifests and reuse audit](experiment_manifest.json)
-- [Structured results with unmeasured fields left null](summary.json)
-- [Requirement audit](acceptance_audit.md)
-- [Formal60/Held-out15 selected-profile coverage audit](evidence/selected_coverage_audit.json)
-- [Independent review and fixes](evidence/independent_review.md)
+| Case | Basic clean latency | Wiki + Analyzer clean latency | Treatment / Basic |
+|---|---:|---:|---:|
+| `deepseek_v4.lm_head_tp2_flash` | 802.400 µs | 877.580 µs | 1.094× |
+| `deepseek_v4.prefill_layer_ep2_csa_demo` | 18,545.710 µs | 9,192.289 µs | 0.496× |
+| `deepseek_v4_flash_mtp.prefill_cp_csa_cp8_demo` | 7,204.310 µs | 6,518.110 µs | 0.905× |
 
-CPU evidence proves nine registrations through a Pi API stub and real TS/Node→Unix socket→Analyzer roundtrips, plus pagination, typed errors, cancellation, interruption, duplicate rejection and cleanup. See [bridge/adapter acceptance](evidence/task2_green.log). It does not prove real Pi/model visibility or actual model calls.
+These are descriptive matched-session outcomes. The treatment combines the Wiki and PTOAnalyzer; the experiment does not isolate either component. All six final candidates passed official finish correctness. The full Candidate hash/diff, Evaluate/Profile Event ledger, device group, failures, tool registrations/calls/errors, Wiki identity, token and wall-clock records are in [paired Session report](paired_trials.md), [summary.json](summary.json) and the original PTOBench Session archives.
 
-Latest affected acceptance: **11 Mode CPU tests passed** in [review_fixes_mode_suite_green.log](evidence/review_fixes_mode_suite_green.log). Two independent-review findings were fixed with failing-then-passing regressions: cached authority is checked on every call without reparsing heavy diagnostics, and nonfinite-result serialization errors have durable typed terminal records with Profile identity. Historical failure/correction logs remain available in the evidence directory.
+The [coverage audit](evidence/selected_coverage_audit.json) records one selected canonical Profile per each of the 75 Cases (60 Formal + 15 Held-out); 94 profile references were reviewed: 75 selected, 18 usable duplicates not selected by the stated preference, and one unusable original retained as failure evidence. The Mode's copied Analyzer runtime identity and public/Basic/CANNBot boundaries are summarized in [acceptance_audit.md](acceptance_audit.md).
 
-Mode acceptance covers Basic contract preservation, prepare/run/collect wiring, normal/startup-failure/SIGTERM socket cleanup and interrupted-call finalization. Wiki verification used a CPU fixture Session, a real fork and the existing Agent sandbox under the real `ptobench-agent` UID. Wiki INDEX reading succeeded, mutation/replacement was denied, Candidate/Context hashes and existing protection remained valid. No LLM, API or NPU was invoked.
+All three treatment Sessions registered all nine Analyzer tools and recorded five successful Analyzer calls in total. Tool invocation is distinct from registration; no durable evidence establishes whether the Agent later used a returned Analyzer result. Wiki snapshots were verified unchanged. The earlier full Mode suite (11 passed) and public Pi interface suite (2 passed/9 subtests) remain at [review_fixes_mode_suite_green.log](evidence/review_fixes_mode_suite_green.log) and [public_pi_tool_tests.log](evidence/public_pi_tool_tests.log). After the Mode-local socket-path fix, `test_mode.py` passed 4 tests, the focused socket test passed, and the affected bridge/adapter suite passed 8 tests. The public suite was reused because public sources did not change.
 
-The generic public Pi extension/socket tests passed once: [public evidence](evidence/public_pi_tool_tests.log). No public code was changed here. The original Analyzer runtime is retained; its copy and SHA-256 manifest are Mode-owned, while adaptation stays outside the copy.
-
-Real Pi registration/active-tool evidence is absent until the three treatment Sessions run. Actual model tool calls, observed Wiki reads, later decisions citing tool results and optimization benefit are all unmeasured. Unlaunched Session metrics are null with an explicit reason, not zero. After real trials, report all outcomes, including failures and zero tool calls, without adding forced-call or smoke Sessions.
-
-The latest user decision authorizes filling missing Formal60/Held-out15 combined Profiles and proceeding without waiting for selected-Mode source protection. Public PTOBench code remains unchanged. Earlier blocker descriptions in historical ledger entries are superseded.
-
-Coverage is being rebuilt from raw Session/Event/artifact indexes. The initial rebuilt audit verifies 27/75 Cases: 18 reused historical Profiles and 9 new canonical starting Candidate collections through normal `ptobench profile .`. Each selected record has authorized metadata, indexed diagnostics and complete device-rank coverage. Remaining Cases are collected serially with the Case's full device group; failures retain original CLI/Session evidence while other Cases continue. The current machine-readable status is [selected_coverage_audit.json](evidence/selected_coverage_audit.json).
-
-The experiment manifest fixes effective deepseek-flash/high, Pi1.5.2, budget20+finish1 and Case seed identity. Case runtime device groups are [0,1], [0,1] and [0..7]. Two historical Basic lm_head Sessions were inspected and rejected for reuse because their budget/reasoning/profile differ. Run configurations in their numbered serial order after the coverage step and frozen identities are revalidated. Output roots must follow existing Broker/group traversal policy and PTOBench device locks.
-
-Only the Wiki+Analyzer combination can be evaluated by these three pairs. Do not attribute effects separately or claim universal performance improvement. Profile measurements are diagnostic and never Clean Latency.
+Two launch attempts failed before Agent startup with zero hardware actions, and one interrupted Trial 4 precursor is retained separately with its nine actions and pending fork record. The completed paired Sessions and all recovery records are listed in [progress.md](progress.md) and [summary.json](summary.json). No extra smoke Session, seed, or full Agent experiment was added.

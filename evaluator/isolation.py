@@ -180,7 +180,8 @@ def install_pi_private_tools(config_directory, tools_directory, workspace_root):
 
 
 def agent_command(command, *, cwd, environment, workspace, session_root,
-                  cann_bot_extension=None, cann_bot_socket=None, backend=None):
+                  cann_bot_extension=None, cann_bot_socket=None, backend=None,
+                  pi_tool_extension=None, pi_tool_socket=None):
     """Build the verified host launcher and Bubblewrap command for an Agent."""
     if not enabled():
         raise RuntimeError('Pi Agent requires filesystem isolation')
@@ -188,6 +189,10 @@ def agent_command(command, *, cwd, environment, workspace, session_root,
     view = View(isolate_network=True).system()
     is_pi = (backend == 'pi' or Path(command[0]).name == 'pi'
              or any('pi-coding-agent/dist/bundle/cli.js' in value for value in command[:3]))
+    if (pi_tool_extension is None) != (pi_tool_socket is None):
+        raise RuntimeError('Pi Tool extension and socket must be provided together')
+    if pi_tool_extension is not None and not is_pi:
+        raise RuntimeError('Pi Tool extension and socket are only available to Pi Agents')
     view.native_agent(command=command, environment=environment, is_pi=is_pi)
     workspace_root = Path(session_root) / 'workspaces'
     workspace_root_metadata = workspace_root.lstat()
@@ -214,6 +219,47 @@ def agent_command(command, *, cwd, environment, workspace, session_root,
         path.mkdir(parents=True, exist_ok=True, mode=mode)
         _agent_shared_directory(path, mode=mode, group_id=share_gid)
     install_pi_private_tools(pi_config, pi_tools, workspace_root)
+    pi_tool_extension_path = None
+    pi_tool_extension_loaded = False
+    pi_tool_socket_path = None
+    if pi_tool_extension is not None:
+        try:
+            extension_source = Path(pi_tool_extension).absolute()
+            extension_source.relative_to(pi_tools.absolute())
+            resolved_extension = extension_source.resolve(strict=True)
+            relative_extension = resolved_extension.relative_to(pi_tools.resolve(strict=True))
+            extension_metadata = resolved_extension.stat()
+        except (OSError, ValueError) as error:
+            raise RuntimeError('Pi Tool extension must be inside the current Session pi-tools directory') from error
+        if not stat.S_ISREG(extension_metadata.st_mode) or extension_metadata.st_uid != os.getuid():
+            raise RuntimeError('Pi Tool extension must be a Broker-owned regular file')
+        pi_tool_extension_path = str(Path('/ptobench/pi-tools') / relative_extension)
+        for index, value in enumerate(command):
+            if value == '--extension' and index + 1 < len(command):
+                try:
+                    matches_tool_extension = Path(command[index + 1]).resolve(strict=True) == resolved_extension
+                except OSError:
+                    matches_tool_extension = False
+                if matches_tool_extension:
+                    command[index + 1] = pi_tool_extension_path
+                    pi_tool_extension_loaded = True
+            elif value.startswith('--extension='):
+                try:
+                    matches_tool_extension = Path(value.partition('=')[2]).resolve(strict=True) == resolved_extension
+                except OSError:
+                    matches_tool_extension = False
+                if matches_tool_extension:
+                    command[index] = f'--extension={pi_tool_extension_path}'
+                    pi_tool_extension_loaded = True
+
+        try:
+            pi_tool_socket_path = Path(pi_tool_socket).resolve(strict=True)
+            pi_tool_socket_path.relative_to(Path(session_root).resolve(strict=True))
+            socket_metadata = Path(pi_tool_socket).lstat()
+        except (OSError, ValueError) as error:
+            raise RuntimeError('Pi Tool socket must be inside the current Session') from error
+        if not stat.S_ISSOCK(socket_metadata.st_mode) or socket_metadata.st_uid != os.getuid():
+            raise RuntimeError('Pi Tool endpoint must be a Broker-owned Unix socket')
     view.add_tmpfs('/ptobench/pi-config')
     for name in ('settings.json', 'models.json', 'auth.json', 'unlimited-output.ts'):
         config_file = pi_config / name
@@ -321,6 +367,8 @@ def agent_command(command, *, cwd, environment, workspace, session_root,
                 command[index] = str(Path('/ptobench/pi-config') / relative)
         flags = ['--no-extensions', '--no-approve', '--extension',
                  '/ptobench/pi-tools/ptobench-file-guard.mjs']
+        if pi_tool_extension_path is not None and not pi_tool_extension_loaded:
+            flags.extend(['--extension', pi_tool_extension_path])
         insertion = command.index('{prompt}') if '{prompt}' in command else len(command)
         command[insertion:insertion] = flags
     if cann_bot_extension:
@@ -336,6 +384,9 @@ def agent_command(command, *, cwd, environment, workspace, session_root,
     if cann_bot_socket:
         _agent_shared_socket(cann_bot_socket)
         view.add(cann_bot_socket, '/ptobench/cannbot.sock')
+    if pi_tool_socket_path is not None:
+        _agent_shared_socket(pi_tool_socket_path)
+        view.add(pi_tool_socket_path, '/ptobench/pi-tool.sock')
 
     cleaned = agent_environment(environment)
     cleaned['PTOBENCH_RPC_SOCKET'] = '/ptobench/cli.sock'
@@ -346,6 +397,8 @@ def agent_command(command, *, cwd, environment, workspace, session_root,
     cleaned['PATH'] = os.pathsep.join(('/ptobench', '/ptobench/runtime', '/usr/bin', '/bin'))
     if cann_bot_socket:
         cleaned['PTOBENCH_CANNBOT_SOCKET'] = '/ptobench/cannbot.sock'
+    if pi_tool_socket_path is not None:
+        cleaned['PTOBENCH_PI_TOOL_SOCKET'] = '/ptobench/pi-tool.sock'
     (Path(session_root) / 'filesystem_isolation.json').write_text(
         json.dumps(view.manifest(), indent=2) + '\n')
     bubblewrap = view.argv(command, cwd=cwd, environment=cleaned)

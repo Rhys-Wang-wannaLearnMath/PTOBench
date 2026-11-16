@@ -39,6 +39,15 @@ sys.exit(0 if result.status=='completed' else 1)
 
 
 class FinalizeTest(ActionTestBase):
+    def snapshot_id(self, result):
+        event = next(item for item in self.events() if item['seq'] == result['event_seq'])
+        return event['snapshot_id']
+
+    def snapshot(self, result):
+        snapshot_id = self.snapshot_id(result)
+        self.assertTrue(snapshot_id)
+        return self.handle.snapshots_root / snapshot_id
+
     def create(self, budget=2, optimizer='maintenance', case_id=None, output=None):
         # Maintenance qualification retains correctness-checked profiles and
         # their historical Snapshot/final-selection behavior.
@@ -72,6 +81,36 @@ class FinalizeTest(ActionTestBase):
         self.handle=self.create(budget=20,optimizer='pi')
         self.env['PTOBENCH_SESSION_ROOT']=str(self.handle.session_root)
 
+    def test_snapshot_failure_uses_verified_action_freeze(self):
+        self.configure(median=6.0)
+        with mock.patch.dict(os.environ, self.env), \
+             mock.patch.object(snapshots, 'create_snapshot',
+                               side_effect=OSError('forced Snapshot storage failure')):
+            action = session_actions.run_evaluate(
+                self.handle.session_root, self.handle.initial_workspace)
+
+        self.assertEqual((action.status, action.error_code, action.exit_code), ('PASS', None, 0))
+        event = self.events()[-1]
+        self.assertIsNone(event['snapshot_id'])
+        self.assertIn('forced Snapshot storage failure', event['snapshot_error'])
+        selected = snapshots.select_best_snapshot(self.handle.session_root)
+        self.assertIsNone(selected.snapshot_id)
+        self.assertEqual(selected.event_seq, event['seq'])
+        self.assertEqual(selected.content_sha256, event['content_sha256'])
+
+        self.configure(median=19.0, speedup=3.0)
+        result = self.finish()
+
+        self.assertEqual(result.status, 'completed', result)
+        self.assertIsNone(result.error_code)
+        self.assertIsNone(result.selected_snapshot)
+        self.assertEqual(result.selected_event_seq, event['seq'])
+        self.assertEqual(result.selected_content_sha256, event['content_sha256'])
+        self.assertEqual(result.final_verified_latency_us, 19.0)
+        self.assertEqual((result.hardware_actions_used, result.finish_actions_used), (1, 1))
+        self.assertEqual(session.read_session(self.handle.session_root)['status'], 'completed')
+        self.assertEqual(len(self.calls()), 2)
+
     def test_retired_session_rejected_before_close_or_write(self):
         root = self.handle.session_root
         record = session.read_session(root)
@@ -94,12 +133,12 @@ class FinalizeTest(ActionTestBase):
         self.observe('runtime',median=None)
         self.observe(median=8)
         selected=snapshots.select_best_snapshot(self.handle.session_root)
-        self.assertEqual(selected.snapshot_id,best['snapshot_id'])
+        self.assertEqual(selected.snapshot_id,self.snapshot_id(best))
         self.assertEqual((selected.observation['kind'],selected.observation['mode']),('profile','pmu'))
         self.assertEqual(selected.selection_reason,'lowest_observed_latency')
         self.assertEqual(selected.content_sha256,common.read_json(self.snapshot(first)/'metadata.json')['content_sha256'])
         lower=self.observe('compiler',median=7)
-        self.assertEqual(snapshots.select_best_snapshot(self.handle.session_root).snapshot_id,lower['snapshot_id'])
+        self.assertEqual(snapshots.select_best_snapshot(self.handle.session_root).snapshot_id,self.snapshot_id(lower))
         self.assertEqual(len(self.calls()),5)
         self.assertEqual(session.read_session(self.handle.session_root)['usage']['finish_actions'],0)
 
@@ -107,7 +146,7 @@ class FinalizeTest(ActionTestBase):
         for mode,median in [('runtime',None),('pmu',0),('compiler',-1),('pmu',True)]:
             latest=self.observe(mode,median=median)
         selected=snapshots.select_best_snapshot(self.handle.session_root)
-        self.assertEqual(selected.snapshot_id,latest['snapshot_id'])
+        self.assertEqual(selected.snapshot_id,self.snapshot_id(latest))
         self.assertEqual(selected.selection_reason,'latest_pass_without_latency')
         self.assertIsNone(selected.observation['latency_us'])
         self.assertIsNone(selected.observation['metric_name'])
@@ -160,7 +199,7 @@ class FinalizeTest(ActionTestBase):
             common.read_json(self.handle.session_root/'final_result.json')['elapsed_seconds'],
             result.elapsed_seconds,
         )
-        self.assertEqual(result.selected_snapshot,candidate['snapshot_id'])
+        self.assertEqual(result.selected_snapshot,self.snapshot_id(candidate))
         self.assertEqual(result.best_observed_latency_us,2)
         self.assertEqual((result.best_observed_source,result.best_observed_mode),('profile','pmu'))
         self.assertEqual((result.final_verified_latency_us,result.final_verified_speedup),(123.0,3.25))
@@ -183,7 +222,7 @@ class FinalizeTest(ActionTestBase):
         latest=self.observe('compiler',median=None)
         self.configure(median=17,speedup=4)
         result=self.finish()
-        self.assertEqual(result.selected_snapshot,latest['snapshot_id'])
+        self.assertEqual(result.selected_snapshot,self.snapshot_id(latest))
         self.assertIsNone(result.best_observed_latency_us)
         self.assertEqual(result.final_verified_latency_us,17)
         self.assertEqual(len(self.calls()),3)
@@ -199,7 +238,7 @@ class FinalizeTest(ActionTestBase):
         (self.handle.session_root/'events.jsonl').write_text('[]\n')
         (self.handle.session_root/'staging/action_000001/authority_result.json').write_text('{}')
         selected=snapshots.select_best_snapshot(self.handle.session_root)
-        self.assertEqual(selected.snapshot_id,original['snapshot_id'])
+        self.assertEqual(selected.snapshot_id,self.snapshot_id(original))
         self.assertEqual(sentinel.read_text(),'outside')
         self.assertEqual((snap/'source/candidate/helper.py').read_text(),'VALUE = 1\n')
         self.assertEqual((snap/'source').stat().st_mode & 0o777,0o555)
@@ -210,7 +249,7 @@ class FinalizeTest(ActionTestBase):
     def test_corrupt_history_recovery_blocks_finish_without_charge(self):
         original=self.observe()
         manifest=common.read_json(self.handle.protection_root/'manifest.json')
-        entry=manifest['roots'][original['snapshot_id']]['entries']['source/candidate/helper.py']
+        entry=manifest['roots'][self.snapshot_id(original)]['entries']['source/candidate/helper.py']
         backup=self.handle.protection_root/entry['backup']; backup.chmod(0o600); backup.write_text('corrupt')
         source=self.snapshot(original)/'source/candidate/helper.py'; source.chmod(0o600); source.write_text('needs recovery')
         with self.assertRaises(integrity.InfrastructureError):
@@ -227,7 +266,7 @@ class FinalizeTest(ActionTestBase):
         shutil.copytree(self.snapshot(original),orphan)
         metadata=orphan/'metadata.json'; metadata.chmod(0o600)
         value=common.read_json(metadata); value['observation']['latency_us']=.001; metadata.write_text(json.dumps(value))
-        self.assertEqual(snapshots.select_best_snapshot(self.handle.session_root).snapshot_id,original['snapshot_id'])
+        self.assertEqual(snapshots.select_best_snapshot(self.handle.session_root).snapshot_id,self.snapshot_id(original))
         self.assertEqual(len(self.calls()),1)
 
     def test_inconsistent_committed_history_is_rejected_before_finish(self):
@@ -248,7 +287,7 @@ class FinalizeTest(ActionTestBase):
         result=self.finish()
         self.assertEqual((result.status,result.error_code),('failed','action_failed'))
         self.assertGreaterEqual(result.elapsed_seconds, 0)
-        self.assertEqual(result.selected_snapshot,selected['snapshot_id'])
+        self.assertEqual(result.selected_snapshot,self.snapshot_id(selected))
         self.assertEqual(result.best_observed_latency_us,1)
         self.assertIsNone(result.final_verified_latency_us); self.assertIsNone(result.final_verified_speedup)
         self.assertIsNone(result.final_verified_correctness)
@@ -287,7 +326,7 @@ class FinalizeTest(ActionTestBase):
         with mock.patch.object(workspace,'write_context',side_effect=OSError('context fault')):
             result=self.finish()
         self.assertEqual(result.error_code,'infrastructure_error')
-        self.assertEqual(result.selected_snapshot,observed['snapshot_id'])
+        self.assertEqual(result.selected_snapshot,self.snapshot_id(observed))
         self.assertEqual(result.finish_actions_used,0)
         self.assertEqual(self.finish().to_dict(),result.to_dict())
         self.assertEqual(len(self.calls()),1)

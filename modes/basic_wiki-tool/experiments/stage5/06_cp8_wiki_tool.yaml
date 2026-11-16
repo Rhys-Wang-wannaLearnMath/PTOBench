@@ -5,7 +5,7 @@ optimizer:
   backend: pi
   profile: default
 budget:
-  max_hardware_actions: 20
+  max_hardware_actions: 10
   finish_actions: 1
 output:
   runs_root: /data2/ziruiwang/PTOBench/stage5_trials/runs

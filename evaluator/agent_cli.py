@@ -17,7 +17,7 @@ class Parser(argparse.ArgumentParser):
 
 
 def _emit_result(result):
-    payload = (json.dumps(result.to_dict(), ensure_ascii=False, allow_nan=False) + '\n').encode()
+    payload = (json.dumps(result.to_agent_dict(), ensure_ascii=False, allow_nan=False) + '\n').encode()
     try:
         fd = sys.stdout.fileno()
     except (AttributeError, OSError, ValueError):
@@ -55,7 +55,7 @@ def main(argv=None):
     commands = parser.add_subparsers(dest='action', required=True, parser_class=Parser)
     evaluate = commands.add_parser('evaluate', allow_abbrev=False,
                                   help='Check correctness and measure Candidate latency.',
-                                  description=('Check correctness and measure Candidate latency; consumes one Evaluate allowance '
+                                  description=('Check correctness and measure Candidate latency; consumes one hardware action '
                                                'per accepted action, including failed or interrupted actions.'))
     evaluate.add_argument('workspace', nargs='?', default='.', help='Registered workspace root (default: current directory).')
     if enabled_profiles:
@@ -67,8 +67,8 @@ def main(argv=None):
                                                    if profile_strategy == 'combined' else 'Collect diagnostics. ')
                                                    + 'Profile does not check output correctness; '
                                                    'use `ptobench evaluate` to check correctness and clean latency. '
-                                                   'Profile is recorded as a hardware action but does not consume the Evaluate allowance; '
-                                                   'it remains available while the Session is open, even after that allowance is exhausted.'))
+                                                   'Each accepted Profile consumes one hardware action; '
+                                                   'all further Evaluate, Profile and Fork requests are rejected when the hardware-action budget is exhausted.'))
         if profile_strategy == 'combined':
             profile.add_argument('workspace', nargs='?', default='.', help='Registered workspace root (default: current directory).')
         else:
@@ -76,7 +76,7 @@ def main(argv=None):
                                  help='runtime: scheduling/dependencies; pmu: hardware counters; compiler: compiler/IR diagnostics.')
             profile.add_argument('workspace', nargs='?', default='.', help='Registered workspace root (default: current directory).')
     fork = commands.add_parser('fork', allow_abbrev=False, help='Copy source into a new registered workspace.',
-                               description='Copy source into a new registered workspace and return its path; consumes no Evaluate allowance and is recorded as a Session operation.')
+                               description='Copy source into a new registered workspace and return its path; consumes no hardware-action budget and is recorded as a Session operation. Available only before the hardware-action budget is exhausted.')
     fork.add_argument('workspace', nargs='?', default='.', help='Registered parent workspace root (default: current directory).')
     try:
         args = parser.parse_args(argv)

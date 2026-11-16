@@ -54,6 +54,11 @@ class ActionResult:
             value.pop('failure_diagnostic')
         return value
 
+    def to_agent_dict(self):
+        value = self.to_dict()
+        value.pop('snapshot_id', None)
+        return value
+
 
 class ActionInterrupted(RuntimeError):
     error_code = 'interrupted'
@@ -69,11 +74,11 @@ def _error_result(error, seq=None, path=None, remaining=None):
                         str(path) if path else None, remaining_hardware_actions=remaining, message=str(error))
 
 
-def _remaining(record, events):
+def _remaining(record):
     maximum = record['budget']['max_hardware_actions']
     if maximum == session.UNLIMITED_HARDWARE_ACTIONS:
         return None
-    return maximum - session._evaluate_actions_used(record, events)
+    return maximum - record['usage']['hardware_actions']
 
 
 def _repair_for_action(root):
@@ -786,7 +791,7 @@ def _publish_diagnostics(original, frozen, internal_mode, action_result, raw_res
                 except (OSError, file_tree.UnsafeTreeError):
                     pass
             file_tree.atomic_bytes(temporary / 'latest_session_result.json',
-                                   session._bytes(action_result.to_dict()), mode=0o640)
+                                   session._bytes(action_result.to_agent_dict()), mode=0o640)
             if raw_result is not None:
                 file_tree.atomic_bytes(temporary / 'latest_result.json',
                                        session._bytes(raw_result), mode=0o640)
@@ -815,7 +820,7 @@ def reject_request(session_root, action, error, *, path=None, mode=None):
                      error_code=code, exit_code=EXIT_CODES[code], result={'message': str(error)})
             with session._session_lock(Path(record['session_root'])) as root:
                 current, events = session._load_locked(root)
-            result = _error_result(error, event['seq'], path, _remaining(current, events))
+            result = _error_result(error, event['seq'], path, _remaining(current))
             result.status = 'REJECTED'
             result.attempt_id = event.get('attempt_id')
             return result
@@ -842,6 +847,8 @@ def _run_action(session_root, workspace_path, kind, mode):
             frozen = None
             repaired = []
             observed_mode_changes = []
+            capture_skipped = []
+            capture_skipped_versions = {}
             record = None
             try:
                 repairs = _repair_for_action(root)
@@ -852,9 +859,9 @@ def _run_action(session_root, workspace_path, kind, mode):
                     record, events = session._load_locked(normalized)
                 session._open_exploration(record)
                 maximum = record['budget']['max_hardware_actions']
-                if (kind == 'evaluate' and maximum != session.UNLIMITED_HARDWARE_ACTIONS
-                        and session._evaluate_actions_used(record, events) >= maximum):
-                    raise session.SessionError('Evaluate allowance exhausted', 'budget_exceeded')
+                if (maximum != session.UNLIMITED_HARDWARE_ACTIONS
+                        and record['usage']['hardware_actions'] >= maximum):
+                    raise session.SessionError('Hardware action budget exhausted', 'budget_exceeded')
                 worker_id, original, _ = session.resolve_workspace(root, workspace_path)
                 if kind == 'profile' and (mode not in session.PUBLIC_MODES or mode not in record['profiling_modes']):
                     raise session.SessionError('profile is not enabled')
@@ -863,7 +870,10 @@ def _run_action(session_root, workspace_path, kind, mode):
                 with file_tree.open_directory(action_dir, create=True):
                     pass
                 frozen = action_dir / 'workspace'
-                manifest = workspace.copy_candidate_tree(original, frozen / 'candidate')
+                manifest = workspace.copy_candidate_tree(
+                    original, frozen / 'candidate', best_effort=True,
+                    skipped_paths=capture_skipped,
+                    skipped_versions=capture_skipped_versions)
                 case = session._read(Path(record['case_dir']) / 'case.json')
                 try:
                     compile_config = common.read_tuning(frozen, case)
@@ -882,7 +892,9 @@ def _run_action(session_root, workspace_path, kind, mode):
                 session.reserve_action(root, seq, kind, workspace_path=original, mode=mode,
                                        source_manifest=manifest,
                                        observed_mode_changes=observed_mode_changes,
-                                       compile_config=compile_config)
+                                       compile_config=compile_config,
+                                       candidate_capture_skipped=sorted(set(capture_skipped)),
+                                       candidate_capture_skipped_versions=capture_skipped_versions)
                 accepted = True
             except (session.SessionError, workspace.InvalidWorkspaceError) as error:
                 event = session.record_nonhardware_event(root, kind, mode=mode,
@@ -891,7 +903,7 @@ def _run_action(session_root, workspace_path, kind, mode):
                 with session._session_lock(root) as normalized:
                     current, current_events = session._load_locked(normalized)
                 result = _error_result(error, event['seq'], workspace_path,
-                                       _remaining(current, current_events))
+                                       _remaining(current))
                 result.status = 'REJECTED'
                 result.attempt_id = event.get('attempt_id')
                 return result
@@ -952,6 +964,7 @@ def _run_action(session_root, workspace_path, kind, mode):
                 except (session.SessionError, integrity.InfrastructureError, OSError, ValueError) as error:
                     error_code, message = 'action_failed', str(error)
             snapshot_id = None
+            snapshot_error = None
             # Publication is an atomic completion decision. Defer signals until
             # all authority, Snapshot and event commits finish consistently.
             signal_state['active'] = False
@@ -967,23 +980,37 @@ def _run_action(session_root, workspace_path, kind, mode):
             artifact_index = action_records.archive(root, seq, action_dir)
             attempt_metadata = _attempt_metadata(action_dir, kind, error_code, observation, raw, artifact_index)
             if error_code is None and observation.get('correctness') == 'PASS':
-                snapshot_id = snapshots.create_snapshot(root, frozen, {
-                    'seq': seq, 'workspace': str(original), 'content_sha256': manifest['content_sha256'],
-                    'exit_code': evaluator_exit, 'correctness': 'PASS', 'integrity_passed': intact,
-                    'observation': observation,
-                })
+                try:
+                    snapshot_id = snapshots.create_snapshot(root, frozen, {
+                        'seq': seq, 'workspace': str(original), 'content_sha256': manifest['content_sha256'],
+                        'exit_code': evaluator_exit, 'correctness': 'PASS', 'integrity_passed': intact,
+                        'observation': observation,
+                    })
+                except integrity.InfrastructureError:
+                    raise
+                except OSError as error:
+                    snapshot_error = f'{type(error).__name__}: {error}'
+                except workspace.InvalidWorkspaceError as error:
+                    storage_error = error.__cause__
+                    if (not isinstance(storage_error, OSError) or storage_error.errno not in {
+                            errno.EACCES, errno.EPERM, errno.ENOSPC, errno.EDQUOT,
+                            errno.EROFS, errno.EIO}):
+                        raise
+                    snapshot_error = f'{type(error).__name__}: {error}'
             event = session.complete_action(root, seq, exit_code=evaluator_exit, error_code=error_code,
                     integrity_passed=intact, result=raw, repaired_paths=repaired, snapshot_id=snapshot_id,
                     action_started=started, observation=observation,
                     observed_mode_changes=observed_mode_changes, artifact_index=artifact_index,
-                    attempt_metadata=attempt_metadata)
+                    attempt_metadata=attempt_metadata,
+                    candidate_capture_skipped=sorted(set(capture_skipped)),
+                    snapshot_error=snapshot_error)
             _clear_marker()
             with session._session_lock(root) as normalized:
                 current, current_events = session._load_locked(normalized)
             result = ActionResult('PASS' if error_code is None else 'FAIL', error_code, EXIT_CODES[error_code], seq,
                                   str(original), observation.get('correctness') if observation else None,
                                   observation['latency_us'] if observation else None, snapshot_id,
-                                  _remaining(current, current_events), message)
+                                  _remaining(current), message)
             result._omit_correctness = kind == 'profile' and record['optimizer']['backend'] != 'maintenance'
             result.integrity_passed = intact
             result.attempt_id = event.get('attempt_id')
@@ -1034,14 +1061,14 @@ def fork_workspace(session_root, parent_path):
                 with session._session_lock(Path(record['session_root'])) as normalized:
                     current, current_events = session._load_locked(normalized)
                 return ActionResult('PASS', None, 0, event['seq'], str(child),
-                                    remaining_hardware_actions=_remaining(current, current_events))
+                                    remaining_hardware_actions=_remaining(current))
             except (session.SessionError, workspace.InvalidWorkspaceError) as error:
                 event = session.record_nonhardware_event(session_root, 'fork', error_code=error.error_code,
                                                         exit_code=EXIT_CODES[error.error_code], result={'message': str(error)})
                 with session._session_lock(Path(record['session_root'])) as normalized:
                     current, current_events = session._load_locked(normalized)
                 result = _error_result(error, event['seq'], parent_path,
-                                       _remaining(current, current_events))
+                                       _remaining(current))
                 result.status = 'REJECTED'
                 return result
     except Exception as error:

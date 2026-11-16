@@ -177,7 +177,7 @@ else:
         if control.get('budget_child'):
             profile = cli(['profile'])
             rejected = cli(['evaluate'])
-            assert profile['exit_code'] == 0, profile
+            assert profile['exit_code'] == 3, profile
             assert rejected['exit_code'] == 3, rejected
             reply('Original evaluate stage answer')
         if control.get('hang_child') or control.get('cancel_child'):
@@ -1114,9 +1114,9 @@ class CANNBotTests(ActionTestBase):
         self.assertNotIn('First run ptobench evaluate', (root / 'prompt.txt').read_text())
         allowance = session.read_session(root)['budget']['max_hardware_actions']
         main_prompt=' '.join((root/'prompt.txt').read_text().split())
-        self.assertIn(f'Evaluate allowance: {allowance} accepted `ptobench evaluate` actions', main_prompt)
-        self.assertIn('Profile has cost 0, is recorded as a hardware action', main_prompt)
-        self.assertIn('Profile/Fork until this method exits', main_prompt)
+        self.assertIn(f'Hardware-action budget: {allowance} accepted `ptobench evaluate` or `ptobench profile` actions', main_prompt)
+        self.assertIn('Fork does not consume this budget.', main_prompt)
+        self.assertIn('Stop when `remaining_hardware_actions` reaches 0', main_prompt)
         protection=json.loads((root/'protection/manifest.json').read_text())
         self.assertNotIn('raw_wiki', protection['roots']['participant_cannbot_resources']['entries'])
         self.assertFalse((root/'method/knowledge.json').exists())
@@ -1141,17 +1141,14 @@ class CANNBotTests(ActionTestBase):
             self.assertTrue((root / 'method/dispatches' / state['id'] / 'system.md').read_text().startswith(original))
             prompt=(root/'method/dispatches'/state['id']/'prompt.txt').read_text()
             prompt_text=' '.join(prompt.split())
-            self.assertIn('.benchmark_context/README.md', prompt_text)
-            self.assertIn('.benchmark_context/tuning_capabilities.json', prompt_text)
-            self.assertIn('complete defaults vary by Case', prompt_text)
-            self.assertIn('PYPTO + false', prompt_text)
+            self.assertIn('Read .benchmark_context/README.md for the Case contract, editable options, CLI commands and result locations.', prompt_text)
+            self.assertIn('Fork does not consume this budget.', prompt_text)
             self.assertIn('ptobench evaluate .', prompt_text)
             if state['parent_dispatch_id'] is None:
-                self.assertIn(f'Evaluate allowance: {allowance} accepted `ptobench evaluate` actions', prompt_text)
-                self.assertIn('Profile has cost 0, is recorded as a hardware action', prompt_text)
+                self.assertIn(f'Hardware-action budget: {allowance} accepted `ptobench evaluate` or `ptobench profile` actions', prompt_text)
             else:
-                self.assertIn(f'Evaluate allowance of {allowance} accepted `ptobench evaluate` actions', prompt_text)
-                self.assertIn('Profile costs 0 and is recorded as a hardware action', prompt_text)
+                self.assertIn(f'hardware-action budget of {allowance} accepted `ptobench evaluate` or `ptobench profile` actions', prompt_text)
+                self.assertIn('Stop when `remaining_hardware_actions` reaches 0', prompt_text)
             self.assertNotIn(str(root/'method/README.md'), prompt_text)
             self.assertNotIn('5 + 10', prompt)
             if state is not parent:
@@ -1251,21 +1248,19 @@ class CANNBotTests(ActionTestBase):
         self.assertTrue(list((root / 'method/tools').glob('*/interrupted.json')))
         self.assertEqual(json.loads((root / 'agent/session.json').read_text())['status'], 'recorded')
 
-    def test_profile_after_evaluate_budget_exhaustion_completes_active_stage(self):
+    def test_budget_exhaustion_ends_cannbot_after_last_evaluate(self):
         self.cannbot_config(budget=1, budget_child=True)
         process, value = self.launch()
         self.assertEqual(process.returncode, 0, (value, process.stderr.decode()))
-        root, _ = self.assert_final(value, 3)
+        root, _ = self.assert_final(value, 1)
         events=[json.loads(line) for line in (root/'events.jsonl').read_text().splitlines()]
-        self.assertEqual([event['action'] for event in events],
-                         ['evaluate','profile','evaluate','profile','finish'])
-        self.assertEqual([event['hardware_action'] for event in events],
-                         [True,True,False,True,True])
-        self.assertEqual(sum(event['hardware_action'] for event in events),4)
-        self.assertTrue(all(state['status'] == 'completed' for state in self.dispatches(root)))
+        self.assertEqual([event['action'] for event in events], ['evaluate','finish'])
+        self.assertEqual([event['hardware_action'] for event in events], [True,True])
+        self.assertEqual(sum(event['hardware_action'] for event in events),2)
+        self.assertEqual(value['close_reason'], 'budget_exhausted')
         run=json.loads((root/'launcher_result.json').read_text())['run']
         self.assertEqual(run['hardware_usage']['budgeted_actions'],1)
-        self.assertEqual(run['hardware_usage']['total_actions'],4)
+        self.assertEqual(run['hardware_usage']['total_actions'],2)
 
     def test_pi_task_cancellation_propagates_and_next_stage_runs(self):
         if not self.node or int(subprocess.check_output([self.node, '--version']).decode().split('.')[0][1:]) < 22:

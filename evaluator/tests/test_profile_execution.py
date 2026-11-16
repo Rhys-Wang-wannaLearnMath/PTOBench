@@ -114,15 +114,16 @@ class AgentProfilePolicyTest(ActionTestBase):
             self.assertNotIn('correctness', self.events()[-1]['observation'])
             self.assertNotIn('correctness', self.events()[-1]['result'])
             self.assertIsNone(result['latency_us'])
-            self.assertIsNone(result['snapshot_id'])
+            self.assertIsNone(result.get('snapshot_id'))
             self.assertTrue(self.calls()[-1]['skip_correctness'])
             self.assertIsNone(snapshots.select_best_snapshot(self.handle.session_root))
         process, checked = self.cli(['evaluate'])
         self.assertEqual(process.returncode, 0, checked)
         self.assertEqual(checked['correctness'], 'PASS')
+        self.assertNotIn('snapshot_id', checked)
         self.assertFalse(self.calls()[-1]['skip_correctness'])
         self.assertEqual(snapshots.select_best_snapshot(self.handle.session_root).snapshot_id,
-                         checked['snapshot_id'])
+                         self.events()[-1]['snapshot_id'])
         with mock.patch.dict(os.environ, self.env):
             final = snapshots.finalize_session(self.handle.session_root, 'optimizer_exit')
         self.assertEqual(final.status, 'completed')
@@ -131,19 +132,20 @@ class AgentProfilePolicyTest(ActionTestBase):
         self.assertEqual((self.calls()[-1]['phase'], self.calls()[-1]['profile_mode']), ('all', 'clean'))
 
     def test_runtime_errors_and_integrity_failures_still_fail_profiles(self):
-        self.handle = self.create(budget=1, profile_strategy='split')
+        self.handle = self.create(budget=3, profile_strategy='split')
         self.env['PTOBENCH_SESSION_ROOT'] = str(self.handle.session_root)
         for config, code in (({'fail': True}, 1), ({'crash': True}, 1), ({'tamper': 'source'}, 4)):
             self.configure(**config)
             process, result = self.cli(['profile', 'pmu'])
             self.assertEqual(process.returncode, code, result)
             self.assertNotIn('correctness', result)
-            self.assertIsNone(result['snapshot_id'])
-            self.assertEqual(result['remaining_hardware_actions'], 1)
+            self.assertIsNone(result.get('snapshot_id'))
+            self.assertEqual(result['remaining_hardware_actions'],
+                             3 - sum(e['action'] == 'profile' and e['hardware_action'] for e in self.events()))
         self.assertEqual(session.read_session(self.handle.session_root)['usage']['hardware_actions'], 3)
         with session._session_lock(self.handle.session_root):
             record, events = session._load_locked(self.handle.session_root)
-        self.assertEqual(session._evaluate_actions_used(record, events), 0)
+        self.assertEqual(record['usage']['hardware_actions'], 3)
 
     def test_maintenance_profiles_keep_original_correctness_and_snapshot_policy(self):
         self.handle = self.create(budget=4, optimizer='maintenance', profile_strategy='split')
@@ -153,7 +155,8 @@ class AgentProfilePolicyTest(ActionTestBase):
             self.assertEqual(process.returncode, 0, result)
             self.assertEqual(result['correctness'], 'PASS')
             self.assertFalse(self.calls()[-1]['skip_correctness'])
-            self.assertIsNotNone(result['snapshot_id'])
+            self.assertNotIn('snapshot_id', result)
+            self.assertIsNotNone(self.events()[-1]['snapshot_id'])
         self.configure(fail=True)
         process, result = self.cli(['profile', 'runtime'])
         self.assertEqual(process.returncode, 1, result)
