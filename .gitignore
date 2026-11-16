@@ -50,3 +50,6 @@ pto_wiki/pto_wiki_pipeline/.work/
 # Local-only profile-validation suite; retain it in this checkout for Bench runs.
 /cases/profile_validation/
 /sealed_assets/profile_validation/
+
+# Local-only historical case-selection materials.
+/case_selection/archived/
