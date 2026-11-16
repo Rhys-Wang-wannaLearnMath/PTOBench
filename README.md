@@ -8,8 +8,7 @@ Basic 已使用独立方法入口，自行准备任务说明、执行 Agent 并�
 PTOBench 只提供共同评测、预算和原始实验记录。
 Basic 与 CANNBot 均开放 evaluate、fork 和全部三种 profile。
 CANNBot 使用固定上游 PyPTO 性能入口，支持 Pi/Codex；[运行说明](modes/cannbot/README.md)。
-Ours 目录已预留。方法组织和接入方式见 [modes/README.md](modes/README.md)，必须保留的
-原始会话、配置、测量和失败附件见 [RUN_RECORDS.md](RUN_RECORDS.md)。初始
+Ours 目录已预留。方法组织和接入方式见 [modes/README.md](modes/README.md)。初始
 性能直接使用 Case 的已认证缓存，不要求 Agent 额外 evaluate 原始代码。
 
 本目录既可以作为 `pypto-lib/benchmarks/PTOBench` 嵌套运行，
@@ -64,9 +63,6 @@ Case 资产按模型组织为 `cases/<model>/<case>/` 和
 `sealed_assets/<model>/<case>/`。历史 `models_0912.*`、`models_1001.*`
 Case ID 仍可使用，Evaluator 会将它们映射到新的模型目录；旧的时间前缀目录不再作为规范布局。
 
-全部当前 Case 的 Standalone／Composite 二分类以 [CASE_CLASSIFICATION.json](CASE_CLASSIFICATION.json)
-为准，逐项记录分类、理由和源码依据；分类与迁移、正确性认证状态独立。
-
 论文使用的 workload granularity 和 operator categories 以 [case_metadata.json](sealed_assets/case_metadata.json)
 为准：granularity 每个 Case 单选，operator categories 可多选；分类依据是初始 Case 源码，
 只作数据集标注，不参与评测执行。311 个正式 Case 均有记录，验证专用 Case 不在其中。
@@ -88,8 +84,6 @@ Agent 可以读取并 import 后两者，Bench 会校验并恢复受保护文件
 唯一的 public `config.py`，但不共用可编辑实现文件。
 
 Comparator 的上游对齐原则在集成到 pypto-lib 时见 `../mig_workflow/COMPARATOR_POLICY.md`；
-当前全部 Case 的逐项复核结论和证据分组见 `COMPARATOR_AUDIT.md`。
-
 所有 Case 只执行一个 step，并只使用一个固定的正式 Fixture
 `fixture_000`。Ref 在正式优化前生成一次输出和性能基线，Candidate 后续直接与
 缓存的 Ref 结果比较。

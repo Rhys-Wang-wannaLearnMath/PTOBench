@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-exec /usr/bin/env python3 "$(dirname "$0")/evaluator/bench.py" "$@"

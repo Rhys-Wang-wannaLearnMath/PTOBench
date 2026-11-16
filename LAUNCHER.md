@@ -5,7 +5,7 @@ This is independent of the backend. Basic exposes evaluate, fork, and all three
 profile operations. `mode: cannbot` runs the frozen upstream PyPTO performance
 workflow using Pi or Codex; see [CANNBot setup and records](modes/cannbot/README.md).
 Ours remains reserved and is rejected until implemented.
-See [mode organization](modes/README.md), the [participant protocol](modes/PROTOCOL.md), and [original Run records](RUN_RECORDS.md).
+See [mode organization](modes/README.md) and the [participant protocol](modes/PROTOCOL.md).
 
 Use an interpreter with PyPTO-Lib's Torch/PyPTO dependencies for Case metadata
 preflight, and install the local Launcher dependency in that same interpreter:
@@ -31,8 +31,6 @@ model/reasoning are pinned in argv; native sessions retain effective settings.
 Named gateway profiles retain their provider/model arguments, so
 the corresponding provider must be configured in the host tool. An existing
 custom wrapper is required as configured and is never silently discarded.
-The initial machine verification and backend readiness results are recorded in
-[the S5 report](reports/agent_upgrade/S5_launcher_and_adapters.md).
 
 ```yaml
 case: deepseek_v4.rmsnorm_decode_demo
