@@ -13,7 +13,7 @@ Stage 3 已完成工具收敛与 Cursor 分页改造；Stage 4 已完成大文�
 
 ## Stage 5：Basic + Wiki + PTOAnalyzer 消融
 
-75 个 Formal/Held-out Case 的 `combined` Profile 覆盖和 PTOAnalyzer 离线验收视为已完成前置条件，不在 Stage 5 重跑。[Stage 5 规划](stage5/README.md)聚焦独立的 `modes/basic_wiki-tool`：尽量保持 Basic Pi 不变，增加只读 `pto_wiki/opt_wiki` 和复制后的最新 PTOAnalyzer。Basic 处理组不按 Tuner 分配工具，九个工具全部暴露；每次实际调用（包括失败和取消）都记录。Stage 5 依赖另一个 PTOBench 公共代码任务先完成并验收通用 Pi extension/socket 接口；Stage 5 只调用该接口，不修改隔离层。Pi 通过原生 extension 调用 Session-local Unix-socket Python Broker；Stage 5 的 CPU 集成测试还要证明 Pi 侧注册并实际调用九个工具，无需真实 LLM 或 NPU。Broker 授权 Profile、分发工具并归档完整调用，Runner 负责它的启动和清理。最新 Analyzer 本体继续保留在 `modes/ptomni/pto_analyzer/`，接入使用复制体和薄适配层。接口就绪后，Stage 5 用三个 Formal Case 做 Basic 与 Basic+Wiki+PTOAnalyzer 的六个真实 Agent Session 配对；结果仅作为组合消融的可行性和行为证据，不宣称单独归因或普遍提升。完整执行门槛见 [Stage 5 任务清单](stage5/TASK_CHECKLIST.md)，启动说明见 [Stage 5 Prompt](stage5/IMPLEMENTATION_PROMPT.md)。
+75 个 Formal/Held-out Case 的 `combined` Profile 覆盖和 PTOAnalyzer 离线验收视为已完成前置条件，不在 Stage 5 重跑。[Stage 5 规划](stage5/README.md)聚焦独立的 `modes/basic_wiki-tool`：尽量保持 Basic Pi 不变，增加只读 `pto_wiki/pypto_wiki` 和复制后的最新 PTOAnalyzer。Basic 处理组不按 Tuner 分配工具，九个工具全部暴露；每次实际调用（包括失败和取消）都记录。Stage 5 依赖另一个 PTOBench 公共代码任务先完成并验收通用 Pi extension/socket 接口；Stage 5 只调用该接口，不修改隔离层。Pi 通过原生 extension 调用 Session-local Unix-socket Python Broker；Stage 5 的 CPU 集成测试还要证明 Pi 侧注册并实际调用九个工具，无需真实 LLM 或 NPU。Broker 授权 Profile、分发工具并归档完整调用，Runner 负责它的启动和清理。最新 Analyzer 本体继续保留在 `modes/ptomni/pto_analyzer/`，接入使用复制体和薄适配层。接口就绪后，Stage 5 用三个 Formal Case 做 Basic 与 Basic+Wiki+PTOAnalyzer 的六个真实 Agent Session 配对；结果仅作为组合消融的可行性和行为证据，不宣称单独归因或普遍提升。完整执行门槛见 [Stage 5 任务清单](stage5/TASK_CHECKLIST.md)，启动说明见 [Stage 5 Prompt](stage5/IMPLEMENTATION_PROMPT.md)。
 
 ## Stage 4 实施与验收状态
 

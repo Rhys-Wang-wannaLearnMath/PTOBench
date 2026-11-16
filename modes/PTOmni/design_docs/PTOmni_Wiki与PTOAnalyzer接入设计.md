@@ -15,7 +15,7 @@
 ## 2. 现状与约束
 
 - 当前主架构已定义 Lead、Assembler、Tuner、按需 Challenger 和 Curator，以及动态 `RoundPlan`、Runner、Event Ledger、派生 State 与 Case Memory。
-- `pto_wiki/opt_wiki` 已有离线整理的知识内容，可被固定版本并按需检索；正式运行不应把整库塞进每个 prompt。
+- `pto_wiki/pypto_wiki` 已有离线整理的知识内容，可被固定版本并按需检索；正式运行不应把整库塞进每个 prompt。
 - PTOAnalyzer Stage 4 已有九个离线只读工具，按 Compute / Dataflow / Schedule 专长分配；工具绑定 Profile Event、Candidate 与受保护归档身份。
 - Analyzer 当前没有 PTOmni Host 的调用入口。Stage 4 已确认这一缺口，因此不可把离线工具验收误称为 Agent 已能使用。
 - PTOBench 方法协议规定方法自有 `preflight / prepare / run / collect` 生命周期；方法使用公共受管 `profile/evaluate` CLI。Profile 是硬件动作，但不建立正确性或 Clean Latency；PTOAnalyzer 离线读档本身不产生硬件动作。
@@ -131,6 +131,6 @@ RoundContext 与 ExperimentResult 需要区分三种东西：
 - [无 Wiki / PTOAnalyzer 消融设计](../../ptomni_no_wiki-tool/design/PTOmni-NoWikiTool_架构设计.md)
 - [PTOBench 方法入口协议](../../PROTOCOL.md)
 - [PTOBench Agent CLI](../../../evaluator/AGENT_CLI.md)
-- [PTO Wiki](../../../pto_wiki/opt_wiki/README.md)
+- [PTO Wiki](../../../pto_wiki/pypto_wiki/README.md)
 - [PTOAnalyzer 当前接口与离线验收状态](../../ptomni/pto_analyzer/README.md)
 - [PTOAnalyzer Stage 4 Host 接线与验收记录](../../ptomni/pto_analyzer/planning/stage4/README.md)

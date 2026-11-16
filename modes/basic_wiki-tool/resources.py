@@ -39,8 +39,8 @@ def freeze_wiki(source: Path, session_root: Path, workspace: Path) -> dict:
     files, directories = inventory(source)
     if 'INDEX.md' not in files:
         raise ValueError('Wiki INDEX.md is missing')
-    snapshot = session_root / 'method/resources/opt_wiki'
-    visible = workspace / '.mode_resources/opt_wiki'
+    snapshot = session_root / 'method/resources/pypto_wiki'
+    visible = workspace / '.mode_resources/pypto_wiki'
     if snapshot.exists() or snapshot.is_symlink() or visible.parent.exists() or visible.parent.is_symlink():
         raise ValueError('Wiki destinations already exist')
     gid = grp.getgrnam('ptobench-share').gr_gid
@@ -67,7 +67,7 @@ def freeze_wiki(source: Path, session_root: Path, workspace: Path) -> dict:
         entries.append({'path': relative, 'source_sha256': digest,
                         'snapshot_sha256': hashlib.sha256((snapshot / relative).read_bytes()).hexdigest(),
                         'visible_sha256': hashlib.sha256((visible / relative).read_bytes()).hexdigest(),
-                        'source_path': str(Path('pto_wiki/opt_wiki') / relative),
+                        'source_path': str(Path('pto_wiki/pypto_wiki') / relative),
                         'snapshot_path': str(snapshot.relative_to(session_root) / relative),
                         'visible_path': str(visible.relative_to(workspace) / relative)})
     readonly(snapshot)

@@ -106,7 +106,7 @@
 - `modes/ptomni/pto_analyzer/toolset.py`
 - `modes/ptomni/pto_analyzer/tests/test_toolset.py`
 - `modes/ptomni/pto_analyzer/README.md`
-- `evaluator/profile_modes.py` and `pto_wiki/opt_wiki/topics/api-and-operations-reference/source-02_pypto--static_api--pypto.language.tile.md` (read-only references)
+- `evaluator/profile_modes.py` and `pto_wiki/pypto_wiki/topics/api-and-operations-reference/source-02_pypto--static_api--pypto.language.tile.md` (read-only references)
 
 - [x] 先审计 Stage 3 的 16 份 Profile 中实际归档的 AllocateMemoryAddr 输出；确认文件形式、调用语法、函数边界、memory space、分配大小单位和源码位置。不得先假设文本格式或编写宽泛正则。
 - [x] 以 `evaluator/profile_modes.py` 规定的归档产物为入口，使用 PTOBench 已索引的 `memory_after_AllocateMemoryAddr` 报告或 `*_after_AllocateMemoryAddr.py`；对 `tile.alloc` 等打印语法按 PyPTO API 文档核实 `size` 的字节语义。保持 Profile 身份、来源路径和内容哈希校验，不从 Candidate 工作树或任意路径读取。

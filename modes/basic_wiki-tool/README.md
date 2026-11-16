@@ -6,7 +6,7 @@ The runtime in `pto_analyzer/` is a byte-identical copy pinned in `analyzer_mani
 
 Use an independent local `.env` based on `.env.example`; credentials stay local and are ignored by Git. The default Pi profile is resolved through the existing Provider/recording helpers. Compare the effective model and reasoning, not just the profile name. Other backends are rejected.
 
-Wiki snapshots are archived in `<session>/method/resources/opt_wiki/`. A separate ordinary-file copy at `<initial_workspace>/.mode_resources/opt_wiki/` is readable by `ptobench-agent` through existing Workspace mounts and protected by Broker ownership and DAC. The prompt supplies its absolute `INDEX.md` path, also usable from forks. Collect checks both copies against the frozen manifest.
+Wiki snapshots are archived in `<session>/method/resources/pypto_wiki/`. A separate ordinary-file copy at `<initial_workspace>/.mode_resources/pypto_wiki/` is readable by `ptobench-agent` through existing Workspace mounts and protected by Broker ownership and DAC. The prompt supplies its absolute `INDEX.md` path, also usable from forks. Collect checks both copies against the frozen manifest.
 
 The extension registers all nine tools from static specifications before any Profile exists. Produce a completed combined Profile with normal `ptobench profile .` first. A call without `profile` uses the newest valid completed Profile in this Session. For older Candidates and pagination, pass the returned `profile.event_id` explicitly; a cursor never chooses a Profile. Analysis reads the archived Profile and uses no hardware.
 

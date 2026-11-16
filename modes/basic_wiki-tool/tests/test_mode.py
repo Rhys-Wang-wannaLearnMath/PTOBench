@@ -168,7 +168,11 @@ def test_wiki_visible_readonly_without_context_changes():
         before_context = hashes(workspace / '.benchmark_context')
         before_manifest = (root / 'protection/manifest.json').read_bytes()
         root_mode = workspace.stat().st_mode
-        wiki = runner.resources.freeze_wiki(ROOT / 'pto_wiki/opt_wiki', root, workspace)
+        wiki = runner.resources.freeze_wiki(ROOT / 'pto_wiki/pypto_wiki', root, workspace)
+        assert wiki['snapshot_path'] == str(root / 'method/resources/pypto_wiki')
+        assert wiki['visible_path'] == str(workspace / '.mode_resources/pypto_wiki')
+        assert all(entry['source_path'].startswith('pto_wiki/pypto_wiki/')
+                   for entry in wiki['files'])
         assert workspace.stat().st_mode == root_mode
         assert (root / 'protection/manifest.json').read_bytes() == before_manifest
         assert integrity.check_only(root / 'protection').passed

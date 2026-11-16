@@ -31,7 +31,7 @@ def preflight(request):
     optimizer = request['experiment']['optimizer']
     if optimizer['backend'] != 'pi':
         raise ConfigError('basic_wiki-tool supports only Pi')
-    resources.inventory(ROOT / 'pto_wiki/opt_wiki')
+    resources.inventory(ROOT / 'pto_wiki/pypto_wiki')
     profile = recording.prepare_profile(provider.configure(
         load_profile(optimizer['backend'], optimizer['profile']), DIRECTORY))
     info = get_adapter(optimizer['backend']).preflight(profile)
@@ -45,7 +45,7 @@ def prepare(request):
     ready = request['preflight']
     gateway = isolation.enabled() and bool(ready['profile'].get('mode_provider'))
     profile = provider.prepare(ready['profile'], run_root, gateway=gateway)
-    wiki = resources.freeze_wiki(ROOT / 'pto_wiki/opt_wiki', run_root, workspace)
+    wiki = resources.freeze_wiki(ROOT / 'pto_wiki/pypto_wiki', run_root, workspace)
     instructions = (DIRECTORY / 'instructions.md').read_bytes()
     prompt = make_prompt(request['experiment'], context, context['case'], instructions.decode(),
                          Path(wiki['visible_path']) / 'INDEX.md')

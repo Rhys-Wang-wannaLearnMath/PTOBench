@@ -6,7 +6,7 @@
 
 - Formal 60 + Held-out 15 的 75 个 Case Profile 覆盖已完成。
 - `modes/ptomni/pto_analyzer/` 的九个只读工具已构建并通过当前离线验收。
-- Wiki 位于 `pto_wiki/opt_wiki/`。
+- Wiki 位于 `pto_wiki/pypto_wiki/`。
 - Basic Pi 的实现位于 `modes/basic/`。
 
 先核对这些输入和工作树，但不要重跑 75 个 Profile，不要把 PTOmni Host、Tuner 分权或完整 PTOmni 架构带入本任务。

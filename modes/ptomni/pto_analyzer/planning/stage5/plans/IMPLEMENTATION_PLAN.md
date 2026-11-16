@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use the repository's `executing-plans` workflow to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. 按本计划的最小验收集合执行；已通过且代码未变化的检查不重复运行。
 
-**Goal:** 实现独立的 `basic_wiki-tool` Mode，在 Basic Pi 上接入 `pto_wiki/opt_wiki` 和 PTOAnalyzer 九个工具，完成三组真实配对试验并留下可复核记录。
+**Goal:** 实现独立的 `basic_wiki-tool` Mode，在 Basic Pi 上接入 `pto_wiki/pypto_wiki` 和 PTOAnalyzer 九个工具，完成三组真实配对试验并留下可复核记录。
 
 **Architecture:** 保留 Basic 的单 Agent 和 `preflight → prepare → run → collect` 流程。Mode 持有 PTOAnalyzer 的固定复制体，通过 Pi 原生 extension、本地 Unix socket 和 Python Broker 暴露九个工具；Wiki 作为 Workspace 内独立只读资料提供。PTOBench 继续管理 Evaluate、Profile、预算和设备。
 
@@ -143,7 +143,7 @@ class AnalyzerAdapter:
 - [ ] 写 `test_wiki_visible_readonly_without_context_changes`：实际 Session Workspace 下生成 Wiki；以 `ptobench-agent` 身份在现有 Agent 视图读取 `INDEX.md`，写入、删除、替换失败。保持 Candidate、Context 原内容/哈希及既有保护 manifest 有效；从 fork workspace 通过 Prompt 中同一绝对路径可读。该定向 CPU 测试复用已有隔离测试设施，不新增挂载，不启动 LLM/NPU。
 - [ ] 运行 `python -m pytest modes/basic_wiki-tool/tests/test_mode.py -q` 确认失败，再实施以下步骤。
 - [ ] 从 Basic 复制四步入口、基础 Prompt 和 `instructions.md`，沿用 `_shared` Provider/recording/provenance 和 `agent_launch.run_process`。声明 Mode v2；preflight 拒绝非 Pi，不读取或执行其他 Mode 业务工具。独立 `.env` 沿用当前 Basic 有效配置，密钥只从既有本地配置/环境取，`.gitignore` 排除 `.env` 和缓存。
-- [ ] Wiki 的归档快照放 `<session>/method/resources/opt_wiki/`，Agent 可见副本放 `<initial_workspace>/.mode_resources/opt_wiki/`，两者是独立普通文件。可见目录为 Broker-owned、`ptobench-share` 组可读，目录 `0750`、文件 `0640`；不使用链接、不改 Workspace 根权限。初始 Workspace 的绝对可见路径放进 Prompt，供所有 fork 使用，不为每个 fork 再复制。
+- [ ] Wiki 的归档快照放 `<session>/method/resources/pypto_wiki/`，Agent 可见副本放 `<initial_workspace>/.mode_resources/pypto_wiki/`，两者是独立普通文件。可见目录为 Broker-owned、`ptobench-share` 组可读，目录 `0750`、文件 `0640`；不使用链接、不改 Workspace 根权限。初始 Workspace 的绝对可见路径放进 Prompt，供所有 fork 使用，不为每个 fork 再复制。
 - [ ] `freeze_wiki` 拒绝链接/特殊文件，保存 source/snapshot/visible-copy 的相对路径与哈希清单。prepare 只通过既有 `archives` 声明冻结 `method/resources`；可见副本由 DAC 只读，并在 collect 对照清单确认未变。不要将 `workspaces/...` 当作 `archives` 路径——现协议只允许 `method/`、`agent/` 附件。
 - [ ] prepare 放好扩展与规格；run 先建立 `AnalyzerAdapter` 和 `ToolServer`，再调用以下现有接口；正常/异常/可捕获中断通过同一清理路径关闭服务。socket 路径使用当前 Session 内短路径，不能移到 Session 外规避 Unix 路径长度约束。
 
