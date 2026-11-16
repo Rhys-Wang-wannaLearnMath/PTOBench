@@ -6,7 +6,7 @@
 
 在尽可能保留 Basic Pi 流程的前提下，新增一个对照 Mode：`basic_wiki-tool`。它在 Basic Pi 的工作流上只增加两项能力：
 
-1. 读取知识库 `pto_wiki/opt_wiki`。
+1. 读取知识库 `pto_wiki/pypto_wiki`。
 2. 按需调用 PTOAnalyzer 的全部九个只读工具。
 
 与同 Case、同初始 Candidate、同模型和同预算的 Basic Pi 对照，观察组合加入 Wiki 与 PTOAnalyzer 后的实际 Agent 行为和优化结果。该实验是 **Wiki + Analyzer 的组合消融**；结果不能分别归因于 Wiki 或 PTOAnalyzer。
@@ -17,7 +17,7 @@ Stage 5 不重新安排以下工作：
 
 - Formal 60 + Held-out 15 的 75 个 Case 已完成 `combined` Profile 覆盖。
 - PTOAnalyzer 当前九个工具及离线验收已准备好使用。
-- `pto_wiki/opt_wiki` 已作为知识库存在。
+- `pto_wiki/pypto_wiki` 已作为知识库存在。
 
 实现开始时只需核对这些输入的版本、归档身份和可访问性；不重跑 75 个 Profile，也不把 PTOAnalyzer 的本体修缮混进 Mode 接入。若某个配对试验所需 Profile 的 Candidate 身份不匹配，单独记录并按 PTOBench 正常流程补足该试验输入，不因此重跑全量 Case。
 
@@ -39,7 +39,7 @@ Pi 接入使用 **原生 Pi extension + 本次 Agent Session 的本地 Unix sock
 
 Broker 只接受 Runner 为当前 Session/Case 提供的授权 Profile 索引。Agent 可省略 `profile` 使用默认 Profile，也可指定索引中的 Profile ID；Broker 将它解析为已验证的 `ProfileRef`，拒绝路径和未授权事件。Cursor 仍由对应 `ToolSession` 校验。Stage 5 只调用已提供的通用接口，不改它的实现；不得把 Basic Mode 伪装成 CANNBot。
 
-只读暴露 `pto_wiki/opt_wiki` 的冻结快照，让 Agent 用现有文件读取和搜索能力按需查阅；不增加 Wiki Agent 或复杂检索服务。为保持实验可复现，记录知识库快照身份。
+只读暴露 `pto_wiki/pypto_wiki` 的冻结快照，让 Agent 用现有文件读取和搜索能力按需查阅；不增加 Wiki Agent 或复杂检索服务。为保持实验可复现，记录知识库快照身份。
 
 每次 Analyzer 工具调用均须留下可追溯记录，至少包含 Agent tool-call ID、工具名、参数、选用的 Profile 身份、开始/结束状态及完整结果或错误。调用请求和结果保存到本次 PTOBench Session 的 Mode 归档，同时保留 Pi 原生会话记录；失败和取消也要记录。若大结果另存为不可变文件，归档引用和校验哈希。工具只读读取已归档 Profile，不触发 `profile`、`evaluate` 或其它 NPU 动作，不操作设备锁，也不产生硬件动作。首版没有固定 baseline、自动 diff 或额外比较工具。
 

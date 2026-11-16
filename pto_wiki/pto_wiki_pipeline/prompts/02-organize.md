@@ -1,4 +1,4 @@
-# Stage 2: create the standalone opt_wiki
+# Stage 2: create the standalone pypto_wiki
 
 This is an already-authorized, unattended workflow run. Carry out the requested
 organization and return the required artifacts directly; no approval or

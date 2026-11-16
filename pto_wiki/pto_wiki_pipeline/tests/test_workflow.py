@@ -66,21 +66,21 @@ class WorkflowTests(unittest.TestCase):
     def test_publish_keeps_previous_knowledge_base(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            old = root / "opt_wiki"
+            old = root / "pypto_wiki"
             old.mkdir()
             (old / "README.md").write_text("old", encoding="utf-8")
             pipeline = root / "pipeline"
             run_dir = pipeline / ".work" / "run-1"
-            candidate = run_dir / "candidate_opt_wiki"
+            candidate = run_dir / "candidate_pypto_wiki"
             candidate.mkdir(parents=True)
             (candidate / "README.md").write_text("new", encoding="utf-8")
             for name in ("mapping.json", "source-map.json", "review.json"):
                 (run_dir / name).write_text("{}", encoding="utf-8")
             provenance = pipeline / "provenance"
-            with patch.object(workflow, "OPT_WIKI", old), patch.object(workflow, "PROVENANCE", provenance):
+            with patch.object(workflow, "PYPTO_WIKI", old), patch.object(workflow, "PROVENANCE", provenance):
                 result = workflow.publish(run_dir, candidate, {"run_id": "run-1"})
             self.assertEqual((old / "README.md").read_text(encoding="utf-8"), "new")
-            self.assertEqual((run_dir / "previous_opt_wiki" / "README.md").read_text(encoding="utf-8"), "old")
+            self.assertEqual((run_dir / "previous_pypto_wiki" / "README.md").read_text(encoding="utf-8"), "old")
             self.assertTrue((result / "source-map.json").is_file())
 
     def test_candidate_links_must_resolve_inside_candidate(self):

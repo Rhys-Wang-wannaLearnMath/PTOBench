@@ -1,7 +1,7 @@
 # PTO Wiki workflow
 
 This offline three-stage Codex workflow reorganizes only the files listed in
-`../clean_wiki/INPUT_MANIFEST.json` into the standalone `../opt_wiki/` knowledge
+`../clean_wiki/INPUT_MANIFEST.json` into the standalone `../pypto_wiki/` knowledge
 base. It does not call PTOBench or run NPU workloads.
 
 ## Run
@@ -24,7 +24,7 @@ workflow artifacts.
 
 1. **Map:** group sources into a small set of topics and identify exact duplicate
    candidates. A local check requires complete manifest coverage.
-2. **Organize:** create an `opt_wiki` candidate, preserving source explanations,
+2. **Organize:** create a candidate `pypto_wiki`, preserving source explanations,
    code, tables, and distinctions between versions or contexts. Local checks
    validate the output paths and source map.
 3. **Review:** a separate Codex call checks coverage, preservation, claims, and
@@ -33,8 +33,8 @@ workflow artifacts.
 
 Every stage rechecks the input hashes. A changed input stops the workflow. The
 candidate and intermediate responses stay in ignored `.work/<run-id>/`. Only a
-passing review replaces `opt_wiki`; the previous version is retained in that
-run's `previous_opt_wiki/` directory. Mapping, source map, review, and
+passing review replaces `pypto_wiki`; the previous version is retained in that
+run's `previous_pypto_wiki/` directory. Mapping, source map, review, and
 configuration metadata are retained under `provenance/<run-id>/`.
 
 Stage instructions are in `prompts/`; content rules and data boundaries are in

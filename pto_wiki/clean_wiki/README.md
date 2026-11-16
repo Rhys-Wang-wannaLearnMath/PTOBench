@@ -17,7 +17,7 @@ content extraction. Do not ingest every file under pto_wiki.
 Audits, helpers, logs, captures, Chinese comparisons and prior change records are
 preserved in the [outside-input archive](../Corpus_Archive/20261007_input_cleanup/REPORT.md).
 The [original edition](../raw_wiki/README.md) remains immutable.
-The [optimized edition](../opt_wiki/README.md) currently
+The [optimized edition](../pypto_wiki/README.md) currently
 contains only its README. [Knowledge_Workflow](../Knowledge_Workflow/README.md)
 defines the future filtering, synthesis and self-contained dynamic loading.
 

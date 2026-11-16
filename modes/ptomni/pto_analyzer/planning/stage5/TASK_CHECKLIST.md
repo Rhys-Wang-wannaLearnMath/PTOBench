@@ -4,7 +4,7 @@
 
 - [ ] 只实现 `modes/basic_wiki-tool` 和必要的 Mode 适配；不修改 `modes/basic/` 的 Basic Pi 对照实现。
 - [ ] `modes/ptomni/pto_analyzer/` 是唯一维护的 PTOAnalyzer 本体。接入 Basic 时复制当前本体到 `modes/basic_wiki-tool/pto_analyzer/`；适配层可以变化，但不得反向修改本体来迎合 Basic。
-- [ ] 处理组只增加 `pto_wiki/opt_wiki` 和 PTOAnalyzer；不加入 PTOmni 的 Lead、Tuner、Assembler、Challenger、Curator 或其它工作流。
+- [ ] 处理组只增加 `pto_wiki/pypto_wiki` 和 PTOAnalyzer；不加入 PTOmni 的 Lead、Tuner、Assembler、Challenger、Curator 或其它工作流。
 - [ ] Basic Pi 不按三个 Tuner 分配工具；九个工具全部注册给 Basic Pi。每次工具调用都记录，包含成功、失败和取消。
 - [ ] PTOAnalyzer、Wiki 和工具调用不启动硬件动作。`evaluate`、`profile`、设备锁和预算继续由 PTOBench Runner/Event Ledger 负责。
 - [ ] 不重跑已经完成的 75 个 Case Profile 覆盖；只在配对试验发现输入身份确实缺失时，按 Runner/PTOBench 正常流程补采一个明确目标。
@@ -16,7 +16,7 @@
 ## Task 0：冻结输入与工作树
 
 - [ ] 核对 `modes/ptomni/pto_analyzer/` 的当前版本、九个工具名、CPU 回归结果和 Stage 4/75 Case 归档索引；记录本次接入使用的版本身份。
-- [ ] 核对 `pto_wiki/opt_wiki/INDEX.md`、`README.md` 和文件清单，生成只读知识库快照身份（例如提交/目录摘要或完整 SHA-256 清单）。
+- [ ] 核对 `pto_wiki/pypto_wiki/INDEX.md`、`README.md` 和文件清单，生成只读知识库快照身份（例如提交/目录摘要或完整 SHA-256 清单）。
 - [ ] 确认 `modes/basic/` 当前协议和 Basic Pi 的 `preflight/prepare/run/collect` 行为；不把任何处理组文件写回 Basic。
 - [ ] 检查工作树并保留无关改动，尤其不覆盖 `evaluator/` 和已有 PTOAnalyzer 本体改动。
 - [ ] 检查 PTOBench 通用接口已落地并通过其自身验收：成对可选 `pi_tool_extension`/`pi_tool_socket`、Session-local Broker-owned extension 与 Unix socket、固定沙箱映射和 `PTOBENCH_PI_TOOL_SOCKET`，且现有 Pi extensions 可并存、CANNBot 兼容。若未完成或无验收证据，停止所有依赖 Pi 接线的 Stage 5 任务并报告；不在本 Stage 实现该接口。
@@ -35,7 +35,7 @@
 - Create: `modes/basic_wiki-tool/README.md`
 
 - [ ] 从 Basic Mode 复制生命周期和配置结构，再用独立 `id`（例如 `basic_wiki-tool`）登记；保持同一 Pi backend、`combined` profile strategy、Case workspace 和 PTOBench CLI 入口。
-- [ ] Prompt 只增加两项公开能力说明：可按需查阅 `pto_wiki/opt_wiki`，可按需调用九个 PTOAnalyzer 工具；保留 Basic 的编辑范围、正确性要求、预算和停止条件。
+- [ ] Prompt 只增加两项公开能力说明：可按需查阅 `pto_wiki/pypto_wiki`，可按需调用九个 PTOAnalyzer 工具；保留 Basic 的编辑范围、正确性要求、预算和停止条件。
 - [ ] 不把 Wiki 全量文本预注入 Prompt；不自动调用所有工具；Agent 自行决定何时查询 Wiki 或工具。
 - [ ] 记录 Mode 配置、Prompt 和源文件哈希，保证 Basic 对照组与处理组可审计。
 
@@ -67,7 +67,7 @@
 
 **验收：** 复制体与本体在同一 fixture/profile 上输出一致；本体文件哈希不变；九个工具都由 Pi extension 注册并可经 Broker 调用；工具调用记录可与 Pi 原生 tool-call ID 关联；Broker 在 Agent 正常退出、启动失败和取消时均关闭。通用隔离接口及 CANNBot 兼容由公共接口任务验收，Stage 5 不承担其实现或回归责任。
 
-## Task 3：接入 `pto_wiki/opt_wiki`
+## Task 3：接入 `pto_wiki/pypto_wiki`
 
 **Files:**
 
@@ -75,8 +75,8 @@
 - Modify: `modes/basic_wiki-tool/instructions.md` or `prompt.py`
 - Create: `modes/basic_wiki-tool/knowledge/` manifest/snapshot metadata as needed
 
-- [ ] 在 Prepare 阶段把 `pto_wiki/opt_wiki` 冻结复制到本次 Run 的 Broker-owned `agent/pi-tools/opt_wiki`，利用现有 Pi 隔离只读挂载暴露为 `/ptobench/pi-tools/opt_wiki`；不把源 Wiki 目录直接交给 Agent 写入。
-- [ ] 向 Agent 提供 `/ptobench/pi-tools/opt_wiki/INDEX.md` 和 `README.md` 的入口及按主题查阅方式；允许使用 `rg`/普通文件读取按需检索，不强制预读全部文档。
+- [ ] 在 Prepare 阶段把 `pto_wiki/pypto_wiki` 冻结复制到本次 Run 的 Broker-owned `agent/pi-tools/pypto_wiki`，利用现有 Pi 隔离只读挂载暴露为 `/ptobench/pi-tools/pypto_wiki`；不把源 Wiki 目录直接交给 Agent 写入。
+- [ ] 向 Agent 提供 `/ptobench/pi-tools/pypto_wiki/INDEX.md` 和 `README.md` 的入口及按主题查阅方式；允许使用 `rg`/普通文件读取按需检索，不强制预读全部文档。
 - [ ] 冻结并记录 Wiki 快照身份、可见路径和文件数量/哈希清单；不允许 Agent 写回知识库。
 - [ ] 明确 Wiki 内容是参考知识，不能替代 Profile 原始证据、PTOBench `evaluate` 结果或工具解释边界。
 

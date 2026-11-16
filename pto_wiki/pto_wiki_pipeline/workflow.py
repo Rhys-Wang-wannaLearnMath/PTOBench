@@ -19,7 +19,7 @@ from urllib.parse import unquote, urlsplit
 PIPELINE = Path(__file__).resolve().parent
 PTO_WIKI = PIPELINE.parent
 CLEAN_WIKI = PTO_WIKI / "clean_wiki"
-OPT_WIKI = PTO_WIKI / "opt_wiki"
+PYPTO_WIKI = PTO_WIKI / "pypto_wiki"
 MANIFEST = CLEAN_WIKI / "INPUT_MANIFEST.json"
 WORK = PIPELINE / ".work"
 PROVENANCE = PIPELINE / "provenance"
@@ -272,8 +272,8 @@ def run_codex(codex: str, cwd: Path, sandbox: str, settings: dict[str, str], out
 
 
 def publish(run_dir: Path, candidate: Path, run_metadata: dict) -> Path:
-    if not candidate.is_dir() or not OPT_WIKI.is_dir():
-        raise WorkflowError("Candidate and current opt_wiki must both be directories")
+    if not candidate.is_dir() or not PYPTO_WIKI.is_dir():
+        raise WorkflowError("Candidate and current pypto_wiki must both be directories")
     provenance_dir = PROVENANCE / run_dir.name
     provenance_dir.mkdir(parents=True, exist_ok=False)
     run_metadata["review_status"] = "pass"
@@ -283,16 +283,16 @@ def publish(run_dir: Path, candidate: Path, run_metadata: dict) -> Path:
     metadata_path.write_text(json.dumps(run_metadata, indent=2) + "\n", encoding="utf-8")
     shutil.copy2(metadata_path, provenance_dir / "run.json")
 
-    backup = run_dir / "previous_opt_wiki"
-    if OPT_WIKI.exists():
+    backup = run_dir / "previous_pypto_wiki"
+    if PYPTO_WIKI.exists():
         if backup.exists():
             raise WorkflowError(f"Backup path already exists: {backup}")
-        os.replace(OPT_WIKI, backup)
+        os.replace(PYPTO_WIKI, backup)
     try:
-        os.replace(candidate, OPT_WIKI)
+        os.replace(candidate, PYPTO_WIKI)
     except OSError:
-        if backup.exists() and not OPT_WIKI.exists():
-            os.replace(backup, OPT_WIKI)
+        if backup.exists() and not PYPTO_WIKI.exists():
+            os.replace(backup, PYPTO_WIKI)
         raise
     return provenance_dir
 
@@ -315,7 +315,7 @@ def run() -> int:
     manifest, manifest_hash = validate_manifest()
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     run_dir = WORK / run_id
-    candidate = run_dir / "candidate_opt_wiki"
+    candidate = run_dir / "candidate_pypto_wiki"
     candidate.mkdir(parents=True)
     metadata = {
         "schema_version": 1,
@@ -338,7 +338,7 @@ def run() -> int:
     validate_manifest()
     validate_mapping(run_dir / "mapping.json", manifest, manifest_hash)
 
-    print("[2/3] Organizing opt_wiki")
+    print("[2/3] Organizing pypto_wiki")
     run_codex(
         codex, candidate, "workspace-write", settings, run_dir / "organize-result.md",
         render_prompt(
@@ -401,9 +401,9 @@ def run() -> int:
     shutil.copy2(source_map, run_dir / "source-map.json")
     source_map.unlink()
     provenance_dir = publish(run_dir, candidate, metadata)
-    print(f"Published opt_wiki: {OPT_WIKI}")
+    print(f"Published pypto_wiki: {PYPTO_WIKI}")
     print(f"Review and source records: {provenance_dir}")
-    print(f"Previous opt_wiki backup: {run_dir / 'previous_opt_wiki'}")
+    print(f"Previous pypto_wiki backup: {run_dir / 'previous_pypto_wiki'}")
     return 0
 
 

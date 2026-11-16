@@ -115,7 +115,7 @@ Host 把“Agent 的想法”和“系统实际做过的事”分开管理：
 
 ## 现在有什么，接下来还要做什么
 
-- `pto_wiki/opt_wiki` 已整理好，可作为 PTOmni 的只读知识来源；还要做的是 Host 侧的按需检索、版本固定和实际曝光记录。
+- `pto_wiki/pypto_wiki` 已整理好，可作为 PTOmni 的只读知识来源；还要做的是 Host 侧的按需检索、版本固定和实际曝光记录。
 - `modes/ptomni/pto_analyzer` 已有只读分析工具和离线验证；还要做的是把它接到真实 Host / Agent 工具调用中。
 - PTOmni 的 Agent Team、Host、状态记录和 Runner 还需要实现。
 - 当前 PTOBench Launcher 能根据 `mode.yaml` 动态加载方法，但隔离运行时的公共源码清单还没有登记 `ptomni`，而且需要把 Analyzer 子包一并带进运行时。因此首次隔离运行仍有一处公共运行时接入工作；PTOmni 的业务逻辑仍可以留在自己的 mode 目录里。

@@ -38,6 +38,10 @@ manual_runs
 .superpowers
 reports
 
+held_out_data
+formal_data
+
+
 # Mode-local provider credentials; keep only .env.example in version control.
 modes/*/.env
 pto_wiki/pto_wiki_pipeline/.env

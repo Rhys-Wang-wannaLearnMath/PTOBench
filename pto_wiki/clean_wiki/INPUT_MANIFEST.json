@@ -1732,7 +1732,7 @@
   ],
   "excluded_trees": [
     "../raw_wiki",
-    "../opt_wiki",
+    "../pypto_wiki",
     "../Corpus_Archive",
     "../Knowledge_Workflow"
   ],
